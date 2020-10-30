@@ -26,7 +26,7 @@ class Model_CurrencyHistory : public Model<DB_Table_CURRENCYHISTORY_V1>
 {
 public:
     using Model<DB_Table_CURRENCYHISTORY_V1>::get;
-    enum UPDTYPE { ONLINE = 1, MANUAL };
+    enum UPDTYPE { CURRENT, ONLINE, MANUAL };
 
 public:
     Model_CurrencyHistory();

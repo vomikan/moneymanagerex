@@ -35,7 +35,7 @@ public:
     mmStockDialog();
     mmStockDialog(wxWindow* parent
         , mmGUIFrame* gui_frame
-        , Model_Stock::Data* stock
+        , const wxString& symbol
         , int accountID
         , const wxString& name = "mmStockDialog"
         );
@@ -47,44 +47,51 @@ public:
         , long style
         , const wxString& name = "mmStockDialog"
         );
-
-    int m_stock_id;
+    int get_stock_id() const;
 
 private:
+    struct Data
+    {
+        int id;
+        wxString DATE;
+        wxString type;
+        double number;
+        double price;
+        double commission;
+        wxString notes;
+    };
+    std::vector<Data> m_list;
+
     void OnQuit(wxCloseEvent& event);
     void OnSave(wxCommandEvent& event);
-    void OnCancel(wxCommandEvent& event);
-    void OnAttachments(wxCommandEvent& event);
-    void OnStockPriceButton(wxCommandEvent& event);
-    void OnHistoryImportButton(wxCommandEvent& event);
-    void OnHistoryDownloadButton(wxCommandEvent& event);
-    void OnHistoryAddButton(wxCommandEvent& event);
-    void OnHistoryDeleteButton(wxCommandEvent& event);
+    void OnStockWebButton(wxCommandEvent& event);
+    void OnStockEventEditButton(wxCommandEvent& event);
+    void OnStockEventDeleteButton(wxCommandEvent& event);
+    void OnOpenAttachment(wxCommandEvent& event);
+    void OnNewEntry(wxCommandEvent& event);
+    void OnStockSetup(wxCommandEvent& event);
     void OnListItemSelected(wxListEvent& event);
     void OnFocusChange(wxChildFocusEvent& event);
-    void OnTextEntered(wxCommandEvent& event);
+    void OnListItemActivated(wxListEvent& event);
+    void OnListRightClick(wxListEvent& event);
+    void OnStockItemMenu(wxCommandEvent& event);
 
     void CreateControls();
-    void UpdateControls();
     void DataToControls();
     void ShowStockHistory();
-    void CreateShareAccount(Model_Account::Data* stock_account, const wxString& name);
 
-    mmTextCtrl* m_stock_name_ctrl;
+    void mmStockDialog::OnBuy();
+    void mmStockDialog::OnSell();
+    void mmStockDialog::OnDividend();
+
     mmTextCtrl* m_stock_symbol_ctrl;
-    wxDatePickerCtrl* m_purchase_date_ctrl;
-    mmTextCtrl* m_num_shares_ctrl;
-    mmTextCtrl* m_purchase_price_ctrl;
-    mmTextCtrl* m_notes_ctrl;
-    mmTextCtrl* m_history_price_ctrl;
-    wxDatePickerCtrl* m_history_date_ctrl;
-    wxStaticText* m_value_investment;
-    mmTextCtrl* m_commission_ctrl;
-    mmTextCtrl* m_current_price_ctrl;
+    wxStaticText* m_info_txt;
     wxBitmapButton* m_bAttachments;
-    wxListCtrl* m_price_listbox;
+    wxListCtrl* m_stock_event_listbox;
 
-    Model_Stock::Data* m_stock;
+    //Model_Stock::Data* m_stock;
+    int m_stock_id;
+    wxString m_symbol;
     bool m_edit;
     int m_account_id;
     mmGUIFrame* m_gui_frame;
@@ -93,16 +100,11 @@ private:
         ID_DPC_STOCK_PDATE = wxID_HIGHEST + 800,
         ID_TEXTCTRL_STOCKNAME,
         ID_TEXTCTRL_STOCK_SYMBOL,
-        ID_TEXTCTRL_NUMBER_SHARES,
-        ID_TEXTCTRL_STOCK_PP,
         ID_TEXTCTRL_STOCK_CP,
         ID_STATIC_STOCK_VALUE,
-        ID_TEXTCTRL_STOCK_COMMISSION,
         ID_TEXTCTRL_STOCK_CURR_PRICE,
         ID_DIALOG_STOCKS,
-        ID_DPC_CP_PDATE,
-        ID_BUTTON_IMPORT,
-        ID_BUTTON_DOWNLOAD
+        ID_DPC_CP_PDATE
     };
 };
 

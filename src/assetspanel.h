@@ -39,9 +39,6 @@ public:
     void OnDuplicateAsset(wxCommandEvent& event);
     void OnOrganizeAttachments(wxCommandEvent& event);
     void OnOpenAttachment(wxCommandEvent& event);
-    void OnAddAssetTrans(wxCommandEvent& WXUNUSED(event));
-    void OnViewAssetTrans(wxCommandEvent& WXUNUSED(event));
-    void OnGotoAssetAccount(wxCommandEvent& WXUNUSED(event));
 
     void doRefreshItems(int trx_id = -1);
 
@@ -65,9 +62,6 @@ private:
 
     enum {
         MENU_TREEPOPUP_NEW = wxID_HIGHEST + 1200,
-        MENU_TREEPOPUP_ADDTRANS,
-        MENU_TREEPOPUP_VIEWTRANS,
-        MENU_TREEPOPUP_GOTOACCOUNT,
         MENU_TREEPOPUP_EDIT,
         MENU_TREEPOPUP_DELETE,
         MENU_ON_DUPLICATE_TRANSACTION,
@@ -122,12 +116,9 @@ private:
     void OnEditAsset(wxCommandEvent& event);
     void OnOpenAttachment(wxCommandEvent& event);
     void OnMouseLeftDown(wxCommandEvent& event);
-    void OnAddAssetTrans(wxCommandEvent& event);
-    void OnViewAssetTrans(wxCommandEvent& event);
 
     void OnViewPopupSelected(wxCommandEvent& event);
     void sortTable();
-    void SetAccountParameters(const Model_Account::Data* account);
 
 private:
     wxString tips_;

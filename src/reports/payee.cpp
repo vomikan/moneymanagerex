@@ -165,10 +165,6 @@ void mmReportPayeeExpenses::getPayeeStats(std::map<int, std::pair<double, double
     {
         if (Model_Checking::type(trx) == Model_Checking::TRANSFER) continue;
 
-        // Do not include asset or stock transfers in income expense calculations.
-        if (Model_Checking::foreignTransactionAsTransfer(trx))
-            continue;
-
         const double convRate = Model_CurrencyHistory::getDayRate(Model_Account::instance().get(trx.ACCOUNTID)->CURRENCYID, trx.TRANSDATE);
 
         Model_Splittransaction::Data_Set splits;

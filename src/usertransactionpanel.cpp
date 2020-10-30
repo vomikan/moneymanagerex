@@ -285,7 +285,7 @@ void UserTransactionPanel::SetLastPayeeAndCategory(const int account_id)
 
 void UserTransactionPanel::OnTransAccountButton(wxCommandEvent& WXUNUSED(event))
 {
-    const auto& accounts = Model_Account::instance().all_checking_account_names();
+    const auto& accounts = Model_Account::instance().all_account_names();
     mmSingleChoiceDialog scd(this
         , _("Select the required account")
         , _("Account Selection")

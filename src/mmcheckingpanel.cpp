@@ -32,8 +32,6 @@
 #include "validators.h"
 #include "attachmentdialog.h"
 #include "model/allmodel.h"
-#include "sharetransactiondialog.h"
-#include "assetdialog.h"
 #include "billsdepositsdialog.h"
 #include <wx/clipbrd.h>
 
@@ -728,11 +726,6 @@ void mmCheckingPanel::DeleteViewedTransactions()
     Model_Checking::instance().Savepoint();
     for (const auto& tran: this->m_trans)
     {
-        if (Model_Checking::foreignTransaction(tran))
-        {
-            Model_Translink::RemoveTranslinkEntry(tran.TRANSID);
-        }
-
         // remove also removes any split transactions
         Model_Checking::instance().remove(tran.TRANSID);
         mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), tran.TRANSID);
@@ -773,9 +766,9 @@ const wxString mmCheckingPanel::getItem(long item, long column)
     case TransactionListCtrl::COL_CATEGORY:
         return tran.CATEGNAME;
     case TransactionListCtrl::COL_PAYEE_STR:
-        return tran.is_foreign_transfer() ? "< " + tran.PAYEENAME : tran.PAYEENAME;
+        return tran.PAYEENAME;
     case TransactionListCtrl::COL_STATUS:
-        return tran.is_foreign() ? "< " + tran.STATUS : tran.STATUS;
+        return tran.STATUS;
     case TransactionListCtrl::COL_WITHDRAWAL:
         return tran.AMOUNT <= 0 ? Model_Currency::toString(std::fabs(tran.AMOUNT), this->m_currency) : "";
     case TransactionListCtrl::COL_DEPOSIT:
@@ -1034,7 +1027,6 @@ void TransactionListCtrl::OnMouseRightClick(wxMouseEvent& event)
     bool multiselect = (GetSelectedItemCount() > 1);
     bool type_transfer = false;
     bool have_category = false;
-    bool is_foreign = false;
     if (m_selectedIndex > -1)
     {
         const Model_Checking::Full_Data& tran = m_cp->m_trans.at(m_selectedIndex);
@@ -1046,15 +1038,11 @@ void TransactionListCtrl::OnMouseRightClick(wxMouseEvent& event)
         {
             have_category = true;
         }
-        if (Model_Checking::foreignTransaction(tran))
-        {
-            is_foreign = true;
-        }
     }
     wxMenu menu;
     menu.Append(MENU_TREEPOPUP_NEW_WITHDRAWAL, _("&New Withdrawal"));
     menu.Append(MENU_TREEPOPUP_NEW_DEPOSIT, _("&New Deposit"));
-    if (Model_Account::instance().all_checking_account_names(true).size() > 1)
+    if (Model_Account::instance().all_account_names(true).size() > 1)
         menu.Append(MENU_TREEPOPUP_NEW_TRANSFER, _("&New Transfer"));
 
     menu.AppendSeparator();
@@ -1072,7 +1060,7 @@ void TransactionListCtrl::OnMouseRightClick(wxMouseEvent& event)
     if (hide_menu_item || multiselect) menu.Enable(MENU_ON_DUPLICATE_TRANSACTION, false);
 
     menu.Append(MENU_TREEPOPUP_MOVE2, _("&Move Transaction"));
-    if (hide_menu_item || multiselect || type_transfer || (Model_Account::money_accounts_num() < 2) || is_foreign)
+    if (hide_menu_item || multiselect || type_transfer || (Model_Account::money_accounts_num() < 2))
         menu.Enable(MENU_TREEPOPUP_MOVE2, false);
 
     menu.AppendSeparator();
@@ -1121,14 +1109,6 @@ void TransactionListCtrl::OnMouseRightClick(wxMouseEvent& event)
     subGlobalOpMenu->Append(MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP_ALL, _("as needing Followup"));
     subGlobalOpMenu->Append(MENU_TREEPOPUP_MARKDUPLICATE_ALL, _("as Duplicate"));
     menu.Append(MENU_SUBMENU_MARK_ALL, _("Mark all being viewed"), subGlobalOpMenu);
-
-    // Disable menu items not ment for foreign transactions
-    if (is_foreign)
-    {
-        menu.Enable(MENU_ON_COPY_TRANSACTION, false);
-        menu.Enable(MENU_ON_PASTE_TRANSACTION, false);
-        menu.Enable(MENU_ON_DUPLICATE_TRANSACTION, false);
-    }
 
     PopupMenu(&menu, event.GetPosition());
     this->SetFocus();
@@ -1569,12 +1549,6 @@ void TransactionListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
             {
                 SetItemState(x, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 
-                if (Model_Checking::foreignTransaction(i))
-                {
-                    Model_Translink::RemoveTranslinkEntry(transID);
-                    m_cp->m_frame->RefreshNavigationTree();
-                }
-
                 // remove also removes any split transactions
                 Model_Checking::instance().remove(transID);
                 mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), transID);
@@ -1621,34 +1595,12 @@ void TransactionListCtrl::OnEditTransaction(wxCommandEvent& /*event*/)
         return;
     }
 
-    if (Model_Checking::foreignTransaction(checking_entry))
+    mmTransDialog dlg(this, m_cp->m_AccountID, transaction_id, m_cp->m_account_balance);
+    if (dlg.ShowModal() == wxID_OK)
     {
-        Model_Translink::Data translink = Model_Translink::TranslinkRecord(transaction_id);
-        if (translink.LINKTYPE == Model_Attachment::reftype_desc(Model_Attachment::STOCK))
-        {
-            ShareTransactionDialog dlg(this, &translink, &checking_entry);
-            if (dlg.ShowModal() == wxID_OK)
-            {
-                refreshVisualList(transaction_id);
-            }
-        }
-        else
-        {
-            mmAssetDialog dlg(this, m_cp->m_frame, &translink, &checking_entry);
-            if (dlg.ShowModal() == wxID_OK)
-            {
-                refreshVisualList(transaction_id);
-            }
-        }
+        refreshVisualList(transaction_id);
     }
-    else
-    {
-        mmTransDialog dlg(this, m_cp->m_AccountID, transaction_id, m_cp->m_account_balance);
-        if (dlg.ShowModal() == wxID_OK)
-        {
-            refreshVisualList(transaction_id);
-        }
-    }
+    
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 }
 
@@ -1748,7 +1700,7 @@ void TransactionListCtrl::OnMoveTransaction(wxCommandEvent& /*event*/)
     mmSingleChoiceDialog scd(this
         , _("Select the destination Account ")
         , headerMsg
-        , Model_Account::instance().all_checking_account_names());
+        , Model_Account::instance().all_account_names());
 
     if (scd.ShowModal() == wxID_OK)
     {

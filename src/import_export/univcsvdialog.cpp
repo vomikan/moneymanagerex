@@ -292,7 +292,7 @@ void mmUnivCSVDialog::CreateControls()
     itemStaticText6->SetFont(staticBoxFontSetting);
 
     m_choice_account_ = new wxChoice(itemPanel7, wxID_ACCOUNT, wxDefaultPosition, wxDefaultSize
-        , Model_Account::instance().all_checking_account_names(), 0);
+        , Model_Account::instance().all_account_names(), 0);
     m_choice_account_->SetMinSize(wxSize(210, -1));
     flex_sizer->Add(m_choice_account_, g_flagsH);
 

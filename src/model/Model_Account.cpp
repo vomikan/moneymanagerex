@@ -18,7 +18,6 @@
 
 #include "Model_Account.h"
 #include "Model_Stock.h"
-#include "Model_Translink.h"
 #include "Model_Shareinfo.h"
 
 const std::vector<std::pair<Model_Account::STATUS_ENUM, wxString> > Model_Account::STATUS_CHOICES =
@@ -69,14 +68,12 @@ Model_Account& Model_Account::instance()
     return Singleton<Model_Account>::instance();
 }
 
-wxArrayString Model_Account::all_checking_account_names(bool skip_closed)
+wxArrayString Model_Account::all_account_names(bool skip_closed)
 {
     wxArrayString accounts;
     for (const auto &account : this->all(COL_ACCOUNTNAME))
     {
         if (skip_closed && status(account) == CLOSED)
-            continue;
-        if (type(account) == INVESTMENT)
             continue;
         if (account.ACCOUNTNAME.empty())
             continue;
@@ -136,12 +133,6 @@ bool Model_Account::remove(int id)
     this->Savepoint();
     for (const auto& r: Model_Checking::instance().find_or(Model_Checking::ACCOUNTID(id), Model_Checking::TOACCOUNTID(id)))
     {
-        if (Model_Checking::foreignTransaction(r))
-        {
-            Model_Shareinfo::RemoveShareEntry(r.TRANSID);
-            Model_Translink::Data tr = Model_Translink::TranslinkRecord(r.TRANSID);
-            Model_Translink::instance().remove(tr.TRANSLINKID);
-        }
         Model_Checking::instance().remove(r.TRANSID);
     }
     for (const auto& r: Model_Billsdeposits::instance().find_or(Model_Billsdeposits::ACCOUNTID(id), Model_Billsdeposits::TOACCOUNTID(id)))
@@ -149,7 +140,6 @@ bool Model_Account::remove(int id)
 
     for (const auto& r : Model_Stock::instance().find(Model_Stock::HELDAT(id)))
     {
-        Model_Translink::RemoveTransLinkRecords(Model_Attachment::STOCK, r.STOCKID);
         Model_Stock::instance().remove(r.STOCKID);
     }
     this->ReleaseSavepoint();

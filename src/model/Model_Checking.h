@@ -54,8 +54,6 @@ public:
         Model_Splittransaction::Data_Set m_splits;
         wxString real_payee_name(int account_id) const;
         bool has_split() const;
-        bool is_foreign() const;
-        bool is_foreign_transfer() const;
 
         wxString info() const;
         const wxString to_json();
@@ -159,8 +157,7 @@ public:
     static void getEmptyTransaction(Data &data, int accountID);
     static bool getTransactionData(Data &data, const Data* r);
     static void putDataToTransaction(Data *r, const Data &data);
-    static bool foreignTransaction(const Data& data);
-    static bool foreignTransactionAsTransfer(const Data& data);
+
 };
 
 #endif // 

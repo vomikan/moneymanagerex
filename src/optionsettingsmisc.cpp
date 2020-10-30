@@ -60,7 +60,8 @@ void OptionSettingsMisc::Create()
 
     wxArrayString list;
     list.Add(mmex::weblink::DefStockUrl);
-    //list.Add("https://www.morningstar.com/stocks/xnas/%s/quote");
+    //list.Add("https://www.google.com/search?q=%s");
+    //list.Add("http://quotes.morningstar.com/stockq/c-header?&t=%s");
     //list.Add("https://www.marketwatch.com/investing/stock/%s");
     //list.Add("https://www.ifcmarkets.co.in/en/market-data/stocks-prices/%s");
 

@@ -22,7 +22,6 @@
 #include "Model_Payee.h"
 #include "Model_Category.h"
 #include <queue>
-#include "Model_Translink.h"
 
 const std::vector<std::pair<Model_Checking::TYPE, wxString> > Model_Checking::TYPE_CHOICES =
 {
@@ -367,16 +366,6 @@ bool Model_Checking::Full_Data::has_split() const
     return !this->m_splits.empty();
 }
 
-bool Model_Checking::Full_Data::is_foreign() const
-{
-    return (this->TOACCOUNTID > 0) && ((this->TRANSCODE == all_type()[DEPOSIT]) || (this->TRANSCODE == all_type()[WITHDRAWAL]));
-}
-
-bool Model_Checking::Full_Data::is_foreign_transfer() const
-{
-    return is_foreign() && (this->TOACCOUNTID == Model_Translink::AS_TRANSFER);
-}
-
 wxString Model_Checking::Full_Data::info() const
 {
     // TODO more info
@@ -535,14 +524,4 @@ const wxString Model_Checking::Full_Data::to_json()
     wxLogDebug("FullData using rapidjson:\n%s", wxString::FromUTF8(json_buffer.GetString()));
 
     return wxString::FromUTF8(json_buffer.GetString());
-}
-
-bool Model_Checking::foreignTransaction(const Data& data)
-{
-    return (data.TOACCOUNTID > 0) && ((data.TRANSCODE == all_type()[DEPOSIT]) || (data.TRANSCODE == all_type()[WITHDRAWAL]));
-}
-
-bool Model_Checking::foreignTransactionAsTransfer(const Data& data)
-{
-    return foreignTransaction(data) && (data.TOACCOUNTID == Model_Translink::AS_TRANSFER);
 }

@@ -69,7 +69,7 @@ public:
     bool remove(int id);
 
 public:
-    wxArrayString all_checking_account_names(bool skip_closed = false);
+    wxArrayString all_account_names(bool skip_closed = false);
 
     static wxArrayString all_status();
     static wxArrayString all_type();

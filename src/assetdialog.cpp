@@ -42,7 +42,7 @@ wxBEGIN_EVENT_TABLE( mmAssetDialog, wxDialog )
     EVT_CLOSE(mmAssetDialog::OnQuit)
 wxEND_EVENT_TABLE()
 
-mmAssetDialog::mmAssetDialog(wxWindow* parent, mmGUIFrame* gui_frame, Model_Asset::Data* asset, bool trans_data)
+mmAssetDialog::mmAssetDialog(wxWindow* parent, mmGUIFrame* gui_frame, Model_Asset::Data* asset)
     : m_asset(asset)
     , m_gui_frame(gui_frame)
     , m_assetType(nullptr)
@@ -55,47 +55,14 @@ mmAssetDialog::mmAssetDialog(wxWindow* parent, mmGUIFrame* gui_frame, Model_Asse
     , m_valueChangeRateLabel(nullptr)
     , bAttachments_(nullptr)
     , m_transaction_frame(nullptr)
-    , m_transaction_panel(nullptr)
-    , m_transfer_entry(nullptr)
     , m_checking_entry(nullptr)
     , m_dialog_heading (_("New Asset"))
     , m_hidden_trans_entry(true)
     , assetRichText(true)
 {
-    if (m_asset || trans_data)
+    if (m_asset)
     {
         m_dialog_heading = _("Edit Asset");
-        if (trans_data)
-        {
-            m_hidden_trans_entry = false;
-            m_dialog_heading = _("Add Asset Transaction");
-        }
-    }
-
-    long style = wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX;
-    Create(parent, wxID_ANY, m_dialog_heading, wxDefaultPosition, wxSize(400, 300), style);
-}
-
-mmAssetDialog::mmAssetDialog(wxWindow* parent, mmGUIFrame* gui_frame, Model_Translink::Data* transfer_entry, Model_Checking::Data* checking_entry)
-    : m_asset(nullptr)
-    , m_gui_frame(gui_frame)
-    , m_assetName()
-    , m_dpc()
-    , m_notes()
-    , m_value()
-    , m_valueChangeRate()
-    , m_assetType()
-    , m_valueChange()
-    , m_valueChangeRateLabel()
-    , m_hidden_trans_entry(false)
-    , m_transfer_entry(transfer_entry)
-    , m_checking_entry(checking_entry)
-    , m_dialog_heading (_("Add Asset Transaction"))
-{
-    if (transfer_entry)
-    {
-        m_dialog_heading = _("Edit Asset Transaction");
-        m_asset = Model_Asset::instance().get(transfer_entry->LINKRECORDID);
     }
 
     long style = wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX;
@@ -138,22 +105,11 @@ void mmAssetDialog::dataToControls()
     m_dpc->SetValue(Model_Asset::STARTDATE(m_asset));
     m_value->SetValue(std::abs(m_asset->VALUE));
 
-    if (!Model_Translink::TranslinkList(Model_Attachment::ASSET, m_asset->ASSETID).empty())
-    {
-        m_value->Enable(false);
-    }
-
     m_valueChangeRate->SetValue(m_asset->VALUECHANGERATE, 3);
 
     m_valueChange->SetSelection(Model_Asset::rate(m_asset));
     enableDisableRate(Model_Asset::rate(m_asset) != Model_Asset::RATE_NONE);
     m_assetType->SetSelection(Model_Asset::type(m_asset));
-
-    // Set up the transaction if this is the first entry.
-    if (Model_Translink::TranslinkList(Model_Attachment::ASSET, m_asset->ASSETID).empty())
-    {
-        m_transaction_panel->SetTransactionValue(m_asset->VALUE);
-    }
 
     if (!m_hidden_trans_entry)
     {
@@ -275,21 +231,6 @@ void mmAssetDialog::CreateControls()
     wxStaticBoxSizer* transaction_frame_sizer = new wxStaticBoxSizer(m_transaction_frame, wxVERTICAL);
     right_sizer->Add(transaction_frame_sizer, g_flagsV);
 
-    m_transaction_panel = new UserTransactionPanel(this, m_checking_entry, wxID_STATIC);
-    transaction_frame_sizer->Add(m_transaction_panel, g_flagsV);
-    if (m_transfer_entry && m_checking_entry)
-    {
-        m_transaction_panel->CheckingType(Model_Translink::type_checking(m_checking_entry->TOACCOUNTID));
-    }
-    else
-    {
-        if (m_asset)
-        {
-            m_transaction_panel->SetTransactionNumber(m_asset->ASSETNAME);
-            m_transaction_panel->CheckingType(Model_Translink::AS_INCOME_EXPENSE);
-        }
-    }
-
     if (m_hidden_trans_entry) HideTransactionPanel();
     /********************************************************************
     Separation Line
@@ -316,7 +257,7 @@ void mmAssetDialog::CreateControls()
 void mmAssetDialog::HideTransactionPanel()
 {
     m_transaction_frame->Hide();
-    m_transaction_panel->Hide();
+    //m_transaction_panel->Hide();
 }
 
 void mmAssetDialog::OnChangeAppreciationType(wxCommandEvent& /*event*/)
@@ -387,21 +328,6 @@ void mmAssetDialog::OnOk(wxCommandEvent& /*event*/)
         const wxString& RefType = Model_Attachment::reftype_desc(Model_Attachment::ASSET);
         mmAttachmentManage::RelocateAllAttachments(RefType, 0, new_asset_id);
     }
-    if (m_transaction_panel->ValidCheckingAccountEntry())
-    {
-        int checking_id = m_transaction_panel->SaveChecking();
-        if (!m_transfer_entry)
-        {
-            Model_Translink::SetAssetTranslink(new_asset_id
-                , checking_id, m_transaction_panel->CheckingType());
-        }
-        Model_Translink::UpdateAssetValue(m_asset);
-    }
-    else if (!m_hidden_trans_entry)
-    {
-        mmErrorDialogs::MessageWarning(this, _("Invalid Transaction"), m_dialog_heading);
-        return;
-    }
 
     Model_Account::Data* asset_account = Model_Account::instance().get(name);
     if (is_new && !asset_account)
@@ -414,16 +340,6 @@ void mmAssetDialog::OnOk(wxCommandEvent& /*event*/)
     }
 
     EndModal(wxID_OK);
-}
-
-void mmAssetDialog::SetTransactionAccountName(const wxString& account_name)
-{
-    m_transaction_panel->SetTransactionAccount(account_name);
-}
-
-void mmAssetDialog::SetTransactionDate()
-{
-    m_transaction_panel->TransactionDate(m_dpc->GetValue());
 }
 
 void mmAssetDialog::CreateAssetAccount()
@@ -441,9 +357,7 @@ void mmAssetDialog::CreateAssetAccount()
     account_dialog.ShowModal();
     m_gui_frame->RefreshNavigationTree();
 
-    mmAssetDialog asset_dialog(this, m_gui_frame, m_asset, true);
-    asset_dialog.SetTransactionAccountName(m_asset->ASSETNAME);
-    asset_dialog.SetTransactionDate();
+    mmAssetDialog asset_dialog(this, m_gui_frame, m_asset);
     asset_dialog.ShowModal();
 }
 

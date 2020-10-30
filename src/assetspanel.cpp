@@ -37,9 +37,6 @@ wxBEGIN_EVENT_TABLE(mmAssetsListCtrl, mmListCtrl)
 
     EVT_MENU(MENU_TREEPOPUP_NEW,    mmAssetsListCtrl::OnNewAsset)
     EVT_MENU(MENU_TREEPOPUP_EDIT,   mmAssetsListCtrl::OnEditAsset)
-    EVT_MENU(MENU_TREEPOPUP_ADDTRANS, mmAssetsListCtrl::OnAddAssetTrans)
-    EVT_MENU(MENU_TREEPOPUP_VIEWTRANS, mmAssetsListCtrl::OnViewAssetTrans)
-    EVT_MENU(MENU_TREEPOPUP_GOTOACCOUNT, mmAssetsListCtrl::OnGotoAssetAccount)
     EVT_MENU(MENU_TREEPOPUP_DELETE, mmAssetsListCtrl::OnDeleteAsset)
     EVT_MENU(MENU_ON_DUPLICATE_TRANSACTION, mmAssetsListCtrl::OnDuplicateAsset)
     EVT_MENU(MENU_TREEPOPUP_ORGANIZE_ATTACHMENTS, mmAssetsListCtrl::OnOrganizeAttachments)
@@ -97,10 +94,6 @@ void mmAssetsListCtrl::OnMouseRightClick(wxMouseEvent& event)
     menu.AppendSeparator();
     menu.Append(MENU_ON_DUPLICATE_TRANSACTION, _("D&uplicate Asset"));
     menu.AppendSeparator();
-    menu.Append(MENU_TREEPOPUP_ADDTRANS, _("&Add Asset Transaction"));
-    menu.Append(MENU_TREEPOPUP_VIEWTRANS, _("&View Asset Transactions"));
-    menu.Append(MENU_TREEPOPUP_GOTOACCOUNT, _("&Open Asset Account"));
-    menu.AppendSeparator();
     menu.Append(MENU_TREEPOPUP_EDIT, _("&Edit Asset"));
     menu.Append(MENU_TREEPOPUP_DELETE, _("&Delete Asset"));
     menu.AppendSeparator();
@@ -108,8 +101,6 @@ void mmAssetsListCtrl::OnMouseRightClick(wxMouseEvent& event)
     if (m_selected_row < 0)
     {
         menu.Enable(MENU_ON_DUPLICATE_TRANSACTION, false);
-        menu.Enable(MENU_TREEPOPUP_ADDTRANS, false);
-        menu.Enable(MENU_TREEPOPUP_VIEWTRANS, false);
         menu.Enable(MENU_TREEPOPUP_EDIT, false);
         menu.Enable(MENU_TREEPOPUP_DELETE, false);
         menu.Enable(MENU_TREEPOPUP_ORGANIZE_ATTACHMENTS, false);
@@ -205,7 +196,6 @@ void mmAssetsListCtrl::OnDeleteAsset(wxCommandEvent& /*event*/)
         const Model_Asset::Data& asset = m_panel->m_assets[m_selected_row];
         Model_Asset::instance().remove(asset.ASSETID);
         mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::ASSET), asset.ASSETID);
-        Model_Translink::RemoveTransLinkRecords(Model_Attachment::ASSET, asset.ASSETID);
 
         m_panel->initVirtualListControl(m_selected_row, m_selected_col, m_asc);
         m_selected_row = -1;
@@ -233,27 +223,6 @@ void mmAssetsListCtrl::OnDuplicateAsset(wxCommandEvent& /*event*/)
         m_panel->initVirtualListControl();
         doRefreshItems(duplicate_asset->ASSETID);
     }
-}
-
-void mmAssetsListCtrl::OnAddAssetTrans(wxCommandEvent& WXUNUSED(event))
-{
-    if (m_selected_row < 0) return;
-
-    m_panel->AddAssetTrans(m_selected_row);
-}
-
-void mmAssetsListCtrl::OnViewAssetTrans(wxCommandEvent& WXUNUSED(event))
-{
-    if (m_selected_row < 0) return;
-
-    m_panel->ViewAssetTrans(m_selected_row);
-}
-
-void mmAssetsListCtrl::OnGotoAssetAccount(wxCommandEvent& WXUNUSED(event))
-{
-    if (m_selected_row < 0) return;
-
-    m_panel->GotoAssetAccount(m_selected_row);
 }
 
 void mmAssetsListCtrl::OnOrganizeAttachments(wxCommandEvent& /*event*/)
@@ -346,8 +315,6 @@ void mmAssetsListCtrl::OnEndLabelEdit(wxListEvent& event)
 BEGIN_EVENT_TABLE(mmAssetsPanel, wxPanel)
     EVT_BUTTON(wxID_NEW, mmAssetsPanel::OnNewAsset)
     EVT_BUTTON(wxID_EDIT, mmAssetsPanel::OnEditAsset)
-    EVT_BUTTON(wxID_ADD, mmAssetsPanel::OnAddAssetTrans)
-    EVT_BUTTON(wxID_VIEW_DETAILS , mmAssetsPanel::OnViewAssetTrans)
     EVT_BUTTON(wxID_DELETE, mmAssetsPanel::OnDeleteAsset)
     EVT_BUTTON(wxID_FILE, mmAssetsPanel::OnOpenAttachment)
     EVT_BUTTON(wxID_FILE2, mmAssetsPanel::OnMouseLeftDown)
@@ -465,16 +432,6 @@ void mmAssetsPanel::CreateControls()
     wxButton* itemButton6 = new wxButton( assets_panel, wxID_NEW, _("&New "));
     itemButton6->SetToolTip(_("New Asset"));
     itemBoxSizer5->Add(itemButton6, 0, wxRIGHT, 5);
-
-    wxButton* add_trans_btn = new wxButton(assets_panel, wxID_ADD, _("&Add Trans "));
-    add_trans_btn->SetToolTip(_("Add Asset Transaction"));
-    itemBoxSizer5->Add(add_trans_btn, 0, wxRIGHT, 5);
-    add_trans_btn->Enable(false);
-
-    wxButton* view_trans_btn = new wxButton(assets_panel, wxID_VIEW_DETAILS, _("&View Trans "));
-    view_trans_btn->SetToolTip(_("View Asset Transactions"));
-    itemBoxSizer5->Add(view_trans_btn, 0, wxRIGHT, 5);
-    view_trans_btn->Enable(false);
 
     wxButton* itemButton81 = new wxButton( assets_panel, wxID_EDIT, _("&Edit "));
     itemButton81->SetToolTip(_("Edit Asset"));
@@ -595,16 +552,6 @@ void mmAssetsPanel::OnEditAsset(wxCommandEvent& event)
     m_listCtrlAssets->OnEditAsset(event);
 }
 
-void mmAssetsPanel::OnAddAssetTrans(wxCommandEvent& event)
-{
-    m_listCtrlAssets->OnAddAssetTrans(event);
-}
-
-void mmAssetsPanel::OnViewAssetTrans(wxCommandEvent& event)
-{
-    m_listCtrlAssets->OnViewAssetTrans(event);
-}
-
 void mmAssetsPanel::OnOpenAttachment(wxCommandEvent& event)
 {
     m_listCtrlAssets->OnOpenAttachment(event);
@@ -674,9 +621,6 @@ void mmAssetsPanel::enableEditDeleteButtons(bool enable)
     if (btn) btn->Enable(!enable);
 
     btn = static_cast<wxButton*>(FindWindow(wxID_ADD));
-    if (btn) btn->Enable(enable);
-
-    btn = static_cast<wxButton*>(FindWindow(wxID_VIEW_DETAILS));
     if (btn) btn->Enable(enable);
 
     btn = static_cast<wxButton*>(FindWindow(wxID_DELETE));
@@ -753,81 +697,11 @@ void mmAssetsPanel::OnSearchTxtEntered(wxCommandEvent& event)
 void mmAssetsPanel::AddAssetTrans(const int selected_index)
 {
     Model_Asset::Data* asset = &m_assets[selected_index];
-    mmAssetDialog asset_dialog(this, m_frame, asset, true);
-    Model_Account::Data* account = Model_Account::instance().get(asset->ASSETNAME);
-    if (account)
-    {
-        asset_dialog.SetTransactionAccountName(asset->ASSETNAME);
-    }
-    else
-    {
-        Model_Translink::Data_Set translist = Model_Translink::TranslinkList(Model_Attachment::ASSET, asset->ASSETID);
-        if (!translist.empty())
-        {
-            wxMessageBox(_(
-                "This asset does not have its own account\n\n"
-                "Multiple transactions for this asset are not recommended.")
-                , _("Asset Management"), wxOK | wxICON_INFORMATION);
-
-            return; // abort process
-        }
-    }
+    mmAssetDialog asset_dialog(this, m_frame, asset);
 
     if (asset_dialog.ShowModal() == wxID_OK)
     {
         m_listCtrlAssets->doRefreshItems(selected_index);
         updateExtraAssetData(selected_index);
     }
-}
-
-void mmAssetsPanel::ViewAssetTrans(const int selected_index)
-{
-    Model_Asset::Data* asset = &m_assets[selected_index];
-    Model_Translink::Data_Set asset_list = Model_Translink::TranslinkList(Model_Attachment::ASSET, asset->ASSETID);
-
-    // TODO create a panel to display all the information on one screen
-    wxString msg = _("Account \t Date\t   Value\n\n");
-    for (const auto asset_entry : asset_list)
-    {
-        Model_Checking::Data* asset_trans = Model_Checking::instance().get(asset_entry.CHECKINGACCOUNTID);
-        if (asset_trans)
-        {
-            const auto aa = Model_Account::get_account_name(asset_trans->ACCOUNTID);
-            const auto ad = mmGetDateForDisplay(asset_trans->TRANSDATE);
-            const auto av = Model_Currency::toString(asset_trans->TRANSAMOUNT); //TODO: check if currency needed
-            msg << wxString::Format("%s \t%s   \t%s \n", aa, ad, av);
-        }
-    }
-    wxMessageBox(msg, "Viewing Asset Transactions");
-}
-
-void mmAssetsPanel::GotoAssetAccount(const int selected_index)
-{
-    Model_Asset::Data* asset = &m_assets[selected_index];
-    const Model_Account::Data* account = Model_Account::instance().get(asset->ASSETNAME);
-    if (account)
-    {
-        SetAccountParameters(account);
-    }
-    else
-    {
-        Model_Translink::Data_Set asset_list = Model_Translink::TranslinkList(Model_Attachment::ASSET, asset->ASSETID);
-        for (const auto asset_entry : asset_list)
-        {
-            Model_Checking::Data* asset_trans = Model_Checking::instance().get(asset_entry.CHECKINGACCOUNTID);
-            if (asset_trans)
-            {
-                account = Model_Account::instance().get(asset_trans->ACCOUNTID);
-                SetAccountParameters(account);
-            }
-        }
-    }
-}
-
-void mmAssetsPanel::SetAccountParameters(const Model_Account::Data* account)
-{
-    m_frame->setAccountNavTreeSection(account->ACCOUNTNAME);
-    m_frame->setGotoAccountID(account->ACCOUNTID, -1);
-    wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_GOTOACCOUNT);
-    m_frame->GetEventHandler()->AddPendingEvent(evt);
 }

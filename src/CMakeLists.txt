@@ -167,8 +167,6 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     relocatepayeedialog.h
     resource.h
     singleton.h
-    sharetransactiondialog.cpp
-    sharetransactiondialog.h
     splitdetailsdialog.cpp
     splitdetailsdialog.h
     splittransactionsdialog.cpp
@@ -177,10 +175,12 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     stockdialog.h
     stockspanel.cpp
     stockspanel.h
+    stock_item.cpp
+    stock_item.h
+    stock_settings.cpp
+    stock_settings.h
     transdialog.cpp
     transdialog.h
-    usertransactionpanel.cpp
-    usertransactionpanel.h
     util.cpp
     util.h
     validators.h
@@ -313,8 +313,6 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     model/Model_StockHistory.h
     model/Model_Subcategory.cpp
     model/Model_Subcategory.h
-    model/Model_Translink.cpp
-    model/Model_Translink.h
     model/Model_Usage.cpp
     model/Model_Usage.h
 

@@ -360,8 +360,7 @@ void mmBDDialog::SetDialogParameters(const Model_Checking::Full_Data& transactio
 
     if (transaction.has_split())
     {
-        Model_Splittransaction::Data_Set bill_splits;
-        for (auto &split_trans : transaction.m_splits)
+        for (const auto &split_trans : transaction.m_splits)
         {
             Split s;
             s.CATEGID = split_trans.CATEGID;
@@ -658,7 +657,7 @@ void mmBDDialog::OnCancel(wxCommandEvent& WXUNUSED(event))
 
 void mmBDDialog::OnAccountName(wxCommandEvent& WXUNUSED(event))
 {
-    const auto& accounts = Model_Account::instance().all_checking_account_names(true);
+    const auto& accounts = Model_Account::instance().all_account_names(true);
     mmSingleChoiceDialog scd(this
         , _("Choose Bank Account or Term Account")
         , _("Select Account")
@@ -694,7 +693,7 @@ void mmBDDialog::OnPayee(wxCommandEvent& WXUNUSED(event))
     {
         m_bill_data.PAYEEID = -1;
         mmSingleChoiceDialog scd(this, _("Account name"), _("Select Account")
-            , Model_Account::instance().all_checking_account_names(true));
+            , Model_Account::instance().all_account_names(true));
         if (scd.ShowModal() == wxID_OK)
         {
             const wxString& acctName = scd.GetStringSelection();
@@ -743,7 +742,7 @@ void mmBDDialog::OnTo(wxCommandEvent& WXUNUSED(event))
     // This should only get called if we are in a transfer
 
     mmSingleChoiceDialog scd(this, _("Account name"), _("Select Account")
-        , Model_Account::instance().all_checking_account_names());
+        , Model_Account::instance().all_account_names());
     if (scd.ShowModal() == wxID_OK)
     {
         const wxString& acctName = scd.GetStringSelection();

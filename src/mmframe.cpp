@@ -118,7 +118,6 @@ EVT_MENU(MENU_CONVERT_ENC_DB, mmGUIFrame::OnConvertEncryptedDB)
 EVT_MENU(MENU_CHANGE_ENCRYPT_PASSWORD, mmGUIFrame::OnChangeEncryptPassword)
 EVT_MENU(MENU_DB_VACUUM, mmGUIFrame::OnVacuumDB)
 EVT_MENU(MENU_DB_DEBUG, mmGUIFrame::OnDebugDB)
-
 EVT_MENU(MENU_ASSETS, mmGUIFrame::OnAssets)
 EVT_MENU(MENU_CURRENCY, mmGUIFrame::OnCurrency)
 EVT_MENU(MENU_RATES, mmGUIFrame::OnRates)
@@ -799,21 +798,6 @@ void mmGUIFrame::updateNavTreeControl()
             case Model_Account::INVESTMENT:
             {
                 tacct = m_nav_tree_ctrl->AppendItem(stocks, account.ACCOUNTNAME, selectedImage, selectedImage);
-                // find all the accounts associated with this stock portfolio
-                Model_Stock::Data_Set stock_account_list = Model_Stock::instance().find(Model_Stock::HELDAT(account.ACCOUNTID));
-                // Put the names of the Stock_entry names as children of the stock account.
-                for (const auto &stock_entry : stock_account_list)
-                {
-                    if (Model_Translink::HasShares(stock_entry.STOCKID))
-                    {
-                        wxTreeItemId se = m_nav_tree_ctrl->AppendItem(tacct, stock_entry.STOCKNAME, selectedImage, selectedImage);
-                        int account_id = stock_entry.STOCKID;
-                        if (Model_Translink::ShareAccountId(account_id))
-                        {
-                            m_nav_tree_ctrl->SetItemData(se, new mmTreeItemData(account_id, false, true));
-                        }
-                    }
-                }
             }
             break;
             case Model_Account::SHARES:
@@ -1745,7 +1729,6 @@ void mmGUIFrame::InitializeModelTables()
     m_all_models.push_back(&Model_Attachment::instance(m_db.get()));
     m_all_models.push_back(&Model_CustomFieldData::instance(m_db.get()));
     m_all_models.push_back(&Model_CustomField::instance(m_db.get()));
-    m_all_models.push_back(&Model_Translink::instance(m_db.get()));
     m_all_models.push_back(&Model_Shareinfo::instance(m_db.get()));
 }
 
@@ -2328,9 +2311,6 @@ void mmGUIFrame::refreshPanelData()
         createHomePage();
     else if (id == mmID_CHECKING)
         checkingAccountPage_->RefreshList();
-    else if (id == mmID_ASSETS)
-    { /*Nothing to do;*/
-    }
     else if (id == mmID_BILLS)
         billsDepositsPanel_->RefreshList();
     else if (id == mmID_BUDGET)
@@ -2374,7 +2354,7 @@ void mmGUIFrame::OnNewTransaction(wxCommandEvent& /*event*/)
 {
     if (m_db)
     {
-        if (Model_Account::instance().all_checking_account_names().empty()) return;
+        if (Model_Account::instance().all_account_names().empty()) return;
         mmTransDialog dlg(this, gotoAccountID_, 0, 0);
 
         if (dlg.ShowModal() == wxID_OK)
@@ -2837,31 +2817,6 @@ void mmGUIFrame::OnGotoStocksAccount(wxCommandEvent& WXUNUSED(event))
     m_nav_tree_ctrl->Refresh();
 }
 
-void mmGUIFrame::OnAssets(wxCommandEvent& /*event*/)
-{
-    StringBuffer json_buffer;
-    Writer<StringBuffer> json_writer(json_buffer);
-
-    json_writer.StartObject();
-    json_writer.Key("module");
-    json_writer.String("Asset Panel");
-
-    const auto time = wxDateTime::UNow();
-
-    windowsFreezeThaw(homePanel_);
-    wxSizer *sizer = cleanupHomePanel();
-    panelCurrent_ = new mmAssetsPanel(this, homePanel_, mmID_ASSETS);
-    sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
-    homePanel_->Layout();
-    windowsFreezeThaw(homePanel_);
-    menuPrintingEnable(true);
-
-    json_writer.Key("seconds");
-    json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
-    json_writer.EndObject();
-
-    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
-}
 //----------------------------------------------------------------------------
 
 void mmGUIFrame::OnCurrency(wxCommandEvent& /*event*/)
@@ -2938,6 +2893,33 @@ void mmGUIFrame::OnRates(wxCommandEvent& WXUNUSED(event))
 
     refreshPanelData();
 }
+
+void mmGUIFrame::OnAssets(wxCommandEvent& /*event*/)
+{
+    StringBuffer json_buffer;
+    Writer<StringBuffer> json_writer(json_buffer);
+
+    json_writer.StartObject();
+    json_writer.Key("module");
+    json_writer.String("Asset Panel");
+
+    const auto time = wxDateTime::UNow();
+
+    windowsFreezeThaw(homePanel_);
+    wxSizer *sizer = cleanupHomePanel();
+    panelCurrent_ = new mmAssetsPanel(this, homePanel_, mmID_ASSETS);
+    sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
+    homePanel_->Layout();
+    windowsFreezeThaw(homePanel_);
+    menuPrintingEnable(true);
+
+    json_writer.Key("seconds");
+    json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
+    json_writer.EndObject();
+
+    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+}
+
 //----------------------------------------------------------------------------
 
 void mmGUIFrame::OnEditAccount(wxCommandEvent& /*event*/)
@@ -2997,7 +2979,7 @@ void mmGUIFrame::OnReallocateAccount(wxCommandEvent& WXUNUSED(event))
 {
     mmSingleChoiceDialog account_choice(this
         , _("Select the account to reallocate"), _("Account Reallocation")
-        , Model_Account::instance().all_checking_account_names());
+        , Model_Account::instance().all_account_names());
 
     if (account_choice.ShowModal() == wxID_OK)
     {

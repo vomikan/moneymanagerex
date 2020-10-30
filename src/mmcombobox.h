@@ -47,7 +47,7 @@ public:
         if (m_payee)
             this->AutoComplete(Model_Payee::instance().all_payee_names());
         else
-            this->AutoComplete(Model_Account::instance().all_checking_account_names());
+            this->AutoComplete(Model_Account::instance().all_account_names());
 
     }
     wxString GetValue() const

@@ -156,7 +156,7 @@ void mmQIFImportDialog::CreateControls()
         , wxDefaultPosition, wxDefaultSize, wxCHK_2STATE);
     accountDropDown_ = new wxChoice(this
         , wxID_ANY, wxDefaultPosition, wxSize(180, -1));
-    for (const auto& a : Model_Account::instance().all_checking_account_names())
+    for (const auto& a : Model_Account::instance().all_account_names())
         accountDropDown_->Append(a, new wxStringClientData(a));
 
     accountDropDown_->Enable(false);
@@ -765,7 +765,7 @@ void mmQIFImportDialog::OnCheckboxClick(wxCommandEvent& event)
     {
         t = t | ACC_TAB;
         if (accountCheckBox_->IsChecked()
-            && !Model_Account::instance().all_checking_account_names().empty())
+            && !Model_Account::instance().all_account_names().empty())
         {
             accountDropDown_->Enable(true);
             m_accountNameStr = "";

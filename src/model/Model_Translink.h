@@ -94,7 +94,6 @@ public:
     ... share_entry.SHARENUMBER * share_entry.SHAREPRICE
     */
     static void UpdateStockValue(Model_Stock::Data* stock_entry);
-    static void UpdateAssetValue(Model_Asset::Data* asset_entry);
 
     /* Return true with the account id of the first share entry in the stock translink list */
     static bool ShareAccountId(int& stock_entry_id);

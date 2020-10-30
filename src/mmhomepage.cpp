@@ -209,8 +209,6 @@ void htmlWidgetTop7Categories::getTopCategoryStats(
     for (const auto &trx : transactions)
     {
         // Do not include asset or stock transfers in income expense calculations.
-        if (Model_Checking::foreignTransactionAsTransfer(trx))
-            continue;
 
         bool withdrawal = Model_Checking::type(trx) == Model_Checking::WITHDRAWAL;
         const auto it = split.find(trx.TRANSID);
@@ -387,10 +385,6 @@ const wxString htmlWidgetIncomeVsExpenses::getHTMLText()
     for (const auto& pBankTransaction : transactions)
     {
 
-        // Do not include asset or stock transfers in income expense calculations.
-        if (Model_Checking::foreignTransactionAsTransfer(pBankTransaction))
-            continue;
-
         double convRate = Model_CurrencyHistory::getDayRate(Model_Account::instance().get(pBankTransaction.ACCOUNTID)->CURRENCYID, pBankTransaction.TRANSDATE);
 
         int idx = pBankTransaction.ACCOUNTID;
@@ -490,9 +484,6 @@ const wxString htmlWidgetStatistics::getHTMLText()
     std::map<int, std::pair<double, double> > accountStats;
     for (const auto& trx : all_trans)
     {
-        // Do not include asset or stock transfers in income expense calculations.
-        if (Model_Checking::foreignTransactionAsTransfer(trx))
-            continue;
 
         if (Model_Checking::status(trx) == Model_Checking::FOLLOWUP) countFollowUp++;
 
@@ -603,10 +594,6 @@ void htmlWidgetAccounts::get_account_stats()
 
     for (const auto& trx : all_trans)
     {
-        // Do not include asset or stock transfers in income expense calculations.
-        if (Model_Checking::foreignTransactionAsTransfer(trx))
-            continue;
-
         accountStats_[trx.ACCOUNTID].first += Model_Checking::reconciled(trx, trx.ACCOUNTID);
         accountStats_[trx.ACCOUNTID].second += Model_Checking::balance(trx, trx.ACCOUNTID);
 

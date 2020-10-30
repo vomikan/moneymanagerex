@@ -16,7 +16,6 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************/
 
-#include "assetdialog.h"
 #include "attachmentdialog.h"
 #include "mmreportspanel.h"
 #include "mmex.h"
@@ -24,7 +23,6 @@
 #include "mmcheckingpanel.h"
 #include "paths.h"
 #include "platfdep.h"
-#include "sharetransactiondialog.h"
 #include "transdialog.h"
 #include "util.h"
 #include "reports/htmlbuilder.h"
@@ -468,37 +466,13 @@ void mmReportsPanel::OnNewWindow(wxWebViewEvent& evt)
             Model_Checking::Data* transaction = Model_Checking::instance().get(transId);
             if (transaction && transaction->TRANSID > -1)
             {
-                if (Model_Checking::foreignTransaction(*transaction))
+                mmTransDialog dlg(m_frame, -1, transId, 0);
+                if (dlg.ShowModal() == wxID_OK)
                 {
-                    Model_Translink::Data translink = Model_Translink::TranslinkRecord(transId);
-                    if (translink.LINKTYPE == Model_Attachment::reftype_desc(Model_Attachment::STOCK))
-                    {
-                        ShareTransactionDialog dlg(m_frame, &translink, transaction);
-                        if (dlg.ShowModal() == wxID_OK)
-                        {
-                            rb_->getHTMLText();
-                            saveReportText();
-                        }
-                    }
-                    else
-                    {
-                        mmAssetDialog dlg(m_frame, m_frame, &translink, transaction);
-                        if (dlg.ShowModal() == wxID_OK)
-                        {
-                            rb_->getHTMLText();
-                            saveReportText();
-                        }
-                    }
+                    rb_->getHTMLText();
+                    saveReportText();
                 }
-                else
-                {
-                    mmTransDialog dlg(m_frame, -1, transId, 0);
-                    if (dlg.ShowModal() == wxID_OK)
-                    {
-                        rb_->getHTMLText();
-                        saveReportText();
-                    }
-                }
+
                 const auto name = getVFname4print("rep", getPrintableBase()->getHTMLText());
                 browser_->LoadURL(name);
             }

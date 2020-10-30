@@ -32,8 +32,7 @@ class mmAssetDialog : public wxDialog
 
 public:
     mmAssetDialog(){};
-    mmAssetDialog(wxWindow *parent, mmGUIFrame* gui_frame, Model_Asset::Data* asset, bool trans_data = false);
-    mmAssetDialog(wxWindow *parent, mmGUIFrame* gui_frame, Model_Translink::Data* transfer_entry, Model_Checking::Data* checking_entry);
+    mmAssetDialog(wxWindow *parent, mmGUIFrame* gui_frame, Model_Asset::Data* asset);
 
     Model_Asset::Data* m_asset;
     void SetTransactionAccountName(const wxString& account_name);
@@ -70,8 +69,6 @@ private:
     wxStaticText* m_valueChangeRateLabel;
     wxBitmapButton* bAttachments_;
     wxStaticBox* m_transaction_frame;
-    UserTransactionPanel* m_transaction_panel;
-    Model_Translink::Data* m_transfer_entry;
     Model_Checking::Data* m_checking_entry;
     wxString m_dialog_heading;
     bool m_hidden_trans_entry;

@@ -147,11 +147,6 @@ void Model_Translink::RemoveTranslinkEntry(const int checking_account_id)
     Model_Checking::instance().remove(translink.CHECKINGACCOUNTID);
     Model_Translink::instance().remove(translink.TRANSLINKID);
 
-    if (translink.LINKTYPE == Model_Attachment::reftype_desc(Model_Attachment::ASSET))
-    {
-        Model_Asset::Data* asset_entry = Model_Asset::instance().get(translink.LINKRECORDID);
-        UpdateAssetValue(asset_entry);
-    }
 
     if (translink.LINKTYPE == Model_Attachment::reftype_desc(Model_Attachment::STOCK))
     {
@@ -192,42 +187,6 @@ void Model_Translink::UpdateStockValue(Model_Stock::Data* stock_entry)
         stock_entry->COMMISSION = total_commission;
     }
     Model_Stock::instance().save(stock_entry);
-}
-
-void Model_Translink::UpdateAssetValue(Model_Asset::Data* asset_entry)
-{
-    Data_Set trans_list = TranslinkList(Model_Attachment::REFTYPE::ASSET, asset_entry->ASSETID);
-    bool value_updated = false;
-    double new_value = 0;
-    for (const auto trans : trans_list)
-    {
-        Model_Checking::Data* asset_trans = Model_Checking::instance().get(trans.CHECKINGACCOUNTID);
-        if (asset_trans)
-        {
-            if (!Model_Checking::foreignTransactionAsTransfer(*asset_trans))
-            {
-                Model_Currency::Data* asset_currency = Model_Account::currency(Model_Account::instance().get(asset_trans->ACCOUNTID));
-                const double conv_rate = Model_CurrencyHistory::getDayRate(asset_currency->CURRENCYID, asset_trans->TRANSDATE);
-
-                if (asset_trans->TRANSCODE == Model_Checking::all_type()[Model_Checking::DEPOSIT])
-                {
-                    new_value -= asset_trans->TRANSAMOUNT * conv_rate; // Withdrawal from asset value
-                }
-                else
-                {
-                    new_value += asset_trans->TRANSAMOUNT * conv_rate;  // Deposit to asset value
-                }
-
-                asset_entry->VALUE = new_value;
-                value_updated = true;
-            }
-        }
-    }
-
-    if (value_updated)
-    {
-        Model_Asset::instance().save(asset_entry);
-    }
 }
 
 bool Model_Translink::ShareAccountId(int& stock_entry_id)

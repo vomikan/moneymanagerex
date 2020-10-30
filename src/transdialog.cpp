@@ -249,13 +249,12 @@ void mmTransDialog::dataToControls()
     {
         cbAccount_->SetEvtHandlerEnabled(false);
         cbAccount_->Clear();
-        const wxArrayString account_list = Model_Account::instance().all_checking_account_names(true);
+        const wxArrayString account_list = Model_Account::instance().all_account_names(true);
         cbAccount_->Append(account_list);
         cbAccount_->AutoComplete(account_list);
 
         bool acc_closed = false;
-        const auto& accounts = Model_Account::instance().find(
-            Model_Account::ACCOUNTTYPE(Model_Account::all_type()[Model_Account::INVESTMENT], NOT_EQUAL));
+        const auto& accounts = Model_Account::instance().all();
         for (const auto &account : accounts)
         {
             if (account.ACCOUNTID == m_trx_data.ACCOUNTID)
@@ -297,10 +296,6 @@ void mmTransDialog::dataToControls()
             }
 
             account_label_->SetLabelText(_("Account"));
-            if (!Model_Checking::foreignTransaction(m_trx_data))
-            {
-                m_trx_data.TOACCOUNTID = -1;
-            }
 
             wxArrayString all_payees = Model_Payee::instance().all_payee_names();
             if (!all_payees.empty()) {
@@ -355,7 +350,7 @@ void mmTransDialog::dataToControls()
                 }
             }
 
-            wxArrayString account_names = Model_Account::instance().all_checking_account_names(true);
+            wxArrayString account_names = Model_Account::instance().all_account_names(true);
             cbPayee_->Insert(account_names, 0);
             Model_Account::Data *account = Model_Account::instance().get(m_trx_data.TOACCOUNTID);
             if (account)
@@ -625,7 +620,7 @@ bool mmTransDialog::ValidateData()
         return false;
 
     Model_Account::Data* account = Model_Account::instance().get(cbAccount_->GetValue());
-    if (!account || Model_Account::type(account) == Model_Account::INVESTMENT)
+    if (!account)
     {
         mmErrorDialogs::InvalidAccount(cbAccount_);
         return false;
@@ -665,10 +660,6 @@ bool mmTransDialog::ValidateData()
         }
         m_trx_data.TOTRANSAMOUNT = m_trx_data.TRANSAMOUNT;
         m_trx_data.PAYEEID = payee->PAYEEID;
-        if (!Model_Checking::foreignTransaction(m_trx_data))
-        {
-            m_trx_data.TOACCOUNTID = -1;
-        }
 
         payee->CATEGID = m_trx_data.CATEGID;
         payee->SUBCATEGID = m_trx_data.SUBCATEGID;
@@ -678,8 +669,7 @@ bool mmTransDialog::ValidateData()
     else //transfer
     {
         Model_Account::Data *to_account = Model_Account::instance().get(cbPayee_->GetValue());
-        if (!to_account || to_account->ACCOUNTID == m_trx_data.ACCOUNTID
-            || Model_Account::type(to_account) == Model_Account::INVESTMENT)
+        if (!to_account || to_account->ACCOUNTID == m_trx_data.ACCOUNTID)
         {
             mmErrorDialogs::InvalidAccount(cbPayee_, true);
             return false;
@@ -787,7 +777,7 @@ void mmTransDialog::OnFocusChange(wxChildFocusEvent& event)
     m_currency = Model_Currency::GetBaseCurrency();
     wxString accountName = cbAccount_->GetValue();
     wxString toAccountName = cbPayee_->GetValue();
-    for (const auto& acc : Model_Account::instance().all_checking_account_names())
+    for (const auto& acc : Model_Account::instance().all_account_names())
     {
         if (acc.CmpNoCase(accountName) == 0) accountName = acc;
         if (acc.CmpNoCase(toAccountName) == 0) toAccountName = acc;

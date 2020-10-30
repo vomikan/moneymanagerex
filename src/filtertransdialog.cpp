@@ -180,7 +180,7 @@ void mmFilterTransactionsDialog::CreateControls()
 
     accountDropDown_ = new wxChoice(itemPanel
         , wxID_ANY, wxDefaultPosition, wxSize(220, -1)
-        , Model_Account::instance().all_checking_account_names(), 0);
+        , Model_Account::instance().all_account_names(), 0);
     itemPanelSizer->Add(accountDropDown_, g_flagsExpand);
 
     //--End of Row --------------------------------------------------------

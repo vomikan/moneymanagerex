@@ -42,11 +42,8 @@ public:
     void doRefreshItems(int trx_id = -1);
     void OnNewStocks(wxCommandEvent& event);
     void OnDeleteStocks(wxCommandEvent& event);
-    void OnMoveStocks(wxCommandEvent& event);
     void OnEditStocks(wxCommandEvent& event);
-    void OnOrganizeAttachments(wxCommandEvent& event);
     void OnStockWebPage(wxCommandEvent& event);
-    void OnOpenAttachment(wxCommandEvent& event);
     long get_selectedIndex() { return m_selected_row; }
     int getColumnsNumber() { return COL_MAX; }
     int col_sort() { return COL_DATE; }
@@ -65,8 +62,6 @@ private:
     void OnListLeftClick(wxMouseEvent& event);
     void OnListItemActivated(wxListEvent& event);
     void OnColClick(wxListEvent& event);
-    void OnMarkTransaction(wxCommandEvent& event);
-    void OnMarkAllTransactions(wxCommandEvent& event);
     void OnListKeyDown(wxListEvent& event);
     void OnListItemSelected(wxListEvent& event);
 
@@ -74,19 +69,14 @@ private:
     enum EColumn
     {
         COL_ICON = 0,
-        COL_ID,
-        COL_DATE,
-        COL_NAME,
         COL_SYMBOL,
+        COL_CURRPRICE,
+        COL_DATE,
         COL_NUMBER,
         COL_PRICE,
-        COL_VALUE,
-        COL_GAIN_LOSS,
-        COL_CURRENT,
         COL_CURRVALUE,
-        COL_PRICEDATE,
-        COL_COMMISSION,
-        COL_NOTES,
+        COL_GAIN_LOSS,
+        COL_SECTOR,
         COL_MAX, // number of columns
     };
     wxImageList* m_imageList;
@@ -124,23 +114,16 @@ public:
     /* Event handlers for Buttons */
     void OnNewStocks(wxCommandEvent& event);
     void OnDeleteStocks(wxCommandEvent& event);
-    void OnMoveStocks(wxCommandEvent& event);
     void OnEditStocks(wxCommandEvent& event);
-    void OnOpenAttachment(wxCommandEvent& event);
     void OnRefreshQuotes(wxCommandEvent& event);
     //Unhide the Edit and Delete buttons if any record selected
     void enableEditDeleteButtons(bool en);
     void OnListItemActivated(int selectedIndex);
-    void AddStockTransaction(int selectedIndex);
     void OnListItemSelected(int selectedIndex);
-    //void OnViewPopupSelected(wxCommandEvent& event);
-
-    void ViewStockTransactions(int selectedIndex);
 
     int m_account_id;
     Model_Currency::Data * m_currency;
     void updateExtraStocksData(int selIndex);
-    wxStaticText* stock_details_short_;
     void updateHeader();
 
     wxString BuildPage() const;
@@ -151,19 +134,13 @@ private:
     wxStaticText* stock_details_;
     void call_dialog(int selectedIndex);
     void sortTable() {}
-    const wxString Total_Shares();
 
     wxStaticText* header_text_;
     wxStaticText* header_total_;
-    wxBitmapButton* attachment_button_;
     wxBitmapButton* refresh_button_;
 
     bool onlineQuoteRefresh(wxString& sError);
     wxString GetPanelTitle(const Model_Account::Data& account) const;
-
-    wxString strLastUpdate_;
-    bool StocksRefreshStatus_;
-    wxDateTime LastRefreshDT_;
 
 };
 

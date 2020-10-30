@@ -46,9 +46,6 @@ wxString mmReportForecast::getHTMLText()
 
     for (const auto & trx : all_trans)
     {
-        if (Model_Checking::type(trx) == Model_Checking::TRANSFER || Model_Checking::foreignTransactionAsTransfer(trx))
-            continue;
-
         amount_by_day[trx.TRANSDATE].first += Model_Checking::withdrawal(trx, -1);
         amount_by_day[trx.TRANSDATE].second += Model_Checking::deposit(trx, -1);
     }
