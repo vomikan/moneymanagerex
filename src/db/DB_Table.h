@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-10-30 18:23:21.906000.
+ *          AUTO GENERATED at 2020-10-30 21:40:51.921000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -631,6 +631,15 @@ struct SorterByMINIMUMPAYMENT
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.MINIMUMPAYMENT) < (y.MINIMUMPAYMENT);
+    }
+};
+
+struct SorterByNAME
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.NAME) < (y.NAME);
     }
 };
 

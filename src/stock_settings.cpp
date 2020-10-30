@@ -26,6 +26,7 @@
 
 #include "model/Model_Setting.h"
 #include "model/Model_StockHistory.h"
+#include "model/Model_Ticker.h"
 
 #include "mmSimpleDialogs.h"
 
@@ -59,6 +60,7 @@ mmStockSetup::mmStockSetup(wxWindow* parent, const wxString& symbol)
         SetMinSize(wxSize(600, 500));
 
         CreateControls();
+        dataToControls();
         ShowStockHistory();
 
         this->SetIcon(mmex::getProgramIcon());
@@ -67,6 +69,33 @@ mmStockSetup::mmStockSetup(wxWindow* parent, const wxString& symbol)
     }
 }
 
+void mmStockSetup::dataToControls()
+{
+    Model_Ticker::Data* i = Model_Ticker::instance().get(m_symbol);
+
+    wxTextCtrl* market = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE1));
+    wxTextCtrl* webSite = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE2));
+
+    if (i)
+    {
+        m_stock_symbol_ctrl->Enable(false);
+        market->Enable(false);
+        m_stock_name_ctrl->ChangeValue(i->NAME);
+        //m_stock_notes_ctrl->ChangeValue(i->NOTES);
+        webSite->ChangeValue(i->DASHBOARD);
+        m_choiceType->SetSelection(i->TYPE);
+        m_choiceSource->SetSelection(i->SOURCE);
+        m_choiceSector->SetStringSelection(wxGetTranslation(i->SECTOR));
+
+        //i->INDUSTRY = "INDUSTRY";
+    }
+    else
+    {
+
+    }
+    wxLogDebug("---------------");
+
+}
 
 void mmStockSetup::CreateControls()
 {
@@ -99,7 +128,7 @@ void mmStockSetup::CreateControls()
     sourceLabel->SetFont(this->GetFont().Bold());
 
     m_choiceSource = new wxChoice(itemPanel, wxID_ANY);
-    for (const auto& i : { wxTRANSLATE("Yahoo"), wxTRANSLATE("Morningstar"), wxTRANSLATE("MICEX") }) {
+    for (const auto& i : Model_Ticker::all_sources()) {
         m_choiceSource->Append(wxGetTranslation(i), new wxStringClientData(i));
     }
     m_choiceSource->Select(0);
@@ -129,11 +158,10 @@ void mmStockSetup::CreateControls()
     m_stock_symbol_ctrl = new mmTextCtrl(itemPanel, wxID_ANY, m_symbol, wxDefaultPosition
         , wxDefaultSize, wxTE_PROCESS_ENTER);
     flex_sizer->Add(m_stock_symbol_ctrl, g_flagsExpand);
-    m_stock_symbol_ctrl->Enable(m_symbol.empty());
 
     // Market --------------------------------------------
     flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Market")), g_flagsH);
-    wxTextCtrl* textMarket = new wxTextCtrl(itemPanel, wxID_ANY, "", wxDefaultPosition, wxDefaultSize);
+    wxTextCtrl* textMarket = new wxTextCtrl(itemPanel, wxID_FILE1, "");
     flex_sizer->Add(textMarket, g_flagsExpand);
 
     // Name --------------------------------------------
@@ -145,11 +173,7 @@ void mmStockSetup::CreateControls()
     // Sector --------------------------------------------
     m_choiceSector = new wxChoice(itemPanel, wxID_ANY);
 
-    for (const auto& i : {
-        wxTRANSLATE("Basic Materials"),  wxTRANSLATE("Consumer Cyclical"),  wxTRANSLATE("Financial Services")
-        ,  wxTRANSLATE("Real Estate"), wxTRANSLATE("Consumer Defensive"), wxTRANSLATE("Healthcare")
-        , wxTRANSLATE("Utilities"), wxTRANSLATE("Communication Services"), wxTRANSLATE("Energy")
-        , wxTRANSLATE("Industrials"), wxTRANSLATE("Technology"), wxTRANSLATE("Others") })
+    for (const auto& i : Model_Ticker::all_sectors())
     {
         m_choiceSector->Append(wxGetTranslation(i), new wxStringClientData(i));
     }
@@ -159,7 +183,7 @@ void mmStockSetup::CreateControls()
 
     // Web --------------------------------------------
     flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Dashboard")), g_flagsH);
-    wxTextCtrl* webSite = new wxTextCtrl(itemPanel, wxID_ANY, "", wxDefaultPosition
+    wxTextCtrl* webSite = new wxTextCtrl(itemPanel, wxID_FILE2, "", wxDefaultPosition
         , wxSize(200, 90), wxTE_MULTILINE);
 
     itemBoxSizer4->Add(webSite, g_flagsExpand);
@@ -712,5 +736,34 @@ void mmStockSetup::OnTextEntered(wxCommandEvent& event)
 void mmStockSetup::OnOk(wxCommandEvent& WXUNUSED(event))
 {
     m_symbol = m_stock_symbol_ctrl->GetValue();
+    wxTextCtrl* webSite = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE2));
+
+    Model_Ticker::Data* i = Model_Ticker::instance().get(m_symbol);
+
+    if (!i)
+    {
+        i = Model_Ticker::instance().create();
+        i->SYMBOL = m_symbol;
+    }
+
+    int t = m_choiceType->GetSelection();
+    if (t < 0) t = 0;
+    i->TYPE = t;
+    wxString sectorStr;
+    int sector = m_choiceSector->GetSelection();
+    if (sector >= 0) {
+        sectorStr = Model_Ticker::all_sectors()[sector];
+    }
+    i->SECTOR = sectorStr;
+    int s = m_choiceSource->GetSelection();
+    if (s < 0) s = 0;
+    i->SOURCE = s;
+    //i->INDUSTRY = "INDUSTRY";
+    i->DASHBOARD = webSite->GetValue();
+    i->NAME = m_stock_name_ctrl->GetValue();
+    //i->NOTES = "NOTES";
+
+    Model_Ticker::instance().save(i);
+
     EndModal(wxID_OK);
 }

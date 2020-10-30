@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-10-30 18:23:21.906000.
+ *          AUTO GENERATED at 2020-10-30 21:40:51.921000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE TICKERPROPERTIES_V1 (TICKERID INTEGER PRIMARY KEY,SOURCE INTEGER, -- Yahoo, MorningStar, moexSYMBOL TEXT COLLATE NOCASE NOT NULL,MARKET TEXT, --TYPE INTEGER DEFAULT 0, -- Share, Fund, BondSECTOR TEXT, --Basic Materials-- Consumer Cyclical-- Financial Services-- Real Estate-- Consumer Defensive-- Healthcare-- Utilities-- Communication Services-- Energy-- Industrials-- Technology-- OtherINDUSTRY TEXT,DASHBOARD TEXT,NOTES TEXT))");
+                db->ExecuteUpdate(R"(CREATE TABLE TICKERPROPERTIES_V1 (TICKERID INTEGER PRIMARY KEY,SOURCE INTEGER, /* Yahoo, MorningStar, MOEX */ SYMBOL TEXT COLLATE NOCASE NOT NULL,NAME TEXT,MARKET TEXT, TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond */ SECTOR TEXT, /*Basic Materials, Consumer Cyclical, Financial Services, Real Estate, Consumer Defensive, Healthcare, Utilities, Communication Services, Energy, Industrials, Technology, Other */ INDUSTRY TEXT,DASHBOARD TEXT,NOTES TEXT))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
@@ -129,6 +129,12 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         explicit SYMBOL(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
+    struct NAME : public DB_Column<wxString>
+    { 
+        static wxString name() { return "NAME"; } 
+        explicit NAME(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+    };
+    
     struct MARKET : public DB_Column<wxString>
     { 
         static wxString name() { return "MARKET"; } 
@@ -171,12 +177,13 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         COL_TICKERID = 0
         , COL_SOURCE = 1
         , COL_SYMBOL = 2
-        , COL_MARKET = 3
-        , COL_TYPE = 4
-        , COL_SECTOR = 5
-        , COL_INDUSTRY = 6
-        , COL_DASHBOARD = 7
-        , COL_NOTES = 8
+        , COL_NAME = 3
+        , COL_MARKET = 4
+        , COL_TYPE = 5
+        , COL_SECTOR = 6
+        , COL_INDUSTRY = 7
+        , COL_DASHBOARD = 8
+        , COL_NOTES = 9
     };
 
     /** Returns the column name as a string*/
@@ -187,6 +194,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             case COL_TICKERID: return "TICKERID";
             case COL_SOURCE: return "SOURCE";
             case COL_SYMBOL: return "SYMBOL";
+            case COL_NAME: return "NAME";
             case COL_MARKET: return "MARKET";
             case COL_TYPE: return "TYPE";
             case COL_SECTOR: return "SECTOR";
@@ -205,6 +213,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         if ("TICKERID" == name) return COL_TICKERID;
         else if ("SOURCE" == name) return COL_SOURCE;
         else if ("SYMBOL" == name) return COL_SYMBOL;
+        else if ("NAME" == name) return COL_NAME;
         else if ("MARKET" == name) return COL_MARKET;
         else if ("TYPE" == name) return COL_TYPE;
         else if ("SECTOR" == name) return COL_SECTOR;
@@ -225,6 +234,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         int TICKERID;//  primary key
         int SOURCE;
         wxString SYMBOL;
+        wxString NAME;
         wxString MARKET;
         int TYPE;
         wxString SECTOR;
@@ -268,12 +278,13 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             TICKERID = q.GetInt(0); // TICKERID
             SOURCE = q.GetInt(1); // SOURCE
             SYMBOL = q.GetString(2); // SYMBOL
-            MARKET = q.GetString(3); // MARKET
-            TYPE = q.GetInt(4); // TYPE
-            SECTOR = q.GetString(5); // SECTOR
-            INDUSTRY = q.GetString(6); // INDUSTRY
-            DASHBOARD = q.GetString(7); // DASHBOARD
-            NOTES = q.GetString(8); // NOTES
+            NAME = q.GetString(3); // NAME
+            MARKET = q.GetString(4); // MARKET
+            TYPE = q.GetInt(5); // TYPE
+            SECTOR = q.GetString(6); // SECTOR
+            INDUSTRY = q.GetString(7); // INDUSTRY
+            DASHBOARD = q.GetString(8); // DASHBOARD
+            NOTES = q.GetString(9); // NOTES
         }
 
         Data& operator=(const Data& other)
@@ -283,6 +294,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             TICKERID = other.TICKERID;
             SOURCE = other.SOURCE;
             SYMBOL = other.SYMBOL;
+            NAME = other.NAME;
             MARKET = other.MARKET;
             TYPE = other.TYPE;
             SECTOR = other.SECTOR;
@@ -311,6 +323,11 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         bool match(const Self::SYMBOL &in) const
         {
             return this->SYMBOL.CmpNoCase(in.v_) == 0;
+        }
+
+        bool match(const Self::NAME &in) const
+        {
+            return this->NAME.CmpNoCase(in.v_) == 0;
         }
 
         bool match(const Self::MARKET &in) const
@@ -365,6 +382,8 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             json_writer.Int(this->SOURCE);
             json_writer.Key("SYMBOL");
             json_writer.String(this->SYMBOL.utf8_str());
+            json_writer.Key("NAME");
+            json_writer.String(this->NAME.utf8_str());
             json_writer.Key("MARKET");
             json_writer.String(this->MARKET.utf8_str());
             json_writer.Key("TYPE");
@@ -385,6 +404,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             row(L"TICKERID") = TICKERID;
             row(L"SOURCE") = SOURCE;
             row(L"SYMBOL") = SYMBOL;
+            row(L"NAME") = NAME;
             row(L"MARKET") = MARKET;
             row(L"TYPE") = TYPE;
             row(L"SECTOR") = SECTOR;
@@ -399,6 +419,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             t(L"TICKERID") = TICKERID;
             t(L"SOURCE") = SOURCE;
             t(L"SYMBOL") = SYMBOL;
+            t(L"NAME") = NAME;
             t(L"MARKET") = MARKET;
             t(L"TYPE") = TYPE;
             t(L"SECTOR") = SECTOR;
@@ -440,7 +461,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
 
     enum
     {
-        NUM_COLUMNS = 9
+        NUM_COLUMNS = 10
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
@@ -450,7 +471,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
 
     DB_Table_TICKERPROPERTIES_V1() : fake_(new Data())
     {
-        query_ = "SELECT TICKERID, SOURCE, SYMBOL, MARKET, TYPE, SECTOR, INDUSTRY, DASHBOARD, NOTES FROM TICKERPROPERTIES_V1 ";
+        query_ = "SELECT TICKERID, SOURCE, SYMBOL, NAME, MARKET, TYPE, SECTOR, INDUSTRY, DASHBOARD, NOTES FROM TICKERPROPERTIES_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -480,11 +501,11 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO TICKERPROPERTIES_V1(SOURCE, SYMBOL, MARKET, TYPE, SECTOR, INDUSTRY, DASHBOARD, NOTES) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO TICKERPROPERTIES_V1(SOURCE, SYMBOL, NAME, MARKET, TYPE, SECTOR, INDUSTRY, DASHBOARD, NOTES) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE TICKERPROPERTIES_V1 SET SOURCE = ?, SYMBOL = ?, MARKET = ?, TYPE = ?, SECTOR = ?, INDUSTRY = ?, DASHBOARD = ?, NOTES = ? WHERE TICKERID = ?";
+            sql = "UPDATE TICKERPROPERTIES_V1 SET SOURCE = ?, SYMBOL = ?, NAME = ?, MARKET = ?, TYPE = ?, SECTOR = ?, INDUSTRY = ?, DASHBOARD = ?, NOTES = ? WHERE TICKERID = ?";
         }
 
         try
@@ -493,14 +514,15 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
 
             stmt.Bind(1, entity->SOURCE);
             stmt.Bind(2, entity->SYMBOL);
-            stmt.Bind(3, entity->MARKET);
-            stmt.Bind(4, entity->TYPE);
-            stmt.Bind(5, entity->SECTOR);
-            stmt.Bind(6, entity->INDUSTRY);
-            stmt.Bind(7, entity->DASHBOARD);
-            stmt.Bind(8, entity->NOTES);
+            stmt.Bind(3, entity->NAME);
+            stmt.Bind(4, entity->MARKET);
+            stmt.Bind(5, entity->TYPE);
+            stmt.Bind(6, entity->SECTOR);
+            stmt.Bind(7, entity->INDUSTRY);
+            stmt.Bind(8, entity->DASHBOARD);
+            stmt.Bind(9, entity->NOTES);
             if (entity->id() > 0)
-                stmt.Bind(9, entity->TICKERID);
+                stmt.Bind(10, entity->TICKERID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();

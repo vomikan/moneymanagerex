@@ -39,6 +39,7 @@ public:
 private:
 
     void CreateControls();
+    void dataToControls();
     void OnOk(wxCommandEvent& event);
     wxString m_symbol;
     wxChoice* m_choiceType;

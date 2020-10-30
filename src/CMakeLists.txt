@@ -230,6 +230,7 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     db/DB_Table_Stockhistory_V1.h
     db/DB_Table_Stock_V1.h
     db/DB_Table_Subcategory_V1.h
+    db/DB_Table_Tickerproperties_V1.h
     db/DB_Table_Usage_V1.h
 
     reports/allreport.h
@@ -309,6 +310,8 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     model/Model_StockHistory.h
     model/Model_Subcategory.cpp
     model/Model_Subcategory.h
+    model/Model_Ticker.cpp
+    model/Model_Ticker.h
     model/Model_Usage.cpp
     model/Model_Usage.h
 

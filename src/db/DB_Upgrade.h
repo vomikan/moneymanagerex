@@ -7,7 +7,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-10-30 18:23:25.878000.
+ *          AUTO GENERATED at 2020-10-30 21:40:54.197000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -127,22 +127,23 @@ const std::vector<wxString> dbUpgradeQuery =
         
         CREATE TABLE IF NOT EXISTS TICKERPROPERTIES_V1 (
         TICKERID INTEGER PRIMARY KEY,
-        SOURCE INTEGER, -- Yahoo, MorningStar, moex
+        SOURCE INTEGER, /* Yahoo, MorningStar, MOEX */
         SYMBOL TEXT COLLATE NOCASE NOT NULL,
-        MARKET TEXT, --
-        TYPE INTEGER DEFAULT 0, -- Share, Fund, Bond
-        SECTOR TEXT, --Basic Materials
-        -- Consumer Cyclical
-        -- Financial Services
-        -- Real Estate
-        -- Consumer Defensive
-        -- Healthcare
-        -- Utilities
-        -- Communication Services
-        -- Energy
-        -- Industrials
-        -- Technology
-        -- Other
+        NAME TEXT,
+        MARKET TEXT, 
+        TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond */ 
+        SECTOR TEXT, /*Basic Materials
+        , Consumer Cyclical
+        , Financial Services
+        , Real Estate
+        , Consumer Defensive
+        , Healthcare
+        , Utilities
+        , Communication Services
+        , Energy
+        , Industrials
+        , Technology
+        , Other */ 
         INDUSTRY TEXT,
         DASHBOARD TEXT,
         NOTES TEXT
