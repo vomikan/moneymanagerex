@@ -69,15 +69,14 @@ void  mmReportSummaryStocks::RefreshData()
             const double purchase_rate = Model_CurrencyHistory::getDayRate(currency->CURRENCYID, stock.PURCHASEDATE);
             m_gain_loss_sum_total += (Model_Stock::CurrentValue(stock) * today_rate - Model_Stock::InvestmentValue(stock) * purchase_rate);
 
-            line.name = stock.STOCKNAME;
             line.symbol = stock.SYMBOL;
             line.date = stock.PURCHASEDATE;
             line.qty = stock.NUMSHARES;
             line.purchase = Model_Stock::InvestmentValue(stock);
-            line.current = stock.CURRENTPRICE;
+            line.current = 1;
             line.commission = stock.COMMISSION;
             line.gainloss = Model_Stock::CurrentValue(stock) - Model_Stock::InvestmentValue(stock);
-            line.value = Model_Stock::CurrentValue(stock);
+            line.value = line.qty * line.current - line.commission;
             account.data.push_back(line);
         }
         m_stocks.push_back(account);

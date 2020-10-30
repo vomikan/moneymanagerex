@@ -7,7 +7,7 @@ set buildfile_name=sqlite2cpp.py
 set buildfile_location=../database/tables_v1.sql
 @echo Generated DB_Tables files for MMEX
 @echo.
-python %buildfile_name% %buildfile_location% 
+c:\python27\python.exe %buildfile_name% %buildfile_location% 
 @echo.
 @echo Confirm moving the generated files to correct the location
 @echo.

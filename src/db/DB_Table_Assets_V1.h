@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-05-04 17:41:56.665000.
+ *          AUTO GENERATED at 2020-10-30 18:23:21.906000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,7 @@ struct DB_Table_ASSETS_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate("CREATE TABLE ASSETS_V1(ASSETID integer primary key, STARTDATE TEXT NOT NULL, ASSETNAME TEXT COLLATE NOCASE NOT NULL, VALUE numeric, VALUECHANGE TEXT /* None, Appreciates, Depreciates */, NOTES TEXT, VALUECHANGERATE numeric, ASSETTYPE TEXT /* Property, Automobile, Household Object, Art, Jewellery, Cash, Other */)");
+                db->ExecuteUpdate(R"(CREATE TABLE ASSETS_V1(ASSETID integer primary key, STARTDATE TEXT NOT NULL, ASSETNAME TEXT COLLATE NOCASE NOT NULL, VALUE numeric, VALUECHANGE TEXT /* None, Appreciates, Depreciates */, NOTES TEXT, VALUECHANGERATE numeric, ASSETTYPE TEXT /* Property, Automobile, Household Object, Art, Jewellery, Cash, Other */))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
@@ -94,7 +94,7 @@ struct DB_Table_ASSETS_V1 : public DB_Table
     {
         try
         {
-            db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS IDX_ASSETS_ASSETTYPE ON ASSETS_V1(ASSETTYPE)");
+            db->ExecuteUpdate(R"(CREATE INDEX IF NOT EXISTS IDX_ASSETS_ASSETTYPE ON ASSETS_V1(ASSETTYPE))");
         }
         catch(const wxSQLite3Exception &e) 
         { 

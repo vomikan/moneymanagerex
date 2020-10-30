@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-05-04 17:41:56.665000.
+ *          AUTO GENERATED at 2020-10-30 18:23:21.906000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -19,10 +19,10 @@
 
 #include "DB_Table.h"
 
-struct DB_Table_TRANSLINK_V1 : public DB_Table
+struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
 {
     struct Data;
-    typedef DB_Table_TRANSLINK_V1 Self;
+    typedef DB_Table_TICKERPROPERTIES_V1 Self;
 
     /** A container to hold list of Data records for the table*/
     struct Data_Set : public std::vector<Self::Data>
@@ -54,7 +54,7 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
     Data* fake_; // in case the entity not found
 
     /** Destructor: clears any data records stored in memory */
-    ~DB_Table_TRANSLINK_V1() 
+    ~DB_Table_TICKERPROPERTIES_V1() 
     {
         delete this->fake_;
         destroy_cache();
@@ -75,12 +75,12 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate("CREATE TABLE TRANSLINK_V1 (TRANSLINKID  integer NOT NULL primary key, CHECKINGACCOUNTID integer NOT NULL, LINKTYPE TEXT NOT NULL /* Asset, Stock */, LINKRECORDID integer NOT NULL)");
+                db->ExecuteUpdate(R"(CREATE TABLE TICKERPROPERTIES_V1 (TICKERID INTEGER PRIMARY KEY,SOURCE INTEGER, -- Yahoo, MorningStar, moexSYMBOL TEXT COLLATE NOCASE NOT NULL,MARKET TEXT, --TYPE INTEGER DEFAULT 0, -- Share, Fund, BondSECTOR TEXT, --Basic Materials-- Consumer Cyclical-- Financial Services-- Real Estate-- Consumer Defensive-- Healthcare-- Utilities-- Communication Services-- Energy-- Industrials-- Technology-- OtherINDUSTRY TEXT,DASHBOARD TEXT,NOTES TEXT))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
             { 
-                wxLogError("TRANSLINK_V1: Exception %s", e.GetMessage().utf8_str());
+                wxLogError("TICKERPROPERTIES_V1: Exception %s", e.GetMessage().utf8_str());
                 return false;
             }
         }
@@ -94,12 +94,11 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
     {
         try
         {
-            db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS IDX_CHECKINGACCOUNT ON TRANSLINK_V1 (CHECKINGACCOUNTID)");
-            db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS IDX_LINKRECORD ON TRANSLINK_V1 (LINKTYPE, LINKRECORDID)");
+            db->ExecuteUpdate(R"(CREATE INDEX IF NOT EXISTS IDX_TICKER ON TICKERPROPERTIES_V1 (SYMBOL, TICKERID))");
         }
         catch(const wxSQLite3Exception &e) 
         { 
-            wxLogError("TRANSLINK_V1: Exception %s", e.GetMessage().utf8_str());
+            wxLogError("TICKERPROPERTIES_V1: Exception %s", e.GetMessage().utf8_str());
             return false;
         }
 
@@ -112,37 +111,72 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
         db->Commit();
     }
     
-    struct TRANSLINKID : public DB_Column<int>
+    struct TICKERID : public DB_Column<int>
     { 
-        static wxString name() { return "TRANSLINKID"; } 
-        explicit TRANSLINKID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+        static wxString name() { return "TICKERID"; } 
+        explicit TICKERID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
-    struct CHECKINGACCOUNTID : public DB_Column<int>
+    struct SOURCE : public DB_Column<int>
     { 
-        static wxString name() { return "CHECKINGACCOUNTID"; } 
-        explicit CHECKINGACCOUNTID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+        static wxString name() { return "SOURCE"; } 
+        explicit SOURCE(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
-    struct LINKTYPE : public DB_Column<wxString>
+    struct SYMBOL : public DB_Column<wxString>
     { 
-        static wxString name() { return "LINKTYPE"; } 
-        explicit LINKTYPE(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+        static wxString name() { return "SYMBOL"; } 
+        explicit SYMBOL(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
-    struct LINKRECORDID : public DB_Column<int>
+    struct MARKET : public DB_Column<wxString>
     { 
-        static wxString name() { return "LINKRECORDID"; } 
-        explicit LINKRECORDID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+        static wxString name() { return "MARKET"; } 
+        explicit MARKET(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
-    typedef TRANSLINKID PRIMARY;
+    struct TYPE : public DB_Column<int>
+    { 
+        static wxString name() { return "TYPE"; } 
+        explicit TYPE(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
+    struct SECTOR : public DB_Column<wxString>
+    { 
+        static wxString name() { return "SECTOR"; } 
+        explicit SECTOR(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+    };
+    
+    struct INDUSTRY : public DB_Column<wxString>
+    { 
+        static wxString name() { return "INDUSTRY"; } 
+        explicit INDUSTRY(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+    };
+    
+    struct DASHBOARD : public DB_Column<wxString>
+    { 
+        static wxString name() { return "DASHBOARD"; } 
+        explicit DASHBOARD(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+    };
+    
+    struct NOTES : public DB_Column<wxString>
+    { 
+        static wxString name() { return "NOTES"; } 
+        explicit NOTES(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+    };
+    
+    typedef TICKERID PRIMARY;
     enum COLUMN
     {
-        COL_TRANSLINKID = 0
-        , COL_CHECKINGACCOUNTID = 1
-        , COL_LINKTYPE = 2
-        , COL_LINKRECORDID = 3
+        COL_TICKERID = 0
+        , COL_SOURCE = 1
+        , COL_SYMBOL = 2
+        , COL_MARKET = 3
+        , COL_TYPE = 4
+        , COL_SECTOR = 5
+        , COL_INDUSTRY = 6
+        , COL_DASHBOARD = 7
+        , COL_NOTES = 8
     };
 
     /** Returns the column name as a string*/
@@ -150,10 +184,15 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
     {
         switch(col)
         {
-            case COL_TRANSLINKID: return "TRANSLINKID";
-            case COL_CHECKINGACCOUNTID: return "CHECKINGACCOUNTID";
-            case COL_LINKTYPE: return "LINKTYPE";
-            case COL_LINKRECORDID: return "LINKRECORDID";
+            case COL_TICKERID: return "TICKERID";
+            case COL_SOURCE: return "SOURCE";
+            case COL_SYMBOL: return "SYMBOL";
+            case COL_MARKET: return "MARKET";
+            case COL_TYPE: return "TYPE";
+            case COL_SECTOR: return "SECTOR";
+            case COL_INDUSTRY: return "INDUSTRY";
+            case COL_DASHBOARD: return "DASHBOARD";
+            case COL_NOTES: return "NOTES";
             default: break;
         }
         
@@ -163,10 +202,15 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
     /** Returns the column number from the given column name*/
     static COLUMN name_to_column(const wxString& name)
     {
-        if ("TRANSLINKID" == name) return COL_TRANSLINKID;
-        else if ("CHECKINGACCOUNTID" == name) return COL_CHECKINGACCOUNTID;
-        else if ("LINKTYPE" == name) return COL_LINKTYPE;
-        else if ("LINKRECORDID" == name) return COL_LINKRECORDID;
+        if ("TICKERID" == name) return COL_TICKERID;
+        else if ("SOURCE" == name) return COL_SOURCE;
+        else if ("SYMBOL" == name) return COL_SYMBOL;
+        else if ("MARKET" == name) return COL_MARKET;
+        else if ("TYPE" == name) return COL_TYPE;
+        else if ("SECTOR" == name) return COL_SECTOR;
+        else if ("INDUSTRY" == name) return COL_INDUSTRY;
+        else if ("DASHBOARD" == name) return COL_DASHBOARD;
+        else if ("NOTES" == name) return COL_NOTES;
 
         return COLUMN(-1);
     }
@@ -174,23 +218,28 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
     /** Data is a single record in the database table*/
     struct Data
     {
-        friend struct DB_Table_TRANSLINK_V1;
+        friend struct DB_Table_TICKERPROPERTIES_V1;
         /** This is a instance pointer to itself in memory. */
         Self* table_;
     
-        int TRANSLINKID;//  primary key
-        int CHECKINGACCOUNTID;
-        wxString LINKTYPE;
-        int LINKRECORDID;
+        int TICKERID;//  primary key
+        int SOURCE;
+        wxString SYMBOL;
+        wxString MARKET;
+        int TYPE;
+        wxString SECTOR;
+        wxString INDUSTRY;
+        wxString DASHBOARD;
+        wxString NOTES;
 
         int id() const
         {
-            return TRANSLINKID;
+            return TICKERID;
         }
 
         void id(int id)
         {
-            TRANSLINKID = id;
+            TICKERID = id;
         }
 
         bool operator < (const Data& r) const
@@ -207,29 +256,39 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
         {
             table_ = table;
         
-            TRANSLINKID = -1;
-            CHECKINGACCOUNTID = -1;
-            LINKRECORDID = -1;
+            TICKERID = -1;
+            SOURCE = -1;
+            TYPE = -1;
         }
 
         explicit Data(wxSQLite3ResultSet& q, Self* table = 0)
         {
             table_ = table;
         
-            TRANSLINKID = q.GetInt(0); // TRANSLINKID
-            CHECKINGACCOUNTID = q.GetInt(1); // CHECKINGACCOUNTID
-            LINKTYPE = q.GetString(2); // LINKTYPE
-            LINKRECORDID = q.GetInt(3); // LINKRECORDID
+            TICKERID = q.GetInt(0); // TICKERID
+            SOURCE = q.GetInt(1); // SOURCE
+            SYMBOL = q.GetString(2); // SYMBOL
+            MARKET = q.GetString(3); // MARKET
+            TYPE = q.GetInt(4); // TYPE
+            SECTOR = q.GetString(5); // SECTOR
+            INDUSTRY = q.GetString(6); // INDUSTRY
+            DASHBOARD = q.GetString(7); // DASHBOARD
+            NOTES = q.GetString(8); // NOTES
         }
 
         Data& operator=(const Data& other)
         {
             if (this == &other) return *this;
 
-            TRANSLINKID = other.TRANSLINKID;
-            CHECKINGACCOUNTID = other.CHECKINGACCOUNTID;
-            LINKTYPE = other.LINKTYPE;
-            LINKRECORDID = other.LINKRECORDID;
+            TICKERID = other.TICKERID;
+            SOURCE = other.SOURCE;
+            SYMBOL = other.SYMBOL;
+            MARKET = other.MARKET;
+            TYPE = other.TYPE;
+            SECTOR = other.SECTOR;
+            INDUSTRY = other.INDUSTRY;
+            DASHBOARD = other.DASHBOARD;
+            NOTES = other.NOTES;
             return *this;
         }
 
@@ -239,24 +298,49 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
             return false;
         }
 
-        bool match(const Self::TRANSLINKID &in) const
+        bool match(const Self::TICKERID &in) const
         {
-            return this->TRANSLINKID == in.v_;
+            return this->TICKERID == in.v_;
         }
 
-        bool match(const Self::CHECKINGACCOUNTID &in) const
+        bool match(const Self::SOURCE &in) const
         {
-            return this->CHECKINGACCOUNTID == in.v_;
+            return this->SOURCE == in.v_;
         }
 
-        bool match(const Self::LINKTYPE &in) const
+        bool match(const Self::SYMBOL &in) const
         {
-            return this->LINKTYPE.CmpNoCase(in.v_) == 0;
+            return this->SYMBOL.CmpNoCase(in.v_) == 0;
         }
 
-        bool match(const Self::LINKRECORDID &in) const
+        bool match(const Self::MARKET &in) const
         {
-            return this->LINKRECORDID == in.v_;
+            return this->MARKET.CmpNoCase(in.v_) == 0;
+        }
+
+        bool match(const Self::TYPE &in) const
+        {
+            return this->TYPE == in.v_;
+        }
+
+        bool match(const Self::SECTOR &in) const
+        {
+            return this->SECTOR.CmpNoCase(in.v_) == 0;
+        }
+
+        bool match(const Self::INDUSTRY &in) const
+        {
+            return this->INDUSTRY.CmpNoCase(in.v_) == 0;
+        }
+
+        bool match(const Self::DASHBOARD &in) const
+        {
+            return this->DASHBOARD.CmpNoCase(in.v_) == 0;
+        }
+
+        bool match(const Self::NOTES &in) const
+        {
+            return this->NOTES.CmpNoCase(in.v_) == 0;
         }
 
         // Return the data record as a json string
@@ -275,32 +359,52 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
         // Add the field data as json key:value pairs
         void as_json(PrettyWriter<StringBuffer>& json_writer) const
         {
-            json_writer.Key("TRANSLINKID");
-            json_writer.Int(this->TRANSLINKID);
-            json_writer.Key("CHECKINGACCOUNTID");
-            json_writer.Int(this->CHECKINGACCOUNTID);
-            json_writer.Key("LINKTYPE");
-            json_writer.String(this->LINKTYPE.utf8_str());
-            json_writer.Key("LINKRECORDID");
-            json_writer.Int(this->LINKRECORDID);
+            json_writer.Key("TICKERID");
+            json_writer.Int(this->TICKERID);
+            json_writer.Key("SOURCE");
+            json_writer.Int(this->SOURCE);
+            json_writer.Key("SYMBOL");
+            json_writer.String(this->SYMBOL.utf8_str());
+            json_writer.Key("MARKET");
+            json_writer.String(this->MARKET.utf8_str());
+            json_writer.Key("TYPE");
+            json_writer.Int(this->TYPE);
+            json_writer.Key("SECTOR");
+            json_writer.String(this->SECTOR.utf8_str());
+            json_writer.Key("INDUSTRY");
+            json_writer.String(this->INDUSTRY.utf8_str());
+            json_writer.Key("DASHBOARD");
+            json_writer.String(this->DASHBOARD.utf8_str());
+            json_writer.Key("NOTES");
+            json_writer.String(this->NOTES.utf8_str());
         }
 
         row_t to_row_t() const
         {
             row_t row;
-            row(L"TRANSLINKID") = TRANSLINKID;
-            row(L"CHECKINGACCOUNTID") = CHECKINGACCOUNTID;
-            row(L"LINKTYPE") = LINKTYPE;
-            row(L"LINKRECORDID") = LINKRECORDID;
+            row(L"TICKERID") = TICKERID;
+            row(L"SOURCE") = SOURCE;
+            row(L"SYMBOL") = SYMBOL;
+            row(L"MARKET") = MARKET;
+            row(L"TYPE") = TYPE;
+            row(L"SECTOR") = SECTOR;
+            row(L"INDUSTRY") = INDUSTRY;
+            row(L"DASHBOARD") = DASHBOARD;
+            row(L"NOTES") = NOTES;
             return row;
         }
 
         void to_template(html_template& t) const
         {
-            t(L"TRANSLINKID") = TRANSLINKID;
-            t(L"CHECKINGACCOUNTID") = CHECKINGACCOUNTID;
-            t(L"LINKTYPE") = LINKTYPE;
-            t(L"LINKRECORDID") = LINKRECORDID;
+            t(L"TICKERID") = TICKERID;
+            t(L"SOURCE") = SOURCE;
+            t(L"SYMBOL") = SYMBOL;
+            t(L"MARKET") = MARKET;
+            t(L"TYPE") = TYPE;
+            t(L"SECTOR") = SECTOR;
+            t(L"INDUSTRY") = INDUSTRY;
+            t(L"DASHBOARD") = DASHBOARD;
+            t(L"NOTES") = NOTES;
         }
 
         /** Save the record instance in memory to the database. */
@@ -309,7 +413,7 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
             if (db && db->IsReadOnly()) return false;
             if (!table_ || !db) 
             {
-                wxLogError("can not save TRANSLINK_V1");
+                wxLogError("can not save TICKERPROPERTIES_V1");
                 return false;
             }
 
@@ -321,7 +425,7 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
         {
             if (!table_ || !db) 
             {
-                wxLogError("can not remove TRANSLINK_V1");
+                wxLogError("can not remove TICKERPROPERTIES_V1");
                 return false;
             }
             
@@ -336,17 +440,17 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
 
     enum
     {
-        NUM_COLUMNS = 4
+        NUM_COLUMNS = 9
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
 
     /** Name of the table*/    
-    wxString name() const { return "TRANSLINK_V1"; }
+    wxString name() const { return "TICKERPROPERTIES_V1"; }
 
-    DB_Table_TRANSLINK_V1() : fake_(new Data())
+    DB_Table_TICKERPROPERTIES_V1() : fake_(new Data())
     {
-        query_ = "SELECT TRANSLINKID, CHECKINGACCOUNTID, LINKTYPE, LINKRECORDID FROM TRANSLINK_V1 ";
+        query_ = "SELECT TICKERID, SOURCE, SYMBOL, MARKET, TYPE, SECTOR, INDUSTRY, DASHBOARD, NOTES FROM TICKERPROPERTIES_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -376,22 +480,27 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO TRANSLINK_V1(CHECKINGACCOUNTID, LINKTYPE, LINKRECORDID) VALUES(?, ?, ?)";
+            sql = "INSERT INTO TICKERPROPERTIES_V1(SOURCE, SYMBOL, MARKET, TYPE, SECTOR, INDUSTRY, DASHBOARD, NOTES) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE TRANSLINK_V1 SET CHECKINGACCOUNTID = ?, LINKTYPE = ?, LINKRECORDID = ? WHERE TRANSLINKID = ?";
+            sql = "UPDATE TICKERPROPERTIES_V1 SET SOURCE = ?, SYMBOL = ?, MARKET = ?, TYPE = ?, SECTOR = ?, INDUSTRY = ?, DASHBOARD = ?, NOTES = ? WHERE TICKERID = ?";
         }
 
         try
         {
             wxSQLite3Statement stmt = db->PrepareStatement(sql);
 
-            stmt.Bind(1, entity->CHECKINGACCOUNTID);
-            stmt.Bind(2, entity->LINKTYPE);
-            stmt.Bind(3, entity->LINKRECORDID);
+            stmt.Bind(1, entity->SOURCE);
+            stmt.Bind(2, entity->SYMBOL);
+            stmt.Bind(3, entity->MARKET);
+            stmt.Bind(4, entity->TYPE);
+            stmt.Bind(5, entity->SECTOR);
+            stmt.Bind(6, entity->INDUSTRY);
+            stmt.Bind(7, entity->DASHBOARD);
+            stmt.Bind(8, entity->NOTES);
             if (entity->id() > 0)
-                stmt.Bind(4, entity->TRANSLINKID);
+                stmt.Bind(9, entity->TICKERID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();
@@ -408,7 +517,7 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
         }
         catch(const wxSQLite3Exception &e) 
         { 
-            wxLogError("TRANSLINK_V1: Exception %s, %s", e.GetMessage().utf8_str(), entity->to_json());
+            wxLogError("TICKERPROPERTIES_V1: Exception %s, %s", e.GetMessage().utf8_str(), entity->to_json());
             return false;
         }
 
@@ -426,7 +535,7 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
         if (id <= 0) return false;
         try
         {
-            wxString sql = "DELETE FROM TRANSLINK_V1 WHERE TRANSLINKID = ?";
+            wxString sql = "DELETE FROM TICKERPROPERTIES_V1 WHERE TICKERID = ?";
             wxSQLite3Statement stmt = db->PrepareStatement(sql);
             stmt.Bind(1, id);
             stmt.ExecuteUpdate();
@@ -451,7 +560,7 @@ struct DB_Table_TRANSLINK_V1 : public DB_Table
         }
         catch(const wxSQLite3Exception &e) 
         { 
-            wxLogError("TRANSLINK_V1: Exception %s", e.GetMessage().utf8_str());
+            wxLogError("TICKERPROPERTIES_V1: Exception %s", e.GetMessage().utf8_str());
             return false;
         }
 

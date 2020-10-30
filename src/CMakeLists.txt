@@ -226,12 +226,10 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     db/DB_Table_Payee_V1.h
     db/DB_Table_Report_V1.h
     db/DB_Table_Setting_V1.h
-    db/DB_Table_Shareinfo_V1.h
     db/DB_Table_Splittransactions_V1.h
     db/DB_Table_Stockhistory_V1.h
     db/DB_Table_Stock_V1.h
     db/DB_Table_Subcategory_V1.h
-    db/DB_Table_Translink_V1.h
     db/DB_Table_Usage_V1.h
 
     reports/allreport.h
@@ -303,8 +301,6 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     model/Model_Report.h
     model/Model_Setting.cpp
     model/Model_Setting.h
-    model/Model_Shareinfo.cpp
-    model/Model_Shareinfo.h
     model/Model_Splittransaction.cpp
     model/Model_Splittransaction.h
     model/Model_Stock.cpp

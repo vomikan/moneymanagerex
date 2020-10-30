@@ -61,7 +61,7 @@ wxDate Model_Stock::PURCHASEDATE(const Data& stock)
 /** Original value of Stocks */
 double Model_Stock::InvestmentValue(const Data* r)
 {
-    return r->VALUE;
+    return 0.0; //TODO: //r->VALUE;
 }
 
 /** Original value of Stocks */
@@ -72,7 +72,7 @@ double Model_Stock::InvestmentValue(const Data& r)
 
 double Model_Stock::CurrentValue(const Data* r)
 {
-    return r->NUMSHARES * r->CURRENTPRICE;
+    return r->NUMSHARES * 1.0; //TODO: // r->CURRENTPRICE;
 }
 
 double Model_Stock::CurrentValue(const Data& r)

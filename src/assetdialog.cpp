@@ -25,7 +25,6 @@
 #include "validators.h"
 
 #include "model/Model_Attachment.h"
-#include "usertransactionpanel.h"
 #include "accountdialog.h"
 #include "mmframe.h"
 
@@ -55,7 +54,6 @@ mmAssetDialog::mmAssetDialog(wxWindow* parent, mmGUIFrame* gui_frame, Model_Asse
     , m_valueChangeRateLabel(nullptr)
     , bAttachments_(nullptr)
     , m_transaction_frame(nullptr)
-    , m_checking_entry(nullptr)
     , m_dialog_heading (_("New Asset"))
     , m_hidden_trans_entry(true)
     , assetRichText(true)
@@ -222,10 +220,6 @@ void mmAssetDialog::CreateControls()
     Asset Transaction Panel
     *********************************************************************/
     wxString trans_frame_heading = _("New Transaction Details");
-    if (m_checking_entry)
-    {
-        trans_frame_heading = _("Edit Transaction Details");
-    }
 
     m_transaction_frame = new wxStaticBox(this, wxID_ANY, trans_frame_heading);
     wxStaticBoxSizer* transaction_frame_sizer = new wxStaticBoxSizer(m_transaction_frame, wxVERTICAL);

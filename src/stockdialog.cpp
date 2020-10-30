@@ -113,8 +113,6 @@ bool mmStockDialog::Create(wxWindow* parent, wxWindowID id, const wxString& capt
 
 void mmStockDialog::DataToControls()
 {
-
-    //m_stock_acc_name_ctrl->SetValue(m_stock->STOCKNAME);
     m_stock_symbol_ctrl->SetValue(m_symbol);
 
     Model_Account::Data* account = Model_Account::instance().get(m_account_id);

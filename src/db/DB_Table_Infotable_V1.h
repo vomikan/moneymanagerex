@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-05-04 17:41:56.665000.
+ *          AUTO GENERATED at 2020-10-30 18:23:21.906000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,7 @@ struct DB_Table_INFOTABLE_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate("CREATE TABLE INFOTABLE_V1(INFOID integer not null primary key, INFONAME TEXT COLLATE NOCASE NOT NULL UNIQUE, INFOVALUE TEXT NOT NULL)");
+                db->ExecuteUpdate(R"(CREATE TABLE INFOTABLE_V1(INFOID integer not null primary key, INFONAME TEXT COLLATE NOCASE NOT NULL UNIQUE, INFOVALUE TEXT NOT NULL))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
@@ -94,7 +94,7 @@ struct DB_Table_INFOTABLE_V1 : public DB_Table
     {
         try
         {
-            db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS IDX_INFOTABLE_INFONAME ON INFOTABLE_V1(INFONAME)");
+            db->ExecuteUpdate(R"(CREATE INDEX IF NOT EXISTS IDX_INFOTABLE_INFONAME ON INFOTABLE_V1(INFONAME))");
         }
         catch(const wxSQLite3Exception &e) 
         { 

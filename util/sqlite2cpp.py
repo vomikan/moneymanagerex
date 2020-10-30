@@ -227,7 +227,7 @@ struct DB_Table_%s : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate("%s");
+                db->ExecuteUpdate(R"(%s)");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
@@ -255,7 +255,7 @@ struct DB_Table_%s : public DB_Table
             mi.insert(4, 'EXISTS')
             ni = ' '.join(mi)
             s += '''
-            db->ExecuteUpdate("%s");''' % (ni.replace('\n', ''))
+            db->ExecuteUpdate(R"(%s)");''' % (ni.replace('\n', ' '))
 
         s += '''
         }

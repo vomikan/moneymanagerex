@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-05-04 17:41:56.665000.
+ *          AUTO GENERATED at 2020-10-30 18:23:21.906000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,7 @@ struct DB_Table_PAYEE_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate("CREATE TABLE PAYEE_V1(PAYEEID integer primary key, PAYEENAME TEXT COLLATE NOCASE NOT NULL UNIQUE, CATEGID integer, SUBCATEGID integer)");
+                db->ExecuteUpdate(R"(CREATE TABLE PAYEE_V1(PAYEEID integer primary key, PAYEENAME TEXT COLLATE NOCASE NOT NULL UNIQUE, CATEGID integer, SUBCATEGID integer))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
@@ -94,7 +94,7 @@ struct DB_Table_PAYEE_V1 : public DB_Table
     {
         try
         {
-            db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS IDX_PAYEE_INFONAME ON PAYEE_V1(PAYEENAME)");
+            db->ExecuteUpdate(R"(CREATE INDEX IF NOT EXISTS IDX_PAYEE_INFONAME ON PAYEE_V1(PAYEENAME))");
         }
         catch(const wxSQLite3Exception &e) 
         { 

@@ -1,13 +1,13 @@
 //=============================================================================
 /**
- *      Copyright (c) 2016 - 2016 Gabriele-V
+ *      Copyright (c) 2016 - 2020 Gabriele-V
  *
  *      @author [sqliteupgrade2cpp.py]
  *
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2016-07-16 22:51:32.920000.
+ *          AUTO GENERATED at 2020-10-30 18:23:25.878000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -18,7 +18,7 @@
 #include <vector>
 #include <wx/string.h>
 
-const int dbLatestVersion = 7;
+const int dbLatestVersion = 8;
 
 const std::vector<wxString> dbUpgradeQuery =
 {
@@ -70,7 +70,7 @@ const std::vector<wxString> dbUpgradeQuery =
         FIELDID INTEGER NOT NULL PRIMARY KEY
         , REFTYPE TEXT NOT NULL /* Transaction, Stock, Asset, BankAccount, RepeatingTransaction, Payee */
         , DESCRIPTION TEXT COLLATE NOCASE
-        , TYPE TEXT NOT NULL /* String, Integer, Decimal, Boolean, Date, Time, SingleChoice, MultiChoice */
+        , TYPE TEXT NOT NULL /* String, Integer, Decimal, Boolean, Date, Time, SingleChoiche, MultiChoiche */
         , PROPERTIES TEXT NOT NULL
         );
         CREATE INDEX IF NOT EXISTS IDX_CUSTOMFIELD_REF ON CUSTOMFIELD_V1 (REFTYPE);
@@ -119,6 +119,77 @@ const std::vector<wxString> dbUpgradeQuery =
         alter table ACCOUNTLIST_V1 add column INTERESTRATE numeric;
         alter table ACCOUNTLIST_V1 add column PAYMENTDUEDATE text;
         alter table ACCOUNTLIST_V1 add column MINIMUMPAYMENT numeric;
+        
+    )",
+
+    // Upgrade to version 8
+    R"(
+        
+        CREATE TABLE IF NOT EXISTS TICKERPROPERTIES_V1 (
+        TICKERID INTEGER PRIMARY KEY,
+        SOURCE INTEGER, -- Yahoo, MorningStar, moex
+        SYMBOL TEXT COLLATE NOCASE NOT NULL,
+        MARKET TEXT, --
+        TYPE INTEGER DEFAULT 0, -- Share, Fund, Bond
+        SECTOR TEXT, --Basic Materials
+        -- Consumer Cyclical
+        -- Financial Services
+        -- Real Estate
+        -- Consumer Defensive
+        -- Healthcare
+        -- Utilities
+        -- Communication Services
+        -- Energy
+        -- Industrials
+        -- Technology
+        -- Other
+        INDUSTRY TEXT,
+        DASHBOARD TEXT,
+        NOTES TEXT
+        );
+        CREATE INDEX IF NOT EXISTS IDX_TICKER ON TICKERPROPERTIES_V1 (SYMBOL, TICKERID);
+        
+        
+        CREATE TABLE STOCK_NEW(
+        STOCKID integer primary key
+        , HELDAT integer
+        , PURCHASEDATE TEXT NOT NULL
+        , SYMBOL TEXT
+        , NUMSHARES numeric
+        , PURCHASEPRICE numeric NOT NULL
+        , NOTES TEXT
+        , COMMISSION numeric
+        );
+        
+        INSERT INTO STOCK_NEW SELECT
+        STOCKID,
+        HELDAT,
+        PURCHASEDATE,
+        SYMBOL,
+        NUMSHARES,
+        PURCHASEPRICE,
+        NOTES,
+        COMMISSION
+        FROM STOCK_V1;
+        
+        DROP INDEX IDX_STOCK_HELDAT;
+        DROP TABLE STOCK_V1;
+        ALTER TABLE STOCK_NEW RENAME TO STOCK_V1;
+        CREATE INDEX IDX_STOCK_HELDAT ON STOCK_V1(HELDAT);
+        
+        ALTER TABLE SPLITTRANSACTIONS_V1 add column NOTES TEXT;
+        
+        UPDATE ATTACHMENT_V1 SET REFTYPE = 'Bank Account' WHERE REFTYPE = 'BankAccount';
+        UPDATE ATTACHMENT_V1 SET REFTYPE = 'Recurring Transaction' WHERE REFTYPE = 'RecurringTransaction';
+        UPDATE CUSTOMFIELD_V1 SET REFTYPE = 'Bank Account' WHERE REFTYPE = 'BankAccount';
+        UPDATE CUSTOMFIELD_V1 SET REFTYPE = 'Recurring Transaction' WHERE REFTYPE = 'RecurringTransaction';
+        
+        DROP TABLE SHAREINFO_V1;
+        DROP TABLE TRANSLINK_V1;
+        DROP TABLE ASSETCLASS_V1;
+        DROP TABLE ASSETCLASS_STOCK_V1;
+        
+        PRAGMA user_version = 8;
         
     )",
 

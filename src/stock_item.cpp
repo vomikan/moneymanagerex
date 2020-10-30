@@ -277,10 +277,6 @@ void mmStockItem::OnOk(wxCommandEvent& WXUNUSED(event))
     stock->COMMISSION = comm;
     stock->NOTES = notes;
     stock->PURCHASEPRICE = price;
-    stock->VALUE = price * fabs(num) + comm;
-    if (stock->CURRENTPRICE == 0.0) {
-        stock->CURRENTPRICE = stock->PURCHASEPRICE;
-    }
 
     Model_Stock::instance().Savepoint();
     Model_Stock::instance().save(stock);

@@ -23,7 +23,6 @@
 #include "mmSimpleDialogs.h"
 #include "mmTips.h"
 #include "stockdialog.h"
-#include "sharetransactiondialog.h"
 #include "util.h"
 #include <algorithm>
 
@@ -146,18 +145,30 @@ void StocksListCtrl::OnMouseRightClick(wxMouseEvent& event)
 wxString StocksListCtrl::OnGetItemText(long item, long column) const
 {
     if (column == COL_SYMBOL)       return m_stocks[item].SYMBOL;
+    if (column == COL_CURRPRICE) {
+        Model_StockHistory::Data_Set histData = Model_StockHistory::instance().find(
+            Model_StockHistory::SYMBOL(m_stocks[item].SYMBOL)
+            , Model_StockHistory::DATE(wxDate::Today(), LESS_OR_EQUAL));
+        if (!histData.empty())
+        {
+            std::sort(histData.begin(), histData.end(), SorterByDATE());
+            return Model_Currency::toString(histData.back().VALUE, m_stock_panel->m_currency);
+        }
+        else {
+            return _("Empty");
+        }
+    }
+    if (column == COL_PRICE)        return Model_Currency::toString(m_stocks[item].PURCHASEPRICE, m_stock_panel->m_currency);
     if (column == COL_DATE)         return mmGetDateForDisplay(m_stocks[item].PURCHASEDATE);
     if (column == COL_NUMBER)
     {
         int precision = m_stocks[item].NUMSHARES == floor(m_stocks[item].NUMSHARES) ? 0 : 4;
         return Model_Currency::toString(m_stocks[item].NUMSHARES, m_stock_panel->m_currency, precision);
     }
-    if (column == COL_PRICE)        return Model_Currency::toString(m_stocks[item].PURCHASEPRICE, m_stock_panel->m_currency);
     if (column == COL_GAIN_LOSS)    return Model_Currency::toString(GetGainLoss(item), m_stock_panel->m_currency);
-    if (column == COL_CURRPRICE)    return Model_Currency::toString(m_stocks[item].CURRENTPRICE, m_stock_panel->m_currency);
     if (column == COL_CURRVALUE) {
         return Model_Currency::toString(
-            m_stocks[item].CURRENTPRICE * m_stocks[item].NUMSHARES -m_stocks[item].COMMISSION
+            1.0 * m_stocks[item].NUMSHARES -m_stocks[item].COMMISSION //TODO:
             , m_stock_panel->m_currency);
     }
     if (column == COL_SECTOR)
@@ -178,12 +189,13 @@ double StocksListCtrl::GetGainLoss(const Model_Stock::Data& stock)
 {
     if (stock.PURCHASEPRICE == 0)
     {
-        return stock.NUMSHARES * stock.CURRENTPRICE - (stock.VALUE + stock.COMMISSION);
+        //return stock.NUMSHARES * stock.CURRENTPRICE - (stock.VALUE + stock.COMMISSION);
     }
     else
     {
-        return stock.NUMSHARES * stock.CURRENTPRICE - ((stock.NUMSHARES * stock.PURCHASEPRICE) + stock.COMMISSION);
+        //return stock.NUMSHARES * stock.CURRENTPRICE - ((stock.NUMSHARES * stock.PURCHASEPRICE) + stock.COMMISSION);
     }
+    return 0.0; //TODO:
 }
 
 void StocksListCtrl::OnListItemSelected(wxListEvent& event)
@@ -509,8 +521,8 @@ void StocksListCtrl::sortTable()
         std::stable_sort(m_stocks.begin(), m_stocks.end()
             , [](const Model_Stock::Data& x, const Model_Stock::Data& y)
         {
-            double valueX = x.CURRENTPRICE;
-            double valueY = y.CURRENTPRICE;
+            double valueX = 0.0; //TODO: // x.CURRENTPRICE;
+            double valueY = 0.0; //TODO: //  y.CURRENTPRICE;
             return valueX < valueY;
         });
         break;
@@ -518,8 +530,8 @@ void StocksListCtrl::sortTable()
         std::stable_sort(m_stocks.begin(), m_stocks.end()
             , [](const Model_Stock::Data& x, const Model_Stock::Data& y)
         {
-            double valueX = x.CURRENTPRICE * x.NUMSHARES - x.COMMISSION;
-            double valueY = y.CURRENTPRICE * y.NUMSHARES - y.COMMISSION;
+            double valueX = 0.0; //TODO: //  x.CURRENTPRICE * x.NUMSHARES - x.COMMISSION;
+            double valueY = 0.0; //TODO: //  y.CURRENTPRICE * y.NUMSHARES - y.COMMISSION;
             return valueX < valueY;
         });
         break;
@@ -554,6 +566,10 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
     };
     std::map<wxString, Data> list;
 
+    //TODO: Current price
+    //Model_StockHistory::Data_Set histData = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(i.first));
+    //std::sort(histData.begin(), histData.end(), SorterByDATE());
+
     for (const auto& entry : stocks)
     {
         Data i;
@@ -563,9 +579,9 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
             i.date = i.date > entry.PURCHASEDATE ? entry.PURCHASEDATE : i.date;
             i.number += entry.NUMSHARES;
             i.commission += entry.COMMISSION;
-            i.gain_loss += (entry.NUMSHARES * entry.CURRENTPRICE - entry.VALUE - entry.COMMISSION);
-            i.current_value += entry.NUMSHARES * entry.CURRENTPRICE;
-            i.value += entry.VALUE;
+            i.gain_loss += 0.0; //TODO: //  (entry.NUMSHARES * entry.CURRENTPRICE - entry.VALUE - entry.COMMISSION);
+            i.current_value += 0.0; //TODO: //  entry.NUMSHARES * entry.CURRENTPRICE;
+            i.value += 0.0; //TODO: //  entry.VALUE;
             i.purchase_price += entry.PURCHASEPRICE * fabs(entry.NUMSHARES);
             i.sector = "TBD";
         }
@@ -574,9 +590,9 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
             i.date = entry.PURCHASEDATE;
             i.number = entry.NUMSHARES;
             i.commission = entry.COMMISSION;
-            i.gain_loss = (entry.NUMSHARES * entry.CURRENTPRICE - entry.VALUE - entry.COMMISSION);
-            i.current_value = entry.NUMSHARES * entry.CURRENTPRICE;
-            i.value = entry.VALUE;
+            i.gain_loss = 0.0; //TODO: //  (entry.NUMSHARES * entry.CURRENTPRICE - entry.VALUE - entry.COMMISSION);
+            i.current_value = 0.0; //TODO: //  entry.NUMSHARES * entry.CURRENTPRICE;
+            i.value = 0.0; //TODO: //  entry.VALUE;
             i.purchase_price = entry.PURCHASEPRICE * fabs(entry.NUMSHARES);
             i.sector = "TBD";
         }
@@ -592,16 +608,7 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
         entry->PURCHASEPRICE = i.second.purchase_price;
         entry->HELDAT = m_stock_panel->m_account_id;
         entry->SYMBOL = i.first;
-        entry->VALUE = i.second.value;
         entry->COMMISSION = i.second.commission;
-
-        Model_StockHistory::Data_Set histData = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(i.first));
-
-        std::sort(histData.begin(), histData.end(), SorterByDATE());
-        if (!histData.empty())
-            entry->CURRENTPRICE = histData.back().VALUE;
-        else
-            entry->CURRENTPRICE = i.second.purchase_price;
 
         m_stocks.push_back(*entry);
     }
@@ -736,7 +743,7 @@ bool mmStocksPanel::onlineQuoteRefresh(wxString& msg)
     {
         const wxString symbol = stock.SYMBOL.Upper();
         if (symbol.IsEmpty()) continue;
-        symbols[symbol] = stock.VALUE;
+        symbols[symbol] = 0.0;
     }
 
     refresh_button_->SetBitmapLabel(mmBitmap(png::LED_YELLOW));

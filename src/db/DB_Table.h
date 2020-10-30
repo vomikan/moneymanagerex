@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-05-04 17:41:56.665000.
+ *          AUTO GENERATED at 2020-10-30 18:23:21.906000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -202,30 +202,12 @@ struct SorterByACCOUNTTYPE
     }
 };
 
-struct SorterByALLOCATION
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.ALLOCATION) < (y.ALLOCATION);
-    }
-};
-
 struct SorterByAMOUNT
 { 
     template<class DATA>
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.AMOUNT) < (y.AMOUNT);
-    }
-};
-
-struct SorterByASSETCLASSID
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.ASSETCLASSID) < (y.ASSETCLASSID);
     }
 };
 
@@ -337,15 +319,6 @@ struct SorterByCENT_NAME
     }
 };
 
-struct SorterByCHECKINGACCOUNTID
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.CHECKINGACCOUNTID) < (y.CHECKINGACCOUNTID);
-    }
-};
-
 struct SorterByCOMMISSION
 { 
     template<class DATA>
@@ -418,15 +391,6 @@ struct SorterByCURRENCY_SYMBOL
     }
 };
 
-struct SorterByCURRENTPRICE
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.CURRENTPRICE) < (y.CURRENTPRICE);
-    }
-};
-
 struct SorterByCURRHISTID
 { 
     template<class DATA>
@@ -451,6 +415,15 @@ struct SorterByCURRVALUE
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.CURRVALUE) < (y.CURRVALUE);
+    }
+};
+
+struct SorterByDASHBOARD
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.DASHBOARD) < (y.DASHBOARD);
     }
 };
 
@@ -562,12 +535,12 @@ struct SorterByHISTID
     }
 };
 
-struct SorterByID
+struct SorterByINDUSTRY
 { 
     template<class DATA>
     bool operator()(const DATA& x, const DATA& y)
     {
-        return (x.ID) < (y.ID);
+        return (x.INDUSTRY) < (y.INDUSTRY);
     }
 };
 
@@ -625,30 +598,21 @@ struct SorterByJSONCONTENT
     }
 };
 
-struct SorterByLINKRECORDID
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.LINKRECORDID) < (y.LINKRECORDID);
-    }
-};
-
-struct SorterByLINKTYPE
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.LINKTYPE) < (y.LINKTYPE);
-    }
-};
-
 struct SorterByLUACONTENT
 { 
     template<class DATA>
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.LUACONTENT) < (y.LUACONTENT);
+    }
+};
+
+struct SorterByMARKET
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.MARKET) < (y.MARKET);
     }
 };
 
@@ -667,15 +631,6 @@ struct SorterByMINIMUMPAYMENT
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.MINIMUMPAYMENT) < (y.MINIMUMPAYMENT);
-    }
-};
-
-struct SorterByNAME
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.NAME) < (y.NAME);
     }
 };
 
@@ -712,15 +667,6 @@ struct SorterByNUMSHARES
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.NUMSHARES) < (y.NUMSHARES);
-    }
-};
-
-struct SorterByPARENTID
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.PARENTID) < (y.PARENTID);
     }
 };
 
@@ -850,6 +796,15 @@ struct SorterBySCALE
     }
 };
 
+struct SorterBySECTOR
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.SECTOR) < (y.SECTOR);
+    }
+};
+
 struct SorterBySETTINGID
 { 
     template<class DATA>
@@ -886,57 +841,12 @@ struct SorterBySFX_SYMBOL
     }
 };
 
-struct SorterBySHARECOMMISSION
+struct SorterBySOURCE
 { 
     template<class DATA>
     bool operator()(const DATA& x, const DATA& y)
     {
-        return (x.SHARECOMMISSION) < (y.SHARECOMMISSION);
-    }
-};
-
-struct SorterBySHAREINFOID
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.SHAREINFOID) < (y.SHAREINFOID);
-    }
-};
-
-struct SorterBySHARELOT
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.SHARELOT) < (y.SHARELOT);
-    }
-};
-
-struct SorterBySHARENUMBER
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.SHARENUMBER) < (y.SHARENUMBER);
-    }
-};
-
-struct SorterBySHAREPRICE
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.SHAREPRICE) < (y.SHAREPRICE);
-    }
-};
-
-struct SorterBySORTORDER
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.SORTORDER) < (y.SORTORDER);
+        return (x.SOURCE) < (y.SOURCE);
     }
 };
 
@@ -1012,24 +922,6 @@ struct SorterBySTOCKID
     }
 };
 
-struct SorterBySTOCKNAME
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.STOCKNAME) < (y.STOCKNAME);
-    }
-};
-
-struct SorterBySTOCKSYMBOL
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.STOCKSYMBOL) < (y.STOCKSYMBOL);
-    }
-};
-
 struct SorterBySUBCATEGID
 { 
     template<class DATA>
@@ -1063,6 +955,15 @@ struct SorterByTEMPLATECONTENT
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.TEMPLATECONTENT) < (y.TEMPLATECONTENT);
+    }
+};
+
+struct SorterByTICKERID
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.TICKERID) < (y.TICKERID);
     }
 };
 
@@ -1126,15 +1027,6 @@ struct SorterByTRANSID
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.TRANSID) < (y.TRANSID);
-    }
-};
-
-struct SorterByTRANSLINKID
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.TRANSLINKID) < (y.TRANSLINKID);
     }
 };
 

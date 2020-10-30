@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-05-04 17:41:56.665000.
+ *          AUTO GENERATED at 2020-10-30 18:23:21.906000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,7 @@ struct DB_Table_STOCK_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate("CREATE TABLE STOCK_V1(STOCKID integer primary key, HELDAT integer, PURCHASEDATE TEXT NOT NULL, STOCKNAME TEXT COLLATE NOCASE NOT NULL, SYMBOL TEXT, NUMSHARES numeric, PURCHASEPRICE numeric NOT NULL, NOTES TEXT, CURRENTPRICE numeric NOT NULL, VALUE numeric, COMMISSION numeric)");
+                db->ExecuteUpdate(R"(CREATE TABLE STOCK_V1(STOCKID integer primary key, HELDAT integer, PURCHASEDATE TEXT NOT NULL, SYMBOL TEXT COLLATE NOCASE NOT NULL, NUMSHARES numeric, PURCHASEPRICE numeric NOT NULL, NOTES TEXT, COMMISSION numeric))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
@@ -94,7 +94,7 @@ struct DB_Table_STOCK_V1 : public DB_Table
     {
         try
         {
-            db->ExecuteUpdate("CREATE INDEX IF NOT EXISTS IDX_STOCK_HELDAT ON STOCK_V1(HELDAT)");
+            db->ExecuteUpdate(R"(CREATE INDEX IF NOT EXISTS IDX_STOCK_HELDAT ON STOCK_V1(HELDAT))");
         }
         catch(const wxSQLite3Exception &e) 
         { 
@@ -129,12 +129,6 @@ struct DB_Table_STOCK_V1 : public DB_Table
         explicit PURCHASEDATE(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
-    struct STOCKNAME : public DB_Column<wxString>
-    { 
-        static wxString name() { return "STOCKNAME"; } 
-        explicit STOCKNAME(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
-    };
-    
     struct SYMBOL : public DB_Column<wxString>
     { 
         static wxString name() { return "SYMBOL"; } 
@@ -159,18 +153,6 @@ struct DB_Table_STOCK_V1 : public DB_Table
         explicit NOTES(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
-    struct CURRENTPRICE : public DB_Column<double>
-    { 
-        static wxString name() { return "CURRENTPRICE"; } 
-        explicit CURRENTPRICE(const double &v, OP op = EQUAL): DB_Column<double>(v, op) {}
-    };
-    
-    struct VALUE : public DB_Column<double>
-    { 
-        static wxString name() { return "VALUE"; } 
-        explicit VALUE(const double &v, OP op = EQUAL): DB_Column<double>(v, op) {}
-    };
-    
     struct COMMISSION : public DB_Column<double>
     { 
         static wxString name() { return "COMMISSION"; } 
@@ -183,14 +165,11 @@ struct DB_Table_STOCK_V1 : public DB_Table
         COL_STOCKID = 0
         , COL_HELDAT = 1
         , COL_PURCHASEDATE = 2
-        , COL_STOCKNAME = 3
-        , COL_SYMBOL = 4
-        , COL_NUMSHARES = 5
-        , COL_PURCHASEPRICE = 6
-        , COL_NOTES = 7
-        , COL_CURRENTPRICE = 8
-        , COL_VALUE = 9
-        , COL_COMMISSION = 10
+        , COL_SYMBOL = 3
+        , COL_NUMSHARES = 4
+        , COL_PURCHASEPRICE = 5
+        , COL_NOTES = 6
+        , COL_COMMISSION = 7
     };
 
     /** Returns the column name as a string*/
@@ -201,13 +180,10 @@ struct DB_Table_STOCK_V1 : public DB_Table
             case COL_STOCKID: return "STOCKID";
             case COL_HELDAT: return "HELDAT";
             case COL_PURCHASEDATE: return "PURCHASEDATE";
-            case COL_STOCKNAME: return "STOCKNAME";
             case COL_SYMBOL: return "SYMBOL";
             case COL_NUMSHARES: return "NUMSHARES";
             case COL_PURCHASEPRICE: return "PURCHASEPRICE";
             case COL_NOTES: return "NOTES";
-            case COL_CURRENTPRICE: return "CURRENTPRICE";
-            case COL_VALUE: return "VALUE";
             case COL_COMMISSION: return "COMMISSION";
             default: break;
         }
@@ -221,13 +197,10 @@ struct DB_Table_STOCK_V1 : public DB_Table
         if ("STOCKID" == name) return COL_STOCKID;
         else if ("HELDAT" == name) return COL_HELDAT;
         else if ("PURCHASEDATE" == name) return COL_PURCHASEDATE;
-        else if ("STOCKNAME" == name) return COL_STOCKNAME;
         else if ("SYMBOL" == name) return COL_SYMBOL;
         else if ("NUMSHARES" == name) return COL_NUMSHARES;
         else if ("PURCHASEPRICE" == name) return COL_PURCHASEPRICE;
         else if ("NOTES" == name) return COL_NOTES;
-        else if ("CURRENTPRICE" == name) return COL_CURRENTPRICE;
-        else if ("VALUE" == name) return COL_VALUE;
         else if ("COMMISSION" == name) return COL_COMMISSION;
 
         return COLUMN(-1);
@@ -243,13 +216,10 @@ struct DB_Table_STOCK_V1 : public DB_Table
         int STOCKID;//  primary key
         int HELDAT;
         wxString PURCHASEDATE;
-        wxString STOCKNAME;
         wxString SYMBOL;
         double NUMSHARES;
         double PURCHASEPRICE;
         wxString NOTES;
-        double CURRENTPRICE;
-        double VALUE;
         double COMMISSION;
 
         int id() const
@@ -280,8 +250,6 @@ struct DB_Table_STOCK_V1 : public DB_Table
             HELDAT = -1;
             NUMSHARES = 0.0;
             PURCHASEPRICE = 0.0;
-            CURRENTPRICE = 0.0;
-            VALUE = 0.0;
             COMMISSION = 0.0;
         }
 
@@ -292,14 +260,11 @@ struct DB_Table_STOCK_V1 : public DB_Table
             STOCKID = q.GetInt(0); // STOCKID
             HELDAT = q.GetInt(1); // HELDAT
             PURCHASEDATE = q.GetString(2); // PURCHASEDATE
-            STOCKNAME = q.GetString(3); // STOCKNAME
-            SYMBOL = q.GetString(4); // SYMBOL
-            NUMSHARES = q.GetDouble(5); // NUMSHARES
-            PURCHASEPRICE = q.GetDouble(6); // PURCHASEPRICE
-            NOTES = q.GetString(7); // NOTES
-            CURRENTPRICE = q.GetDouble(8); // CURRENTPRICE
-            VALUE = q.GetDouble(9); // VALUE
-            COMMISSION = q.GetDouble(10); // COMMISSION
+            SYMBOL = q.GetString(3); // SYMBOL
+            NUMSHARES = q.GetDouble(4); // NUMSHARES
+            PURCHASEPRICE = q.GetDouble(5); // PURCHASEPRICE
+            NOTES = q.GetString(6); // NOTES
+            COMMISSION = q.GetDouble(7); // COMMISSION
         }
 
         Data& operator=(const Data& other)
@@ -309,13 +274,10 @@ struct DB_Table_STOCK_V1 : public DB_Table
             STOCKID = other.STOCKID;
             HELDAT = other.HELDAT;
             PURCHASEDATE = other.PURCHASEDATE;
-            STOCKNAME = other.STOCKNAME;
             SYMBOL = other.SYMBOL;
             NUMSHARES = other.NUMSHARES;
             PURCHASEPRICE = other.PURCHASEPRICE;
             NOTES = other.NOTES;
-            CURRENTPRICE = other.CURRENTPRICE;
-            VALUE = other.VALUE;
             COMMISSION = other.COMMISSION;
             return *this;
         }
@@ -341,11 +303,6 @@ struct DB_Table_STOCK_V1 : public DB_Table
             return this->PURCHASEDATE.CmpNoCase(in.v_) == 0;
         }
 
-        bool match(const Self::STOCKNAME &in) const
-        {
-            return this->STOCKNAME.CmpNoCase(in.v_) == 0;
-        }
-
         bool match(const Self::SYMBOL &in) const
         {
             return this->SYMBOL.CmpNoCase(in.v_) == 0;
@@ -364,16 +321,6 @@ struct DB_Table_STOCK_V1 : public DB_Table
         bool match(const Self::NOTES &in) const
         {
             return this->NOTES.CmpNoCase(in.v_) == 0;
-        }
-
-        bool match(const Self::CURRENTPRICE &in) const
-        {
-            return this->CURRENTPRICE == in.v_;
-        }
-
-        bool match(const Self::VALUE &in) const
-        {
-            return this->VALUE == in.v_;
         }
 
         bool match(const Self::COMMISSION &in) const
@@ -403,8 +350,6 @@ struct DB_Table_STOCK_V1 : public DB_Table
             json_writer.Int(this->HELDAT);
             json_writer.Key("PURCHASEDATE");
             json_writer.String(this->PURCHASEDATE.utf8_str());
-            json_writer.Key("STOCKNAME");
-            json_writer.String(this->STOCKNAME.utf8_str());
             json_writer.Key("SYMBOL");
             json_writer.String(this->SYMBOL.utf8_str());
             json_writer.Key("NUMSHARES");
@@ -413,10 +358,6 @@ struct DB_Table_STOCK_V1 : public DB_Table
             json_writer.Double(this->PURCHASEPRICE);
             json_writer.Key("NOTES");
             json_writer.String(this->NOTES.utf8_str());
-            json_writer.Key("CURRENTPRICE");
-            json_writer.Double(this->CURRENTPRICE);
-            json_writer.Key("VALUE");
-            json_writer.Double(this->VALUE);
             json_writer.Key("COMMISSION");
             json_writer.Double(this->COMMISSION);
         }
@@ -427,13 +368,10 @@ struct DB_Table_STOCK_V1 : public DB_Table
             row(L"STOCKID") = STOCKID;
             row(L"HELDAT") = HELDAT;
             row(L"PURCHASEDATE") = PURCHASEDATE;
-            row(L"STOCKNAME") = STOCKNAME;
             row(L"SYMBOL") = SYMBOL;
             row(L"NUMSHARES") = NUMSHARES;
             row(L"PURCHASEPRICE") = PURCHASEPRICE;
             row(L"NOTES") = NOTES;
-            row(L"CURRENTPRICE") = CURRENTPRICE;
-            row(L"VALUE") = VALUE;
             row(L"COMMISSION") = COMMISSION;
             return row;
         }
@@ -443,13 +381,10 @@ struct DB_Table_STOCK_V1 : public DB_Table
             t(L"STOCKID") = STOCKID;
             t(L"HELDAT") = HELDAT;
             t(L"PURCHASEDATE") = PURCHASEDATE;
-            t(L"STOCKNAME") = STOCKNAME;
             t(L"SYMBOL") = SYMBOL;
             t(L"NUMSHARES") = NUMSHARES;
             t(L"PURCHASEPRICE") = PURCHASEPRICE;
             t(L"NOTES") = NOTES;
-            t(L"CURRENTPRICE") = CURRENTPRICE;
-            t(L"VALUE") = VALUE;
             t(L"COMMISSION") = COMMISSION;
         }
 
@@ -486,7 +421,7 @@ struct DB_Table_STOCK_V1 : public DB_Table
 
     enum
     {
-        NUM_COLUMNS = 11
+        NUM_COLUMNS = 8
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
@@ -496,7 +431,7 @@ struct DB_Table_STOCK_V1 : public DB_Table
 
     DB_Table_STOCK_V1() : fake_(new Data())
     {
-        query_ = "SELECT STOCKID, HELDAT, PURCHASEDATE, STOCKNAME, SYMBOL, NUMSHARES, PURCHASEPRICE, NOTES, CURRENTPRICE, VALUE, COMMISSION FROM STOCK_V1 ";
+        query_ = "SELECT STOCKID, HELDAT, PURCHASEDATE, SYMBOL, NUMSHARES, PURCHASEPRICE, NOTES, COMMISSION FROM STOCK_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -526,11 +461,11 @@ struct DB_Table_STOCK_V1 : public DB_Table
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO STOCK_V1(HELDAT, PURCHASEDATE, STOCKNAME, SYMBOL, NUMSHARES, PURCHASEPRICE, NOTES, CURRENTPRICE, VALUE, COMMISSION) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO STOCK_V1(HELDAT, PURCHASEDATE, SYMBOL, NUMSHARES, PURCHASEPRICE, NOTES, COMMISSION) VALUES(?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE STOCK_V1 SET HELDAT = ?, PURCHASEDATE = ?, STOCKNAME = ?, SYMBOL = ?, NUMSHARES = ?, PURCHASEPRICE = ?, NOTES = ?, CURRENTPRICE = ?, VALUE = ?, COMMISSION = ? WHERE STOCKID = ?";
+            sql = "UPDATE STOCK_V1 SET HELDAT = ?, PURCHASEDATE = ?, SYMBOL = ?, NUMSHARES = ?, PURCHASEPRICE = ?, NOTES = ?, COMMISSION = ? WHERE STOCKID = ?";
         }
 
         try
@@ -539,16 +474,13 @@ struct DB_Table_STOCK_V1 : public DB_Table
 
             stmt.Bind(1, entity->HELDAT);
             stmt.Bind(2, entity->PURCHASEDATE);
-            stmt.Bind(3, entity->STOCKNAME);
-            stmt.Bind(4, entity->SYMBOL);
-            stmt.Bind(5, entity->NUMSHARES);
-            stmt.Bind(6, entity->PURCHASEPRICE);
-            stmt.Bind(7, entity->NOTES);
-            stmt.Bind(8, entity->CURRENTPRICE);
-            stmt.Bind(9, entity->VALUE);
-            stmt.Bind(10, entity->COMMISSION);
+            stmt.Bind(3, entity->SYMBOL);
+            stmt.Bind(4, entity->NUMSHARES);
+            stmt.Bind(5, entity->PURCHASEPRICE);
+            stmt.Bind(6, entity->NOTES);
+            stmt.Bind(7, entity->COMMISSION);
             if (entity->id() > 0)
-                stmt.Bind(11, entity->STOCKID);
+                stmt.Bind(8, entity->STOCKID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();

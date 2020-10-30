@@ -10,7 +10,7 @@ set buildfile_location=../database
 set actual_location=%buildfile_location%
 if not exist %actual_location% set actual_location=../%buildfile_location%
 @echo on
-python %buildfile_name% %actual_location%
+c:\python27\python.exe %buildfile_name% %actual_location%
 @echo off
 if not %buildfile_location%==%actual_location% goto continue
 @echo copy DB_Upgrade.h files to src/db

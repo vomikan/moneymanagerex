@@ -18,7 +18,6 @@
 
 #include "model/Model_Asset.h"
 #include "model/Model_Currency.h"
-#include "model/Model_Translink.h"
 
 class wxDatePickerCtrl;
 class mmTextCtrl;
@@ -69,7 +68,6 @@ private:
     wxStaticText* m_valueChangeRateLabel;
     wxBitmapButton* bAttachments_;
     wxStaticBox* m_transaction_frame;
-    Model_Checking::Data* m_checking_entry;
     wxString m_dialog_heading;
     bool m_hidden_trans_entry;
     bool assetRichText;

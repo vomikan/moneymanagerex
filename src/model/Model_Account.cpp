@@ -18,7 +18,6 @@
 
 #include "Model_Account.h"
 #include "Model_Stock.h"
-#include "Model_Shareinfo.h"
 
 const std::vector<std::pair<Model_Account::STATUS_ENUM, wxString> > Model_Account::STATUS_CHOICES =
 {

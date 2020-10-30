@@ -1729,7 +1729,6 @@ void mmGUIFrame::InitializeModelTables()
     m_all_models.push_back(&Model_Attachment::instance(m_db.get()));
     m_all_models.push_back(&Model_CustomFieldData::instance(m_db.get()));
     m_all_models.push_back(&Model_CustomField::instance(m_db.get()));
-    m_all_models.push_back(&Model_Shareinfo::instance(m_db.get()));
 }
 
 bool mmGUIFrame::createDataStore(const wxString& fileName, const wxString& pwd, bool openingNew)
@@ -2847,16 +2846,17 @@ void mmGUIFrame::OnRates(wxCommandEvent& WXUNUSED(event))
     wxLogDebug("%s", msg);
 
     Model_Stock::Data_Set stock_list = Model_Stock::instance().all();
-    if (!stock_list.empty()) {
+    if (!stock_list.empty())
+    {
 
         std::map<wxString, double> symbols;
         for (const auto& stock : stock_list)
         {
             const wxString symbol = stock.SYMBOL.Upper();
             if (symbol.IsEmpty()) continue;
-            symbols[symbol] = stock.CURRENTPRICE;
+            symbols[symbol] = 1.0; //TODO:
         }
-
+#if 0
         std::map<wxString, double> stocks_data;
         if (get_yahoo_prices(symbols, stocks_data, "", msg, yahoo_price_type::SHARES))
         {
@@ -2875,7 +2875,6 @@ void mmGUIFrame::OnRates(wxCommandEvent& WXUNUSED(event))
                 {
                     msg += wxString::Format("%s\t: %0.6f -> %0.6f\n", s.SYMBOL, s.CURRENTPRICE, dPrice);
                     s.CURRENTPRICE = dPrice;
-                    if (s.STOCKNAME.empty()) s.STOCKNAME = s.SYMBOL;
                     Model_Stock::instance().save(&s);
                     Model_StockHistory::instance().addUpdate(s.SYMBOL
                         , wxDate::Now(), dPrice, Model_StockHistory::ONLINE);
@@ -2887,7 +2886,7 @@ void mmGUIFrame::OnRates(wxCommandEvent& WXUNUSED(event))
                 , mmGetDateForDisplay(wxDateTime::Now().FormatISODate()));
             Model_Infotable::instance().Set("STOCKS_LAST_REFRESH_DATETIME", strLastUpdate);
         }
-
+#endif
         wxLogDebug("%s", msg);
     }
 

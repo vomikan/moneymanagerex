@@ -35,7 +35,6 @@
 #include "Model_Payee.h"
 #include "Model_Report.h"
 #include "Model_Setting.h"
-#include "Model_Shareinfo.h"
 #include "Model_Splittransaction.h"
 #include "Model_Stock.h"
 #include "Model_StockHistory.h"
