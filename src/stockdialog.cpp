@@ -307,7 +307,7 @@ void mmStockDialog::OnStockSetup(wxCommandEvent& /*event*/)
 {
     wxString symbol = m_stock_symbol_ctrl->GetValue();
 
-    mmStockSetup dlg(this, symbol);
+    mmStockSetup dlg(this, symbol, m_account_id);
     int d = dlg.ShowModal();
     if (!m_edit && d != static_cast<int>(wxID_OK))
     {

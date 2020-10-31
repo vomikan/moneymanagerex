@@ -129,7 +129,6 @@ Model_Ticker::SOURCE_ENUM Model_Ticker::source(const Data* ticker)
     return static_cast<SOURCE_ENUM>(ticker->SOURCE);
 }
 
-
 DB_Table_TICKERPROPERTIES_V1::SOURCE SOURCE(Model_Ticker::SOURCE_ENUM source, OP op)
 {
     return DB_Table_TICKERPROPERTIES_V1::SOURCE(source, op);

@@ -129,6 +129,8 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     mmhomepage.cpp
     mmhomepage.h
     mmHook.h
+    mmOnline.h
+    mmOnline.cpp
     mmpanelbase.cpp
     mmpanelbase.h
     mmreportspanel.cpp

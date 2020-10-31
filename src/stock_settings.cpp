@@ -29,6 +29,7 @@
 #include "model/Model_Ticker.h"
 
 #include "mmSimpleDialogs.h"
+#include "mmOnline.h"
 
 wxBEGIN_EVENT_TABLE(mmStockSetup, wxDialog)
     EVT_BUTTON(wxID_OK, mmStockSetup::OnOk)
@@ -45,8 +46,9 @@ mmStockSetup::~mmStockSetup()
 
 }
 
-mmStockSetup::mmStockSetup(wxWindow* parent, const wxString& symbol)
+mmStockSetup::mmStockSetup(wxWindow* parent, const wxString& symbol, int account_id)
     : m_symbol(symbol)
+    , m_account_id(account_id)
 {
 
     SetExtraStyle(GetExtraStyle() | wxWS_EX_BLOCK_EVENTS);
@@ -290,181 +292,22 @@ void mmStockSetup::OnHistoryDownloadButton(wxCommandEvent& /*event*/)
         return;
 
     m_symbol = symbol.Upper();
-    /*"ValidRanges":["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"]*/
-    enum { DAY5, MON, MON3, MON6, YEAR, YEAR2, YEAR5, YEAR10, YTD, MAX };
-    const wxString ranges[] = { "5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max" };
-    const std::vector<std::pair<int, wxString> > RANGE_PAIRS =
-    {
-        { DAY5, _("5 Days") }
-        ,{ MON, _("1 Month") }
-        ,{ MON3, _("3 Months") }
-        ,{ MON6, _("6 Months") }
-        ,{ YEAR, _("1 Year") }
-        ,{ YEAR2, _("2 Years") }
-        ,{ YEAR5, _("5 Years") }
-        ,{ YEAR10, _("10 Years") }
-        ,{ YTD, _("Current Year to Date") }
-        ,{ MAX, _("Max") }
-    };
+    wxTextCtrl* m = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE1));
+    wxString market = m ? m->GetValue() : "";
+    int s = m_choiceSource->GetSelection();
+    int t = m_choiceType->GetSelection();
 
-    wxArrayString items;
-    for (const auto& entry : RANGE_PAIRS) { items.Add(entry.second); }
-
-    int range_menu_item_no = wxGetSingleChoiceIndex(_("Specify type frequency of stock history")
-        , _("Stock History Update"), items);
-
-    if (range_menu_item_no < 0) return;
-    const wxString range = ranges[range_menu_item_no];
-
-    wxString interval = "1d";
-    if (range != "5d")
-    {
-        /* Valid intervals : [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 1d, 5d, 1wk, 1mo, 3mo] */
-        enum class i { DAY, DAY5, WEEK, MON, MON3 };
-        const wxString intervals[] = { "1d","5d","1wk","1mo","3mo" };
-        const std::vector<std::pair<int, wxString> > INTERVAL_PAIRS =
-        {
-              { static_cast<int>(i::DAY), _("1 Day") }
-            , { static_cast<int>(i::DAY5), _("5 Days") }
-            , { static_cast<int>(i::WEEK), _("1 Week") }
-            , { static_cast<int>(i::MON), _("1 Month") }
-            , { static_cast<int>(i::MON3), _("3 Months") }
-        };
-
-        items.clear();
-        for (const auto& entry : INTERVAL_PAIRS) { items.Add(entry.second); }
-
-        int interval_menu_item_no = wxGetSingleChoiceIndex(_("Specify interval of stock history")
-            , _("Stock History Update"), items);
-
-        if (interval_menu_item_no < 0) return;
-        interval = intervals[interval_menu_item_no];
-    }
-    const wxString URL = wxString::Format(mmex::weblink::YahooQuotesHistory
-        , m_symbol, range, interval);
-
-    wxString json_data;
-    auto err_code = http_get_data(URL, json_data);
-    wxString sOutput = json_data;
-
-    if (err_code != CURLE_OK)
-    {
-        if (sOutput.empty()) sOutput = _("Stock history not found!");
-        return mmErrorDialogs::MessageError(this, sOutput, _("Stock History Error"));
+    wxString currency = "USD";
+    Model_Account::Data* a = Model_Account::instance().get(m_account_id);
+    if (a) {
+        Model_Currency::Data* c = Model_Currency::instance().get(a->CURRENCYID);
+        if (c) currency = c->CURRENCY_SYMBOL;
     }
 
-    sOutput = _("Stock history not found!");
-
-    while (true)
-    {
-        Document json_doc;
-        if (json_doc.Parse(json_data.utf8_str()).HasParseError()) {
-            break;
-        }
-        else if (!json_doc.HasMember("chart") || !json_doc["chart"].IsObject()) {
-            break;
-        }
-
-        Value chart = json_doc["chart"].GetObject();
-        wxASSERT(chart.HasMember("error"));
-        if (chart.HasMember("error"))
-        {
-            if (chart["error"].IsObject())
-            {
-
-                // {"chart":{"result":null,"error":{"code":"Not Found","description":"No data found, symbol may be delisted"}}}
-
-                Value e = chart["error"].GetObject();
-                if (!e.HasMember("code") || !e.HasMember("description") || !e["code"].IsString() || !e["description"].IsString()) {
-                    break;
-                }
-
-                const wxString code = wxString::FromUTF8(e["code"].GetString());
-                const wxString description = wxString::FromUTF8(e["description"].GetString());
-                sOutput = wxString::Format("%s - %s", code, description);
-                break;
-            }
-        }
-
-        if (!chart.HasMember("result") || !chart["result"].IsArray())
-            break;
-        Value result = chart["result"].GetArray();
-        if (!result.IsArray() || !result.Begin()->IsObject())
-            break;
-        Value data = result.Begin()->GetObject();
-
-        if (!data.HasMember("meta") || !data["meta"].IsObject())
-            break;
-        Value meta = data["meta"].GetObject();
-
-        float k = 1.0L;
-        if (meta.HasMember("currency") && meta["currency"].IsString()) {
-
-            const auto currency = wxString::FromUTF8(meta["currency"].GetString());
-            k = (currency == "GBp" ? 100 : 1);
-        }
-
-        if (!data.HasMember("timestamp") || !data["timestamp"].IsArray())
-            break;
-        Value timestamp = data["timestamp"].GetArray();
-
-        if (!data.HasMember("indicators") || !data.IsObject())
-            break;
-        Value indicators = data["indicators"].GetObject();
-
-        if (!indicators.HasMember("adjclose") || !indicators["adjclose"].IsArray())
-            break;
-        Value quote_array = indicators["adjclose"].GetArray();
-        Value quotes = quote_array.Begin()->GetObject();
-        if (!quotes.HasMember("adjclose") || !quotes["adjclose"].IsArray())
-            break;
-        Value quotes_closed = quotes["adjclose"].GetArray();
-
-        if (timestamp.Size() != quotes_closed.Size())
-            break;
-
-        std::map<time_t, float> history;
-        for (rapidjson::SizeType i = 0; i < timestamp.Size(); i++)
-        {
-            if (!timestamp[i].IsInt()) continue;
-            time_t time = timestamp[i].GetInt();
-            if (!quotes_closed[i].IsFloat()) continue;
-            float rate = quotes_closed[i].GetFloat() / k;
-            history[time] = rate;
-        }
-
-        const wxString today = wxDate::Today().FormatISODate();
-        Model_StockHistory::instance().Savepoint();
-        for (const auto& entry : history)
-        {
-            float dPrice = entry.second;
-            const wxString date_str = wxDateTime(static_cast<time_t>(entry.first)).FormatISODate();
-
-            Model_StockHistory::Data_Set d = Model_StockHistory::instance().find(Model_StockHistory::DATE(entry.first)
-                , Model_StockHistory::SYMBOL(m_symbol));
-            if (d.empty()) {
-                Model_StockHistory::Data* ndata = Model_StockHistory::instance().create();
-                ndata->SYMBOL = m_symbol;
-                ndata->DATE = date_str;
-                ndata->VALUE = dPrice;
-                ndata->UPDTYPE = date_str == today ? Model_StockHistory::CURRENT : Model_StockHistory::ONLINE;
-                Model_StockHistory::instance().save(ndata);
-            }
-            else {
-                if (d.begin()->UPDTYPE != Model_StockHistory::MANUAL)
-                {
-                    Model_StockHistory::Data* ndata = Model_StockHistory::instance().get(d.begin()->HISTID);
-                    ndata->VALUE = dPrice;
-                    ndata->UPDTYPE = date_str == today ? Model_StockHistory::CURRENT : Model_StockHistory::ONLINE;
-                    Model_StockHistory::instance().save(ndata);
-                }
-            }
-
-        }
-        Model_StockHistory::instance().ReleaseSavepoint();
-        return ShowStockHistory();
-    }
-    mmErrorDialogs::MessageError(this, sOutput, _("Stock History Error"));
+    mmOnline* o = new mmOnline(m_symbol, market, currency, s, t);
+    wxLogDebug("Error: %s", o->getError());
+    delete o;
+    ShowStockHistory();
 }
 
 void mmStockSetup::ShowStockHistory()

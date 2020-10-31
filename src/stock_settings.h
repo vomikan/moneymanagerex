@@ -31,7 +31,7 @@
 class mmStockSetup : public wxDialog
 {
 public:
-    mmStockSetup(wxWindow* parent, const wxString& symbol);
+    mmStockSetup(wxWindow* parent, const wxString& symbol, int account_id);
 
     ~mmStockSetup();
     const wxString getSymbol() const;
@@ -51,6 +51,8 @@ private:
     wxListCtrl* m_price_listbox;
     mmTextCtrl* m_stock_name_ctrl;
     mmTextCtrl* m_stock_symbol_ctrl;
+
+    int m_account_id;
 
     void OnHistoryImportButton(wxCommandEvent& event);
     void OnHistoryDownloadButton(wxCommandEvent& event);
