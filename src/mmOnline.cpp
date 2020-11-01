@@ -167,14 +167,103 @@ bool mmOnline::mmYahoo()
             history[time] = rate;
         }
         saveData(history);
+        return true;
     }
-
-    return true;
+    m_error = _("Error");
+    return false;
 }
 
 bool mmOnline::mmMOEX()
 {
-    return true;
+    const wxString today = wxDate::Today().FormatISODate();
+    size_t date = wxDate::Today().Subtract(wxDateSpan::Days(7)).GetTicks();
+    const wxString dateStr = wxDateTime(static_cast<time_t>(date)).FormatISODate();
+    std::map<time_t, float> history;
+
+    wxString type;
+    switch (m_type)
+    {
+    case Model_Ticker::FUND:
+        type = "shares/boards/TQTF";
+        break;
+    case Model_Ticker::BOND:
+        type = "bonds/boards/TQOB";
+        break;
+    case Model_Ticker::CBOND:
+        type = "bonds/boards/TQCB";
+        break;
+        
+    default:
+        type = "shares/boards/TQBR";
+        break;
+    }
+
+    const wxString URL = wxString::Format(
+        "https://iss.moex.com/iss/history/engines/stock/markets/%s/securities/%s/candles.xml?from=%s&till=%s&interval=24&start=0"
+        , type, m_ticker, dateStr, today);
+
+    auto err_code = http_get_data(URL, m_error);
+
+    if (err_code != CURLE_OK) {
+        return false;
+    }
+    wxString xml = m_error;
+    m_error.clear();
+    wxXmlDocument doc;
+
+    if (!xml.Contains("</document>"))
+        wxLogDebug("%s", "!= </document>");
+
+    wxStringInputStream XmlContentStream(xml);
+
+    if (!doc.Load(XmlContentStream))
+        wxLogDebug("%s", "XmlContentStream");
+
+    wxXmlNode *child = doc.GetRoot()->GetChildren()->GetChildren();
+    wxString attribute1 = "TRADEDATE";
+    wxString attribute2 = "CLOSE";
+
+    wxString result;
+    while (child)
+    {
+        wxLogDebug("%i %s", child->GetType(), child->GetName());
+
+        if (child->GetName() == "rows")
+        {
+            child = child->GetChildren();
+            while (child)
+            {
+                wxString content = child->GetNodeContent();
+
+                wxString att1 =
+                    child->GetAttribute(attribute1, "null");
+                wxDateTime lineDate;
+                lineDate.ParseDate(att1);
+                if (!lineDate.IsValid())
+                    continue;
+
+                date = lineDate.GetTicks();
+                wxString att2 =
+                    child->GetAttribute(attribute2, "null");
+                wxLogDebug("att1 = %s | att2 = %s", att1, att2);
+
+                double value;
+                if (att2.ToDouble(&value))
+                {
+                    history[date] = value;
+                }
+
+                child = child->GetNext();
+            }
+            break;
+        }
+
+        child = child->GetNext();
+    }
+
+    saveData(history);
+
+    return err_code == CURLE_OK;
 }
 
 bool mmOnline::mmMorningStar()

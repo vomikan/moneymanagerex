@@ -29,7 +29,7 @@ public:
     using Model<DB_Table_TICKERPROPERTIES_V1>::get;
 
     enum SOURCE_ENUM { YAHOO = 0, MS, MOEX };
-    enum TYPE_ENUM { SHARE = 0, FUND, BOND };
+    enum TYPE_ENUM { SHARE = 0, FUND, BOND, CBOND };
 
     static const std::vector<std::pair<SOURCE_ENUM, wxString> > SOURCE_CHOICES;
     static const std::vector<std::pair<TYPE_ENUM, wxString> > TYPE_CHOICES;
