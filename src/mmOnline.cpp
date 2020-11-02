@@ -28,20 +28,29 @@
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
 
-mmOnline::mmOnline(const wxString& ticker, const wxString& market, const wxString& currency, int source, int type) :
-    m_ticker(ticker)
+mmHistoryOnline::mmHistoryOnline(const wxString& unique_name, const wxString& market, const wxString& currency, int source, int type) :
+    m_unique_name(unique_name)
     , m_type(type)
     , m_source(source)
     , m_market(market)
     , m_currency(currency)
 {
 
-    Model_StockHistory::Data_Set d = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(m_ticker));
+    Model_Ticker::Data* i = Model_Ticker::instance().get(m_unique_name);
+    m_ticker = i->SYMBOL;
+
+    Model_StockHistory::Data_Set d = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(m_unique_name));
     std::stable_sort(d.begin(), d.end(), SorterByDATE());
     std::reverse(d.begin(), d.end());
 
-    m_date = d.empty() ? wxDate::Today().Subtract(wxDateSpan::Week()).FormatISODate() : d.back().DATE;
-    wxLogDebug("%s", m_date);
+    if (d.empty()) {
+        m_date = wxDate::Today().Subtract(wxDateSpan::Week());
+    }
+    else {
+        m_date.ParseISODate(d.back().DATE);
+    }
+    m_date = m_date.ToTimezone(wxDate::GMT0, true).Add(wxDateSpan::Day());
+    wxLogDebug("%s %s", m_date.FormatISODate(), m_date.FormatISOTime());
 
     switch (m_source)
     {
@@ -65,21 +74,18 @@ mmOnline::mmOnline(const wxString& ticker, const wxString& market, const wxStrin
 //    mmOnline(t->SYMBOL, t->MARKET, currency, t->SOURCE, t->TYPE);
 //}
 
-mmOnline::~mmOnline()
+mmHistoryOnline::~mmHistoryOnline()
 {
 
 }
 
-bool mmOnline::mmYahoo()
+bool mmHistoryOnline::mmYahoo()
 {
-    /*"ValidRanges":["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"]*/
-    /* Valid intervals : [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 1d, 5d, 1wk, 1mo, 3mo] */
+    wxLongLong begin = m_date.GetValue();
 
-    wxString range = "5d", interval = "1d";
-
-    // https://query1.finance.yahoo.com/v8/finance/chart/%s?range=%s&interval=%s&fields=currency
-    const wxString URL = wxString::Format(mmex::weblink::YahooQuotesHistory
-        , m_ticker, range, interval);
+    const wxString URL = wxString::Format(
+        "https://query1.finance.yahoo.com/v8/finance/chart/%s?period1=%zu&period2=%zu&interval=1d&fields=currency"
+        , m_ticker, m_date.GetTicks(), wxDate::Today().GetTicks());
 
     wxString json_data;
     auto err_code = http_get_data(URL, json_data);
@@ -173,11 +179,10 @@ bool mmOnline::mmYahoo()
     return false;
 }
 
-bool mmOnline::mmMOEX()
+bool mmHistoryOnline::mmMOEX()
 {
     const wxString today = wxDate::Today().FormatISODate();
-    size_t date = wxDate::Today().Subtract(wxDateSpan::Days(7)).GetTicks();
-    const wxString dateStr = wxDateTime(static_cast<time_t>(date)).FormatISODate();
+    const wxString dateStr = m_date.FormatISODate();
     std::map<time_t, float> history;
 
     wxString type;
@@ -211,18 +216,27 @@ bool mmOnline::mmMOEX()
     m_error.clear();
     wxXmlDocument doc;
 
-    if (!xml.Contains("</document>"))
+    if (!xml.Contains("</document>")) {
         wxLogDebug("%s", "!= </document>");
+        m_error = _("Error");
+        return false;
+    }
 
     wxStringInputStream XmlContentStream(xml);
 
-    if (!doc.Load(XmlContentStream))
+    if (!doc.Load(XmlContentStream)) {
         wxLogDebug("%s", "XmlContentStream");
+        m_error = _("Error");
+        return false;
+    }
+
+    const wxString attribute1 = "TRADEDATE";
+    const wxString attribute2 = "CLOSE";
+    const wxString attribute3 = "FACEVALUE";
 
     wxXmlNode *child = doc.GetRoot()->GetChildren()->GetChildren();
-    wxString attribute1 = "TRADEDATE";
-    wxString attribute2 = "CLOSE";
 
+    size_t date;
     wxString result;
     while (child)
     {
@@ -233,7 +247,6 @@ bool mmOnline::mmMOEX()
             child = child->GetChildren();
             while (child)
             {
-                wxString content = child->GetNodeContent();
 
                 wxString att1 =
                     child->GetAttribute(attribute1, "null");
@@ -253,6 +266,16 @@ bool mmOnline::mmMOEX()
                     history[date] = value;
                 }
 
+                if (m_type == Model_Ticker::CBOND || m_type == Model_Ticker::BOND) {
+                    wxString att3 =
+                        child->GetAttribute(attribute3, "null");
+                    double value;
+                    if (att3.ToDouble(&value))
+                    {
+                        history[date] = value / 100 * history[date];
+                    }
+                }
+
                 child = child->GetNext();
             }
             break;
@@ -266,7 +289,7 @@ bool mmOnline::mmMOEX()
     return err_code == CURLE_OK;
 }
 
-bool mmOnline::mmMorningStar()
+bool mmHistoryOnline::mmMorningStar()
 {
 
     const wxString URL = wxString::Format(
@@ -322,9 +345,10 @@ bool mmOnline::mmMorningStar()
     }
 
     const wxString today = wxDate::Today().FormatISODate();
+    const wxString begin = m_date.FormatISODate();
     const wxString URL2 = wxString::Format(
         "http://tools.morningstar.es/api/rest.svc/timeseries_price/2nhcdckzon?id=%s&currencyId=%s&idtype=Morningstar&priceType=&frequency=daily&startDate=%s&endDate=%s&outputType=COMPACTJSON"
-        , fund, m_currency, m_date, today);
+        , fund, m_currency, begin, today);
 
     m_error = "";
     err_code = http_get_data(URL2, m_error);
@@ -365,7 +389,7 @@ bool mmOnline::mmMorningStar()
     return err_code == CURLE_OK;
 }
 
-void mmOnline::saveData(std::map<time_t, float>& history)
+void mmHistoryOnline::saveData(std::map<time_t, float>& history)
 {
     const wxString today = wxDate::Today().FormatISODate();
     Model_StockHistory::instance().Savepoint();
@@ -375,10 +399,10 @@ void mmOnline::saveData(std::map<time_t, float>& history)
         const wxString date_str = wxDateTime(static_cast<time_t>(entry.first)).FormatISODate();
 
         Model_StockHistory::Data_Set d = Model_StockHistory::instance().find(Model_StockHistory::DATE(entry.first)
-            , Model_StockHistory::SYMBOL(m_ticker));
+            , Model_StockHistory::SYMBOL(m_unique_name));
         if (d.empty()) {
             Model_StockHistory::Data* ndata = Model_StockHistory::instance().create();
-            ndata->SYMBOL = m_ticker;
+            ndata->SYMBOL = m_unique_name;
             ndata->DATE = date_str;
             ndata->VALUE = dPrice;
             ndata->UPDTYPE = date_str == today ? Model_StockHistory::CURRENT : Model_StockHistory::ONLINE;
@@ -397,3 +421,109 @@ void mmOnline::saveData(std::map<time_t, float>& history)
     }
     Model_StockHistory::instance().ReleaseSavepoint();
 }
+
+// ----------------------------------------------------------
+
+mmWebPage::~mmWebPage()
+{
+}
+
+mmWebPage::mmWebPage(const wxString & name)
+    : m_unique_name(name)
+{
+    Model_Ticker::Data* d = Model_Ticker::instance().get(name);
+    if (d)
+    {
+        wxString httpString = wxString::Format(d->WEBPAGE, d->SYMBOL);
+        if (!httpString.empty())
+        {
+            wxLaunchDefaultBrowser(httpString);
+            return;
+        }
+
+        switch (d->SOURCE)
+        {
+        case Model_Ticker::MOEX:
+            mmMOEX();
+            break;
+
+        case Model_Ticker::MS:
+            mmMorningStar();
+            break;
+
+        default:
+            mmYahoo();
+            break;
+        }
+    }
+    else
+    {
+
+    }
+
+}
+
+bool mmWebPage::mmYahoo()
+{
+    // "https://www.google.com/search?q=%s"
+    // "https://www.marketwatch.com/investing/stock/%s"
+    // "https://www.ifcmarkets.co.in/en/market-data/stocks-prices/%s"
+
+    // Will display the stock page when using Looks up the current value
+    const wxString stockURL = "http://finance.yahoo.com/echarts?s=%s";
+
+    if (!m_unique_name.IsEmpty())
+    {
+        //const wxString& stockURL = Model_Infotable::instance().GetStringInfo("STOCKURL", mmex::weblink::DefStockUrl);
+        const wxString& httpString = wxString::Format(stockURL, m_unique_name);
+        wxLaunchDefaultBrowser(httpString);
+        return true;
+    }
+
+    return false;
+}
+
+bool mmWebPage::mmMOEX()
+{
+    const wxString stockURL = "https://www.moex.com/ru/issue.aspx?board=%s&code=%s";
+
+    if (!m_unique_name.IsEmpty())
+    {
+        wxString type;
+        switch (m_type)
+        {
+        case Model_Ticker::FUND:
+            type = "TQTF";
+            break;
+        case Model_Ticker::BOND:
+            type = "TQOB";
+            break;
+        case Model_Ticker::CBOND:
+            type = "TQCB";
+            break;
+
+        default:
+            type = "TQBR";
+            break;
+        }
+
+        const wxString& httpString = wxString::Format(stockURL, type, m_unique_name);
+        wxLaunchDefaultBrowser(httpString);
+        return true;
+    }
+
+    return false;
+}
+
+bool mmWebPage::mmMorningStar()
+{
+    if (!m_unique_name.IsEmpty())
+    {
+        const wxString stockURL = "http://quotes.morningstar.com/stockq/c-header?&t=%s";
+        const wxString& httpString = wxString::Format(stockURL, m_unique_name);
+        wxLaunchDefaultBrowser(httpString);
+        return true;
+    }
+    return false;
+}
+

@@ -94,6 +94,7 @@ private:
     wxString m_symbol;
     bool m_edit;
     int m_account_id;
+    int m_precision;
     mmGUIFrame* m_gui_frame;
     enum
     {

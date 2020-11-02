@@ -44,18 +44,15 @@ private:
     void Create();
 
     void OnBackupChanged(wxCommandEvent& event);
-    void SaveStocksUrl();
 
 private:
     wxSpinCtrl* m_max_files;
-    wxSpinCtrl* m_share_precision;
 
     enum
     {
         ID_DIALOG_OPTIONS_TEXTCTRL_DELIMITER4 = wxID_HIGHEST + 10,
         ID_DIALOG_OPTIONS_CHK_BACKUP,
         ID_DIALOG_OPTIONS_CHK_BACKUP_UPDATE,
-        ID_DIALOG_OPTIONS_TEXTCTRL_STOCKURL,
         ID_DIALOG_OPTIONS_DEFAULT_TRANSACTION_PAYEE,
         ID_DIALOG_OPTIONS_DEFAULT_TRANSACTION_CATEGORY,
         ID_DIALOG_OPTIONS_DEFAULT_TRANSACTION_STATUS,

@@ -39,6 +39,7 @@ private:
     int m_id;
     int m_acc;
     int m_type;
+    int m_share_precision;
     wxString m_symbol;
     wxChoice* m_choiceType;
 

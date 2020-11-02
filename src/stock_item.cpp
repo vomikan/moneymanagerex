@@ -25,6 +25,7 @@
 #include "util.h"
 
 #include "mmSimpleDialogs.h"
+#include "model/Model_Ticker.h"
 #include "model/Model_Attachment.h"
 #include <wx/webviewfshandler.h>
 
@@ -70,23 +71,32 @@ mmStockItem::mmStockItem(wxWindow* parent, int acc, int id, const wxString& symb
 
 void mmStockItem::fillControls()
 {
+    Model_Currency::Data *currency = Model_Currency::GetBaseCurrency();
+    int currency_precision = Model_Currency::precision(currency);
+    m_share_precision = currency_precision;
+    Model_Ticker::Data* t = Model_Ticker::instance().get(m_symbol);
+    if (t) m_share_precision = t->PRECISION;
+    if (currency_precision < m_share_precision)
+        currency_precision = m_share_precision;
+
     Model_Stock::Data* stock = Model_Stock::instance().get(m_id);
     if (stock)
     {
         m_purchase_date_ctrl->SetValue(Model_Stock::PURCHASEDATE(stock));
-        m_num_shares_ctrl->SetValue(fabs(stock->NUMSHARES));
+        m_num_shares_ctrl->SetValue(fabs(stock->NUMSHARES), floor(stock->NUMSHARES) ? 0 : m_share_precision);
         if (stock->NUMSHARES < 0) {
             m_type = 1;
             m_choiceType->Select(m_type);
         }
-        m_purchase_price_ctrl->SetValue(stock->PURCHASEPRICE);
-        m_commission_ctrl->SetValue(stock->COMMISSION);
+        m_purchase_price_ctrl->SetValue(stock->PURCHASEPRICE, m_share_precision);
+        m_commission_ctrl->SetValue(stock->COMMISSION, m_share_precision);
         m_notes_ctrl->SetValue(stock->NOTES);
     }
     else
     {
         m_choiceType->Select(m_type);
     }
+
 }
 
 void mmStockItem::CreateControls()
@@ -222,23 +232,21 @@ void mmStockItem::CreateControls()
 
 void mmStockItem::OnTextEntered(wxCommandEvent& event)
 {
-    Model_Currency::Data *currency = Model_Currency::GetBaseCurrency();
 
-    int currency_precision = Model_Currency::precision(currency);
-    if (currency_precision < Option::instance().SharePrecision())
-        currency_precision = Option::instance().SharePrecision();
 
     if (event.GetId() == m_num_shares_ctrl->GetId())
     {
-        m_num_shares_ctrl->Calculate(Option::instance().SharePrecision());
+        double amount;
+        m_num_shares_ctrl->checkValue(amount);
+        m_num_shares_ctrl->Calculate(floor(amount) ? 0 : m_share_precision);
     }
     else if (event.GetId() == m_purchase_price_ctrl->GetId())
     {
-        m_purchase_price_ctrl->Calculate(Option::instance().SharePrecision());
+        m_purchase_price_ctrl->Calculate(m_share_precision);
     }
     else if (event.GetId() == m_commission_ctrl->GetId())
     {
-        m_commission_ctrl->Calculate(Option::instance().SharePrecision());
+        m_commission_ctrl->Calculate(m_share_precision);
     }
 
 }

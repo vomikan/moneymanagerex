@@ -23,21 +23,23 @@
 
 class Model_Ticker;
 
-class mmOnline
+class mmHistoryOnline
 {
 public:
-    mmOnline(const wxString& ticker, const wxString& market ="", const wxString& currency = "USD", int source = 0, int type  = 0);
+    mmHistoryOnline(const wxString& unique_name, const wxString& market ="", const wxString& currency = "USD", int source = 0, int type  = 0);
     //mmOnline(Model_Ticker::Data* t, const wxString& currency = "USD");
-    ~mmOnline();
-    bool mmYahoo();
-    bool mmMOEX();
-    bool mmMorningStar();
+    ~mmHistoryOnline();
     const wxString getError() const;
 
 private:
+    bool mmYahoo();
+    bool mmMOEX();
+    bool mmMorningStar();
+
+    wxString m_unique_name;
     wxString m_ticker;
     wxString m_market;
-    wxString m_date;
+    wxDateTime m_date;
     wxString m_error;
     wxString m_name;
     wxString m_currency;
@@ -47,4 +49,21 @@ private:
     void saveData(std::map<time_t, float>& history);
 };
 
-inline const wxString mmOnline::getError() const { return m_error; }
+inline const wxString mmHistoryOnline::getError() const { return m_error; }
+
+class mmWebPage
+{
+public:
+    mmWebPage(const wxString& ticker);
+    ~mmWebPage();
+private:
+    bool mmYahoo();
+    bool mmMOEX();
+    bool mmMorningStar();
+
+    wxString m_unique_name;
+    wxString m_market;
+    int m_source;
+    int m_type;
+};
+

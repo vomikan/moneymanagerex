@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-10-30 21:40:51.921000.
+ *          AUTO GENERATED at 2020-11-02 15:45:42.792000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE TICKERPROPERTIES_V1 (TICKERID INTEGER PRIMARY KEY,SOURCE INTEGER, /* Yahoo, MorningStar, MOEX */ SYMBOL TEXT COLLATE NOCASE NOT NULL,NAME TEXT,MARKET TEXT, TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond */ SECTOR TEXT, /*Basic Materials, Consumer Cyclical, Financial Services, Real Estate, Consumer Defensive, Healthcare, Utilities, Communication Services, Energy, Industrials, Technology, Other */ INDUSTRY TEXT,DASHBOARD TEXT,NOTES TEXT))");
+                db->ExecuteUpdate(R"(CREATE TABLE TICKERPROPERTIES_V1 (TICKERID INTEGER PRIMARY KEY,UNIQUENAME TEXT UNIQUE COLLATE NOCASE NOT NULL,SOURCE INTEGER, /* Yahoo, MorningStar, MOEX */ SYMBOL TEXT COLLATE NOCASE NOT NULL,SOURCENAME TEXT,MARKET TEXT, TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond */ SECTOR TEXT, /*Basic Materials, Consumer Cyclical, Financial Services, Real Estate, Consumer Defensive, Healthcare, Utilities, Communication Services, Energy, Industrials, Technology, Other */ INDUSTRY TEXT,WEBPAGE TEXT,NOTES TEXT,PRECISION INTEGER))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
@@ -117,6 +117,12 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         explicit TICKERID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
+    struct UNIQUENAME : public DB_Column<wxString>
+    { 
+        static wxString name() { return "UNIQUENAME"; } 
+        explicit UNIQUENAME(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+    };
+    
     struct SOURCE : public DB_Column<int>
     { 
         static wxString name() { return "SOURCE"; } 
@@ -129,10 +135,10 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         explicit SYMBOL(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
-    struct NAME : public DB_Column<wxString>
+    struct SOURCENAME : public DB_Column<wxString>
     { 
-        static wxString name() { return "NAME"; } 
-        explicit NAME(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+        static wxString name() { return "SOURCENAME"; } 
+        explicit SOURCENAME(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
     struct MARKET : public DB_Column<wxString>
@@ -159,10 +165,10 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         explicit INDUSTRY(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
-    struct DASHBOARD : public DB_Column<wxString>
+    struct WEBPAGE : public DB_Column<wxString>
     { 
-        static wxString name() { return "DASHBOARD"; } 
-        explicit DASHBOARD(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+        static wxString name() { return "WEBPAGE"; } 
+        explicit WEBPAGE(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
     struct NOTES : public DB_Column<wxString>
@@ -171,19 +177,27 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         explicit NOTES(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
+    struct PRECISION : public DB_Column<int>
+    { 
+        static wxString name() { return "PRECISION"; } 
+        explicit PRECISION(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
     typedef TICKERID PRIMARY;
     enum COLUMN
     {
         COL_TICKERID = 0
-        , COL_SOURCE = 1
-        , COL_SYMBOL = 2
-        , COL_NAME = 3
-        , COL_MARKET = 4
-        , COL_TYPE = 5
-        , COL_SECTOR = 6
-        , COL_INDUSTRY = 7
-        , COL_DASHBOARD = 8
-        , COL_NOTES = 9
+        , COL_UNIQUENAME = 1
+        , COL_SOURCE = 2
+        , COL_SYMBOL = 3
+        , COL_SOURCENAME = 4
+        , COL_MARKET = 5
+        , COL_TYPE = 6
+        , COL_SECTOR = 7
+        , COL_INDUSTRY = 8
+        , COL_WEBPAGE = 9
+        , COL_NOTES = 10
+        , COL_PRECISION = 11
     };
 
     /** Returns the column name as a string*/
@@ -192,15 +206,17 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         switch(col)
         {
             case COL_TICKERID: return "TICKERID";
+            case COL_UNIQUENAME: return "UNIQUENAME";
             case COL_SOURCE: return "SOURCE";
             case COL_SYMBOL: return "SYMBOL";
-            case COL_NAME: return "NAME";
+            case COL_SOURCENAME: return "SOURCENAME";
             case COL_MARKET: return "MARKET";
             case COL_TYPE: return "TYPE";
             case COL_SECTOR: return "SECTOR";
             case COL_INDUSTRY: return "INDUSTRY";
-            case COL_DASHBOARD: return "DASHBOARD";
+            case COL_WEBPAGE: return "WEBPAGE";
             case COL_NOTES: return "NOTES";
+            case COL_PRECISION: return "PRECISION";
             default: break;
         }
         
@@ -211,15 +227,17 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
     static COLUMN name_to_column(const wxString& name)
     {
         if ("TICKERID" == name) return COL_TICKERID;
+        else if ("UNIQUENAME" == name) return COL_UNIQUENAME;
         else if ("SOURCE" == name) return COL_SOURCE;
         else if ("SYMBOL" == name) return COL_SYMBOL;
-        else if ("NAME" == name) return COL_NAME;
+        else if ("SOURCENAME" == name) return COL_SOURCENAME;
         else if ("MARKET" == name) return COL_MARKET;
         else if ("TYPE" == name) return COL_TYPE;
         else if ("SECTOR" == name) return COL_SECTOR;
         else if ("INDUSTRY" == name) return COL_INDUSTRY;
-        else if ("DASHBOARD" == name) return COL_DASHBOARD;
+        else if ("WEBPAGE" == name) return COL_WEBPAGE;
         else if ("NOTES" == name) return COL_NOTES;
+        else if ("PRECISION" == name) return COL_PRECISION;
 
         return COLUMN(-1);
     }
@@ -232,15 +250,17 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         Self* table_;
     
         int TICKERID;//  primary key
+        wxString UNIQUENAME;
         int SOURCE;
         wxString SYMBOL;
-        wxString NAME;
+        wxString SOURCENAME;
         wxString MARKET;
         int TYPE;
         wxString SECTOR;
         wxString INDUSTRY;
-        wxString DASHBOARD;
+        wxString WEBPAGE;
         wxString NOTES;
+        int PRECISION;
 
         int id() const
         {
@@ -269,6 +289,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             TICKERID = -1;
             SOURCE = -1;
             TYPE = -1;
+            PRECISION = -1;
         }
 
         explicit Data(wxSQLite3ResultSet& q, Self* table = 0)
@@ -276,15 +297,17 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             table_ = table;
         
             TICKERID = q.GetInt(0); // TICKERID
-            SOURCE = q.GetInt(1); // SOURCE
-            SYMBOL = q.GetString(2); // SYMBOL
-            NAME = q.GetString(3); // NAME
-            MARKET = q.GetString(4); // MARKET
-            TYPE = q.GetInt(5); // TYPE
-            SECTOR = q.GetString(6); // SECTOR
-            INDUSTRY = q.GetString(7); // INDUSTRY
-            DASHBOARD = q.GetString(8); // DASHBOARD
-            NOTES = q.GetString(9); // NOTES
+            UNIQUENAME = q.GetString(1); // UNIQUENAME
+            SOURCE = q.GetInt(2); // SOURCE
+            SYMBOL = q.GetString(3); // SYMBOL
+            SOURCENAME = q.GetString(4); // SOURCENAME
+            MARKET = q.GetString(5); // MARKET
+            TYPE = q.GetInt(6); // TYPE
+            SECTOR = q.GetString(7); // SECTOR
+            INDUSTRY = q.GetString(8); // INDUSTRY
+            WEBPAGE = q.GetString(9); // WEBPAGE
+            NOTES = q.GetString(10); // NOTES
+            PRECISION = q.GetInt(11); // PRECISION
         }
 
         Data& operator=(const Data& other)
@@ -292,15 +315,17 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             if (this == &other) return *this;
 
             TICKERID = other.TICKERID;
+            UNIQUENAME = other.UNIQUENAME;
             SOURCE = other.SOURCE;
             SYMBOL = other.SYMBOL;
-            NAME = other.NAME;
+            SOURCENAME = other.SOURCENAME;
             MARKET = other.MARKET;
             TYPE = other.TYPE;
             SECTOR = other.SECTOR;
             INDUSTRY = other.INDUSTRY;
-            DASHBOARD = other.DASHBOARD;
+            WEBPAGE = other.WEBPAGE;
             NOTES = other.NOTES;
+            PRECISION = other.PRECISION;
             return *this;
         }
 
@@ -315,6 +340,11 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             return this->TICKERID == in.v_;
         }
 
+        bool match(const Self::UNIQUENAME &in) const
+        {
+            return this->UNIQUENAME.CmpNoCase(in.v_) == 0;
+        }
+
         bool match(const Self::SOURCE &in) const
         {
             return this->SOURCE == in.v_;
@@ -325,9 +355,9 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             return this->SYMBOL.CmpNoCase(in.v_) == 0;
         }
 
-        bool match(const Self::NAME &in) const
+        bool match(const Self::SOURCENAME &in) const
         {
-            return this->NAME.CmpNoCase(in.v_) == 0;
+            return this->SOURCENAME.CmpNoCase(in.v_) == 0;
         }
 
         bool match(const Self::MARKET &in) const
@@ -350,14 +380,19 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             return this->INDUSTRY.CmpNoCase(in.v_) == 0;
         }
 
-        bool match(const Self::DASHBOARD &in) const
+        bool match(const Self::WEBPAGE &in) const
         {
-            return this->DASHBOARD.CmpNoCase(in.v_) == 0;
+            return this->WEBPAGE.CmpNoCase(in.v_) == 0;
         }
 
         bool match(const Self::NOTES &in) const
         {
             return this->NOTES.CmpNoCase(in.v_) == 0;
+        }
+
+        bool match(const Self::PRECISION &in) const
+        {
+            return this->PRECISION == in.v_;
         }
 
         // Return the data record as a json string
@@ -378,12 +413,14 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         {
             json_writer.Key("TICKERID");
             json_writer.Int(this->TICKERID);
+            json_writer.Key("UNIQUENAME");
+            json_writer.String(this->UNIQUENAME.utf8_str());
             json_writer.Key("SOURCE");
             json_writer.Int(this->SOURCE);
             json_writer.Key("SYMBOL");
             json_writer.String(this->SYMBOL.utf8_str());
-            json_writer.Key("NAME");
-            json_writer.String(this->NAME.utf8_str());
+            json_writer.Key("SOURCENAME");
+            json_writer.String(this->SOURCENAME.utf8_str());
             json_writer.Key("MARKET");
             json_writer.String(this->MARKET.utf8_str());
             json_writer.Key("TYPE");
@@ -392,40 +429,46 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             json_writer.String(this->SECTOR.utf8_str());
             json_writer.Key("INDUSTRY");
             json_writer.String(this->INDUSTRY.utf8_str());
-            json_writer.Key("DASHBOARD");
-            json_writer.String(this->DASHBOARD.utf8_str());
+            json_writer.Key("WEBPAGE");
+            json_writer.String(this->WEBPAGE.utf8_str());
             json_writer.Key("NOTES");
             json_writer.String(this->NOTES.utf8_str());
+            json_writer.Key("PRECISION");
+            json_writer.Int(this->PRECISION);
         }
 
         row_t to_row_t() const
         {
             row_t row;
             row(L"TICKERID") = TICKERID;
+            row(L"UNIQUENAME") = UNIQUENAME;
             row(L"SOURCE") = SOURCE;
             row(L"SYMBOL") = SYMBOL;
-            row(L"NAME") = NAME;
+            row(L"SOURCENAME") = SOURCENAME;
             row(L"MARKET") = MARKET;
             row(L"TYPE") = TYPE;
             row(L"SECTOR") = SECTOR;
             row(L"INDUSTRY") = INDUSTRY;
-            row(L"DASHBOARD") = DASHBOARD;
+            row(L"WEBPAGE") = WEBPAGE;
             row(L"NOTES") = NOTES;
+            row(L"PRECISION") = PRECISION;
             return row;
         }
 
         void to_template(html_template& t) const
         {
             t(L"TICKERID") = TICKERID;
+            t(L"UNIQUENAME") = UNIQUENAME;
             t(L"SOURCE") = SOURCE;
             t(L"SYMBOL") = SYMBOL;
-            t(L"NAME") = NAME;
+            t(L"SOURCENAME") = SOURCENAME;
             t(L"MARKET") = MARKET;
             t(L"TYPE") = TYPE;
             t(L"SECTOR") = SECTOR;
             t(L"INDUSTRY") = INDUSTRY;
-            t(L"DASHBOARD") = DASHBOARD;
+            t(L"WEBPAGE") = WEBPAGE;
             t(L"NOTES") = NOTES;
+            t(L"PRECISION") = PRECISION;
         }
 
         /** Save the record instance in memory to the database. */
@@ -461,7 +504,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
 
     enum
     {
-        NUM_COLUMNS = 10
+        NUM_COLUMNS = 12
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
@@ -471,7 +514,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
 
     DB_Table_TICKERPROPERTIES_V1() : fake_(new Data())
     {
-        query_ = "SELECT TICKERID, SOURCE, SYMBOL, NAME, MARKET, TYPE, SECTOR, INDUSTRY, DASHBOARD, NOTES FROM TICKERPROPERTIES_V1 ";
+        query_ = "SELECT TICKERID, UNIQUENAME, SOURCE, SYMBOL, SOURCENAME, MARKET, TYPE, SECTOR, INDUSTRY, WEBPAGE, NOTES, PRECISION FROM TICKERPROPERTIES_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -501,28 +544,30 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO TICKERPROPERTIES_V1(SOURCE, SYMBOL, NAME, MARKET, TYPE, SECTOR, INDUSTRY, DASHBOARD, NOTES) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO TICKERPROPERTIES_V1(UNIQUENAME, SOURCE, SYMBOL, SOURCENAME, MARKET, TYPE, SECTOR, INDUSTRY, WEBPAGE, NOTES, PRECISION) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE TICKERPROPERTIES_V1 SET SOURCE = ?, SYMBOL = ?, NAME = ?, MARKET = ?, TYPE = ?, SECTOR = ?, INDUSTRY = ?, DASHBOARD = ?, NOTES = ? WHERE TICKERID = ?";
+            sql = "UPDATE TICKERPROPERTIES_V1 SET UNIQUENAME = ?, SOURCE = ?, SYMBOL = ?, SOURCENAME = ?, MARKET = ?, TYPE = ?, SECTOR = ?, INDUSTRY = ?, WEBPAGE = ?, NOTES = ?, PRECISION = ? WHERE TICKERID = ?";
         }
 
         try
         {
             wxSQLite3Statement stmt = db->PrepareStatement(sql);
 
-            stmt.Bind(1, entity->SOURCE);
-            stmt.Bind(2, entity->SYMBOL);
-            stmt.Bind(3, entity->NAME);
-            stmt.Bind(4, entity->MARKET);
-            stmt.Bind(5, entity->TYPE);
-            stmt.Bind(6, entity->SECTOR);
-            stmt.Bind(7, entity->INDUSTRY);
-            stmt.Bind(8, entity->DASHBOARD);
-            stmt.Bind(9, entity->NOTES);
+            stmt.Bind(1, entity->UNIQUENAME);
+            stmt.Bind(2, entity->SOURCE);
+            stmt.Bind(3, entity->SYMBOL);
+            stmt.Bind(4, entity->SOURCENAME);
+            stmt.Bind(5, entity->MARKET);
+            stmt.Bind(6, entity->TYPE);
+            stmt.Bind(7, entity->SECTOR);
+            stmt.Bind(8, entity->INDUSTRY);
+            stmt.Bind(9, entity->WEBPAGE);
+            stmt.Bind(10, entity->NOTES);
+            stmt.Bind(11, entity->PRECISION);
             if (entity->id() > 0)
-                stmt.Bind(10, entity->TICKERID);
+                stmt.Bind(12, entity->TICKERID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();

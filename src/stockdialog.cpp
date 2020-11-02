@@ -28,6 +28,7 @@
 #include "transdialog.h"
 #include "util.h"
 #include "validators.h"
+#include "mmOnline.h"
 
 #include "model/allmodel.h"
 #include "accountdialog.h"
@@ -119,8 +120,13 @@ void mmStockDialog::DataToControls()
     Model_Currency::Data *currency = Model_Currency::GetBaseCurrency();
     if (account) currency = Model_Account::currency(account);
     int currency_precision = Model_Currency::precision(currency);
-    if (currency_precision < Option::instance().SharePrecision())
-        currency_precision = Option::instance().SharePrecision();
+    m_precision = currency_precision;
+
+    Model_Ticker::Data* t = Model_Ticker::instance().get(m_symbol);
+    if (t) m_precision = t->PRECISION;
+
+    if (currency_precision < m_precision)
+        currency_precision = m_precision;
 
     ShowStockHistory();
 }
@@ -270,12 +276,8 @@ void mmStockDialog::OnStockWebButton(wxCommandEvent& /*event*/)
 {
     const wxString stockSymbol = m_stock_symbol_ctrl->GetValue().Trim();
 
-    if (!stockSymbol.IsEmpty())
-    {
-        const wxString& stockURL = Model_Infotable::instance().GetStringInfo("STOCKURL", mmex::weblink::DefStockUrl);
-        const wxString& httpString = wxString::Format(stockURL, stockSymbol);
-        wxLaunchDefaultBrowser(httpString);
-    }
+    wxSharedPtr<mmWebPage> e;
+    e = new mmWebPage(m_symbol);
 }
 
 void mmStockDialog::OnSave(wxCommandEvent& /*event*/)
@@ -322,6 +324,7 @@ void mmStockDialog::OnStockSetup(wxCommandEvent& /*event*/)
             m_stock_symbol_ctrl->ChangeValue(symbol);
             m_symbol = symbol;
         }
+        DataToControls();
         ShowStockHistory();
     }
 }
@@ -397,7 +400,7 @@ void mmStockDialog::ShowStockHistory()
 
     m_list.clear();
     double numTotal = 0.0, commTotal = 0.0;
-    int precision = Option::instance().SharePrecision();
+
     Model_Account::Data* account = Model_Account::instance().get(m_account_id);
     Model_Stock::Data_Set histData = Model_Stock::instance().find(Model_Stock::SYMBOL(m_symbol));
 
@@ -479,17 +482,17 @@ void mmStockDialog::ShowStockHistory()
         m_stock_event_listbox->SetItem(static_cast<long>(idx), 1, mmGetDateForDisplay(i.DATE));
         double value = i.price * i.number + (i.type == "Dividend" ? -i.commission : i.commission);
         if (i.type != "Dividend") value = -value;
-        m_stock_event_listbox->SetItem(static_cast<long>(idx), 2, Model_Account::toString(i.number, account, 0));
-        m_stock_event_listbox->SetItem(static_cast<long>(idx), 3, Model_Account::toString(i.price, account, precision));
-        m_stock_event_listbox->SetItem(static_cast<long>(idx), 4, Model_Account::toString(value, account, precision));
+        m_stock_event_listbox->SetItem(static_cast<long>(idx), 2, Model_Account::toString(i.number, account, floor(i.number) ? 0 : m_precision));
+        m_stock_event_listbox->SetItem(static_cast<long>(idx), 3, Model_Account::toString(i.price, account, m_precision));
+        m_stock_event_listbox->SetItem(static_cast<long>(idx), 4, Model_Account::toString(value, account, m_precision));
         m_stock_event_listbox->SetItem(static_cast<long>(idx), 5, i.notes);
     }
 
     size_t rows = histData.size() - 1;
     m_stock_event_listbox->RefreshItems(0, rows);
 
-    const wxString commStr = Model_Account::toString(commTotal, account, precision);
-    const wxString numberStr = Model_Account::toString(numTotal, account, floor(numTotal) ? 0 : precision);
+    const wxString commStr = Model_Account::toString(commTotal, account, m_precision);
+    const wxString numberStr = Model_Account::toString(numTotal, account, floor(numTotal) ? 0 : m_precision);
     wxString infoStr = "Name TBD";
     infoStr += "\n" + wxString::Format(_("Number of items: %s"), numberStr);
     infoStr += "\n" + wxString::Format(_("Commission paid: %s"), commStr);

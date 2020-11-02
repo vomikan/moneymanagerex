@@ -31,6 +31,7 @@ const std::vector<std::pair<Model_Ticker::TYPE_ENUM, wxString> > Model_Ticker::T
     {Model_Ticker::SHARE, wxString(wxTRANSLATE("Stock"))},
     {Model_Ticker::FUND, wxString(wxTRANSLATE("Fund"))},
     {Model_Ticker::BOND, wxString(wxTRANSLATE("Bond"))},
+    {Model_Ticker::CBOND, wxString(wxTRANSLATE("Corporate Bond"))},
 
 };
 
@@ -101,7 +102,7 @@ wxString Model_Ticker::get_ticker_name(int ticker_id)
 {
     Data* ticker = instance().get(ticker_id);
     if (ticker)
-        return ticker->NAME;
+        return ticker->UNIQUENAME;
     else
         return "";
 }
@@ -144,13 +145,13 @@ Model_Ticker::TYPE_ENUM Model_Ticker::type(const Data& ticker)
     return type(&ticker);
 }
 
-Model_Ticker::Data* Model_Ticker::get(const wxString& symbol)
+Model_Ticker::Data* Model_Ticker::get(const wxString& name)
 {
-    Data* ticker = this->get_one(SYMBOL(symbol));
-    if (ticker) return ticker;
+    Data* unique_name = this->get_one(UNIQUENAME(name));
+    if (unique_name) return unique_name;
 
-    Data_Set items = this->find(SYMBOL(symbol));
-    if (!items.empty()) ticker = this->get(items[0].TICKERID, this->db_);
-    return ticker;
+    Data_Set items = this->find(UNIQUENAME(name));
+    if (!items.empty()) unique_name = this->get(items[0].TICKERID, this->db_);
+    return unique_name;
 }
 

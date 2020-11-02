@@ -24,6 +24,7 @@
 #include "mmTips.h"
 #include "stockdialog.h"
 #include "util.h"
+#include"mmOnline.h"
 #include <algorithm>
 
 #include "model/allmodel.h"
@@ -80,7 +81,7 @@ StocksListCtrl::StocksListCtrl(mmStocksPanel* cp, wxWindow *parent, wxWindowID w
     m_asc = Model_Setting::instance().GetBoolSetting("STOCKS_ASC", true);
 
     m_columns.push_back(PANEL_COLUMN(" ", 25, wxLIST_FORMAT_LEFT));
-    m_columns.push_back(PANEL_COLUMN(_("Symbol"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_LEFT));
+    m_columns.push_back(PANEL_COLUMN(_("Name"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_LEFT));
     m_columns.push_back(PANEL_COLUMN(_("Current Price"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_RIGHT));
     m_columns.push_back(PANEL_COLUMN(_("Init. Date"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_LEFT));
     m_columns.push_back(PANEL_COLUMN(_("Number"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_RIGHT));
@@ -293,12 +294,8 @@ void StocksListCtrl::OnStockWebPage(wxCommandEvent& /*event*/)
     if (m_selected_row < 0) return;
     const wxString stockSymbol = m_stocks[m_selected_row].SYMBOL;
 
-    if (!stockSymbol.IsEmpty())
-    {
-        const wxString& stockURL = Model_Infotable::instance().GetStringInfo("STOCKURL", mmex::weblink::DefStockUrl);
-        const wxString& httpString = wxString::Format(stockURL, stockSymbol);
-        wxLaunchDefaultBrowser(httpString);
-    }
+    wxSharedPtr<mmWebPage> e;
+    e = new mmWebPage(stockSymbol);
 }
 
 void StocksListCtrl::OnListItemActivated(wxListEvent& event)
@@ -572,10 +569,12 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
 
     for (const auto& entry : stocks)
     {
+        Model_Ticker::Data* e = Model_Ticker::instance().get(entry.SYMBOL);
+        const wxString name = e ? e->UNIQUENAME : entry.SYMBOL;
         Data i;
-        if (list.find(entry.SYMBOL) != list.end())
+        if (list.find(name) != list.end())
         {
-            i = list.at(entry.SYMBOL);
+            i = list.at(name);
             i.date = i.date > entry.PURCHASEDATE ? entry.PURCHASEDATE : i.date;
             i.number += entry.NUMSHARES;
             i.commission += entry.COMMISSION;
@@ -596,7 +595,7 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
             i.purchase_price = entry.PURCHASEPRICE * fabs(entry.NUMSHARES);
             i.sector = "TBD";
         }
-        list[entry.SYMBOL] = i;
+        list[name] = i;
     }
 
     m_stocks.clear();

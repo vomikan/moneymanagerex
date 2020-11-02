@@ -53,38 +53,6 @@ void OptionSettingsMisc::Create()
     wxBoxSizer* othersPanelSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(othersPanelSizer);
 
-    wxStaticText* itemStaticTextURL = new wxStaticText(this, wxID_STATIC, _("Stock Quote Web Page"));
-    SetBoldFont(itemStaticTextURL);
-
-    othersPanelSizer->Add(itemStaticTextURL, g_flagsV);
-
-    wxArrayString list;
-    list.Add(mmex::weblink::DefStockUrl);
-    //list.Add("https://www.google.com/search?q=%s");
-    //list.Add("http://quotes.morningstar.com/stockq/c-header?&t=%s");
-    //list.Add("https://www.marketwatch.com/investing/stock/%s");
-    //list.Add("https://www.ifcmarkets.co.in/en/market-data/stocks-prices/%s");
-
-    wxString stockURL = Model_Infotable::instance().GetStringInfo("STOCKURL", mmex::weblink::DefStockUrl);
-    wxComboBox* itemListOfURL = new wxComboBox(this, ID_DIALOG_OPTIONS_TEXTCTRL_STOCKURL, ""
-        , wxDefaultPosition, wxDefaultSize, list);
-    itemListOfURL->SetValue(stockURL);
-
-    othersPanelSizer->Add(itemListOfURL, wxSizerFlags(g_flagsExpand).Proportion(0));
-    itemListOfURL->SetToolTip(_("Clear the field to Reset the value to system default."));
-
-    // Share Precision
-    wxFlexGridSizer* share_precision_sizer = new wxFlexGridSizer(0, 2, 0, 0);
-    share_precision_sizer->Add(new wxStaticText(this, wxID_STATIC, _("Share Precision")), wxSizerFlags(g_flagsExpand).Proportion(0));
-
-    m_share_precision = new wxSpinCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize
-        , wxSP_ARROW_KEYS, 2, 10, Option::instance().SharePrecision());
-    m_share_precision->SetValue(Option::instance().SharePrecision());
-    m_share_precision->SetToolTip(_("Set the precision for Share prices"));
-
-    share_precision_sizer->Add(m_share_precision, wxSizerFlags(g_flagsExpand).Proportion(0));
-    othersPanelSizer->Add(share_precision_sizer, g_flagsBorder1V);
-
     // New transaction dialog settings
     wxStaticBox* transSettingsStaticBox = new wxStaticBox(this, wxID_STATIC, _("New Transaction Dialog Settings"));
     SetBoldFont(transSettingsStaticBox);
@@ -201,22 +169,6 @@ void OptionSettingsMisc::OnBackupChanged(wxCommandEvent& WXUNUSED(event))
     m_max_files->Enable(ChkBackup->GetValue() || ChkBackupUpdate->GetValue());
 }
 
-void OptionSettingsMisc::SaveStocksUrl()
-{
-    wxComboBox* url = static_cast<wxComboBox*>(FindWindow(ID_DIALOG_OPTIONS_TEXTCTRL_STOCKURL));
-    wxString stockURL = url->GetValue();
-    if (!stockURL.IsEmpty())
-    {
-        Model_Infotable::instance().Set("STOCKURL", stockURL);
-    }
-    else
-    {
-        Model_Infotable::Data_Set items = Model_Infotable::instance().find(Model_Infotable::INFONAME("STOCKURL"));
-        if (!items.empty())
-            Model_Infotable::instance().remove(items[0].INFOID);
-    }
-}
-
 bool OptionSettingsMisc::SaveSettings()
 {
     wxChoice* itemChoice = static_cast<wxChoice*>(FindWindow(ID_DIALOG_OPTIONS_DEFAULT_TRANSACTION_PAYEE));
@@ -230,9 +182,6 @@ bool OptionSettingsMisc::SaveSettings()
 
     itemChoice = static_cast<wxChoice*>(FindWindow(ID_DIALOG_OPTIONS_DEFAULT_TRANSACTION_DATE));
     Option::instance().TransDateDefault(itemChoice->GetSelection());
-
-    SaveStocksUrl();
-    Option::instance().SharePrecision(m_share_precision->GetValue());
 
     wxCheckBox* itemCheckBox = static_cast<wxCheckBox*>(FindWindow(ID_DIALOG_OPTIONS_CHK_BACKUP));
     Model_Setting::instance().Set("BACKUPDB", itemCheckBox->GetValue());

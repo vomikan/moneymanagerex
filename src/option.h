@@ -90,9 +90,6 @@ public:
     void SendUsageStatistics(bool value);
     bool SendUsageStatistics();
 
-    void SharePrecision(int value);
-    int SharePrecision();
-
     // Allows a year or financial year to start before or after the 1st of the month.
     void setBudgetDaysOffset(int value);
     int getBudgetDaysOffset() const;

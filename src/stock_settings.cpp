@@ -47,7 +47,7 @@ mmStockSetup::~mmStockSetup()
 }
 
 mmStockSetup::mmStockSetup(wxWindow* parent, const wxString& symbol, int account_id)
-    : m_symbol(symbol)
+    : m_unique_name(symbol)
     , m_account_id(account_id)
 {
 
@@ -63,7 +63,6 @@ mmStockSetup::mmStockSetup(wxWindow* parent, const wxString& symbol, int account
 
         CreateControls();
         dataToControls();
-        ShowStockHistory();
 
         this->SetIcon(mmex::getProgramIcon());
         this->Centre();
@@ -73,30 +72,43 @@ mmStockSetup::mmStockSetup(wxWindow* parent, const wxString& symbol, int account
 
 void mmStockSetup::dataToControls()
 {
-    Model_Ticker::Data* i = Model_Ticker::instance().get(m_symbol);
+
+    Model_Currency::Data *currency = Model_Currency::GetBaseCurrency();
+    int currency_precision = Model_Currency::precision(currency);
+    m_precision = currency_precision;
+
+    Model_Ticker::Data* i = Model_Ticker::instance().get(m_unique_name);
 
     wxTextCtrl* market = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE1));
     wxTextCtrl* webSite = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE2));
+    wxTextCtrl* precisionCtrl = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE4));
 
     if (i)
     {
-        m_stock_symbol_ctrl->Enable(false);
-        market->Enable(false);
-        m_stock_name_ctrl->ChangeValue(i->NAME);
-        //m_stock_notes_ctrl->ChangeValue(i->NOTES);
-        webSite->ChangeValue(i->DASHBOARD);
+        m_stock_unique_name_ctrl->ChangeValue(i->UNIQUENAME);
+        m_stock_unique_name_ctrl->Enable(false);
+        m_stock_name_ctrl->ChangeValue(i->SOURCENAME);
+        m_stock_notes_ctrl->ChangeValue(i->NOTES);
         m_choiceType->SetSelection(i->TYPE);
         m_choiceSource->SetSelection(i->SOURCE);
         m_choiceSector->SetStringSelection(wxGetTranslation(i->SECTOR));
+        webSite->ChangeValue(i->WEBPAGE);
 
+        market->ChangeValue(i->MARKET);
+        m_stock_symbol_ctrl->ChangeValue(i->SYMBOL);
         //i->INDUSTRY = "INDUSTRY";
+
+        m_precision = i->PRECISION;
+        precisionCtrl->ChangeValue(wxString::Format("%i", m_precision));
+
+        m_edit = true;
     }
     else
     {
-
+        m_edit = false;
     }
     wxLogDebug("---------------");
-
+    ShowStockHistory();
 }
 
 void mmStockSetup::CreateControls()
@@ -111,7 +123,7 @@ void mmStockSetup::CreateControls()
     /******************************************************************************
         Items Panel
     *******************************************************************************/
-    wxStaticBox* static_box_sizer = new wxStaticBox(this, wxID_ANY, m_symbol);
+    wxStaticBox* static_box_sizer = new wxStaticBox(this, wxID_ANY, m_unique_name);
     wxStaticBoxSizer* itemStaticBoxSizer4 = new wxStaticBoxSizer(static_box_sizer, wxVERTICAL);
     leftBoxSizer->Add(itemStaticBoxSizer4, 1, wxGROW | wxALL, 10);
     wxPanel* itemPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -123,6 +135,15 @@ void mmStockSetup::CreateControls()
 
     itemPanel->SetSizer(itemBoxSizer4);
     itemBoxSizer4->Add(flex_sizer, g_flagsExpand);
+
+    // Alias  --------------------------------------------
+    wxStaticText* uniqueLabel = new wxStaticText(itemPanel, wxID_STATIC, _("Unique Name"));
+    flex_sizer->Add(uniqueLabel, g_flagsH);
+    uniqueLabel->SetFont(this->GetFont().Bold());
+
+    m_stock_unique_name_ctrl = new mmTextCtrl(itemPanel, wxID_ANY, m_unique_name, wxDefaultPosition
+        , wxDefaultSize, wxTE_PROCESS_ENTER);
+    flex_sizer->Add(m_stock_unique_name_ctrl, g_flagsExpand);
 
     // Source --------------------------------------------
     wxStaticText* sourceLabel = new wxStaticText(itemPanel, wxID_STATIC, _("Source"));
@@ -143,8 +164,7 @@ void mmStockSetup::CreateControls()
     choiceLabel->SetFont(this->GetFont().Bold());
 
     m_choiceType = new wxChoice(itemPanel, wxID_ANY);
-    for (const auto& i : { wxTRANSLATE("Stock"), wxTRANSLATE("Fund")
-        , wxTRANSLATE("Bond") }) {
+    for (const auto& i : Model_Ticker::all_type()) {
         m_choiceType->Append(wxGetTranslation(i), new wxStringClientData(i));
     }
 
@@ -157,7 +177,7 @@ void mmStockSetup::CreateControls()
     flex_sizer->Add(symbolLabel, g_flagsH);
     symbolLabel->SetFont(this->GetFont().Bold());
 
-    m_stock_symbol_ctrl = new mmTextCtrl(itemPanel, wxID_ANY, m_symbol, wxDefaultPosition
+    m_stock_symbol_ctrl = new mmTextCtrl(itemPanel, wxID_ANY, m_unique_name, wxDefaultPosition
         , wxDefaultSize, wxTE_PROCESS_ENTER);
     flex_sizer->Add(m_stock_symbol_ctrl, g_flagsExpand);
 
@@ -184,11 +204,22 @@ void mmStockSetup::CreateControls()
     flex_sizer->Add(m_choiceSector, g_flagsExpand);
 
     // Web --------------------------------------------
-    flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Dashboard")), g_flagsH);
-    wxTextCtrl* webSite = new wxTextCtrl(itemPanel, wxID_FILE2, "", wxDefaultPosition
-        , wxSize(200, 90), wxTE_MULTILINE);
+    flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Web Page")), g_flagsH);
+    wxTextCtrl* webPage = new wxTextCtrl(itemPanel, wxID_FILE2);
+    flex_sizer->Add(webPage, g_flagsExpand);
 
-    itemBoxSizer4->Add(webSite, g_flagsExpand);
+    // Precision --------------------------------------------
+    flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Precision")), g_flagsH);
+    wxTextCtrl* precisionCtrl = new wxTextCtrl(itemPanel, wxID_FILE4);
+    flex_sizer->Add(precisionCtrl, g_flagsExpand);
+
+    // Notes --------------------------------------------
+    flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Notes")), g_flagsH);
+    m_stock_notes_ctrl = new mmTextCtrl(itemPanel, wxID_FILE3, "", wxDefaultPosition
+        , wxDefaultSize, wxTE_MULTILINE);
+    m_stock_notes_ctrl->SetMinSize(wxSize(150, 100));
+
+    itemBoxSizer4->Add(m_stock_notes_ctrl, g_flagsExpand);
 
     //---------------------------------------------
 
@@ -198,8 +229,9 @@ void mmStockSetup::CreateControls()
     wxStaticBoxSizer* historyStaticBoxSizer = new wxStaticBoxSizer(historyStaticBox, wxVERTICAL);
     rightBoxSizer->Add(historyStaticBoxSizer, g_flagsExpand);
 
-    m_price_listbox = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxSize(220, 150)
+    m_price_listbox = new wxListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize
         , wxLC_REPORT);
+    m_price_listbox->SetMinSize(wxSize(220, 150));
     historyStaticBoxSizer->Add(m_price_listbox, g_flagsExpand);
     m_price_listbox->SetToolTip(_("Stock Price History"));
 
@@ -287,11 +319,11 @@ void mmStockSetup::CreateControls()
 
 void mmStockSetup::OnHistoryDownloadButton(wxCommandEvent& /*event*/)
 {
-    wxString symbol = m_stock_symbol_ctrl->GetValue();
+    wxString symbol = m_stock_unique_name_ctrl->GetValue().Trim();
     if (symbol.IsEmpty())
         return;
 
-    m_symbol = symbol.Upper();
+    m_unique_name = symbol.Upper();
     wxTextCtrl* m = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE1));
     wxString market = m ? m->GetValue() : "";
     int s = m_choiceSource->GetSelection();
@@ -304,9 +336,9 @@ void mmStockSetup::OnHistoryDownloadButton(wxCommandEvent& /*event*/)
         if (c) currency = c->CURRENCY_SYMBOL;
     }
 
-    mmOnline* o = new mmOnline(m_symbol, market, currency, s, t);
+    wxSharedPtr<mmHistoryOnline> o;
+    o = new mmHistoryOnline(m_unique_name, market, currency, s, t);
     wxLogDebug("Error: %s", o->getError());
-    delete o;
     ShowStockHistory();
 }
 
@@ -314,50 +346,52 @@ void mmStockSetup::ShowStockHistory()
 {
     m_price_listbox->DeleteAllItems();
 
-    if (m_symbol.IsEmpty())
+    if (m_unique_name.IsEmpty())
         return;
 
-    Model_StockHistory::Data_Set histData = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(m_symbol));
+    Model_Ticker::Data* i = Model_Ticker::instance().get(m_unique_name);
+    i->PRECISION;
+
+    Model_StockHistory::Data_Set histData = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(m_unique_name));
     std::stable_sort(histData.begin(), histData.end(), SorterByDATE());
     std::reverse(histData.begin(), histData.end());
     if (histData.size() > 300)
         histData.resize(300);
     size_t rows = histData.size() - 1;
-    if (!histData.empty())
+
+    for (size_t idx = 0; idx < histData.size(); idx++)
     {
-        for (size_t idx = 0; idx < histData.size(); idx++)
+        wxListItem item;
+        item.SetId(static_cast<long>(idx));
+        item.SetData(histData.at(idx).HISTID);
+        m_price_listbox->InsertItem(item);
+
+
+        const wxDate dtdt = Model_StockHistory::DATE(histData.at(idx));
+        const wxString dispAmount = Model_Currency::toString(histData.at(idx).VALUE, nullptr, 4);
+        m_price_listbox->SetItem(static_cast<long>(idx), 0, mmGetDateForDisplay(histData.at(idx).DATE));
+        m_price_listbox->SetItem(static_cast<long>(idx), 1, dispAmount);
+
+        wxString update_type;
+        switch (histData.at(idx).UPDTYPE)
         {
-            wxListItem item;
-            item.SetId(static_cast<long>(idx));
-            item.SetData(histData.at(idx).HISTID);
-            m_price_listbox->InsertItem(item);
-
-
-            const wxDate dtdt = Model_StockHistory::DATE(histData.at(idx));
-            const wxString dispAmount = Model_Currency::toString(histData.at(idx).VALUE, nullptr, Option::instance().SharePrecision());
-            m_price_listbox->SetItem(static_cast<long>(idx), 0, mmGetDateForDisplay(histData.at(idx).DATE));
-            m_price_listbox->SetItem(static_cast<long>(idx), 1, dispAmount);
-
-            wxString update_type;
-            switch (histData.at(idx).UPDTYPE)
-            {
-            case Model_StockHistory::MANUAL:
-                update_type = "M";
-                break;
-            case Model_StockHistory::CURRENT:
-                update_type = "*";
-                break;
-            default:
-                break;
-            }
-
-            m_price_listbox->SetItem(static_cast<long>(idx), 2, update_type);
-            if (idx == 0)
-            {
-                m_history_date_ctrl->SetValue(dtdt);
-                m_history_price_ctrl->SetValue(dispAmount);
-            }
+        case Model_StockHistory::MANUAL:
+            update_type = "M";
+            break;
+        case Model_StockHistory::CURRENT:
+            update_type = "*";
+            break;
+        default:
+            break;
         }
+
+        m_price_listbox->SetItem(static_cast<long>(idx), 2, update_type);
+        if (idx == 0)
+        {
+            m_history_date_ctrl->SetValue(dtdt);
+            m_history_price_ctrl->SetValue(dispAmount);
+        }
+
         m_price_listbox->RefreshItems(0, rows);
     }
 }
@@ -436,7 +470,7 @@ void mmStockSetup::OnHistoryImportButton(wxCommandEvent& /*event*/)
                 continue;
 
             data = Model_StockHistory::instance().create();
-            data->SYMBOL = m_symbol;
+            data->SYMBOL = m_unique_name;
             data->DATE = dateStr;
             data->VALUE = price;
             data->UPDTYPE = 2;
@@ -492,7 +526,7 @@ void mmStockSetup::OnListItemSelected(wxListEvent& event)
     if (histData->HISTID > 0)
     {
         m_history_date_ctrl->SetValue(Model_StockHistory::DATE(*histData));
-        m_history_price_ctrl->SetValue(Model_Currency::toString(histData->VALUE, nullptr, Option::instance().SharePrecision()));
+        m_history_price_ctrl->SetValue(Model_Currency::toString(histData->VALUE, nullptr, m_precision));
     }
 }
 
@@ -517,7 +551,7 @@ void mmStockSetup::OnHistoryDeleteButton(wxCommandEvent& /*event*/)
 
 void mmStockSetup::OnHistoryAddButton(wxCommandEvent& /*event*/)
 {
-    if (m_symbol.IsEmpty())
+    if (m_unique_name.IsEmpty())
         return;
 
     wxString listStr;
@@ -528,7 +562,7 @@ void mmStockSetup::OnHistoryAddButton(wxCommandEvent& /*event*/)
     if (!Model_Currency::fromString(currentPriceStr, dPrice) || (dPrice < 0.0))
         return;
 
-    long histID = Model_StockHistory::instance().addUpdate(m_symbol, m_history_date_ctrl->GetValue(), dPrice, Model_StockHistory::MANUAL);
+    long histID = Model_StockHistory::instance().addUpdate(m_unique_name, m_history_date_ctrl->GetValue(), dPrice, Model_StockHistory::MANUAL);
     long i;
     for (i = 0; i < m_price_listbox->GetItemCount(); i++)
     {
@@ -554,7 +588,7 @@ void mmStockSetup::OnHistoryAddButton(wxCommandEvent& /*event*/)
     }
     if (i != m_price_listbox->GetItemCount())
     {
-        listStr = Model_Currency::toString(dPrice, nullptr, Option::instance().SharePrecision());
+        listStr = Model_Currency::toString(dPrice, nullptr, m_precision);
         m_price_listbox->SetItem(i, 0, mmGetDateForDisplay(m_history_date_ctrl->GetValue().FormatISODate()));
         m_price_listbox->SetItem(i, 1, listStr);
     }
@@ -563,30 +597,43 @@ void mmStockSetup::OnHistoryAddButton(wxCommandEvent& /*event*/)
 
 void mmStockSetup::OnTextEntered(wxCommandEvent& event)
 {
-    Model_Currency::Data *currency = Model_Currency::GetBaseCurrency();
-
-    int currency_precision = Model_Currency::precision(currency);
-    if (currency_precision < Option::instance().SharePrecision())
-        currency_precision = Option::instance().SharePrecision();
-
     if (event.GetId() == m_history_price_ctrl->GetId())
     {
-        m_history_price_ctrl->Calculate(Option::instance().SharePrecision());
+        m_history_price_ctrl->Calculate(m_precision);
     }
 
 }
 
 void mmStockSetup::OnOk(wxCommandEvent& WXUNUSED(event))
 {
-    m_symbol = m_stock_symbol_ctrl->GetValue();
-    wxTextCtrl* webSite = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE2));
+    m_unique_name = m_stock_unique_name_ctrl->GetValue().Trim();
 
-    Model_Ticker::Data* i = Model_Ticker::instance().get(m_symbol);
+    Model_Ticker::Data_Set n = Model_Ticker::instance().find(Model_Ticker::UNIQUENAME(m_unique_name));
+    if (!m_edit && (m_unique_name.empty() || !n.empty())) {
+        return dataToControls();
+        //return mmErrorDialogs::ToolTip4Object(m_stock_unique_name_ctrl
+        //    , _("Please insert an unique name for the stock"), _("Invalid name"));
+    }
+
+    wxString symbol = m_stock_symbol_ctrl->GetValue().Trim();
+    if (symbol.empty()) {
+        return mmErrorDialogs::ToolTip4Object(m_stock_symbol_ctrl
+            , _("Please insert a ticker for the stock"), _("Invalid value"));
+    }
+
+    wxTextCtrl * precisionCtrl = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE4));
+    long value;
+    if (!precisionCtrl->GetValue().ToLong(&value)) {
+        value = 2;
+    }
+    m_precision = static_cast<int>(value);
+
+    Model_Ticker::Data* i = Model_Ticker::instance().get(m_unique_name);
 
     if (!i)
     {
         i = Model_Ticker::instance().create();
-        i->SYMBOL = m_symbol;
+        i->UNIQUENAME = m_unique_name;
     }
 
     int t = m_choiceType->GetSelection();
@@ -601,10 +648,15 @@ void mmStockSetup::OnOk(wxCommandEvent& WXUNUSED(event))
     int s = m_choiceSource->GetSelection();
     if (s < 0) s = 0;
     i->SOURCE = s;
+    wxTextCtrl* market = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE1));
+    i->MARKET = market->GetValue().Trim();
     //i->INDUSTRY = "INDUSTRY";
-    i->DASHBOARD = webSite->GetValue();
-    i->NAME = m_stock_name_ctrl->GetValue();
-    //i->NOTES = "NOTES";
+    i->SYMBOL = symbol;
+    i->SOURCENAME = m_stock_name_ctrl->GetValue();
+    i->NOTES = m_stock_notes_ctrl->GetValue();
+    wxTextCtrl* webSite = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE2));
+    i->WEBPAGE = webSite->GetValue();
+    i->PRECISION = m_precision;
 
     Model_Ticker::instance().save(i);
 

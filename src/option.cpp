@@ -262,17 +262,6 @@ int Option::TransDateDefault()
     return m_transDateDefault;
 }
 
-void Option::SharePrecision(int value)
-{
-    Model_Infotable::instance().Set("SHARE_PRECISION", value);
-    m_sharePrecision = value;
-}
-
-int Option::SharePrecision()
-{
-    return m_sharePrecision;
-}
-
 void Option::SendUsageStatistics(bool value)
 {
     m_usageStatistics = value;

@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-10-30 21:40:51.921000.
+ *          AUTO GENERATED at 2020-11-02 15:45:42.792000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -418,15 +418,6 @@ struct SorterByCURRVALUE
     }
 };
 
-struct SorterByDASHBOARD
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.DASHBOARD) < (y.DASHBOARD);
-    }
-};
-
 struct SorterByDATE
 { 
     template<class DATA>
@@ -634,15 +625,6 @@ struct SorterByMINIMUMPAYMENT
     }
 };
 
-struct SorterByNAME
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.NAME) < (y.NAME);
-    }
-};
-
 struct SorterByNEXTOCCURRENCEDATE
 { 
     template<class DATA>
@@ -721,6 +703,15 @@ struct SorterByPFX_SYMBOL
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.PFX_SYMBOL) < (y.PFX_SYMBOL);
+    }
+};
+
+struct SorterByPRECISION
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.PRECISION) < (y.PRECISION);
     }
 };
 
@@ -856,6 +847,15 @@ struct SorterBySOURCE
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.SOURCE) < (y.SOURCE);
+    }
+};
+
+struct SorterBySOURCENAME
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.SOURCENAME) < (y.SOURCENAME);
     }
 };
 
@@ -1048,6 +1048,15 @@ struct SorterByTYPE
     }
 };
 
+struct SorterByUNIQUENAME
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.UNIQUENAME) < (y.UNIQUENAME);
+    }
+};
+
 struct SorterByUNIT_NAME
 { 
     template<class DATA>
@@ -1108,6 +1117,15 @@ struct SorterByVALUECHANGERATE
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.VALUECHANGERATE) < (y.VALUECHANGERATE);
+    }
+};
+
+struct SorterByWEBPAGE
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.WEBPAGE) < (y.WEBPAGE);
     }
 };
 

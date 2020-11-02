@@ -41,7 +41,7 @@ private:
     void CreateControls();
     void dataToControls();
     void OnOk(wxCommandEvent& event);
-    wxString m_symbol;
+    wxString m_unique_name;
     wxChoice* m_choiceType;
     wxChoice* m_choiceSource;
     wxChoice* m_choiceSector;
@@ -51,8 +51,12 @@ private:
     wxListCtrl* m_price_listbox;
     mmTextCtrl* m_stock_name_ctrl;
     mmTextCtrl* m_stock_symbol_ctrl;
+    mmTextCtrl* m_stock_unique_name_ctrl;
+    mmTextCtrl* m_stock_notes_ctrl;
 
     int m_account_id;
+    int m_precision;
+    bool m_edit;
 
     void OnHistoryImportButton(wxCommandEvent& event);
     void OnHistoryDownloadButton(wxCommandEvent& event);
@@ -66,4 +70,4 @@ private:
 
 };
 
-inline const wxString mmStockSetup::getSymbol() const { return m_symbol; }
+inline const wxString mmStockSetup::getSymbol() const { return m_unique_name; }

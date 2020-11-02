@@ -7,7 +7,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-10-30 21:40:54.197000.
+ *          AUTO GENERATED at 2020-11-02 15:45:53.718000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -127,9 +127,10 @@ const std::vector<wxString> dbUpgradeQuery =
         
         CREATE TABLE IF NOT EXISTS TICKERPROPERTIES_V1 (
         TICKERID INTEGER PRIMARY KEY,
+        UNIQUENAME TEXT UNIQUE COLLATE NOCASE NOT NULL,
         SOURCE INTEGER, /* Yahoo, MorningStar, MOEX */
         SYMBOL TEXT COLLATE NOCASE NOT NULL,
-        NAME TEXT,
+        SOURCENAME TEXT,
         MARKET TEXT, 
         TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond */ 
         SECTOR TEXT, /*Basic Materials
@@ -145,8 +146,9 @@ const std::vector<wxString> dbUpgradeQuery =
         , Technology
         , Other */ 
         INDUSTRY TEXT,
-        DASHBOARD TEXT,
-        NOTES TEXT
+        WEBPAGE TEXT,
+        NOTES TEXT,
+        PRECISION INTEGER
         );
         CREATE INDEX IF NOT EXISTS IDX_TICKER ON TICKERPROPERTIES_V1 (SYMBOL, TICKERID);
         
@@ -155,7 +157,7 @@ const std::vector<wxString> dbUpgradeQuery =
         STOCKID integer primary key
         , HELDAT integer
         , PURCHASEDATE TEXT NOT NULL
-        , SYMBOL TEXT
+        , SYMBOL TEXT NOT NULL
         , NUMSHARES numeric
         , PURCHASEPRICE numeric NOT NULL
         , NOTES TEXT
