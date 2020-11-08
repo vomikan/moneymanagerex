@@ -28,16 +28,15 @@
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
 
-mmHistoryOnline::mmHistoryOnline(const wxString& unique_name, const wxString& market, const wxString& currency, int source, int type) :
-    m_unique_name(unique_name)
-    , m_type(type)
-    , m_source(source)
-    , m_market(market)
-    , m_currency(currency)
+mmHistoryOnline::mmHistoryOnline(Model_Ticker::Data* t, const wxString& currency) :
+    m_currency(currency)
 {
 
-    Model_Ticker::Data* i = Model_Ticker::instance().get(m_unique_name);
-    m_ticker = i->SYMBOL;
+    m_unique_name = t->UNIQUENAME;
+    m_ticker = t->SYMBOL;
+    m_type = t->TYPE;
+    m_source = t->SOURCE;
+    m_market = t->MARKET;
 
     Model_StockHistory::Data_Set d = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(m_unique_name));
     std::stable_sort(d.begin(), d.end(), SorterByDATE());
@@ -83,9 +82,13 @@ bool mmHistoryOnline::mmYahoo()
 {
     wxLongLong begin = m_date.GetValue();
 
+    wxString ticker = m_ticker;
+    if (!ticker.Contains(".") && !m_market.empty()) {
+        ticker = m_ticker + "." + m_market;
+    }
     const wxString URL = wxString::Format(
         "https://query1.finance.yahoo.com/v8/finance/chart/%s?period1=%zu&period2=%zu&interval=1d&fields=currency"
-        , m_ticker, m_date.GetTicks(), wxDate::Today().GetTicks());
+        , ticker, m_date.GetTicks(), wxDate::Today().GetTicks());
 
     wxString json_data;
     auto err_code = http_get_data(URL, json_data);
@@ -173,39 +176,44 @@ bool mmHistoryOnline::mmYahoo()
             history[time] = rate;
         }
         saveData(history);
+        m_error = "";
         return true;
     }
-    m_error = _("Error");
+
     return false;
 }
 
 bool mmHistoryOnline::mmMOEX()
 {
+    /*
+    shortname="VTBG ETF"
+    https://iss.moex.com/iss/securities.xml?q=VTBG
+    Get primary_boardid="TQTD" or marketprice_boardid="TQTD" from row for m_market
+    */
+
     const wxString today = wxDate::Today().FormatISODate();
     const wxString dateStr = m_date.FormatISODate();
     std::map<time_t, float> history;
 
-    wxString type;
+    wxString type = "shares";
+    m_market = m_market.empty() ? "TQBR" : m_market;
     switch (m_type)
     {
-    case Model_Ticker::FUND:
-        type = "shares/boards/TQTF";
-        break;
     case Model_Ticker::BOND:
-        type = "bonds/boards/TQOB";
+        type = "bonds";
+        m_market = m_market.empty() ? "TQOB" : m_market;
         break;
-    case Model_Ticker::CBOND:
-        type = "bonds/boards/TQCB";
+    case Model_Ticker::FUND:
+        m_market = m_market.empty() ? "TQTF" : m_market;
         break;
-        
+
     default:
-        type = "shares/boards/TQBR";
         break;
     }
 
     const wxString URL = wxString::Format(
-        "https://iss.moex.com/iss/history/engines/stock/markets/%s/securities/%s/candles.xml?from=%s&till=%s&interval=24&start=0"
-        , type, m_ticker, dateStr, today);
+        "https://iss.moex.com/iss/history/engines/stock/markets/%s/boards/%s/securities/%s/candles.xml?from=%s&till=%s&interval=24&start=0"
+        , type, m_market, m_ticker, dateStr, today);
 
     auto err_code = http_get_data(URL, m_error);
 
@@ -266,10 +274,10 @@ bool mmHistoryOnline::mmMOEX()
                     history[date] = value;
                 }
 
-                if (m_type == Model_Ticker::CBOND || m_type == Model_Ticker::BOND) {
+                if (m_type == Model_Ticker::BOND) {
                     wxString att3 =
                         child->GetAttribute(attribute3, "null");
-                    double value;
+
                     if (att3.ToDouble(&value))
                     {
                         history[date] = value / 100 * history[date];
@@ -434,6 +442,8 @@ mmWebPage::mmWebPage(const wxString & name)
     Model_Ticker::Data* d = Model_Ticker::instance().get(name);
     if (d)
     {
+        m_market = d->MARKET;
+
         wxString httpString = wxString::Format(d->WEBPAGE, d->SYMBOL);
         if (!httpString.empty())
         {
@@ -444,15 +454,15 @@ mmWebPage::mmWebPage(const wxString & name)
         switch (d->SOURCE)
         {
         case Model_Ticker::MOEX:
-            mmMOEX();
+            mmMOEX(d);
             break;
 
         case Model_Ticker::MS:
-            mmMorningStar();
+            mmMorningStar(d);
             break;
 
         default:
-            mmYahoo();
+            mmYahoo(d);
             break;
         }
     }
@@ -463,7 +473,7 @@ mmWebPage::mmWebPage(const wxString & name)
 
 }
 
-bool mmWebPage::mmYahoo()
+bool mmWebPage::mmYahoo(Model_Ticker::Data* d)
 {
     // "https://www.google.com/search?q=%s"
     // "https://www.marketwatch.com/investing/stock/%s"
@@ -472,58 +482,35 @@ bool mmWebPage::mmYahoo()
     // Will display the stock page when using Looks up the current value
     const wxString stockURL = "http://finance.yahoo.com/echarts?s=%s";
 
-    if (!m_unique_name.IsEmpty())
-    {
-        //const wxString& stockURL = Model_Infotable::instance().GetStringInfo("STOCKURL", mmex::weblink::DefStockUrl);
-        const wxString& httpString = wxString::Format(stockURL, m_unique_name);
-        wxLaunchDefaultBrowser(httpString);
-        return true;
+    wxString ticker = d->SYMBOL;
+    if (!ticker.Contains(".") && !m_market.empty()) {
+        ticker = ticker + "." + m_market;
     }
 
-    return false;
+    //const wxString& stockURL = Model_Infotable::instance().GetStringInfo("STOCKURL", mmex::weblink::DefStockUrl);
+    const wxString& httpString = wxString::Format(stockURL, ticker);
+    wxLaunchDefaultBrowser(httpString);
+    return true;
+
 }
 
-bool mmWebPage::mmMOEX()
+bool mmWebPage::mmMOEX(Model_Ticker::Data* d)
 {
-    const wxString stockURL = "https://www.moex.com/ru/issue.aspx?board=%s&code=%s";
+    const wxString stockURL = "https://www.moex.com/ru/issue.aspx?code=%s";
 
-    if (!m_unique_name.IsEmpty())
-    {
-        wxString type;
-        switch (m_type)
-        {
-        case Model_Ticker::FUND:
-            type = "TQTF";
-            break;
-        case Model_Ticker::BOND:
-            type = "TQOB";
-            break;
-        case Model_Ticker::CBOND:
-            type = "TQCB";
-            break;
+    const wxString& httpString = wxString::Format(stockURL, d->SYMBOL);
+    wxLaunchDefaultBrowser(httpString);
+    return true;
 
-        default:
-            type = "TQBR";
-            break;
-        }
-
-        const wxString& httpString = wxString::Format(stockURL, type, m_unique_name);
-        wxLaunchDefaultBrowser(httpString);
-        return true;
-    }
-
-    return false;
 }
 
-bool mmWebPage::mmMorningStar()
+bool mmWebPage::mmMorningStar(Model_Ticker::Data* d)
 {
-    if (!m_unique_name.IsEmpty())
-    {
-        const wxString stockURL = "http://quotes.morningstar.com/stockq/c-header?&t=%s";
-        const wxString& httpString = wxString::Format(stockURL, m_unique_name);
-        wxLaunchDefaultBrowser(httpString);
-        return true;
-    }
-    return false;
+
+    const wxString stockURL = "http://quotes.morningstar.com/stockq/c-header?&t=%s";
+    const wxString& httpString = wxString::Format(stockURL, d->SYMBOL);
+    wxLaunchDefaultBrowser(httpString);
+    return true;
+
 }
 

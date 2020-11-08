@@ -1,5 +1,6 @@
 /*******************************************************
  Copyright (C) 2013,2014 Guan Lisheng (guanlisheng@gmail.com)
+ Copyright (C) 2020 Nikolay Akimov
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -18,6 +19,7 @@
 
 #include "Model_Stock.h"
 #include "Model_StockHistory.h"
+#include "Model_Ticker.h"
 
 Model_Stock::Model_Stock()
 : Model<DB_Table_STOCK_V1>()
@@ -99,86 +101,75 @@ bool Model_Stock::remove(int id)
     return this->remove(id, db_);
 }
 
-/**
-Returns the last price date of a given stock
-*/
-wxString Model_Stock::lastPriceDate(const Self::Data* entity)
+// ------------------------------------------
+
+Model_StockStat::~Model_StockStat() {}
+
+Model_StockStat::Model_StockStat(const wxString & ticker, int accountID, double current_price)
 {
-    wxString dtStr = entity->PURCHASEDATE;
-    Model_StockHistory::Data_Set histData = Model_StockHistory::instance().find(SYMBOL(entity->SYMBOL));
 
-    std::sort(histData.begin(), histData.end(), SorterByDATE());
-    if (!histData.empty())
-        dtStr = histData.back().DATE;
+    Model_Account::Data* a = Model_Account::instance().get(accountID);
+    Model_Ticker::Data* t = Model_Ticker::instance().get(ticker);
+    Model_Stock::Data_Set s = Model_Stock::instance().find(Model_Stock::HELDAT(a->ACCOUNTID)
+        , Model_Stock::SYMBOL(t->UNIQUENAME));
 
-    return dtStr;
-}
+    bool marginal = false;
+    m_purchase_total = 0.0;
+    m_money_total = 0.0;
+    m_everage_price = 0.0;
+    m_commission = 0.0;
 
-/**
-Returns the total stock balance at a given date
-*/
-double Model_Stock::getDailyBalanceAt(const Model_Account::Data *account, const wxDate& date)
-{
-    wxString strDate = date.FormatISODate();
-    std::map<int, double> totBalance;
+    std::vector<double> shares;
 
-    Data_Set stocks = this->instance().find(HELDAT(account->id()));
-    for (const auto & stock : stocks)
+    for (const auto& item : s)
     {
-        wxString precValueDate, nextValueDate;
-        Model_StockHistory::Data_Set stock_hist = Model_StockHistory::instance().find(SYMBOL(stock.SYMBOL));
-        std::stable_sort(stock_hist.begin(), stock_hist.end(), SorterByDATE());
-        std::reverse(stock_hist.begin(), stock_hist.end());
-
-        double valueAtDate = 0.0,  precValue = 0.0, nextValue = 0.0;
-
-        for (const auto & hist : stock_hist)
+        for (int i = 0; i < abs(item.NUMSHARES); i++)
         {
-            // test for the date requested
-            if (hist.DATE == strDate)
-            {
-                valueAtDate = hist.VALUE;
-                break;
+            marginal = !shares.empty() ? shares[0] < 0.0 : item.NUMSHARES < 0;
+            if (!marginal && item.NUMSHARES > 0) {
+                shares.push_back(item.PURCHASEPRICE);
+                m_purchase_total += item.PURCHASEPRICE;
             }
-            // if not found, search for previous and next date
-            if (precValue == 0.0 && hist.DATE < strDate)
-            {
-                precValue = hist.VALUE;
-                precValueDate = hist.DATE;
+            else if (marginal && item.NUMSHARES < 0) {
+                shares.push_back(-item.PURCHASEPRICE);
+                m_purchase_total += -item.PURCHASEPRICE;
             }
-            if (hist.DATE > strDate)
+            else if (!marginal && item.NUMSHARES < 0)
             {
-                nextValue = hist.VALUE;
-                nextValueDate = hist.DATE;
+                m_purchase_total += -item.PURCHASEPRICE; //z тут добавил минус для SBER
+                m_money_total += item.PURCHASEPRICE;
+                shares.erase(shares.begin());
             }
-            // end conditions: prec value assigned and price date < requested date
-            if (precValue != 0.0 && hist.DATE < strDate)
-                break;
+            else if (marginal && item.NUMSHARES > 0)
+            {
+                m_purchase_total += item.PURCHASEPRICE;
+                m_money_total += item.PURCHASEPRICE;
+                shares.erase(shares.begin());
+            }
         }
-        if (valueAtDate == 0.0)
-        {
-            //  if previous not found but if the given date is after purchase date, takes purchase price
-            if (precValue == 0.0 && date >= PURCHASEDATE(stock))
-            {
-                precValue = stock.PURCHASEPRICE;
-                precValueDate = stock.PURCHASEDATE;
-            }
-            //  if next not found and the accoung is open, takes previous date
-            if (nextValue == 0.0 && Model_Account::status(account) == Model_Account::OPEN)
-            {
-                nextValue = precValue;
-                nextValueDate = precValueDate;
-            }
-            if (precValue > 0.0 && nextValue > 0.0 && precValueDate >= stock.PURCHASEDATE && nextValueDate >= stock.PURCHASEDATE)
-                valueAtDate = precValue;
-        }
-
-        totBalance[stock.id()] += stock.NUMSHARES * valueAtDate;
+        m_commission += item.COMMISSION;
     }
 
-    double balance = 0.0;
-    for (const auto& it : totBalance)
-        balance += it.second;
+    m_count = static_cast<double>(shares.size());
 
-    return balance;
+    if (m_count == 0.0) {
+        m_gain_loss = -(m_purchase_total + m_commission);
+    }
+    else if (marginal) {
+        m_purchase_total -= m_commission;
+        m_everage_price = m_purchase_total / m_count;
+        m_gain_loss = (current_price - m_everage_price) * m_count;
+        m_count = -m_count;
+    }
+    else {
+        m_purchase_total += m_commission;
+        m_everage_price = m_purchase_total / m_count;
+        m_gain_loss = (current_price - m_everage_price) * m_count;
+    }
+
+    wxLogDebug(" Stock total: %.2f  Money total: %.2f  Count: %f Gain_Loss: %f"
+        , m_purchase_total, m_money_total, m_count, m_gain_loss);
+
+    return;
+
 }

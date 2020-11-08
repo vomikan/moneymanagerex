@@ -17,6 +17,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ********************************************************/
 
 #include "Model_StockHistory.h"
+#include "Model_Stock.h"
 
 Model_StockHistory::Model_StockHistory()
 : Model<DB_Table_STOCKHISTORY_V1>()
@@ -80,3 +81,17 @@ int Model_StockHistory::addUpdate(const wxString& symbol, const wxDate& date, do
     stockHist->UPDTYPE = type;
     return save(stockHist);
 }
+
+double Model_StockHistory::getLastRate(const wxString& symbol)
+{
+    Data_Set histData = instance().find(Model_Stock::SYMBOL(symbol));
+    std::stable_sort(histData.begin(), histData.end(), SorterByDATE());
+
+    if (!histData.empty())
+        return histData.back().VALUE;
+    else
+    {
+        return NULL;
+    }
+}
+

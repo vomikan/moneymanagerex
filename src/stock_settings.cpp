@@ -19,6 +19,7 @@
 #include "stock_settings.h"
 #include "constants.h"
 #include "mmTips.h"
+#include "maincurrencydialog.h"
 #include "images_list.h"
 #include "validators.h"
 #include "paths.h"
@@ -37,6 +38,7 @@ wxBEGIN_EVENT_TABLE(mmStockSetup, wxDialog)
     EVT_BUTTON(wxID_DELETE, mmStockSetup::OnHistoryDeleteButton)
     EVT_BUTTON(wxID_REFRESH, mmStockSetup::OnHistoryDownloadButton)
     EVT_BUTTON(wxID_OPEN, mmStockSetup::OnHistoryImportButton)
+    EVT_BUTTON(wxID_CONVERT, mmStockSetup::OnCurrency)
     EVT_LIST_ITEM_SELECTED(wxID_ANY, mmStockSetup::OnListItemSelected)
 wxEND_EVENT_TABLE()
 
@@ -72,19 +74,15 @@ mmStockSetup::mmStockSetup(wxWindow* parent, const wxString& symbol, int account
 
 void mmStockSetup::dataToControls()
 {
-
-    Model_Currency::Data *currency = Model_Currency::GetBaseCurrency();
-    int currency_precision = Model_Currency::precision(currency);
-    m_precision = currency_precision;
-
     Model_Ticker::Data* i = Model_Ticker::instance().get(m_unique_name);
-
-    wxTextCtrl* market = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE1));
-    wxTextCtrl* webSite = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE2));
-    wxTextCtrl* precisionCtrl = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE4));
 
     if (i)
     {
+        wxTextCtrl* market = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE1));
+        wxTextCtrl* webSite = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE2));
+        wxTextCtrl* precisionCtrl = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE4));
+        wxComboBox* country = static_cast<wxComboBox*>(FindWindow(wxID_FILE5));
+
         m_stock_unique_name_ctrl->ChangeValue(i->UNIQUENAME);
         m_stock_unique_name_ctrl->Enable(false);
         m_stock_name_ctrl->ChangeValue(i->SOURCENAME);
@@ -93,9 +91,11 @@ void mmStockSetup::dataToControls()
         m_choiceSource->SetSelection(i->SOURCE);
         m_choiceSector->SetStringSelection(wxGetTranslation(i->SECTOR));
         webSite->ChangeValue(i->WEBPAGE);
-
+        country->SetValue(i->COUNTRY);
         market->ChangeValue(i->MARKET);
         m_stock_symbol_ctrl->ChangeValue(i->SYMBOL);
+        m_currency_button->SetLabelText(i->CURRENCY_SYMBOL);
+        m_currency_symbol = i->CURRENCY_SYMBOL;
         //i->INDUSTRY = "INDUSTRY";
 
         m_precision = i->PRECISION;
@@ -106,6 +106,16 @@ void mmStockSetup::dataToControls()
     else
     {
         m_edit = false;
+
+        Model_Currency::Data* c = Model_Currency::GetBaseCurrency();
+
+        Model_Account::Data* a = Model_Account::instance().get(m_account_id);
+        if (a) {
+            c = Model_Currency::instance().get(a->CURRENCYID);
+        }
+        m_currency_symbol = c->CURRENCY_SYMBOL;
+        m_precision = log10(c->SCALE);
+        m_currency_button->SetLabel(c->CURRENCY_SYMBOL);
     }
     wxLogDebug("---------------");
     ShowStockHistory();
@@ -136,15 +146,6 @@ void mmStockSetup::CreateControls()
     itemPanel->SetSizer(itemBoxSizer4);
     itemBoxSizer4->Add(flex_sizer, g_flagsExpand);
 
-    // Alias  --------------------------------------------
-    wxStaticText* uniqueLabel = new wxStaticText(itemPanel, wxID_STATIC, _("Unique Name"));
-    flex_sizer->Add(uniqueLabel, g_flagsH);
-    uniqueLabel->SetFont(this->GetFont().Bold());
-
-    m_stock_unique_name_ctrl = new mmTextCtrl(itemPanel, wxID_ANY, m_unique_name, wxDefaultPosition
-        , wxDefaultSize, wxTE_PROCESS_ENTER);
-    flex_sizer->Add(m_stock_unique_name_ctrl, g_flagsExpand);
-
     // Source --------------------------------------------
     wxStaticText* sourceLabel = new wxStaticText(itemPanel, wxID_STATIC, _("Source"));
     flex_sizer->Add(sourceLabel, g_flagsH);
@@ -172,6 +173,15 @@ void mmStockSetup::CreateControls()
 
     flex_sizer->Add(m_choiceType, g_flagsExpand);
 
+    // Short name --------------------------------------------
+    wxStaticText* uniqueLabel = new wxStaticText(itemPanel, wxID_STATIC, _("Unique Name"));
+    flex_sizer->Add(uniqueLabel, g_flagsH);
+    uniqueLabel->SetFont(this->GetFont().Bold());
+
+    m_stock_unique_name_ctrl = new mmTextCtrl(itemPanel, wxID_ANY, m_unique_name, wxDefaultPosition
+        , wxDefaultSize, wxTE_PROCESS_ENTER);
+    flex_sizer->Add(m_stock_unique_name_ctrl, g_flagsExpand);
+
     // Symbol --------------------------------------------
     wxStaticText* symbolLabel = new wxStaticText(itemPanel, wxID_STATIC, _("Stock Symbol"));
     flex_sizer->Add(symbolLabel, g_flagsH);
@@ -186,11 +196,32 @@ void mmStockSetup::CreateControls()
     wxTextCtrl* textMarket = new wxTextCtrl(itemPanel, wxID_FILE1, "");
     flex_sizer->Add(textMarket, g_flagsExpand);
 
-    // Name --------------------------------------------
+    // Long Name --------------------------------------------
     flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Description")), g_flagsH);
     m_stock_name_ctrl = new mmTextCtrl(itemPanel, wxID_ANY, "");
     flex_sizer->Add(m_stock_name_ctrl, g_flagsExpand);
     m_stock_name_ctrl->SetToolTip(_("Enter the stock description"));
+
+    // Currency symbol --------------------------------------------
+    wxStaticText* currencyLabel = new wxStaticText(itemPanel, wxID_STATIC, _("Currency:"));
+    flex_sizer->Add(currencyLabel, g_flagsH);
+    currencyLabel->SetFont(this->GetFont().Bold());
+
+    m_currency_button = new wxButton(itemPanel, wxID_CONVERT, _("Select Currency"));
+    flex_sizer->Add(m_currency_button, g_flagsExpand);
+
+    // Precision --------------------------------------------
+    flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Precision")), g_flagsH);
+    wxTextCtrl* precisionCtrl = new wxTextCtrl(itemPanel, wxID_FILE4);
+    flex_sizer->Add(precisionCtrl, g_flagsExpand);
+
+    // Country --------------------------------------------
+    wxComboBox* choiceCountry = new wxComboBox(itemPanel, wxID_FILE5, ""
+        , wxDefaultPosition, wxDefaultSize, Model_Ticker::all_countries());
+    choiceCountry->AutoComplete(Model_Ticker::all_countries());
+
+    flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Country")), g_flagsH);
+    flex_sizer->Add(choiceCountry, g_flagsExpand);
 
     // Sector --------------------------------------------
     m_choiceSector = new wxChoice(itemPanel, wxID_ANY);
@@ -208,18 +239,13 @@ void mmStockSetup::CreateControls()
     wxTextCtrl* webPage = new wxTextCtrl(itemPanel, wxID_FILE2);
     flex_sizer->Add(webPage, g_flagsExpand);
 
-    // Precision --------------------------------------------
-    flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Precision")), g_flagsH);
-    wxTextCtrl* precisionCtrl = new wxTextCtrl(itemPanel, wxID_FILE4);
-    flex_sizer->Add(precisionCtrl, g_flagsExpand);
-
     // Notes --------------------------------------------
     flex_sizer->Add(new wxStaticText(itemPanel, wxID_STATIC, _("Notes")), g_flagsH);
     m_stock_notes_ctrl = new mmTextCtrl(itemPanel, wxID_FILE3, "", wxDefaultPosition
         , wxDefaultSize, wxTE_MULTILINE);
     m_stock_notes_ctrl->SetMinSize(wxSize(150, 100));
 
-    itemBoxSizer4->Add(m_stock_notes_ctrl, g_flagsExpand);
+    itemBoxSizer4->Add(m_stock_notes_ctrl, wxSizerFlags(g_flagsExpandBorder1).Proportion(0));
 
     //---------------------------------------------
 
@@ -319,26 +345,40 @@ void mmStockSetup::CreateControls()
 
 void mmStockSetup::OnHistoryDownloadButton(wxCommandEvent& /*event*/)
 {
-    wxString symbol = m_stock_unique_name_ctrl->GetValue().Trim();
-    if (symbol.IsEmpty())
+    wxString unique_name = m_stock_unique_name_ctrl->GetValue().Trim();
+    if (unique_name.IsEmpty())
         return;
 
-    m_unique_name = symbol.Upper();
+    wxString symbol = m_stock_symbol_ctrl->GetValue().Trim();
+    if (symbol.IsEmpty())
+        return mmErrorDialogs::ToolTip4Object(m_stock_symbol_ctrl
+            , _("Please insert a ticker for the stock"), _("Invalid value"));
+
+    m_unique_name = unique_name.Upper();
     wxTextCtrl* m = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE1));
     wxString market = m ? m->GetValue() : "";
     int s = m_choiceSource->GetSelection();
     int t = m_choiceType->GetSelection();
 
-    wxString currency = "USD";
-    Model_Account::Data* a = Model_Account::instance().get(m_account_id);
-    if (a) {
-        Model_Currency::Data* c = Model_Currency::instance().get(a->CURRENCYID);
-        if (c) currency = c->CURRENCY_SYMBOL;
+    Model_Ticker::Data* i = Model_Ticker::instance().get(m_unique_name);
+    if (!i) {
+        i = Model_Ticker::instance().create();
+        i->UNIQUENAME = m_unique_name;
+        i->SYMBOL = symbol;
+        i->MARKET = market;
+        i->SOURCE = s;
+        i->TYPE = t;
     }
 
     wxSharedPtr<mmHistoryOnline> o;
-    o = new mmHistoryOnline(m_unique_name, market, currency, s, t);
+    o = new mmHistoryOnline(i, m_currency_symbol);
     wxLogDebug("Error: %s", o->getError());
+
+    if (!o->getError().empty())
+    {
+        wxBitmapButton* b = static_cast<wxBitmapButton*>(FindWindow(wxID_REFRESH));
+        mmErrorDialogs::ToolTip4Object(b, o->getError(), _("Error"));
+    }
     ShowStockHistory();
 }
 
@@ -610,15 +650,20 @@ void mmStockSetup::OnOk(wxCommandEvent& WXUNUSED(event))
 
     Model_Ticker::Data_Set n = Model_Ticker::instance().find(Model_Ticker::UNIQUENAME(m_unique_name));
     if (!m_edit && (m_unique_name.empty() || !n.empty())) {
+        mmErrorDialogs::ToolTip4Object(m_stock_unique_name_ctrl
+            , _("A stock with the same name has already been created earlier."), _("Warning"));
         return dataToControls();
-        //return mmErrorDialogs::ToolTip4Object(m_stock_unique_name_ctrl
-        //    , _("Please insert an unique name for the stock"), _("Invalid name"));
     }
 
     wxString symbol = m_stock_symbol_ctrl->GetValue().Trim();
     if (symbol.empty()) {
         return mmErrorDialogs::ToolTip4Object(m_stock_symbol_ctrl
             , _("Please insert a ticker for the stock"), _("Invalid value"));
+    }
+
+    if (m_currency_symbol.empty()) {
+        return mmErrorDialogs::ToolTip4Object(m_currency_button
+            , _("Please select a currency for the stock"), _("Invalid value"));
     }
 
     wxTextCtrl * precisionCtrl = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE4));
@@ -656,9 +701,35 @@ void mmStockSetup::OnOk(wxCommandEvent& WXUNUSED(event))
     i->NOTES = m_stock_notes_ctrl->GetValue();
     wxTextCtrl* webSite = static_cast<wxTextCtrl*>(FindWindow(wxID_FILE2));
     i->WEBPAGE = webSite->GetValue();
+
+    i->CURRENCY_SYMBOL = m_currency_symbol;
     i->PRECISION = m_precision;
+
+    wxComboBox* country = static_cast<wxComboBox*>(FindWindow(wxID_FILE5));
+    wxString countryStr = country ? country->GetValue() : "";
+    i->COUNTRY = countryStr;
 
     Model_Ticker::instance().save(i);
 
     EndModal(wxID_OK);
+}
+
+void mmStockSetup::OnCurrency(wxCommandEvent& /*event*/)
+{
+    int currencyID = Model_Currency::GetBaseCurrency()->CURRENCYID;
+    Model_Currency::Data_Set cs = Model_Currency::instance().find(Model_Currency::CURRENCY_SYMBOL(m_currency_symbol));
+    if (!cs.empty()) currencyID = cs.begin()->CURRENCYID;
+
+    Model_Currency::Data* c = Model_Currency::instance().get(currencyID);
+    if (c) currencyID = c->CURRENCYID;
+    if (mmMainCurrencyDialog::Execute(this, currencyID))
+    {
+        c = Model_Currency::instance().get(currencyID);
+
+        if (c) {
+            m_currency_symbol = c->CURRENCY_SYMBOL;
+            m_currency_button->SetLabelText(m_currency_symbol);
+        }
+
+    }
 }

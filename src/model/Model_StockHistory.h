@@ -56,6 +56,10 @@ public:
     Adds or updates an element in stock history
     */
     int addUpdate(const wxString& symbol, const wxDate& date, double price, UPDTYPE type);
+
+    /** Return the last rate for a specific ticker */
+    static double getLastRate(const wxString& symbol);
+
 };
 
 #endif // 

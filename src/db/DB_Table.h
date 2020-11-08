@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-02 15:45:42.792000.
+ *          AUTO GENERATED at 2020-11-04 23:26:12.891000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -343,6 +343,15 @@ struct SorterByCONTENT
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.CONTENT) < (y.CONTENT);
+    }
+};
+
+struct SorterByCOUNTRY
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.COUNTRY) < (y.COUNTRY);
     }
 };
 

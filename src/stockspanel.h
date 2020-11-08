@@ -36,7 +36,7 @@ class StocksListCtrl: public mmListCtrl
     wxDECLARE_EVENT_TABLE();
 
 public:
-    StocksListCtrl(mmStocksPanel* cp, wxWindow *parent, wxWindowID winid = wxID_ANY);
+    StocksListCtrl(mmStocksPanel* sp, wxWindow *parent, wxWindowID winid = wxID_ANY);
     ~StocksListCtrl();
 
     void doRefreshItems(int trx_id = -1);
@@ -80,9 +80,21 @@ private:
         COL_MAX, // number of columns
     };
     wxImageList* m_imageList;
-    double GetGainLoss(long item) const;
-    static double GetGainLoss(const Model_Stock::Data& stock);
     void sortTable();
+
+
+    struct Data {
+        int ID;
+        wxString date;
+        wxString sector;
+        double number;
+        double value;
+        double current_value;
+        double gain_loss;
+        double commission;
+        double purchase_price;
+    };
+
 };
 
 /* ------------------------------------------------------- */
@@ -121,7 +133,7 @@ public:
     void OnListItemActivated(int selectedIndex);
     void OnListItemSelected(int selectedIndex);
 
-    int m_account_id;
+    int get_account_id() { return m_account_id; };
     Model_Currency::Data * m_currency;
     void updateExtraStocksData(int selIndex);
     void updateHeader();
@@ -130,6 +142,7 @@ public:
     mmGUIFrame* m_frame;
 
 private:
+    int m_account_id;
     StocksListCtrl* listCtrlAccount_;
     wxStaticText* stock_details_;
     void call_dialog(int selectedIndex);

@@ -41,7 +41,9 @@ private:
     void CreateControls();
     void dataToControls();
     void OnOk(wxCommandEvent& event);
+    void OnCurrency(wxCommandEvent& event);
     wxString m_unique_name;
+    wxString m_currency_symbol;
     wxChoice* m_choiceType;
     wxChoice* m_choiceSource;
     wxChoice* m_choiceSector;
@@ -53,6 +55,7 @@ private:
     mmTextCtrl* m_stock_symbol_ctrl;
     mmTextCtrl* m_stock_unique_name_ctrl;
     mmTextCtrl* m_stock_notes_ctrl;
+    wxButton* m_currency_button;
 
     int m_account_id;
     int m_precision;

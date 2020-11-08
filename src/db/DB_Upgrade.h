@@ -7,7 +7,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-02 15:45:53.718000.
+ *          AUTO GENERATED at 2020-11-04 23:26:16.495000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -132,7 +132,8 @@ const std::vector<wxString> dbUpgradeQuery =
         SYMBOL TEXT COLLATE NOCASE NOT NULL,
         SOURCENAME TEXT,
         MARKET TEXT, 
-        TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond */ 
+        TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond, Corp. Bond */
+        COUNTRY TEXT, 
         SECTOR TEXT, /*Basic Materials
         , Consumer Cyclical
         , Financial Services
@@ -148,7 +149,8 @@ const std::vector<wxString> dbUpgradeQuery =
         INDUSTRY TEXT,
         WEBPAGE TEXT,
         NOTES TEXT,
-        PRECISION INTEGER
+        PRECISION INTEGER,
+        CURRENCY_SYMBOL TEXT
         );
         CREATE INDEX IF NOT EXISTS IDX_TICKER ON TICKERPROPERTIES_V1 (SYMBOL, TICKERID);
         
@@ -180,7 +182,17 @@ const std::vector<wxString> dbUpgradeQuery =
         ALTER TABLE STOCK_NEW RENAME TO STOCK_V1;
         CREATE INDEX IDX_STOCK_HELDAT ON STOCK_V1(HELDAT);
         
-        ALTER TABLE SPLITTRANSACTIONS_V1 add column NOTES TEXT;
+        insert into TICKERPROPERTIES_V1 (UNIQUENAME, SOURCE, SYMBOL, MARKET, PRECISION, CURRENCY_SYMBOL)
+        select distinct symbol UNIQUENAME, 0 SOURCE
+          , substr(SYMBOL, 1, INSTR(SYMBOL, '.') -1)  SYMBOL 
+          , case when INSTR(SYMBOL, '.') > 0 then substr(SYMBOL, INSTR(SYMBOL, '.')+ 1) else '' end  MARKET
+          , (select INFOVALUE from INFOTABLE_V1 where INFONAME = 'SHARE_PRECISION') PRECISION 
+          , (select c.CURRENCY_SYMBOL from ACCOUNTLIST_V1 a
+                 left join CURRENCYFORMATS_V1 c on c.CURRENCYID=a.CURRENCYID
+        		 where a.ACCOUNTID = s.HELDAT) CURRENCY_SYMBOL
+          from STOCK_V1 s;
+        
+        ALTER TABLE SPLITTRANSACTIONS_V1 add column NOTES TEXT;             
         
         UPDATE ATTACHMENT_V1 SET REFTYPE = 'Bank Account' WHERE REFTYPE = 'BankAccount';
         UPDATE ATTACHMENT_V1 SET REFTYPE = 'Recurring Transaction' WHERE REFTYPE = 'RecurringTransaction';

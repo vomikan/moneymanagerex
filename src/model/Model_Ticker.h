@@ -29,7 +29,7 @@ public:
     using Model<DB_Table_TICKERPROPERTIES_V1>::get;
 
     enum SOURCE_ENUM { YAHOO = 0, MS, MOEX };
-    enum TYPE_ENUM { SHARE = 0, FUND, BOND, CBOND };
+    enum TYPE_ENUM { SHARE = 0, FUND, BOND };
 
     static const std::vector<std::pair<SOURCE_ENUM, wxString> > SOURCE_CHOICES;
     static const std::vector<std::pair<TYPE_ENUM, wxString> > TYPE_CHOICES;
@@ -54,6 +54,7 @@ public:
     static wxArrayString all_sources();
     static wxArrayString all_type();
     static wxArrayString all_sectors();
+    static wxArrayString all_countries();
 
     static TYPE_ENUM type(const Data* ticker);
     static TYPE_ENUM type(const Data& ticker);

@@ -31,8 +31,6 @@ const std::vector<std::pair<Model_Ticker::TYPE_ENUM, wxString> > Model_Ticker::T
     {Model_Ticker::SHARE, wxString(wxTRANSLATE("Stock"))},
     {Model_Ticker::FUND, wxString(wxTRANSLATE("Fund"))},
     {Model_Ticker::BOND, wxString(wxTRANSLATE("Bond"))},
-    {Model_Ticker::CBOND, wxString(wxTRANSLATE("Corporate Bond"))},
-
 };
 
 Model_Ticker::Model_Ticker()
@@ -81,6 +79,17 @@ wxArrayString Model_Ticker::all_sectors()
     sector.Add(wxTRANSLATE("Technology"));
     sector.Add(wxTRANSLATE("Other"));
     return sector;
+}
+
+wxArrayString Model_Ticker::all_countries()
+{
+    wxArrayString countries;
+    countries.Add(wxTRANSLATE("United States"));
+    countries.Add(wxTRANSLATE("Russia"));
+    countries.Add(wxTRANSLATE("Brazil"));
+    countries.Add(wxTRANSLATE("Germany"));
+    countries.Add(wxTRANSLATE("China"));
+    return countries;
 }
 
 
@@ -154,4 +163,3 @@ Model_Ticker::Data* Model_Ticker::get(const wxString& name)
     if (!items.empty()) unique_name = this->get(items[0].TICKERID, this->db_);
     return unique_name;
 }
-

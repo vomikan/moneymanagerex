@@ -139,7 +139,7 @@ void mmStockDialog::CreateControls()
     wxBoxSizer* leftBoxSizer = new wxBoxSizer(wxVERTICAL);
     mainBoxSizer->Add(leftBoxSizer, g_flagsH);
 
-    wxStaticBox* itemStaticBoxSizer4Static = new wxStaticBox(this, wxID_ANY, _("Stock Investment Details"));
+    wxStaticBox* itemStaticBoxSizer4Static = new wxStaticBox(this, wxID_STATIC, _("Stock Investment Details"));
     wxStaticBoxSizer* itemStaticBoxSizer4 = new wxStaticBoxSizer(itemStaticBoxSizer4Static, wxVERTICAL);
     leftBoxSizer->Add(itemStaticBoxSizer4, g_flagsExpand);
 
@@ -399,7 +399,6 @@ void mmStockDialog::ShowStockHistory()
         return;
 
     m_list.clear();
-    double numTotal = 0.0, commTotal = 0.0;
 
     Model_Account::Data* account = Model_Account::instance().get(m_account_id);
     Model_Stock::Data_Set histData = Model_Stock::instance().find(Model_Stock::SYMBOL(m_symbol));
@@ -415,9 +414,6 @@ void mmStockDialog::ShowStockHistory()
         i.price = entry.PURCHASEPRICE;
         i.notes = entry.NOTES;
         m_list.push_back(i);
-
-        numTotal += i.number;
-        commTotal += i.commission;
     }
 
 
@@ -491,16 +487,32 @@ void mmStockDialog::ShowStockHistory()
     size_t rows = histData.size() - 1;
     m_stock_event_listbox->RefreshItems(0, rows);
 
-    const wxString commStr = Model_Account::toString(commTotal, account, m_precision);
-    const wxString numberStr = Model_Account::toString(numTotal, account, floor(numTotal) ? 0 : m_precision);
-    wxString infoStr = "Name TBD";
-    infoStr += "\n" + wxString::Format(_("Number of items: %s"), numberStr);
+    Model_Ticker::Data* t = Model_Ticker::instance().get(m_symbol);
+    Model_Currency::Data* account_currency = Model_Currency::instance().get(account->CURRENCYID);
+    Model_Currency::Data_Set currencies = Model_Currency::instance().find(Model_Currency::CURRENCY_SYMBOL(t->CURRENCY_SYMBOL));
+    Model_Currency::Data* ticker_currency = account_currency;
+    if (!currencies.empty())
+        ticker_currency = Model_Currency::instance().get(currencies.begin()->CURRENCYID);
+
+    wxSharedPtr<Model_StockStat> s;
+    double current_price = Model_StockHistory::getLastRate(t->UNIQUENAME);
+    s = new Model_StockStat(m_symbol, m_account_id, current_price);
+
+    const wxString valueStr = Model_Currency::toCurrency(s->get_purchase_total(), ticker_currency, m_precision);
+    const wxString commStr = Model_Currency::toCurrency(s->get_commission(), ticker_currency, m_precision);
+    const wxString numberStr = Model_Currency::toString(s->get_count(), ticker_currency, floor(s->get_count()) ? 0 : m_precision);
+    const wxString moneyStr = Model_Currency::toCurrency(s->get_money_total(), ticker_currency, m_precision);
+    const wxString everageStr = Model_Currency::toCurrency(s->get_everage_price(), ticker_currency, m_precision);
+    const wxString gainLossStr = Model_Currency::toCurrency(s->get_gain_loss(), ticker_currency, m_precision);
+
+    wxString infoStr = wxString::Format(_("Number of items: %s"), numberStr);
     infoStr += "\n" + wxString::Format(_("Commission paid: %s"), commStr);
-    infoStr += "\n" + wxString("Value:");
-    infoStr += "\n" + wxString("Everage Price:");
-    infoStr += "\n" + wxString("Gain loss TBD:");
+    infoStr += "\n" + wxString::Format("Invested: %s", valueStr);
+    infoStr += "\n" + wxString::Format("Everage Price: %s", everageStr);
+    infoStr += "\n" + wxString::Format("Gain loss: %s", gainLossStr);
 
     m_info_txt->SetLabelText(infoStr);
+    //wxString::Format("%s", t->SOURCENAME);
 
 }
 

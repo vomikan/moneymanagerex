@@ -71,13 +71,11 @@ mmStockItem::mmStockItem(wxWindow* parent, int acc, int id, const wxString& symb
 
 void mmStockItem::fillControls()
 {
-    Model_Currency::Data *currency = Model_Currency::GetBaseCurrency();
-    int currency_precision = Model_Currency::precision(currency);
-    m_share_precision = currency_precision;
     Model_Ticker::Data* t = Model_Ticker::instance().get(m_symbol);
-    if (t) m_share_precision = t->PRECISION;
-    if (currency_precision < m_share_precision)
-        currency_precision = m_share_precision;
+    if (t) {
+        m_share_precision = t->PRECISION;
+    }
+
 
     Model_Stock::Data* stock = Model_Stock::instance().get(m_id);
     if (stock)
@@ -263,20 +261,18 @@ void mmStockItem::OnOk(wxCommandEvent& WXUNUSED(event))
     double num, comm, price;
     wxString date, notes;
 
-    Model_Account::Data* acc = Model_Account::instance().get(m_acc);
-    Model_Currency::Data* currency = Model_Account::currency(acc);
     date = m_purchase_date_ctrl->GetValue().FormatISODate();
     notes = m_notes_ctrl->GetValue();
 
-    m_num_shares_ctrl->Calculate(Model_Currency::precision(currency));
+    m_num_shares_ctrl->Calculate(m_share_precision);
     if (!m_num_shares_ctrl->checkValue(num, true))
         return;
 
-    m_purchase_price_ctrl->Calculate(Model_Currency::precision(currency));
+    m_purchase_price_ctrl->Calculate(m_share_precision);
     if (!m_purchase_price_ctrl->checkValue(price, true))
         return;
 
-    m_commission_ctrl->Calculate(Model_Currency::precision(currency));
+    m_commission_ctrl->Calculate(m_share_precision);
     if (!m_commission_ctrl->checkValue(comm, true))
         return;
 

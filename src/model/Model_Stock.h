@@ -1,5 +1,6 @@
 /*******************************************************
  Copyright (C) 2013,2014 Guan Lisheng (guanlisheng@gmail.com)
+ Copyright (C) 2020 Nikolay Akimov
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -63,16 +64,35 @@ public:
     * Delete also all stock history
     */
     bool remove(int id);
-
-    /**
-    Returns the last price date of a given stock
-    */
-    wxString lastPriceDate(const Self::Data* entity);
-
-    /**
-    Returns the total stock balance at a given date
-    */
-    double getDailyBalanceAt(const Model_Account::Data *account, const wxDate& date);
 };
+
+class Model_StockStat : public Model_Stock
+{
+public:
+    Model_StockStat(const wxString& ticker, int accountID, double current_price);
+    ~Model_StockStat();
+
+    double get_purchase_total() const;
+    double get_money_total() const;
+    double get_everage_price() const;
+    double get_gain_loss() const;
+    double get_count() const;
+    double get_commission() const;
+
+private:
+    double m_purchase_total;
+    double m_money_total;
+    double m_everage_price;
+    double m_gain_loss;
+    double m_count;
+    double m_commission;
+};
+
+inline double Model_StockStat::get_purchase_total() const { return m_purchase_total; }
+inline double Model_StockStat::get_money_total() const { return m_money_total; }
+inline double Model_StockStat::get_everage_price() const { return m_everage_price; }
+inline double Model_StockStat::get_gain_loss() const { return m_gain_loss; }
+inline double Model_StockStat::get_count() const { return m_count; }
+inline double Model_StockStat::get_commission() const { return m_commission; }
 
 #endif // 

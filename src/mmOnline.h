@@ -26,8 +26,8 @@ class Model_Ticker;
 class mmHistoryOnline
 {
 public:
-    mmHistoryOnline(const wxString& unique_name, const wxString& market ="", const wxString& currency = "USD", int source = 0, int type  = 0);
-    //mmOnline(Model_Ticker::Data* t, const wxString& currency = "USD");
+    //mmHistoryOnline(const wxString& unique_name, const wxString& market ="", const wxString& currency = "USD", int source = 0, int type  = 0);
+    mmHistoryOnline(Model_Ticker::Data* t, const wxString& currency = "USD");
     ~mmHistoryOnline();
     const wxString getError() const;
 
@@ -57,9 +57,9 @@ public:
     mmWebPage(const wxString& ticker);
     ~mmWebPage();
 private:
-    bool mmYahoo();
-    bool mmMOEX();
-    bool mmMorningStar();
+    bool mmYahoo(Model_Ticker::Data* d);
+    bool mmMOEX(Model_Ticker::Data* d);
+    bool mmMorningStar(Model_Ticker::Data* d);
 
     wxString m_unique_name;
     wxString m_market;
