@@ -68,11 +68,6 @@ mmHistoryOnline::mmHistoryOnline(Model_Ticker::Data* t, const wxString& currency
 
 }
 
-//mmOnline::mmOnline(Model_Ticker::Data* t, const wxString& currency)
-//{
-//    mmOnline(t->SYMBOL, t->MARKET, currency, t->SOURCE, t->TYPE);
-//}
-
 mmHistoryOnline::~mmHistoryOnline()
 {
 

@@ -159,36 +159,39 @@ wxString StocksListCtrl::OnGetItemText(long item, long column) const
     Model_Account::Data* a = Model_Account::instance().get(m_stock_panel->get_account_id());
     Model_Currency::Data* acc_currency = Model_Currency::instance().get(a->CURRENCYID);
 
-    bool default_curr = acc_currency == currency;
+    bool default_curr = (acc_currency == currency);
 
-    if (column == COL_SYMBOL)       return m_stocks[item].SYMBOL;
-    if (column == COL_CURRPRICE) {
+    switch (column)
+    {
+    case COL_SYMBOL:
+        return m_stocks[item].SYMBOL;
+    case COL_CURRPRICE:
         return default_curr ?
             Model_Currency::toString(current_price, currency, i->PRECISION)
             : Model_Currency::toCurrency(current_price, currency, i->PRECISION);
-    }
-    if (column == COL_DATE)         return mmGetDateForDisplay(m_stocks[item].PURCHASEDATE);
-    if (column == COL_NUMBER)
-    {
-        int precision = m_stocks[item].NUMSHARES == floor(m_stocks[item].NUMSHARES) ? 0 : i->PRECISION;
-        return Model_Currency::toString(m_stocks[item].NUMSHARES, currency, precision);
-    }
-    if (column == COL_PRICE) {
+    case COL_DATE:
+        return mmGetDateForDisplay(m_stocks[item].PURCHASEDATE);
+    case COL_NUMBER:
+        return Model_Currency::toString(m_stocks[item].NUMSHARES, currency
+            , (m_stocks[item].NUMSHARES == floor(m_stocks[item].NUMSHARES) ? 0 : i->PRECISION));
+    case COL_PRICE:
         return default_curr ?
-             Model_Currency::toString(s->get_everage_price(), currency, i->PRECISION)
+            Model_Currency::toString(s->get_everage_price(), currency, i->PRECISION)
             : Model_Currency::toCurrency(s->get_everage_price(), currency, i->PRECISION);
-    }
-    if (column == COL_CURRVALUE) {
+    case COL_CURRVALUE:
         return default_curr ?
             Model_Currency::toString(s->get_count() * current_price, currency, i->PRECISION)
             : Model_Currency::toCurrency(s->get_count() * current_price, currency, i->PRECISION);
-    }
-    if (column == COL_GAIN_LOSS) {
+    case COL_GAIN_LOSS:
         return default_curr ?
             Model_Currency::toString(s->get_gain_loss(), currency, i->PRECISION)
             : Model_Currency::toCurrency(s->get_gain_loss(), currency, i->PRECISION);
+    case COL_SECTOR:
+        return i->SECTOR;
+
+    default:
+        break;
     }
-    if (column == COL_SECTOR) { return i->SECTOR; }
 
     return wxEmptyString;
 }
