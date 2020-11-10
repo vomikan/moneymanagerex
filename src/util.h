@@ -151,13 +151,6 @@ public:
 //----------------------------------------------------------------------------
 
 bool getNewsRSS(std::vector<WebsiteNews>& WebsiteNewsList);
-enum yahoo_price_type { FIAT = 0, SHARES };
-bool getOnlineCurrencyRates(wxString& msg, int curr_id = -1, bool used_only = true);
-bool get_yahoo_prices(std::map<wxString, double>& symbols
-    , std::map<wxString, double>& out
-    , const wxString base_currency_symbol
-    , wxString& output
-    , int type);
 
 const wxString mmPlatformType();
 const wxString getProgramDescription(int type = 0);

@@ -67,3 +67,16 @@ private:
     int m_type;
 };
 
+extern const wxString YahooQuotes;
+extern const wxString YahooQuotesHistory;
+
+bool getOnlineHistory(std::map<wxDateTime, double> &historical_rates, const wxString &symbol, wxString &msg);
+enum yahoo_price_type { FIAT = 0, SHARES };
+bool getOnlineRates(wxString& msg);
+bool getOnlineCurrencyRates(wxString& msg, int curr_id = -1, bool used_only = true);
+bool get_yahoo_prices(std::map<wxString, double>& symbols
+    , std::map<wxString, double>& out
+    , const wxString base_currency_symbol
+    , wxString& output
+    , int type);
+

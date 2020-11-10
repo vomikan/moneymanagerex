@@ -22,6 +22,7 @@
 #include "currencydialog.h"
 #include "constants.h"
 #include "images_list.h"
+#include "mmOnline.h"
 #include "mmSimpleDialogs.h"
 #include "mmTextCtrl.h"
 #include "paths.h"
@@ -629,7 +630,7 @@ void mmMainCurrencyDialog::OnHistoryUpdate(wxCommandEvent& WXUNUSED(event))
 
     wxString msg;
     std::map<wxDateTime, double> historical_rates;
-    bool UpdStatus = GetOnlineHistory(historical_rates, CurrentCurrency->CURRENCY_SYMBOL, msg);
+    bool UpdStatus = getOnlineHistory(historical_rates, CurrentCurrency->CURRENCY_SYMBOL, msg);
 
     if (!UpdStatus)
     {
@@ -773,117 +774,6 @@ bool mmMainCurrencyDialog::SetBaseCurrency(int& baseCurrencyID)
         return true;
     OnlineUpdateCurRate();
 
-    return true;
-}
-
-bool mmMainCurrencyDialog::GetOnlineHistory(std::map<wxDateTime, double> &historical_rates, const wxString &symbol, wxString &msg)
-{
-    wxString base_currency_symbol;
-
-    if (!Model_Currency::GetBaseCurrencySymbol(base_currency_symbol))
-    {
-        msg = _("Could not find base currency symbol!");
-        return false;
-    }
-
-    const wxString URL = wxString::Format(mmex::weblink::YahooQuotesHistory
-        , wxString::Format("%s%s=X", symbol, base_currency_symbol)
-        , "1y", "1d"); //TODO: ask range and interval
-
-    wxString json_data;
-    auto err_code = http_get_data(URL, json_data);
-    if (err_code != CURLE_OK)
-    {
-        msg = json_data;
-        return false;
-    }
-
-    Document json_doc;
-    if (json_doc.Parse(json_data.utf8_str()).HasParseError())
-    {
-        return false;
-    }
-
-    if (!json_doc.HasMember("chart") || !json_doc["chart"].IsObject())
-        return false;
-    Value chart = json_doc["chart"].GetObject();
-
-    wxASSERT(chart.HasMember("error"));
-    if (!chart.HasMember("error") || !chart["error"].IsNull())
-        return false;
-
-    if (!chart.HasMember("result") || !chart["result"].IsArray())
-        return false;
-    Value result = chart["result"].GetArray();
-
-    if (!result.IsArray() || !result.Begin()->IsObject())
-        return false;
-    Value data = result.Begin()->GetObject();
-
-    if (!data.HasMember("timestamp") || !data["timestamp"].IsArray())
-        return false;
-    Value timestamp = data["timestamp"].GetArray();
-
-    if (!data.HasMember("indicators") || !data.IsObject())
-        return false;
-    Value indicators = data["indicators"].GetObject();
-
-    if (!indicators.HasMember("adjclose") || !indicators["adjclose"].IsArray())
-        return false;
-    Value quote_array = indicators["adjclose"].GetArray();
-    Value quotes = quote_array.Begin()->GetObject();
-    if (!quotes.HasMember("adjclose") || !quotes["adjclose"].IsArray())
-        return false;
-    Value quotes_closed = quotes["adjclose"].GetArray();
-
-    if (timestamp.Size() != quotes_closed.Size())
-        return false;
-
-    std::map<wxDate, double> history;
-    const wxDateTime today = wxDateTime::Today();
-    wxDateTime first_date = today;
-    double first_price = 0;
-
-    bool only_1 = true;
-    for (rapidjson::SizeType i = 0; i < timestamp.Size(); i++)
-    {
-        wxASSERT(timestamp[i].IsInt());
-        const auto time = wxDateTime(static_cast<time_t>(timestamp[i].GetInt())).GetDateOnly();
-        if (quotes_closed[i].IsFloat())
-        {
-            double rate = quotes_closed[i].GetFloat();
-            history[time] = rate;
-            if (first_date > time)
-            {
-                first_date = time;
-                first_price = rate;
-            }
-            if (rate != 1) only_1 = false;
-        }
-        else
-        {
-            wxLogDebug("%s %s", time.FormatISODate(), wxDateTime::GetWeekDayName(time.GetWeekDay()));
-        }
-    }
-
-    // Skip rates = 1 (Yahoo returns 1 with invalid Symbols)
-    if (only_1) return false;
-
-    double closed_price = first_price;
-    for (wxDateTime i = first_date; i < today; i.Add(wxDateSpan::Days(1)))
-    {
-        wxLogDebug("Date: %s %s", i.FormatISODate(), i.FormatISOTime());
-        double rate = closed_price;
-        if (history.find(i) != history.end()) {
-            rate = history[i];
-            closed_price = rate;
-        }
-        historical_rates[i] = rate;
-    }
-
-    wxLogDebug("Date: %s %s Today: %s %s"
-        , first_date.FormatISODate(), first_date.FormatISOTime()
-        , today.FormatISODate(), today.FormatISOTime());
     return true;
 }
 

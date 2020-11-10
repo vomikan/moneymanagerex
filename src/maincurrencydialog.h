@@ -121,9 +121,7 @@ private:
     int m_currency_id;
     bool m_static_dialog;
 
-    std::vector<CurrencyHistoryRate> _BceCurrencyHistoryRatesList;
     bool ConvertHistoryRates(const std::vector<CurrencyHistoryRate>& Bce, std::vector<CurrencyHistoryRate>& ConvertedRate, const wxString& BaseCurrencySymbol);
-    bool GetOnlineHistory(std::map<wxDateTime, double> &historical_rates, const wxString &symbol, wxString &msg);
 };
 
 

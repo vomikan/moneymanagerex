@@ -45,6 +45,7 @@
 #include "mmex.h"
 #include "mmhelppanel.h"
 #include "mmhomepagepanel.h"
+#include "mmOnline.h"
 #include "mmreportspanel.h"
 #include "mmSimpleDialogs.h"
 #include "mmHook.h"
@@ -2833,63 +2834,18 @@ void mmGUIFrame::OnRates(wxCommandEvent& WXUNUSED(event))
     (
         wxBusyInfoFlags()
         .Parent(this)
-        .Title(_("Downloading stock prices from Yahoo"))
+        .Title(_("Downloading stock prices"))
         .Text(_("Please wait..."))
         .Foreground(*wxWHITE)
         .Background(wxColour(104, 179, 51))
         .Transparency(4 * wxALPHA_OPAQUE / 5)
     );
 #else
-    (_("Downloading stock prices from Yahoo"), this);
+    (_("Downloading stock prices"), this);
 #endif
     wxString msg;
-    getOnlineCurrencyRates(msg);
+    getOnlineRates(msg);
     wxLogDebug("%s", msg);
-
-    Model_Stock::Data_Set stock_list = Model_Stock::instance().all();
-    if (!stock_list.empty())
-    {
-
-        std::map<wxString, double> symbols;
-        for (const auto& stock : stock_list)
-        {
-            const wxString symbol = stock.SYMBOL.Upper();
-            if (symbol.IsEmpty()) continue;
-            symbols[symbol] = 1.0; //TODO:
-        }
-#if 0
-        std::map<wxString, double> stocks_data;
-        if (get_yahoo_prices(symbols, stocks_data, "", msg, yahoo_price_type::SHARES))
-        {
-
-            Model_StockHistory::instance().Savepoint();
-            for (auto& s : stock_list)
-            {
-                std::map<wxString, double>::const_iterator it = stocks_data.find(s.SYMBOL.Upper());
-                if (it == stocks_data.end()) {
-                    continue;
-                }
-
-                double dPrice = it->second;
-
-                if (dPrice != 0)
-                {
-                    msg += wxString::Format("%s\t: %0.6f -> %0.6f\n", s.SYMBOL, s.CURRENTPRICE, dPrice);
-                    s.CURRENTPRICE = dPrice;
-                    Model_Stock::instance().save(&s);
-                    Model_StockHistory::instance().addUpdate(s.SYMBOL
-                        , wxDate::Now(), dPrice, Model_StockHistory::ONLINE);
-                }
-            }
-            Model_StockHistory::instance().ReleaseSavepoint();
-            wxString strLastUpdate;
-            strLastUpdate.Printf(_("%s on %s"), wxDateTime::Now().FormatTime()
-                , mmGetDateForDisplay(wxDateTime::Now().FormatISODate()));
-            Model_Infotable::instance().Set("STOCKS_LAST_REFRESH_DATETIME", strLastUpdate);
-        }
-#endif
-        wxLogDebug("%s", msg);
-    }
 
     refreshPanelData();
 }

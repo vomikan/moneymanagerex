@@ -473,7 +473,7 @@ void mmStocksPanel::CreateControls()
     refresh_button_ = new wxBitmapButton(BottomPanel
         , wxID_REFRESH, mmBitmap (png::LED_OFF), wxDefaultPosition, wxSize(30, itemButton7->GetSize().GetY()));
     refresh_button_->SetLabelText(_("Refresh"));
-    refresh_button_->SetToolTip(_("Refresh Stock Prices from Yahoo"));
+    refresh_button_->SetToolTip(_("Refresh Stock Prices online"));
     BoxSizerHBottom->Add(refresh_button_, 0, wxRIGHT, 5);
 
     //Infobar

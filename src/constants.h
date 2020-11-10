@@ -93,8 +93,7 @@ namespace weblink
     extern const wxString WebApp;
     extern const wxString Chiark;
     extern const wxString Crowdin;
-    extern const wxString YahooQuotes;
-    extern const wxString YahooQuotesHistory;
+
 } // namespace weblink
 } // namespace mmex
 
