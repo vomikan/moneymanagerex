@@ -2316,6 +2316,8 @@ void mmGUIFrame::refreshPanelData()
         billsDepositsPanel_->RefreshList();
     else if (id == mmID_BUDGET)
         budgetingPage_->RefreshList();
+    else if (id == mmID_STOCKS)
+        panelCurrent_->Refresh();
     else if (id == mmID_REPORTS)
     {
         if (activeReport_) //TODO: budget reports and transaction report
@@ -2843,9 +2845,9 @@ void mmGUIFrame::OnRates(wxCommandEvent& WXUNUSED(event))
 #else
     (_("Downloading stock prices"), this);
 #endif
-    wxString msg;
-    getOnlineRates(msg);
-    wxLogDebug("%s", msg);
+
+    wxSharedPtr<mmOnline> o;
+    o = new mmOnline();
 
     refreshPanelData();
 }

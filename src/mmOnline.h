@@ -24,6 +24,27 @@
 
 class Model_Ticker;
 
+class mmOnline
+{
+public:
+    mmOnline();
+    ~mmOnline();
+
+    bool getOnlineRatesYahoo();
+    bool getOnlineRatesMOEX();
+    bool getOnlineRatesMS();
+
+    bool get_error() const;
+    const wxString get_error_str() const;
+private:
+    wxString m_error_str;
+    bool m_error;
+
+};
+
+inline bool mmOnline::get_error() const { return m_error; }
+inline const wxString mmOnline::get_error_str() const { return m_error_str; }
+
 class mmHistoryOnline
 {
 public:
@@ -73,10 +94,8 @@ private:
 extern const wxString YahooQuotes;
 extern const wxString YahooQuotesHistory;
 
-enum yahoo_price_type { FIAT = 0, SHARES };
+//enum yahoo_price_type { FIAT = 0, SHARES };
 
-bool getOnlineRates(wxString& msg);
-bool getOnlineRatesYahoo();
 
 bool getOnlineCurrencyRates(wxString& msg, int curr_id = -1, bool used_only = true);
 bool get_yahoo_prices(std::map<wxString, double>& symbols

@@ -731,8 +731,11 @@ bool mmStocksPanel::onlineQuoteRefresh(wxString& msg)
     refresh_button_->SetBitmapLabel(mmBitmap(png::LED_YELLOW));
     stock_details_->SetLabelText(_("Connecting..."));
 
-    bool ok = getOnlineRates(msg);
-    if (!ok) {
+    wxSharedPtr<mmOnline> o;
+    o = new mmOnline();
+
+    if (o->get_error()) {
+        msg = o->get_error_str();
         return false;
     }
 

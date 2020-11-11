@@ -32,6 +32,257 @@
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
 
+
+mmOnline::mmOnline()
+{
+
+
+    getOnlineRatesYahoo();
+    getOnlineRatesMOEX();
+    getOnlineRatesMS();
+
+
+}
+
+mmOnline::~mmOnline()
+{
+}
+
+bool mmOnline::getOnlineRatesMOEX()
+{
+    
+ wxString url_template = R"(https://iss.moex.com/iss/engines/stock/markets/shares/boards/%s/securities.xml?iss.meta=off&iss.only=securities&securities.columns=SECID,PREVADMITTEDQUOTE)";
+
+    std::vector<wxString> markets;
+
+    Model_Ticker::Data_Set t = Model_Ticker::instance().all();
+    for (const auto &ticker : t)
+    {
+        wxString market;
+        switch (ticker.SOURCE) {
+        case Model_Ticker::MOEX:
+            if (std::find(markets.begin(), markets.end(), ticker.MARKET) == markets.end()) {
+                markets.push_back(ticker.MARKET);
+            }
+        }
+    }
+
+    std::map<wxString, double> prices;
+    std::map<wxString, wxString> names;
+
+    for (const auto& item : markets)
+    {
+        auto URL = wxString::Format(url_template, item.GetData());
+        wxLogDebug(URL);
+
+        wxString xml;
+        auto err_code = http_get_data(URL, xml);
+        if (err_code != CURLE_OK)
+        {
+            m_error_str = xml;
+            m_error = false;
+            return m_error;
+        }
+
+        wxXmlDocument doc;
+
+        if (!xml.Contains("</document>")) {
+            wxLogDebug("%s", "!= </document>");
+            m_error_str = _("Error");
+            m_error = false;
+            return m_error;
+        }
+
+        wxStringInputStream XmlContentStream(xml);
+
+        if (!doc.Load(XmlContentStream)) {
+            wxLogDebug("%s", "XmlContentStream");
+            m_error_str = _("Error");
+            m_error = false;
+            return m_error;
+        }
+
+
+        const wxString attribute1 = "SECID";
+        const wxString attribute2 = "PREVADMITTEDQUOTE";
+
+        wxXmlNode *child = doc.GetRoot()->GetChildren()->GetChildren();
+
+        wxString result;
+        while (child)
+        {
+            wxLogDebug("%i %s", child->GetType(), child->GetName());
+
+            if (child->GetName() == "rows")
+            {
+                child = child->GetChildren();
+                while (child)
+                {
+
+                    wxString att1 =
+                        child->GetAttribute(attribute1, "null"); //+ "|" + wxString(item.GetData());
+
+                    Model_Ticker::Data_Set tickers = Model_Ticker::instance()
+                        .find(Model_Ticker::MARKET(wxString(item.GetData()))
+                            , Model_Ticker::SYMBOL(att1));
+                    if (!tickers.empty()) {
+                        wxString att2 =
+                            child->GetAttribute(attribute2, "null");
+                        wxLogDebug("att1 = %s | att2 = %s", att1, att2);
+
+                        double value;
+                        if (att2.ToDouble(&value))
+                        {
+                            prices[att1] = value;
+                        }
+                    }
+                    child = child->GetNext();
+                }
+                break;
+            }
+
+            child = child->GetNext();
+        }
+
+
+    }
+
+    m_error = false;
+    return m_error;
+}
+
+bool mmOnline::getOnlineRatesMS()
+{
+    wxLogDebug("MorningStar TBD");
+    m_error = true;
+    return m_error;
+}
+
+
+bool mmOnline::getOnlineRatesYahoo()
+{
+
+    std::map<wxString, double> prices;
+    std::map<wxString, wxString> tickers;
+
+    Model_Ticker::Data_Set t = Model_Ticker::instance().all();
+    for (const auto &ticker : t)
+    {
+        wxASSERT(!ticker.SYMBOL.empty());
+        wxString symbol;
+        switch (ticker.SOURCE) {
+        case Model_Ticker::YAHOO:
+            symbol = ticker.SYMBOL;
+            if (!symbol.Contains(".") && !ticker.MARKET.empty()) {
+                symbol += "." + ticker.MARKET;
+            }
+            prices[symbol] = 0.0;
+            tickers[ticker.UNIQUENAME] = symbol;
+
+        }
+    }
+
+
+    wxString buffer;
+    for (const auto& entry : prices)
+    {
+        buffer += entry.first + ",";
+    }
+
+    if (buffer.Right(1).Contains(",")) {
+        buffer.RemoveLast(1);
+    }
+
+    const auto URL = wxString::Format(YahooQuotes, buffer);
+
+    wxString json_data;
+    auto err_code = http_get_data(URL, json_data);
+    if (err_code != CURLE_OK)
+    {
+        m_error_str = json_data;
+        m_error = false;
+        return m_error;
+    }
+
+    Document json_doc;
+    if (json_doc.Parse(json_data.utf8_str()).HasParseError()) {
+        m_error_str = _("JSON Parse Error");
+        m_error = false;
+        return m_error;
+    }
+
+    Value r = json_doc["quoteResponse"].GetObject();
+
+    Value e = r["result"].GetArray();
+
+    if (e.Empty()) {
+        m_error_str = _("Nothing to update");
+        m_error = false;
+        return m_error;
+    }
+
+
+    for (rapidjson::SizeType i = 0; i < e.Size(); i++)
+    {
+        if (!e[i].IsObject()) continue;
+        Value v = e[i].GetObject();
+
+        if (!v.HasMember("symbol") || !v["symbol"].IsString())
+            continue;
+        const auto symbol = wxString::FromUTF8(v["symbol"].GetString());
+
+        if (!v.HasMember("currency") || !v["currency"].IsString())
+            continue;
+
+        float price = 0.0;
+
+        if (!v.HasMember("marketState") || !v["marketState"].IsString())
+            continue;
+        wxString marketState = wxString::FromUTF8(v["marketState"].GetString());
+
+        if (marketState == "PRE")
+        {
+            if (!v.HasMember("preMarketPrice") || !v["preMarketPrice"].IsFloat())
+                continue;
+            price = v["preMarketPrice"].GetFloat();
+        }
+        else
+        {
+            if (!v.HasMember("regularMarketPrice") || !v["regularMarketPrice"].IsFloat())
+                continue;
+            price = v["regularMarketPrice"].GetFloat();
+        }
+
+        const auto currency = wxString::FromUTF8(v["currency"].GetString());
+        double k = currency == "GBp" ? 100 : 1;
+
+        wxLogDebug("item: %u %s %f", i, symbol, price);
+        prices[symbol] = price <= 0 ? 0 : price / k;
+    }
+
+    wxString  msg;
+
+    Model_StockHistory::instance().Savepoint();
+    wxDateTime now = wxDate::Now();
+    for (auto &ti : tickers)
+    {
+
+        double dPrice = prices.find(ti.second) != prices.end() ? prices.at(ti.second) : 0.0;
+
+        if (dPrice != 0.0)
+        {
+            msg += wxString::Format("%s\t: %0.6f \n", ti.first, dPrice);
+            Model_StockHistory::instance().addUpdate(ti.first
+                , now, dPrice, Model_StockHistory::CURRENT);
+        }
+    }
+    Model_StockHistory::instance().ReleaseSavepoint();
+
+    m_error = true;
+    return m_error;
+}
+
+
 mmHistoryOnline::mmHistoryOnline(Model_Currency::Data* currency)
 {
     wxString base_currency_symbol;
@@ -751,132 +1002,6 @@ bool get_yahoo_prices(std::map<wxString, double>& symbols
     return true;
 }
 
-bool getOnlineRates(wxString & msg)
-{
-
-    getOnlineRatesYahoo();
-
-
-    return true;
-}
-
-bool getOnlineRatesYahoo()
-{
-
-    std::map<wxString, double> prices;
-    std::map<wxString, wxString> tickers;
-
-    Model_Ticker::Data_Set t = Model_Ticker::instance().all();
-    for (const auto &ticker : t)
-    {
-        wxASSERT(!ticker.SYMBOL.empty());
-        wxString symbol;
-        switch (ticker.SOURCE) {
-        case Model_Ticker::YAHOO:
-            symbol = ticker.SYMBOL;
-            if (!symbol.Contains(".") && !ticker.MARKET.empty()) {
-                symbol += "." + ticker.MARKET;
-            }
-            prices[symbol] = 0.0;
-            tickers[ticker.UNIQUENAME] = symbol;
-
-            break;
-        }
-    }
-
-
-    wxString buffer, output;
-    for (const auto& entry : prices)
-    {
-        buffer += entry.first + ",";
-    }
-
-    if (buffer.Right(1).Contains(",")) {
-        buffer.RemoveLast(1);
-    }
-
-    const auto URL = wxString::Format(YahooQuotes, buffer);
-
-    wxString json_data;
-    auto err_code = http_get_data(URL, json_data);
-    if (err_code != CURLE_OK)
-    {
-        output = json_data;
-        return false;
-    }
-
-    Document json_doc;
-    if (json_doc.Parse(json_data.utf8_str()).HasParseError())
-        return false;
-
-    Value r = json_doc["quoteResponse"].GetObject();
-
-    Value e = r["result"].GetArray();
-
-    if (e.Empty()) {
-        output = _("Nothing to update");
-        return false;
-    }
-
-
-    for (rapidjson::SizeType i = 0; i < e.Size(); i++)
-    {
-        if (!e[i].IsObject()) continue;
-        Value v = e[i].GetObject();
-
-        if (!v.HasMember("symbol") || !v["symbol"].IsString())
-            continue;
-        const auto symbol = wxString::FromUTF8(v["symbol"].GetString());
-
-        if (!v.HasMember("currency") || !v["currency"].IsString())
-            continue;
-
-        float price = 0.0;
-
-        if (!v.HasMember("marketState") || !v["marketState"].IsString())
-            continue;
-        wxString marketState = wxString::FromUTF8(v["marketState"].GetString());
-
-        if (marketState == "PRE")
-        {
-            if (!v.HasMember("preMarketPrice") || !v["preMarketPrice"].IsFloat())
-                continue;
-            price = v["preMarketPrice"].GetFloat();
-        }
-        else
-        {
-            if (!v.HasMember("regularMarketPrice") || !v["regularMarketPrice"].IsFloat())
-                continue;
-            price = v["regularMarketPrice"].GetFloat();
-        }
-
-        const auto currency = wxString::FromUTF8(v["currency"].GetString());
-        double k = currency == "GBp" ? 100 : 1;
-
-        wxLogDebug("item: %u %s %f", i, symbol, price);
-        prices[symbol] = price <= 0 ? 0 : price / k;
-    }
-
-    wxString  msg;
-
-    Model_StockHistory::instance().Savepoint();
-    wxDateTime now = wxDate::Now();
-    for (auto &ti : tickers)
-    {
-
-        double dPrice = prices.find(ti.second) != prices.end() ? prices.at(ti.second) : 0.0;
-
-        if (dPrice != 0.0)
-        {
-            msg += wxString::Format("%s\t: %0.6f \n", ti.first, dPrice);
-            Model_StockHistory::instance().addUpdate(ti.first
-                , now, dPrice, Model_StockHistory::CURRENT);
-        }
-    }
-    Model_StockHistory::instance().ReleaseSavepoint();
-
-    return true;
-}
 
 // Yahoo API
 const wxString YahooQuotes = "https://query1.finance.yahoo.com/v7/finance/quote?symbols=%s&fields=preMarketPrice,regularMarketPrice,currency,shortName,marketState";

@@ -632,8 +632,8 @@ void mmMainCurrencyDialog::OnHistoryUpdate(wxCommandEvent& WXUNUSED(event))
     wxString base_currency_symbol;
     wxASSERT_MSG(Model_Currency::GetBaseCurrencySymbol(base_currency_symbol), "Could not find base currency symbol");
 
-    int msgResult = wxMessageBox(_("Do you want to add also dates without any transaction?")
-        , _("Currency Dialog"), wxYES_NO | wxNO_DEFAULT | wxICON_WARNING);
+    //int msgResult = wxMessageBox(_("Do you want to add also dates without any transaction?")
+    //    , _("Currency Dialog"), wxYES_NO | wxNO_DEFAULT | wxICON_WARNING);
 
     wxSharedPtr<mmHistoryOnline> o;
     o = new mmHistoryOnline(CurrentCurrency);
