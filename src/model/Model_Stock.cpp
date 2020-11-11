@@ -167,8 +167,8 @@ Model_StockStat::Model_StockStat(const wxString & ticker, int accountID, double 
         m_gain_loss = (current_price - m_everage_price) * m_count;
     }
 
-    wxLogDebug(" Stock total: %.2f  Money total: %.2f  Count: %f Gain_Loss: %f"
-        , m_purchase_total, m_money_total, m_count, m_gain_loss);
+    //wxLogDebug(" Stock total: %.2f  Money total: %.2f  Count: %f Gain_Loss: %f"
+    //    , m_purchase_total, m_money_total, m_count, m_gain_loss);
 
     return;
 

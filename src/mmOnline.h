@@ -20,6 +20,7 @@
 #include "option.h"
 #include <wx/string.h>
 #include "model/Model_Ticker.h"
+#include "model/Model_Currency.h"
 
 class Model_Ticker;
 
@@ -28,6 +29,7 @@ class mmHistoryOnline
 public:
     //mmHistoryOnline(const wxString& unique_name, const wxString& market ="", const wxString& currency = "USD", int source = 0, int type  = 0);
     mmHistoryOnline(Model_Ticker::Data* t, const wxString& currency = "USD");
+    mmHistoryOnline(Model_Currency::Data* currency);
     ~mmHistoryOnline();
     const wxString getError() const;
 
@@ -46,7 +48,8 @@ private:
     int m_source;
     int m_type;
 
-    void saveData(std::map<time_t, float>& history);
+    void saveStockHistoryData(std::map<time_t, float>& history);
+    void saveCurrencyHistoryData(std::map<time_t, float>& history);
 };
 
 inline const wxString mmHistoryOnline::getError() const { return m_error; }
@@ -70,13 +73,13 @@ private:
 extern const wxString YahooQuotes;
 extern const wxString YahooQuotesHistory;
 
-bool getOnlineHistory(std::map<wxDateTime, double> &historical_rates, const wxString &symbol, wxString &msg);
 enum yahoo_price_type { FIAT = 0, SHARES };
+
 bool getOnlineRates(wxString& msg);
+bool getOnlineRatesYahoo();
+
 bool getOnlineCurrencyRates(wxString& msg, int curr_id = -1, bool used_only = true);
 bool get_yahoo_prices(std::map<wxString, double>& symbols
     , std::map<wxString, double>& out
-    , const wxString base_currency_symbol
-    , wxString& output
-    , int type);
+    , wxString& output);
 

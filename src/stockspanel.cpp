@@ -728,38 +728,13 @@ bool mmStocksPanel::onlineQuoteRefresh(wxString& msg)
         return false;
     }
 
-    std::map<wxString, double> symbols;
-    Model_Stock::Data_Set stock_list = Model_Stock::instance().all();
-    for (const auto &stock : stock_list)
-    {
-        const wxString symbol = stock.SYMBOL.Upper();
-        if (symbol.IsEmpty()) continue;
-        symbols[symbol] = 0.0;
-    }
-
     refresh_button_->SetBitmapLabel(mmBitmap(png::LED_YELLOW));
     stock_details_->SetLabelText(_("Connecting..."));
 
-    std::map<wxString, double > stocks_data;
-    bool ok = get_yahoo_prices(symbols, stocks_data, base_currency_symbol, msg, yahoo_price_type::SHARES);
+    bool ok = getOnlineRates(msg);
     if (!ok) {
         return false;
     }
-
-    Model_StockHistory::instance().Savepoint();
-    wxDateTime now = wxDate::Now();
-    for (auto &s : stocks_data)
-    {
-        double dPrice = s.second;
-
-        if (dPrice != 0)
-        {
-            msg += wxString::Format("%s\t: %0.6f \n", s.first, dPrice);
-            Model_StockHistory::instance().addUpdate(s.first
-                , now, dPrice, Model_StockHistory::CURRENT);
-        }
-    }
-    Model_StockHistory::instance().ReleaseSavepoint();
 
     // Now refresh the display
     int selected_id = -1;

@@ -19,6 +19,7 @@
 #include "mmOnline.h"
 #include "util.h"
 #include "constants.h"
+#include "model/Model_Stock.h"
 #include "model/Model_StockHistory.h"
 #include "model/Model_Account.h"
 #include "model/Model_Currency.h"
@@ -30,6 +31,35 @@
 #include <vector>
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
+
+mmHistoryOnline::mmHistoryOnline(Model_Currency::Data* currency)
+{
+    wxString base_currency_symbol;
+    Model_Currency::GetBaseCurrencySymbol(base_currency_symbol);
+    wxString symbol = wxString::Format("%s%s=X", currency->CURRENCY_SYMBOL, base_currency_symbol);
+
+    m_unique_name = symbol;
+    m_ticker = symbol;
+    m_type = Model_Ticker::MONEY;
+    m_source = Model_Ticker::YAHOO;
+    m_market = "";
+    m_currency = currency->CURRENCY_SYMBOL;
+
+    Model_CurrencyHistory::Data_Set d = Model_CurrencyHistory::instance().find(Model_CurrencyHistory::CURRENCYID(currency->CURRENCYID));
+    std::stable_sort(d.begin(), d.end(), SorterByCURRDATE());
+    std::reverse(d.begin(), d.end());
+
+    if (d.empty()) {
+        m_date = wxDate::Today().Subtract(wxDateSpan::Week());
+    }
+    else {
+        m_date.ParseISODate(d.back().CURRDATE);
+    }
+    m_date = m_date.ToTimezone(wxDate::GMT0, true).Add(wxDateSpan::Day());
+    wxLogDebug("%s %s", m_date.FormatISODate(), m_date.FormatISOTime());
+
+    mmYahoo();
+}
 
 mmHistoryOnline::mmHistoryOnline(Model_Ticker::Data* t, const wxString& currency) :
     m_currency(currency)
@@ -173,7 +203,14 @@ bool mmHistoryOnline::mmYahoo()
             float rate = quotes_closed[i].GetFloat() / k;
             history[time] = rate;
         }
-        saveData(history);
+
+        if (m_type != Model_Ticker::MONEY) {
+            saveStockHistoryData(history);
+        }
+        else {
+            saveCurrencyHistoryData(history);
+        }
+
         m_error = "";
         return true;
     }
@@ -290,7 +327,7 @@ bool mmHistoryOnline::mmMOEX()
         child = child->GetNext();
     }
 
-    saveData(history);
+    saveStockHistoryData(history);
 
     return err_code == CURLE_OK;
 }
@@ -390,12 +427,53 @@ bool mmHistoryOnline::mmMorningStar()
         history[date] = price;
     }
 
-    saveData(history);
+    saveStockHistoryData(history);
 
     return err_code == CURLE_OK;
 }
 
-void mmHistoryOnline::saveData(std::map<time_t, float>& history)
+void mmHistoryOnline::saveCurrencyHistoryData(std::map<time_t, float>& history)
+{
+    const wxString today = wxDate::Today().FormatISODate();
+    Model_Currency::Data_Set cs = Model_Currency::instance().find(Model_Currency::CURRENCY_SYMBOL(m_currency));
+    int currencyID = -1;
+    if (!cs.empty()) currencyID = cs.begin()->CURRENCYID;
+
+    Model_Currency::Data* c = Model_Currency::instance().get(currencyID);
+    if (c) currencyID = c->CURRENCYID;
+
+    Model_CurrencyHistory::instance().Savepoint();
+    for (const auto& entry : history)
+    {
+        const wxString date_str = wxDateTime(static_cast<time_t>(entry.first)).FormatISODate();
+        float dPrice = entry.second;
+
+        Model_CurrencyHistory::Data_Set d = Model_CurrencyHistory::instance().find(Model_CurrencyHistory::CURRDATE(entry.first)
+            , Model_CurrencyHistory::CURRENCYID(currencyID));
+        if (d.empty()) {
+            Model_CurrencyHistory::Data* ndata = Model_CurrencyHistory::instance().create();
+            ndata->CURRENCYID = currencyID;
+            ndata->CURRDATE = date_str;
+            ndata->CURRVALUE = dPrice;
+            ndata->CURRUPDTYPE = date_str == today ? Model_CurrencyHistory::CURRENT : Model_CurrencyHistory::ONLINE;
+            Model_CurrencyHistory::instance().save(ndata);
+        }
+        else {
+            if (d.begin()->CURRUPDTYPE != Model_CurrencyHistory::MANUAL)
+            {
+                Model_CurrencyHistory::Data* ndata = Model_CurrencyHistory::instance().get(d.begin()->CURRHISTID);
+                ndata->CURRVALUE = dPrice;
+                ndata->CURRUPDTYPE = date_str == today ? Model_CurrencyHistory::CURRENT : Model_CurrencyHistory::ONLINE;
+                Model_CurrencyHistory::instance().save(ndata);
+            }
+        }
+
+    }
+
+    Model_CurrencyHistory::instance().ReleaseSavepoint();
+}
+
+void mmHistoryOnline::saveStockHistoryData(std::map<time_t, float>& history)
 {
     const wxString today = wxDate::Today().FormatISODate();
     Model_StockHistory::instance().Savepoint();
@@ -551,7 +629,7 @@ bool getOnlineCurrencyRates(wxString& msg, int curr_id, bool used_only)
     wxString output;
     std::map<wxString, double> currency_data;
 
-    if (get_yahoo_prices(fiat, currency_data, base_currency_symbol, output, yahoo_price_type::FIAT))
+    if (get_yahoo_prices(fiat, currency_data, output))
     {
 
         msg << _("Currency rates have been updated");
@@ -588,7 +666,8 @@ bool getOnlineCurrencyRates(wxString& msg, int curr_id, bool used_only)
             if (new_rate > 0)
             {
                 if (Option::instance().getCurrencyHistoryEnabled())
-                    Model_CurrencyHistory::instance().addUpdate(currency.CURRENCYID, today, new_rate, Model_CurrencyHistory::ONLINE);
+                    Model_CurrencyHistory::instance().addUpdate(currency.CURRENCYID
+                        , today, new_rate, Model_CurrencyHistory::CURRENT);
                 else
                 {
                     currency.BASECONVRATE = new_rate;
@@ -607,19 +686,15 @@ bool getOnlineCurrencyRates(wxString& msg, int curr_id, bool used_only)
 
 bool get_yahoo_prices(std::map<wxString, double>& symbols
     , std::map<wxString, double>& out
-    , const wxString base_currency_symbol
-    , wxString& output
-    , int type)
+    , wxString& output)
 {
+    wxString base_currency_symbol;
+    Model_Currency::GetBaseCurrencySymbol(base_currency_symbol);
+
     wxString buffer;
     for (const auto& entry : symbols)
     {
-        if (type == yahoo_price_type::FIAT) {
-            buffer += wxString::Format("%s%s=X,", entry.first, base_currency_symbol);
-        }
-        else {
-            buffer += entry.first + ",";
-        }
+        buffer += wxString::Format("%s%s=X,", entry.first, base_currency_symbol);
     }
 
     if (buffer.Right(1).Contains(",")) {
@@ -642,8 +717,6 @@ bool get_yahoo_prices(std::map<wxString, double>& symbols
 
 
     Value r = json_doc["quoteResponse"].GetObject();
-    //if (!r.HasMember("error") || !r["error"].IsNull())
-    //    return false;
 
     Value e = r["result"].GetArray();
 
@@ -652,175 +725,160 @@ bool get_yahoo_prices(std::map<wxString, double>& symbols
         return false;
     }
 
-    if (type == yahoo_price_type::FIAT)
+
+    wxRegEx pattern("^(...)...=X$");
+    for (rapidjson::SizeType i = 0; i < e.Size(); i++)
     {
-        wxRegEx pattern("^(...)...=X$");
-        for (rapidjson::SizeType i = 0; i < e.Size(); i++)
+        if (!e[i].IsObject()) continue;
+        Value v = e[i].GetObject();
+
+        if (!v.HasMember("symbol") || !v["symbol"].IsString())
+            continue;
+        auto currency_symbol = wxString::FromUTF8(v["symbol"].GetString());
+        if (pattern.Matches(currency_symbol))
         {
-            if (!e[i].IsObject()) continue;
-            Value v = e[i].GetObject();
-
-            if (!v.HasMember("symbol") || !v["symbol"].IsString())
-                continue;
-            auto currency_symbol = wxString::FromUTF8(v["symbol"].GetString());
-            if (pattern.Matches(currency_symbol))
-            {
-                if (!v.HasMember("regularMarketPrice") || !v["regularMarketPrice"].IsFloat())
-                    continue;
-                const auto price = v["regularMarketPrice"].GetFloat();
-                currency_symbol = pattern.GetMatch(currency_symbol, 1);
-
-                wxLogDebug("item: %u %s %f", i, currency_symbol, price);
-                out[currency_symbol] = (price <= 0 ? 0 : price);
-            }
-        }
-    }
-    else
-    {
-        for (rapidjson::SizeType i = 0; i < e.Size(); i++)
-        {
-            if (!e[i].IsObject()) continue;
-            Value v = e[i].GetObject();
-
             if (!v.HasMember("regularMarketPrice") || !v["regularMarketPrice"].IsFloat())
                 continue;
-            auto price = v["regularMarketPrice"].GetFloat();
+            const auto price = v["regularMarketPrice"].GetFloat();
+            currency_symbol = pattern.GetMatch(currency_symbol, 1);
 
-            if (!v.HasMember("symbol") || !v["symbol"].IsString())
-                continue;
-            const auto symbol = wxString::FromUTF8(v["symbol"].GetString());
-
-            if (!v.HasMember("currency") || !v["currency"].IsString())
-                continue;
-            const auto currency = wxString::FromUTF8(v["currency"].GetString());
-            double k = currency == "GBp" ? 100 : 1;
-
-            wxLogDebug("item: %u %s %f", i, symbol, price);
-            out[symbol] = price <= 0 ? 0 : price / k;
+            wxLogDebug("item: %u %s %f", i, currency_symbol, price);
+            out[currency_symbol] = (price <= 0 ? 0 : price);
         }
     }
 
-    return true;
-}
 
-bool getOnlineHistory(std::map<wxDateTime, double> &historical_rates, const wxString &symbol, wxString &msg)
-{
-    wxString base_currency_symbol;
-
-    if (!Model_Currency::GetBaseCurrencySymbol(base_currency_symbol))
-    {
-        msg = _("Could not find base currency symbol!");
-        return false;
-    }
-
-    const wxString URL = wxString::Format(YahooQuotesHistory
-        , wxString::Format("%s%s=X", symbol, base_currency_symbol)
-        , "1y", "1d"); //TODO: ask range and interval
-
-    wxString json_data;
-    auto err_code = http_get_data(URL, json_data);
-    if (err_code != CURLE_OK)
-    {
-        msg = json_data;
-        return false;
-    }
-
-    Document json_doc;
-    if (json_doc.Parse(json_data.utf8_str()).HasParseError())
-    {
-        return false;
-    }
-
-    if (!json_doc.HasMember("chart") || !json_doc["chart"].IsObject())
-        return false;
-    Value chart = json_doc["chart"].GetObject();
-
-    wxASSERT(chart.HasMember("error"));
-    if (!chart.HasMember("error") || !chart["error"].IsNull())
-        return false;
-
-    if (!chart.HasMember("result") || !chart["result"].IsArray())
-        return false;
-    Value result = chart["result"].GetArray();
-
-    if (!result.IsArray() || !result.Begin()->IsObject())
-        return false;
-    Value data = result.Begin()->GetObject();
-
-    if (!data.HasMember("timestamp") || !data["timestamp"].IsArray())
-        return false;
-    Value timestamp = data["timestamp"].GetArray();
-
-    if (!data.HasMember("indicators") || !data.IsObject())
-        return false;
-    Value indicators = data["indicators"].GetObject();
-
-    if (!indicators.HasMember("adjclose") || !indicators["adjclose"].IsArray())
-        return false;
-    Value quote_array = indicators["adjclose"].GetArray();
-    Value quotes = quote_array.Begin()->GetObject();
-    if (!quotes.HasMember("adjclose") || !quotes["adjclose"].IsArray())
-        return false;
-    Value quotes_closed = quotes["adjclose"].GetArray();
-
-    if (timestamp.Size() != quotes_closed.Size())
-        return false;
-
-    std::map<wxDate, double> history;
-    const wxDateTime today = wxDateTime::Today();
-    wxDateTime first_date = today;
-    double first_price = 0;
-
-    bool only_1 = true;
-    for (rapidjson::SizeType i = 0; i < timestamp.Size(); i++)
-    {
-        wxASSERT(timestamp[i].IsInt());
-        const auto time = wxDateTime(static_cast<time_t>(timestamp[i].GetInt())).GetDateOnly();
-        if (quotes_closed[i].IsFloat())
-        {
-            double rate = quotes_closed[i].GetFloat();
-            history[time] = rate;
-            if (first_date > time)
-            {
-                first_date = time;
-                first_price = rate;
-            }
-            if (rate != 1) only_1 = false;
-        }
-        else
-        {
-            wxLogDebug("%s %s", time.FormatISODate(), wxDateTime::GetWeekDayName(time.GetWeekDay()));
-        }
-    }
-
-    // Skip rates = 1 (Yahoo returns 1 with invalid Symbols)
-    if (only_1) return false;
-
-    double closed_price = first_price;
-    for (wxDateTime i = first_date; i < today; i.Add(wxDateSpan::Days(1)))
-    {
-        wxLogDebug("Date: %s %s", i.FormatISODate(), i.FormatISOTime());
-        double rate = closed_price;
-        if (history.find(i) != history.end()) {
-            rate = history[i];
-            closed_price = rate;
-        }
-        historical_rates[i] = rate;
-    }
-
-    wxLogDebug("Date: %s %s Today: %s %s"
-        , first_date.FormatISODate(), first_date.FormatISOTime()
-        , today.FormatISODate(), today.FormatISOTime());
     return true;
 }
 
 bool getOnlineRates(wxString & msg)
 {
-    return false;
+
+    getOnlineRatesYahoo();
+
+
+    return true;
+}
+
+bool getOnlineRatesYahoo()
+{
+
+    std::map<wxString, double> prices;
+    std::map<wxString, wxString> tickers;
+
+    Model_Ticker::Data_Set t = Model_Ticker::instance().all();
+    for (const auto &ticker : t)
+    {
+        wxASSERT(!ticker.SYMBOL.empty());
+        wxString symbol;
+        switch (ticker.SOURCE) {
+        case Model_Ticker::YAHOO:
+            symbol = ticker.SYMBOL;
+            if (!symbol.Contains(".") && !ticker.MARKET.empty()) {
+                symbol += "." + ticker.MARKET;
+            }
+            prices[symbol] = 0.0;
+            tickers[ticker.UNIQUENAME] = symbol;
+
+            break;
+        }
+    }
+
+
+    wxString buffer, output;
+    for (const auto& entry : prices)
+    {
+        buffer += entry.first + ",";
+    }
+
+    if (buffer.Right(1).Contains(",")) {
+        buffer.RemoveLast(1);
+    }
+
+    const auto URL = wxString::Format(YahooQuotes, buffer);
+
+    wxString json_data;
+    auto err_code = http_get_data(URL, json_data);
+    if (err_code != CURLE_OK)
+    {
+        output = json_data;
+        return false;
+    }
+
+    Document json_doc;
+    if (json_doc.Parse(json_data.utf8_str()).HasParseError())
+        return false;
+
+    Value r = json_doc["quoteResponse"].GetObject();
+
+    Value e = r["result"].GetArray();
+
+    if (e.Empty()) {
+        output = _("Nothing to update");
+        return false;
+    }
+
+
+    for (rapidjson::SizeType i = 0; i < e.Size(); i++)
+    {
+        if (!e[i].IsObject()) continue;
+        Value v = e[i].GetObject();
+
+        if (!v.HasMember("symbol") || !v["symbol"].IsString())
+            continue;
+        const auto symbol = wxString::FromUTF8(v["symbol"].GetString());
+
+        if (!v.HasMember("currency") || !v["currency"].IsString())
+            continue;
+
+        float price = 0.0;
+
+        if (!v.HasMember("marketState") || !v["marketState"].IsString())
+            continue;
+        wxString marketState = wxString::FromUTF8(v["marketState"].GetString());
+
+        if (marketState == "PRE")
+        {
+            if (!v.HasMember("preMarketPrice") || !v["preMarketPrice"].IsFloat())
+                continue;
+            price = v["preMarketPrice"].GetFloat();
+        }
+        else
+        {
+            if (!v.HasMember("regularMarketPrice") || !v["regularMarketPrice"].IsFloat())
+                continue;
+            price = v["regularMarketPrice"].GetFloat();
+        }
+
+        const auto currency = wxString::FromUTF8(v["currency"].GetString());
+        double k = currency == "GBp" ? 100 : 1;
+
+        wxLogDebug("item: %u %s %f", i, symbol, price);
+        prices[symbol] = price <= 0 ? 0 : price / k;
+    }
+
+    wxString  msg;
+
+    Model_StockHistory::instance().Savepoint();
+    wxDateTime now = wxDate::Now();
+    for (auto &ti : tickers)
+    {
+
+        double dPrice = prices.find(ti.second) != prices.end() ? prices.at(ti.second) : 0.0;
+
+        if (dPrice != 0.0)
+        {
+            msg += wxString::Format("%s\t: %0.6f \n", ti.first, dPrice);
+            Model_StockHistory::instance().addUpdate(ti.first
+                , now, dPrice, Model_StockHistory::CURRENT);
+        }
+    }
+    Model_StockHistory::instance().ReleaseSavepoint();
+
+    return true;
 }
 
 // Yahoo API
-const wxString YahooQuotes = "https://query1.finance.yahoo.com/v7/finance/quote?symbols=%s&fields=regularMarketPrice,currency,shortName";
-/*"ValidRanges":["1d","5d","1mo","3mo","6mo","1y","2y","5y","10y","ytd","max"]
-   Valid intervals: [1m, 2m, 5m, 15m, 30m, 60m, 90m, 1h, 1d, 5d, 1wk, 1mo, 3mo]*/
+const wxString YahooQuotes = "https://query1.finance.yahoo.com/v7/finance/quote?symbols=%s&fields=preMarketPrice,regularMarketPrice,currency,shortName,marketState";
+
 const wxString YahooQuotesHistory = "https://query1.finance.yahoo.com/v8/finance/chart/%s?range=%s&interval=%s&fields=currency";
