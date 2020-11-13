@@ -34,7 +34,7 @@ const std::vector<std::pair<Model_Ticker::TYPE_ENUM, wxString> > Model_Ticker::T
 };
 
 Model_Ticker::Model_Ticker()
-: Model<DB_Table_TICKERPROPERTIES_V1>()
+: Model<DB_Table_TICKER_V1>()
 {
 }
 
@@ -111,7 +111,16 @@ wxString Model_Ticker::get_ticker_name(int ticker_id)
 {
     Data* ticker = instance().get(ticker_id);
     if (ticker)
-        return ticker->UNIQUENAME;
+        return ticker->SOURCENAME;
+    else
+        return "";
+}
+
+wxString Model_Ticker::get_ticker_symbol(int ticker_id)
+{
+    Data* ticker = instance().get(ticker_id);
+    if (ticker)
+        return ticker->SYMBOL;
     else
         return "";
 }
@@ -139,9 +148,9 @@ Model_Ticker::SOURCE_ENUM Model_Ticker::source(const Data* ticker)
     return static_cast<SOURCE_ENUM>(ticker->SOURCE);
 }
 
-DB_Table_TICKERPROPERTIES_V1::SOURCE SOURCE(Model_Ticker::SOURCE_ENUM source, OP op)
+DB_Table_TICKER_V1::SOURCE SOURCE(Model_Ticker::SOURCE_ENUM source, OP op)
 {
-    return DB_Table_TICKERPROPERTIES_V1::SOURCE(source, op);
+    return DB_Table_TICKER_V1::SOURCE(source, op);
 }
 
 Model_Ticker::TYPE_ENUM Model_Ticker::type(const Data* ticker)
@@ -154,12 +163,12 @@ Model_Ticker::TYPE_ENUM Model_Ticker::type(const Data& ticker)
     return type(&ticker);
 }
 
-Model_Ticker::Data* Model_Ticker::get(const wxString& name)
+Model_Ticker::Data* Model_Ticker::get(int id)
 {
-    Data* unique_name = this->get_one(UNIQUENAME(name));
-    if (unique_name) return unique_name;
+    Data* ticker = this->get_one(TICKERID(id));
+    if (ticker) return ticker;
 
-    Data_Set items = this->find(UNIQUENAME(name));
-    if (!items.empty()) unique_name = this->get(items[0].TICKERID, this->db_);
-    return unique_name;
+    Data_Set items = this->find(TICKERID(id));
+    if (!items.empty()) ticker = this->get(items[0].TICKERID, this->db_);
+    return ticker;
 }

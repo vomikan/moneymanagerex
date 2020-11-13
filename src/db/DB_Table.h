@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-04 23:26:12.891000.
+ *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -1054,15 +1054,6 @@ struct SorterByTYPE
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.TYPE) < (y.TYPE);
-    }
-};
-
-struct SorterByUNIQUENAME
-{ 
-    template<class DATA>
-    bool operator()(const DATA& x, const DATA& y)
-    {
-        return (x.UNIQUENAME) < (y.UNIQUENAME);
     }
 };
 

@@ -149,11 +149,11 @@ wxString StocksListCtrl::OnGetItemText(long item, long column) const
     Model_Ticker::Data* i = Model_Ticker::instance().get(ID);
 
     wxSharedPtr<Model_StockStat> s;
-    double current_price = Model_StockHistory::getLastRate(i->UNIQUENAME);
-    s = new Model_StockStat(i->UNIQUENAME, m_stock_panel->get_account_id(), current_price);
+    double current_price = Model_StockHistory::getLastRate(i->TICKERID);
+    s = new Model_StockStat(i->TICKERID, m_stock_panel->get_account_id(), current_price);
 
     Model_Currency::Data_Set c = Model_Currency::instance()
-        .find(Model_Currency::CURRENCY_SYMBOL(i->CURRENCY_SYMBOL));
+        .find(Model_Currency::CURRENCYID(i->CURRENCYID));
     Model_Currency::Data* currency = Model_Currency::instance().get(c.begin()->CURRENCYID);
 
     Model_Account::Data* a = Model_Account::instance().get(m_stock_panel->get_account_id());
@@ -164,7 +164,7 @@ wxString StocksListCtrl::OnGetItemText(long item, long column) const
     switch (column)
     {
     case COL_SYMBOL:
-        return m_stocks[item].SYMBOL;
+        return Model_Ticker::get_ticker_symbol(m_stocks[item].TICKERID);
     case COL_CURRPRICE:
         return default_curr ?
             Model_Currency::toString(current_price, currency, i->PRECISION)
@@ -223,8 +223,8 @@ void StocksListCtrl::OnListLeftClick(wxMouseEvent& event)
 int StocksListCtrl::OnGetItemImage(long item) const
 {
     wxSharedPtr<Model_StockStat> s;
-    double current_price = Model_StockHistory::getLastRate(m_stocks[item].SYMBOL);
-    s = new Model_StockStat(m_stocks[item].SYMBOL, m_stock_panel->get_account_id(), current_price);
+    double current_price = Model_StockHistory::getLastRate(m_stocks[item].TICKERID);
+    s = new Model_StockStat(m_stocks[item].TICKERID, m_stock_panel->get_account_id(), current_price);
 
     /* Returns the icon to be shown for each entry */
     double val = s->get_gain_loss();
@@ -253,7 +253,7 @@ void StocksListCtrl::OnListKeyDown(wxListEvent& event)
 
 void StocksListCtrl::OnNewStocks(wxCommandEvent& /*event*/)
 {
-    mmStockDialog dlg(this, m_stock_panel->m_frame, "", m_stock_panel->get_account_id());
+    mmStockDialog dlg(this, m_stock_panel->m_frame, -1, m_stock_panel->get_account_id());
     dlg.ShowModal();
     int id = dlg.get_stock_id();
     doRefreshItems(id);
@@ -269,7 +269,7 @@ void StocksListCtrl::OnDeleteStocks(wxCommandEvent& /*event*/)
         , wxYES_NO | wxNO_DEFAULT | wxICON_ERROR);
     if (msgDlg.ShowModal() == wxID_YES)
     {
-        Model_Stock::Data_Set s = Model_Stock::instance().find(Model_Stock::SYMBOL(m_stocks[m_selected_row].SYMBOL));
+        Model_Stock::Data_Set s = Model_Stock::instance().find(Model_Stock::TICKERID(m_stocks[m_selected_row].TICKERID));
         Model_Stock::instance().Savepoint();
         for (const auto& i : s)
         {
@@ -294,10 +294,10 @@ void StocksListCtrl::OnEditStocks(wxCommandEvent& event)
 void StocksListCtrl::OnStockWebPage(wxCommandEvent& /*event*/)
 {
     if (m_selected_row < 0) return;
-    const wxString stockSymbol = m_stocks[m_selected_row].SYMBOL;
+    int ticker_id = m_stocks[m_selected_row].TICKERID;
 
     wxSharedPtr<mmWebPage> e;
-    e = new mmWebPage(stockSymbol);
+    e = new mmWebPage(ticker_id);
 }
 
 void StocksListCtrl::OnListItemActivated(wxListEvent& event)
@@ -493,7 +493,7 @@ void StocksListCtrl::sortTable()
         std::stable_sort(m_stocks.begin(), m_stocks.end(), SorterByPURCHASEDATE());
         break;
     case StocksListCtrl::COL_SYMBOL:
-        std::stable_sort(m_stocks.begin(), m_stocks.end(), SorterBySYMBOL());
+        //std::stable_sort(m_stocks.begin(), m_stocks.end(), SorterBySYMBOL()); //TODO
         break;
     case StocksListCtrl::COL_NUMBER:
         std::stable_sort(m_stocks.begin(), m_stocks.end(), SorterByNUMSHARES());
@@ -551,7 +551,7 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
     item.SetImage(asc ? static_cast<int>(ico::ARROW_DOWN) : static_cast<int>(ico::ARROW_UP));
     SetColumn(col, item);
 
-    std::map<wxString, Data> list;
+    std::map<int, Data> list;
 
     //TODO: Current price
     //Model_StockHistory::Data_Set histData = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(i.first));
@@ -560,12 +560,11 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
     Model_Stock::Data_Set stocks = Model_Stock::instance().find(Model_Stock::HELDAT(m_stock_panel->get_account_id()));
     for (const auto& entry : stocks)
     {
-        Model_Ticker::Data* e = Model_Ticker::instance().get(entry.SYMBOL);
-        const wxString name = e ? e->UNIQUENAME : entry.SYMBOL;
+        Model_Ticker::Data* e = Model_Ticker::instance().get(entry.TICKERID);
         Data i;
-        if (list.find(name) != list.end())
+        if (list.find(e->TICKERID) != list.end())
         {
-            i = list.at(name);
+            i = list.at(e->TICKERID);
             i.date = i.date > entry.PURCHASEDATE ? entry.PURCHASEDATE : i.date;
             i.number += entry.NUMSHARES;
             i.commission += entry.COMMISSION;
@@ -586,7 +585,7 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
         }
         i.ID = e->TICKERID;
         i.sector = e->SECTOR;
-        list[name] = i;
+        list[e->TICKERID] = i;
     }
 
     m_stocks.clear();
@@ -597,7 +596,7 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
         entry->NUMSHARES = i.second.number;
         entry->PURCHASEPRICE = i.second.purchase_price;
         entry->HELDAT = m_stock_panel->get_account_id();
-        entry->SYMBOL = i.first;
+        entry->TICKERID = i.first;
         entry->COMMISSION = i.second.commission;
         entry->STOCKID = i.second.ID;
 
@@ -734,7 +733,7 @@ bool mmStocksPanel::onlineQuoteRefresh(wxString& msg)
     wxSharedPtr<mmOnline> o;
     o = new mmOnline();
 
-    if (o->get_error()) {
+    if (o->get_error_code() != 0) {
         msg = o->get_error_str();
         return false;
     }
@@ -787,7 +786,7 @@ void mmStocksPanel::enableEditDeleteButtons(bool en)
 void mmStocksPanel::call_dialog(int selectedIndex)
 {
     Model_Stock::Data* stock = &listCtrlAccount_->m_stocks[selectedIndex];
-    mmStockDialog dlg(this, m_frame, stock->SYMBOL, m_account_id);
+    mmStockDialog dlg(this, m_frame, stock->TICKERID, m_account_id);
     dlg.ShowModal();
     int id = dlg.get_stock_id();
 

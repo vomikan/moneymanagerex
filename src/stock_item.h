@@ -25,7 +25,7 @@
 class mmStockItem : public wxDialog
 {
 public:
-    mmStockItem(wxWindow* parent, int acc, int id, const wxString& symbol, int type = 0);
+    mmStockItem(wxWindow* parent, int acc, int id, int ticker_id, int type = 0);
 
     ~mmStockItem();
     int get_id() const;
@@ -40,7 +40,7 @@ private:
     int m_acc;
     int m_type;
     int m_share_precision;
-    wxString m_symbol;
+    int m_ticker_id;
     wxChoice* m_choiceType;
 
     wxDatePickerCtrl* m_purchase_date_ctrl;

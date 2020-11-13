@@ -191,7 +191,7 @@ wxString mmReportSummaryByDate::getHTMLText()
                 pHistItem->purchaseDate = Model_Stock::PURCHASEDATE(stock);
                 pHistItem->purchaseDateStr = stock.PURCHASEDATE;
                 pHistItem->numShares = stock.NUMSHARES;
-                pHistItem->stockHist = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(stock.SYMBOL));
+                pHistItem->stockHist = Model_StockHistory::instance().find(Model_StockHistory::TICKERID(stock.TICKERID));
                 std::stable_sort(pHistItem->stockHist.begin(), pHistItem->stockHist.end(), SorterByDATE());
                 std::reverse(pHistItem->stockHist.begin(), pHistItem->stockHist.end());
             }

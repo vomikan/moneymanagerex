@@ -7,7 +7,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-04 23:26:16.495000.
+ *          AUTO GENERATED at 2020-11-13 14:35:33.620000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -125,14 +125,13 @@ const std::vector<wxString> dbUpgradeQuery =
     // Upgrade to version 8
     R"(
         
-        CREATE TABLE IF NOT EXISTS TICKERPROPERTIES_V1 (
+        CREATE TABLE IF NOT EXISTS TICKER_V1 (
         TICKERID INTEGER PRIMARY KEY,
-        UNIQUENAME TEXT UNIQUE COLLATE NOCASE NOT NULL,
         SOURCE INTEGER, /* Yahoo, MorningStar, MOEX */
         SYMBOL TEXT COLLATE NOCASE NOT NULL,
-        SOURCENAME TEXT,
         MARKET TEXT, 
-        TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond, Corp. Bond */
+        SOURCENAME TEXT,
+        TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond */
         COUNTRY TEXT, 
         SECTOR TEXT, /*Basic Materials
         , Consumer Cyclical
@@ -150,54 +149,84 @@ const std::vector<wxString> dbUpgradeQuery =
         WEBPAGE TEXT,
         NOTES TEXT,
         PRECISION INTEGER,
-        CURRENCY_SYMBOL TEXT
+        CURRENCYID INTEGER INTEGER NOT NULL,
+        FOREIGN KEY (CURRENCYID) REFERENCES CURRENCYFORMATS_V1(CURRENCYID) 
         );
-        CREATE INDEX IF NOT EXISTS IDX_TICKER ON TICKERPROPERTIES_V1 (SYMBOL, TICKERID);
+        CREATE INDEX IF NOT EXISTS IDX_TICKER ON TICKER_V1 (SYMBOL, TICKERID);
+        
+        
+        insert into TICKER_V1 (SOURCE, SYMBOL, MARKET, PRECISION, CURRENCYID)
+        select distinct 0 SOURCE
+          , case when INSTR(SYMBOL, '.') > 0 then substr(SYMBOL, 1, INSTR(SYMBOL, '.') -1) else SYMBOL end  SYMBOL 
+          , case when INSTR(SYMBOL, '.') > 0 then substr(SYMBOL, INSTR(SYMBOL, '.')+ 1) else '' end  MARKET
+          , IFNULL((select INFOVALUE from INFOTABLE_V1 where INFONAME = 'SHARE_PRECISION'), 2) PRECISION 
+          , (select c.CURRENCYID from ACCOUNTLIST_V1 a
+                 left join CURRENCYFORMATS_V1 c on c.CURRENCYID=a.CURRENCYID
+        		 where a.ACCOUNTID = s.HELDAT) CURRENCYID
+          from STOCK_V1 s;
         
         
         CREATE TABLE STOCK_NEW(
         STOCKID integer primary key
+        , TICKERID integer NOT NULL
         , HELDAT integer
         , PURCHASEDATE TEXT NOT NULL
-        , SYMBOL TEXT NOT NULL
         , NUMSHARES numeric
         , PURCHASEPRICE numeric NOT NULL
         , NOTES TEXT
         , COMMISSION numeric
+        , FOREIGN KEY (TICKERID) REFERENCES TICKER_V1(TICKERID) 
         );
         
-        INSERT INTO STOCK_NEW SELECT
+        INSERT INTO STOCK_NEW 
+        with t as (
+        select TICKERID,
+        (CASE WHEN T.MARKET ='' THEN T.SYMBOL ELSE T.SYMBOL||'.'||T.MARKET END) SYMBOL
+        FROM TICKER_V1 T)
+        SELECT
         STOCKID,
+        t.TICKERID,
         HELDAT,
         PURCHASEDATE,
-        SYMBOL,
         NUMSHARES,
         PURCHASEPRICE,
         NOTES,
         COMMISSION
-        FROM STOCK_V1;
+        FROM STOCK_V1 s, t
+        where t.SYMBOL = s.SYMBOL;
         
         DROP INDEX IDX_STOCK_HELDAT;
         DROP TABLE STOCK_V1;
         ALTER TABLE STOCK_NEW RENAME TO STOCK_V1;
         CREATE INDEX IDX_STOCK_HELDAT ON STOCK_V1(HELDAT);
         
-        insert into TICKERPROPERTIES_V1 (UNIQUENAME, SOURCE, SYMBOL, MARKET, PRECISION, CURRENCY_SYMBOL)
-        select distinct symbol UNIQUENAME, 0 SOURCE
-          , substr(SYMBOL, 1, INSTR(SYMBOL, '.') -1)  SYMBOL 
-          , case when INSTR(SYMBOL, '.') > 0 then substr(SYMBOL, INSTR(SYMBOL, '.')+ 1) else '' end  MARKET
-          , (select INFOVALUE from INFOTABLE_V1 where INFONAME = 'SHARE_PRECISION') PRECISION 
-          , (select c.CURRENCY_SYMBOL from ACCOUNTLIST_V1 a
-                 left join CURRENCYFORMATS_V1 c on c.CURRENCYID=a.CURRENCYID
-        		 where a.ACCOUNTID = s.HELDAT) CURRENCY_SYMBOL
-          from STOCK_V1 s;
         
-        ALTER TABLE SPLITTRANSACTIONS_V1 add column NOTES TEXT;             
+        CREATE TABLE STOCKHISTORY_V2(
+        HISTID integer primary key
+        , TICKERID INTEGER NOT NULL
+        , DATE TEXT NOT NULL
+        , VALUE numeric NOT NULL
+        , UPDTYPE integer
+        , UNIQUE(TICKERID, DATE)
+        , FOREIGN KEY (TICKERID) REFERENCES TICKER_V1(TICKERID)
+        );
         
-        UPDATE ATTACHMENT_V1 SET REFTYPE = 'Bank Account' WHERE REFTYPE = 'BankAccount';
-        UPDATE ATTACHMENT_V1 SET REFTYPE = 'Recurring Transaction' WHERE REFTYPE = 'RecurringTransaction';
-        UPDATE CUSTOMFIELD_V1 SET REFTYPE = 'Bank Account' WHERE REFTYPE = 'BankAccount';
-        UPDATE CUSTOMFIELD_V1 SET REFTYPE = 'Recurring Transaction' WHERE REFTYPE = 'RecurringTransaction';
+        INSERT INTO STOCKHISTORY_V2 (TICKERID, DATE, VALUE, UPDTYPE)
+        with t as (
+        select TICKERID,
+        (CASE WHEN T.MARKET ='' THEN T.SYMBOL ELSE T.SYMBOL||'.'||T.MARKET END) SYMBOL
+        FROM TICKER_V1 T)
+        SELECT 
+        t.TICKERID
+        , DATE, VALUE, UPDTYPE
+        FROM STOCKHISTORY_V1 S, t
+        where S.SYMBOL = t.SYMBOL;
+        
+        
+        DROP INDEX IDX_STOCKHISTORY_SYMBOL;
+        DROP TABLE STOCKHISTORY_V1;
+        ALTER TABLE STOCKHISTORY_V2 RENAME TO STOCKHISTORY_V1;
+        CREATE INDEX IDX_STOCKHISTORY_SYMBOL ON STOCKHISTORY_V1(TICKERID);
         
         DROP TABLE SHAREINFO_V1;
         DROP TABLE TRANSLINK_V1;

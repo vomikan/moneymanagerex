@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-04 23:26:12.891000.
+ *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE STOCKHISTORY_V1(HISTID integer primary key, SYMBOL TEXT NOT NULL, DATE TEXT NOT NULL, VALUE numeric NOT NULL, UPDTYPE integer, UNIQUE(SYMBOL, DATE)))");
+                db->ExecuteUpdate(R"(CREATE TABLE STOCKHISTORY_V1(HISTID integer primary key, TICKERID INTEGER NOT NULL, DATE TEXT NOT NULL, VALUE numeric NOT NULL, UPDTYPE integer, UNIQUE(TICKERID, DATE), FOREIGN KEY (TICKERID) REFERENCES TICKER_V1(TICKERID)))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
@@ -94,7 +94,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
     {
         try
         {
-            db->ExecuteUpdate(R"(CREATE INDEX IF NOT EXISTS IDX_STOCKHISTORY_SYMBOL ON STOCKHISTORY_V1(SYMBOL))");
+            db->ExecuteUpdate(R"(CREATE INDEX IF NOT EXISTS IDX_STOCKHISTORY_SYMBOL ON STOCKHISTORY_V1(TICKERID))");
         }
         catch(const wxSQLite3Exception &e) 
         { 
@@ -117,10 +117,10 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
         explicit HISTID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
-    struct SYMBOL : public DB_Column<wxString>
+    struct TICKERID : public DB_Column<int>
     { 
-        static wxString name() { return "SYMBOL"; } 
-        explicit SYMBOL(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+        static wxString name() { return "TICKERID"; } 
+        explicit TICKERID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
     struct DATE : public DB_Column<wxString>
@@ -145,7 +145,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
     enum COLUMN
     {
         COL_HISTID = 0
-        , COL_SYMBOL = 1
+        , COL_TICKERID = 1
         , COL_DATE = 2
         , COL_VALUE = 3
         , COL_UPDTYPE = 4
@@ -157,7 +157,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
         switch(col)
         {
             case COL_HISTID: return "HISTID";
-            case COL_SYMBOL: return "SYMBOL";
+            case COL_TICKERID: return "TICKERID";
             case COL_DATE: return "DATE";
             case COL_VALUE: return "VALUE";
             case COL_UPDTYPE: return "UPDTYPE";
@@ -171,7 +171,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
     static COLUMN name_to_column(const wxString& name)
     {
         if ("HISTID" == name) return COL_HISTID;
-        else if ("SYMBOL" == name) return COL_SYMBOL;
+        else if ("TICKERID" == name) return COL_TICKERID;
         else if ("DATE" == name) return COL_DATE;
         else if ("VALUE" == name) return COL_VALUE;
         else if ("UPDTYPE" == name) return COL_UPDTYPE;
@@ -187,7 +187,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
         Self* table_;
     
         int HISTID;//  primary key
-        wxString SYMBOL;
+        int TICKERID;
         wxString DATE;
         double VALUE;
         int UPDTYPE;
@@ -217,6 +217,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
             table_ = table;
         
             HISTID = -1;
+            TICKERID = -1;
             VALUE = 0.0;
             UPDTYPE = -1;
         }
@@ -226,7 +227,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
             table_ = table;
         
             HISTID = q.GetInt(0); // HISTID
-            SYMBOL = q.GetString(1); // SYMBOL
+            TICKERID = q.GetInt(1); // TICKERID
             DATE = q.GetString(2); // DATE
             VALUE = q.GetDouble(3); // VALUE
             UPDTYPE = q.GetInt(4); // UPDTYPE
@@ -237,7 +238,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
             if (this == &other) return *this;
 
             HISTID = other.HISTID;
-            SYMBOL = other.SYMBOL;
+            TICKERID = other.TICKERID;
             DATE = other.DATE;
             VALUE = other.VALUE;
             UPDTYPE = other.UPDTYPE;
@@ -255,9 +256,9 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
             return this->HISTID == in.v_;
         }
 
-        bool match(const Self::SYMBOL &in) const
+        bool match(const Self::TICKERID &in) const
         {
-            return this->SYMBOL.CmpNoCase(in.v_) == 0;
+            return this->TICKERID == in.v_;
         }
 
         bool match(const Self::DATE &in) const
@@ -293,8 +294,8 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
         {
             json_writer.Key("HISTID");
             json_writer.Int(this->HISTID);
-            json_writer.Key("SYMBOL");
-            json_writer.String(this->SYMBOL.utf8_str());
+            json_writer.Key("TICKERID");
+            json_writer.Int(this->TICKERID);
             json_writer.Key("DATE");
             json_writer.String(this->DATE.utf8_str());
             json_writer.Key("VALUE");
@@ -307,7 +308,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
         {
             row_t row;
             row(L"HISTID") = HISTID;
-            row(L"SYMBOL") = SYMBOL;
+            row(L"TICKERID") = TICKERID;
             row(L"DATE") = DATE;
             row(L"VALUE") = VALUE;
             row(L"UPDTYPE") = UPDTYPE;
@@ -317,7 +318,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
         void to_template(html_template& t) const
         {
             t(L"HISTID") = HISTID;
-            t(L"SYMBOL") = SYMBOL;
+            t(L"TICKERID") = TICKERID;
             t(L"DATE") = DATE;
             t(L"VALUE") = VALUE;
             t(L"UPDTYPE") = UPDTYPE;
@@ -366,7 +367,7 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
 
     DB_Table_STOCKHISTORY_V1() : fake_(new Data())
     {
-        query_ = "SELECT HISTID, SYMBOL, DATE, VALUE, UPDTYPE FROM STOCKHISTORY_V1 ";
+        query_ = "SELECT HISTID, TICKERID, DATE, VALUE, UPDTYPE FROM STOCKHISTORY_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -396,18 +397,18 @@ struct DB_Table_STOCKHISTORY_V1 : public DB_Table
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO STOCKHISTORY_V1(SYMBOL, DATE, VALUE, UPDTYPE) VALUES(?, ?, ?, ?)";
+            sql = "INSERT INTO STOCKHISTORY_V1(TICKERID, DATE, VALUE, UPDTYPE) VALUES(?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE STOCKHISTORY_V1 SET SYMBOL = ?, DATE = ?, VALUE = ?, UPDTYPE = ? WHERE HISTID = ?";
+            sql = "UPDATE STOCKHISTORY_V1 SET TICKERID = ?, DATE = ?, VALUE = ?, UPDTYPE = ? WHERE HISTID = ?";
         }
 
         try
         {
             wxSQLite3Statement stmt = db->PrepareStatement(sql);
 
-            stmt.Bind(1, entity->SYMBOL);
+            stmt.Bind(1, entity->TICKERID);
             stmt.Bind(2, entity->DATE);
             stmt.Bind(3, entity->VALUE);
             stmt.Bind(4, entity->UPDTYPE);

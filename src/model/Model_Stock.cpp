@@ -82,6 +82,11 @@ double Model_Stock::CurrentValue(const Data& r)
     return CurrentValue(&r);
 }
 
+wxString Model_Stock::get_symbol()
+{
+    return "TBD";
+}
+
 /**
 * Remove the Data record from memory and the database.
 * Delete also all stock history
@@ -89,12 +94,12 @@ double Model_Stock::CurrentValue(const Data& r)
 bool Model_Stock::remove(int id)
 {
     Model_Stock::Data *data = this->get(id);
-    const auto &stocks = Model_Stock::instance().find(Model_Stock::SYMBOL(data->SYMBOL));
+    const auto &stocks = Model_Stock::instance().find(Model_Stock::TICKERID(data->TICKERID));
     if (stocks.size() == 1)
     {
-        this->Savepoint();
-        for (const auto& r : Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(data->SYMBOL)))
-            Model_StockHistory::instance().remove(r.id());
+        this->Savepoint(); //TODO:
+        //for (const auto& r : Model_StockHistory::instance().find(Model_StockHistory::TICKERID(data->SYMBOL)))
+        //    Model_StockHistory::instance().remove(r.id());
         this->ReleaseSavepoint();
     }
 
@@ -105,13 +110,13 @@ bool Model_Stock::remove(int id)
 
 Model_StockStat::~Model_StockStat() {}
 
-Model_StockStat::Model_StockStat(const wxString & ticker, int accountID, double current_price)
+Model_StockStat::Model_StockStat(int ticker_id, int accountID, double current_price)
 {
 
     Model_Account::Data* a = Model_Account::instance().get(accountID);
-    Model_Ticker::Data* t = Model_Ticker::instance().get(ticker);
+    Model_Ticker::Data* t = Model_Ticker::instance().get(ticker_id);
     Model_Stock::Data_Set s = Model_Stock::instance().find(Model_Stock::HELDAT(a->ACCOUNTID)
-        , Model_Stock::SYMBOL(t->UNIQUENAME));
+        , Model_Stock::TICKERID(t->TICKERID));
 
     bool marginal = false;
     m_purchase_total = 0.0;
@@ -136,7 +141,7 @@ Model_StockStat::Model_StockStat(const wxString & ticker, int accountID, double 
             }
             else if (!marginal && item.NUMSHARES < 0)
             {
-                m_purchase_total += -item.PURCHASEPRICE; //z òóò äîáàâèë ìèíóñ äëÿ SBER
+                m_purchase_total += -item.PURCHASEPRICE; //z Ñ‚ÑƒÑ‚ Ð´Ð¾Ð±Ð°Ð²Ð¸Ð» Ð¼Ð¸Ð½ÑƒÑ Ð´Ð»Ñ SBER
                 m_money_total += item.PURCHASEPRICE;
                 shares.erase(shares.begin());
             }

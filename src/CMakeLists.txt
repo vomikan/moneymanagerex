@@ -232,7 +232,7 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     db/DB_Table_Stockhistory_V1.h
     db/DB_Table_Stock_V1.h
     db/DB_Table_Subcategory_V1.h
-    db/DB_Table_Tickerproperties_V1.h
+    db/DB_Table_Ticker_V1.h
     db/DB_Table_Usage_V1.h
 
     reports/allreport.h

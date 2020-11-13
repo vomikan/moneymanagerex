@@ -57,6 +57,7 @@ public:
 
     static double CurrentValue(const Data* r);
     static double CurrentValue(const Data& r);
+    static wxString get_symbol();
 
 public:
     /**
@@ -69,7 +70,7 @@ public:
 class Model_StockStat : public Model_Stock
 {
 public:
-    Model_StockStat(const wxString& ticker, int accountID, double current_price);
+    Model_StockStat(int ticker_id, int accountID, double current_price);
     ~Model_StockStat();
 
     double get_purchase_total() const;

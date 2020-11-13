@@ -47,12 +47,12 @@ Model_StockHistory& Model_StockHistory::instance()
     return Singleton<Model_StockHistory>::instance();
 }
 
-Model_StockHistory::Data* Model_StockHistory::get(const wxString& symbol, const wxDate& date)
+Model_StockHistory::Data* Model_StockHistory::get(int ticker_id, const wxDate& date)
 {
-    Data* hist = this->get_one(SYMBOL(symbol), DB_Table_STOCKHISTORY_V1::DATE(date.FormatISODate()));
+    Data* hist = this->get_one(TICKERID(ticker_id), DB_Table_STOCKHISTORY_V1::DATE(date.FormatISODate()));
     if (hist) return hist;
 
-    Data_Set items = this->find(SYMBOL(symbol), DB_Table_STOCKHISTORY_V1::DATE(date.FormatISODate()));
+    Data_Set items = this->find(TICKERID(ticker_id), DB_Table_STOCKHISTORY_V1::DATE(date.FormatISODate()));
     if (!items.empty()) hist = this->get(items[0].id(), this->db_);
     return hist;
 }
@@ -70,21 +70,21 @@ DB_Table_STOCKHISTORY_V1::DATE Model_StockHistory::DATE(const wxDate& date, OP o
 /**
 Adds or updates an element in stock history
 */
-int Model_StockHistory::addUpdate(const wxString& symbol, const wxDate& date, double price, UPDTYPE type)
+int Model_StockHistory::addUpdate(int ticker_id, const wxDate& date, double price, UPDTYPE type)
 {
-    Data *stockHist = this->get(symbol, date);
+    Data *stockHist = this->get(ticker_id, date);
     if (!stockHist) stockHist = this->create();
 
-    stockHist->SYMBOL = symbol;
+    stockHist->TICKERID = ticker_id;
     stockHist->DATE = date.FormatISODate();
     stockHist->VALUE = price;
     stockHist->UPDTYPE = type;
     return save(stockHist);
 }
 
-double Model_StockHistory::getLastRate(const wxString& symbol)
+double Model_StockHistory::getLastRate(int id)
 {
-    Data_Set histData = instance().find(Model_Stock::SYMBOL(symbol));
+    Data_Set histData = instance().find(Model_Stock::TICKERID(id));
     std::stable_sort(histData.begin(), histData.end(), SorterByDATE());
 
     if (!histData.empty())

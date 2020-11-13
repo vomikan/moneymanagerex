@@ -139,7 +139,7 @@ double Model_CurrencyHistory::getDayRate(const int& currencyID, const wxDate& Da
 }
 
 /** Return the last rate for specified currency */
-double Model_CurrencyHistory::getLastRate(const int& currencyID)
+double Model_CurrencyHistory::getLastRate(int currencyID)
 {
     if (!Option::instance().getCurrencyHistoryEnabled())
         return Model_Currency::instance().get(currencyID)->BASECONVRATE;

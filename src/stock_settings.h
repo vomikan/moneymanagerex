@@ -31,10 +31,11 @@
 class mmStockSetup : public wxDialog
 {
 public:
-    mmStockSetup(wxWindow* parent, const wxString& symbol, int account_id);
+    mmStockSetup(wxWindow* parent, int ticker_id, int account_id);
 
     ~mmStockSetup();
     const wxString getSymbol() const;
+    const int get_ticker_id() const;
 
 private:
 
@@ -42,8 +43,7 @@ private:
     void dataToControls();
     void OnOk(wxCommandEvent& event);
     void OnCurrency(wxCommandEvent& event);
-    wxString m_unique_name;
-    wxString m_currency_symbol;
+
     wxChoice* m_choiceType;
     wxChoice* m_choiceSource;
     wxChoice* m_choiceSector;
@@ -53,10 +53,12 @@ private:
     wxListCtrl* m_price_listbox;
     mmTextCtrl* m_stock_name_ctrl;
     mmTextCtrl* m_stock_symbol_ctrl;
-    mmTextCtrl* m_stock_unique_name_ctrl;
     mmTextCtrl* m_stock_notes_ctrl;
     wxButton* m_currency_button;
 
+    wxString m_symbol;
+    int m_currency_id;
+    int m_ticker_id;
     int m_account_id;
     int m_precision;
     bool m_edit;
@@ -73,4 +75,6 @@ private:
 
 };
 
-inline const wxString mmStockSetup::getSymbol() const { return m_unique_name; }
+inline mmStockSetup::~mmStockSetup(){}
+inline const wxString mmStockSetup::getSymbol() const { return m_symbol; }
+inline const int mmStockSetup::get_ticker_id() const { return m_ticker_id; }

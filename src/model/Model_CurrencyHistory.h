@@ -61,7 +61,7 @@ public:
     static double getDayRate(const int& currencyID, const wxDate& Date = wxDate::Today());
 
     /** Return the last rate for a specific currency */
-    static double getLastRate(const int& currencyID);
+    static double getLastRate(int id);
     
     /** Clears the currency History table */
     static void ResetCurrencyHistory();

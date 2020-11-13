@@ -35,7 +35,7 @@ public:
     mmStockDialog();
     mmStockDialog(wxWindow* parent
         , mmGUIFrame* gui_frame
-        , const wxString& symbol
+        , int ticker_id
         , int accountID
         , const wxString& name = "mmStockDialog"
         );
@@ -92,6 +92,7 @@ private:
     //Model_Stock::Data* m_stock;
     int m_stock_id;
     wxString m_symbol;
+    int m_ticker_id;
     bool m_edit;
     int m_account_id;
     int m_precision;

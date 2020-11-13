@@ -30,42 +30,43 @@ public:
     mmOnline();
     ~mmOnline();
 
-    bool getOnlineRatesYahoo();
-    bool getOnlineRatesMOEX();
-    bool getOnlineRatesMS();
+    int getOnlineRatesYahoo();
+    int getOnlineRatesMOEX();
+    int getOnlineRatesMS();
 
-    bool get_error() const;
+    int get_error_code() const;
     const wxString get_error_str() const;
 private:
     wxString m_error_str;
-    bool m_error;
+    int m_error_code;
 
 };
 
-inline bool mmOnline::get_error() const { return m_error; }
+inline int mmOnline::get_error_code() const { return m_error_code; }
 inline const wxString mmOnline::get_error_str() const { return m_error_str; }
 
 class mmHistoryOnline
 {
 public:
-    //mmHistoryOnline(const wxString& unique_name, const wxString& market ="", const wxString& currency = "USD", int source = 0, int type  = 0);
-    mmHistoryOnline(Model_Ticker::Data* t, const wxString& currency = "USD");
+    mmHistoryOnline(Model_Ticker::Data* t, int currency_id);
     mmHistoryOnline(Model_Currency::Data* currency);
     ~mmHistoryOnline();
     const wxString getError() const;
+    const int get_error_code() const;
 
 private:
-    bool mmYahoo();
-    bool mmMOEX();
-    bool mmMorningStar();
+    int mmYahoo();
+    int mmMOEX();
+    int mmMorningStar();
 
-    wxString m_unique_name;
+    int m_ticker_id;
     wxString m_ticker;
     wxString m_market;
+    wxString m_currency_symbol;
     wxDateTime m_date;
-    wxString m_error;
+    wxString m_error_str;
+    int m_error_code;
     wxString m_name;
-    wxString m_currency;
     int m_source;
     int m_type;
 
@@ -73,19 +74,20 @@ private:
     void saveCurrencyHistoryData(std::map<time_t, float>& history);
 };
 
-inline const wxString mmHistoryOnline::getError() const { return m_error; }
+inline const wxString mmHistoryOnline::getError() const { return m_error_str; }
+inline const int mmHistoryOnline::get_error_code() const { return m_error_code; }
 
 class mmWebPage
 {
 public:
-    mmWebPage(const wxString& ticker);
+    mmWebPage(int id);
     ~mmWebPage();
 private:
     bool mmYahoo(Model_Ticker::Data* d);
     bool mmMOEX(Model_Ticker::Data* d);
     bool mmMorningStar(Model_Ticker::Data* d);
 
-    wxString m_unique_name;
+    int m_ticker_id;
     wxString m_market;
     int m_source;
     int m_type;

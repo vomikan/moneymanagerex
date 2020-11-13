@@ -65,13 +65,13 @@ mmStockDialog::mmStockDialog( )
 
 mmStockDialog::mmStockDialog(wxWindow* parent
     , mmGUIFrame* gui_frame
-    , const wxString& symbol
+    , int ticker_id
     , int accountID
     , const wxString& name
     )
     : m_gui_frame(gui_frame)
-    , m_symbol(symbol)
-    , m_edit(!symbol.empty() ? true: false)
+    , m_ticker_id(ticker_id)
+    , m_edit(ticker_id < 0 ? false: true)
     , m_account_id(accountID)
     , m_stock_symbol_ctrl(nullptr)
     , m_info_txt(nullptr)
@@ -114,19 +114,22 @@ bool mmStockDialog::Create(wxWindow* parent, wxWindowID id, const wxString& capt
 
 void mmStockDialog::DataToControls()
 {
-    m_stock_symbol_ctrl->SetValue(m_symbol);
-
     Model_Account::Data* account = Model_Account::instance().get(m_account_id);
     Model_Currency::Data *currency = Model_Currency::GetBaseCurrency();
     if (account) currency = Model_Account::currency(account);
     int currency_precision = Model_Currency::precision(currency);
     m_precision = currency_precision;
 
-    Model_Ticker::Data* t = Model_Ticker::instance().get(m_symbol);
-    if (t) m_precision = t->PRECISION;
+    Model_Ticker::Data* t = Model_Ticker::instance().get(m_ticker_id);
+    if (t) {
+        m_precision = t->PRECISION;
+        m_symbol = t->SYMBOL;
+    }
 
     if (currency_precision < m_precision)
         currency_precision = m_precision;
+
+    m_stock_symbol_ctrl->SetValue(m_symbol);
 
     ShowStockHistory();
 }
@@ -157,7 +160,7 @@ void mmStockDialog::CreateControls()
     m_stock_symbol_ctrl = new mmTextCtrl(itemPanel5, ID_TEXTCTRL_STOCK_SYMBOL
         , "", wxDefaultPosition, wxSize(150, -1), 0);
     itemFlexGridSizer6->Add(m_stock_symbol_ctrl, g_flagsH);
-    m_stock_symbol_ctrl->SetToolTip(_("Enter the stock symbol. (Optional) Include exchange. eg: IBM.BE"));
+    m_stock_symbol_ctrl->SetToolTip(_("Enter the stock symbol."));
 
     //
     itemFlexGridSizer6->Add(new wxStaticText(itemPanel5, wxID_STATIC, _("Info")), g_flagsH);
@@ -277,7 +280,7 @@ void mmStockDialog::OnStockWebButton(wxCommandEvent& /*event*/)
     const wxString stockSymbol = m_stock_symbol_ctrl->GetValue().Trim();
 
     wxSharedPtr<mmWebPage> e;
-    e = new mmWebPage(m_symbol);
+    e = new mmWebPage(m_ticker_id);
 }
 
 void mmStockDialog::OnSave(wxCommandEvent& /*event*/)
@@ -309,7 +312,7 @@ void mmStockDialog::OnStockSetup(wxCommandEvent& /*event*/)
 {
     wxString symbol = m_stock_symbol_ctrl->GetValue();
 
-    mmStockSetup dlg(this, symbol, m_account_id);
+    mmStockSetup dlg(this, m_ticker_id, m_account_id);
     int d = dlg.ShowModal();
     if (!m_edit && d != static_cast<int>(wxID_OK))
     {
@@ -323,6 +326,7 @@ void mmStockDialog::OnStockSetup(wxCommandEvent& /*event*/)
         if (!m_edit) {
             m_stock_symbol_ctrl->ChangeValue(symbol);
             m_symbol = symbol;
+            m_ticker_id = dlg.get_ticker_id();
         }
         DataToControls();
         ShowStockHistory();
@@ -350,7 +354,7 @@ void mmStockDialog::OnStockEventEditButton(wxCommandEvent& event)
         }
         else
         {
-            mmStockItem dlg(this, m_account_id, id, m_symbol);
+            mmStockItem dlg(this, m_account_id, id, m_ticker_id);
             dlg.ShowModal();
         }
 
@@ -395,13 +399,11 @@ void mmStockDialog::OnStockEventDeleteButton(wxCommandEvent& /*event*/)
 void mmStockDialog::ShowStockHistory()
 {
     m_stock_event_listbox->DeleteAllItems();
-    if (m_symbol.empty())
-        return;
 
     m_list.clear();
 
     Model_Account::Data* account = Model_Account::instance().get(m_account_id);
-    Model_Stock::Data_Set histData = Model_Stock::instance().find(Model_Stock::SYMBOL(m_symbol));
+    Model_Stock::Data_Set histData = Model_Stock::instance().find(Model_Stock::TICKERID(m_ticker_id));
 
     for (const auto& entry: histData)
     {
@@ -418,7 +420,8 @@ void mmStockDialog::ShowStockHistory()
 
 
     //
-    Model_Payee::Data* payee = Model_Payee::instance().get(m_symbol);
+    wxString symbol = Model_Ticker::instance().get_ticker_name(m_ticker_id);
+    Model_Payee::Data* payee = Model_Payee::instance().get(symbol);
     int payee_id = payee ? payee->PAYEEID : -1;
 
     Model_Checking::Data_Set dividends = Model_Checking::instance().find(Model_Checking::ACCOUNTID(m_account_id)
@@ -487,16 +490,16 @@ void mmStockDialog::ShowStockHistory()
     size_t rows = histData.size() - 1;
     m_stock_event_listbox->RefreshItems(0, rows);
 
-    Model_Ticker::Data* t = Model_Ticker::instance().get(m_symbol);
+    Model_Ticker::Data* t = Model_Ticker::instance().get(m_ticker_id);
     Model_Currency::Data* account_currency = Model_Currency::instance().get(account->CURRENCYID);
-    Model_Currency::Data_Set currencies = Model_Currency::instance().find(Model_Currency::CURRENCY_SYMBOL(t->CURRENCY_SYMBOL));
+    Model_Currency::Data_Set currencies = Model_Currency::instance().find(Model_Currency::CURRENCYID(t->CURRENCYID));
     Model_Currency::Data* ticker_currency = account_currency;
     if (!currencies.empty())
         ticker_currency = Model_Currency::instance().get(currencies.begin()->CURRENCYID);
 
     wxSharedPtr<Model_StockStat> s;
-    double current_price = Model_StockHistory::getLastRate(t->UNIQUENAME);
-    s = new Model_StockStat(m_symbol, m_account_id, current_price);
+    double current_price = Model_StockHistory::getLastRate(t->TICKERID);
+    s = new Model_StockStat(m_ticker_id, m_account_id, current_price);
 
     const wxString valueStr = Model_Currency::toCurrency(s->get_purchase_total(), ticker_currency, m_precision);
     const wxString commStr = Model_Currency::toCurrency(s->get_commission(), ticker_currency, m_precision);
@@ -598,7 +601,7 @@ void mmStockDialog::OnNewEntry(wxCommandEvent & event)
 
 void mmStockDialog::OnBuy()
 {
-    mmStockItem dlg(this, m_account_id, -1, m_symbol, 0);
+    mmStockItem dlg(this, m_account_id, -1, m_ticker_id, 0);
     dlg.ShowModal();
     m_stock_id = dlg.get_id();
 
@@ -607,7 +610,7 @@ void mmStockDialog::OnBuy()
 
 void mmStockDialog::OnSell()
 {
-    mmStockItem dlg(this, m_account_id, -1, m_symbol, 1);
+    mmStockItem dlg(this, m_account_id, -1, m_ticker_id, 1);
     dlg.ShowModal();
     m_stock_id = dlg.get_id();
 

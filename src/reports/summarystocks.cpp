@@ -69,7 +69,7 @@ void  mmReportSummaryStocks::RefreshData()
             const double purchase_rate = Model_CurrencyHistory::getDayRate(currency->CURRENCYID, stock.PURCHASEDATE);
             m_gain_loss_sum_total += (Model_Stock::CurrentValue(stock) * today_rate - Model_Stock::InvestmentValue(stock) * purchase_rate);
 
-            line.symbol = stock.SYMBOL;
+            line.ticker_id = stock.TICKERID;
             line.date = stock.PURCHASEDATE;
             line.qty = stock.NUMSHARES;
             line.purchase = Model_Stock::InvestmentValue(stock);
@@ -110,7 +110,7 @@ wxString mmReportSummaryStocks::getHTMLText()
         {
             hb.startTableRow();
             hb.addTableCell(entry.name);
-            hb.addTableCell(entry.symbol);
+            hb.addTableCell("TBD");
             hb.addTableCellDate(entry.date);
             hb.addTableCell(Model_Account::toString(entry.qty, account, floor(entry.qty) ? 0 : 4), true);
             hb.addCurrencyCell(entry.purchase, currency, 4);
@@ -204,10 +204,11 @@ wxString mmReportChartStocks::getHTMLText()
 
     wxTimeSpan dist;
     wxDate precDateDt = wxInvalidDateTime;
-    wxArrayString symbols;
-    for (const auto& stock : Model_Stock::instance().all(Model_Stock::COL_SYMBOL))
+#if 0
+    wxIntArray symbols;
+    for (const auto& stock : Model_Stock::instance().all())
     {
-        if (symbols.Index(stock.SYMBOL) != wxNOT_FOUND) {
+        if (symbols.Index(stock.TICKERID) != wxNOT_FOUND) {
             continue;
         }
 
@@ -257,7 +258,7 @@ wxString mmReportChartStocks::getHTMLText()
             hb.endDiv();
         }
     }
-
+#endif
     hb.endDiv();
     hb.end();
 

@@ -20,13 +20,13 @@
 #define MODEL_TICKER_H
 
 #include "Model.h"
-#include "db/DB_Table_Tickerproperties_V1.h"
+#include "db/DB_Table_Ticker_V1.h"
 
-class Model_Ticker : public Model<DB_Table_TICKERPROPERTIES_V1>
+class Model_Ticker : public Model<DB_Table_TICKER_V1>
 {
 public:
-    using Model<DB_Table_TICKERPROPERTIES_V1>::remove;
-    using Model<DB_Table_TICKERPROPERTIES_V1>::get;
+    using Model<DB_Table_TICKER_V1>::remove;
+    using Model<DB_Table_TICKER_V1>::get;
 
     enum SOURCE_ENUM { YAHOO = 0, MS, MOEX };
     enum TYPE_ENUM { SHARE = 0, FUND, BOND, MONEY };
@@ -45,8 +45,9 @@ public:
 
 public:
 
-    Data* get(const wxString& name);
-    static wxString get_ticker_name(int account_id);
+    Data* get(int id);
+    static wxString get_ticker_name(int ticker_id);
+    static wxString get_ticker_symbol(int ticker_id);
     bool remove(int id);
 
 public:

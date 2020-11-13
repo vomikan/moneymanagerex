@@ -40,10 +40,10 @@ mmStockItem::~mmStockItem()
 
 }
 
-mmStockItem::mmStockItem(wxWindow* parent, int acc, int id, const wxString& symbol, int type)
+mmStockItem::mmStockItem(wxWindow* parent, int acc, int id, int ticker_id, int type)
     : m_acc(acc)
     , m_id(id)
-    , m_symbol(symbol)
+    , m_ticker_id(ticker_id)
     , m_type(type)
 {
 
@@ -71,7 +71,7 @@ mmStockItem::mmStockItem(wxWindow* parent, int acc, int id, const wxString& symb
 
 void mmStockItem::fillControls()
 {
-    Model_Ticker::Data* t = Model_Ticker::instance().get(m_symbol);
+    Model_Ticker::Data* t = Model_Ticker::instance().get(m_ticker_id);
     if (t) {
         m_share_precision = t->PRECISION;
     }
@@ -255,7 +255,7 @@ void mmStockItem::OnOk(wxCommandEvent& WXUNUSED(event))
     if (!stock) {
         stock = Model_Stock::instance().create();
         stock->HELDAT = m_acc;
-        stock->SYMBOL = m_symbol;
+        stock->TICKERID = m_ticker_id;
     }
 
     double num, comm, price;

@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-04 23:26:12.891000.
+ *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -19,10 +19,10 @@
 
 #include "DB_Table.h"
 
-struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
+struct DB_Table_TICKER_V1 : public DB_Table
 {
     struct Data;
-    typedef DB_Table_TICKERPROPERTIES_V1 Self;
+    typedef DB_Table_TICKER_V1 Self;
 
     /** A container to hold list of Data records for the table*/
     struct Data_Set : public std::vector<Self::Data>
@@ -54,7 +54,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
     Data* fake_; // in case the entity not found
 
     /** Destructor: clears any data records stored in memory */
-    ~DB_Table_TICKERPROPERTIES_V1() 
+    ~DB_Table_TICKER_V1() 
     {
         delete this->fake_;
         destroy_cache();
@@ -75,12 +75,12 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE TICKERPROPERTIES_V1 (TICKERID INTEGER PRIMARY KEY,UNIQUENAME TEXT UNIQUE COLLATE NOCASE NOT NULL,SOURCE INTEGER, /* Yahoo, MorningStar, MOEX */ SYMBOL TEXT COLLATE NOCASE NOT NULL,SOURCENAME TEXT,MARKET TEXT, TYPE INTEGER DEFAULT 0, /* Share, Fund, Bond, Corp. Bond */ COUNTRY TEXT,SECTOR TEXT, /*Basic Materials, Consumer Cyclical, Financial Services, Real Estate, Consumer Defensive, Healthcare, Utilities, Communication Services, Energy, Industrials, Technology, Other */ INDUSTRY TEXT,WEBPAGE TEXT,NOTES TEXT,PRECISION INTEGER,CURRENCY_SYMBOL TEXT))");
+                db->ExecuteUpdate(R"(CREATE TABLE TICKER_V1(TICKERID INTEGER PRIMARY KEY, SOURCE INTEGER /* Yahoo, MorningStar, MOEX */, SYMBOL TEXT COLLATE NOCASE NOT NULL, MARKET TEXT , SOURCENAME TEXT, TYPE INTEGER DEFAULT 0 /* Share, Fund, Bond */, COUNTRY TEXT , SECTOR TEXT /*Basic Materials, Consumer Cyclical, Financial Services, Real Estate, Consumer Defensive, Healthcare, Utilities, Communication Services, Energy, Industrials, Technology, Other */ , INDUSTRY TEXT, WEBPAGE TEXT, NOTES TEXT, PRECISION INTEGER, CURRENCYID INTEGER NOT NULL, FOREIGN KEY (CURRENCYID) REFERENCES CURRENCYFORMATS_V1(CURRENCYID) ))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
             { 
-                wxLogError("TICKERPROPERTIES_V1: Exception %s", e.GetMessage().utf8_str());
+                wxLogError("TICKER_V1: Exception %s", e.GetMessage().utf8_str());
                 return false;
             }
         }
@@ -94,11 +94,11 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
     {
         try
         {
-            db->ExecuteUpdate(R"(CREATE INDEX IF NOT EXISTS IDX_TICKER ON TICKERPROPERTIES_V1 (SYMBOL, TICKERID))");
+            db->ExecuteUpdate(R"(CREATE INDEX IF NOT EXISTS IDX_TICKER ON TICKER_V1 (SYMBOL, TICKERID))");
         }
         catch(const wxSQLite3Exception &e) 
         { 
-            wxLogError("TICKERPROPERTIES_V1: Exception %s", e.GetMessage().utf8_str());
+            wxLogError("TICKER_V1: Exception %s", e.GetMessage().utf8_str());
             return false;
         }
 
@@ -117,12 +117,6 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         explicit TICKERID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
-    struct UNIQUENAME : public DB_Column<wxString>
-    { 
-        static wxString name() { return "UNIQUENAME"; } 
-        explicit UNIQUENAME(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
-    };
-    
     struct SOURCE : public DB_Column<int>
     { 
         static wxString name() { return "SOURCE"; } 
@@ -135,16 +129,16 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         explicit SYMBOL(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
-    struct SOURCENAME : public DB_Column<wxString>
-    { 
-        static wxString name() { return "SOURCENAME"; } 
-        explicit SOURCENAME(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
-    };
-    
     struct MARKET : public DB_Column<wxString>
     { 
         static wxString name() { return "MARKET"; } 
         explicit MARKET(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+    };
+    
+    struct SOURCENAME : public DB_Column<wxString>
+    { 
+        static wxString name() { return "SOURCENAME"; } 
+        explicit SOURCENAME(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
     struct TYPE : public DB_Column<int>
@@ -189,29 +183,28 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         explicit PRECISION(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
-    struct CURRENCY_SYMBOL : public DB_Column<wxString>
+    struct CURRENCYID : public DB_Column<int>
     { 
-        static wxString name() { return "CURRENCY_SYMBOL"; } 
-        explicit CURRENCY_SYMBOL(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+        static wxString name() { return "CURRENCYID"; } 
+        explicit CURRENCYID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
     typedef TICKERID PRIMARY;
     enum COLUMN
     {
         COL_TICKERID = 0
-        , COL_UNIQUENAME = 1
-        , COL_SOURCE = 2
-        , COL_SYMBOL = 3
+        , COL_SOURCE = 1
+        , COL_SYMBOL = 2
+        , COL_MARKET = 3
         , COL_SOURCENAME = 4
-        , COL_MARKET = 5
-        , COL_TYPE = 6
-        , COL_COUNTRY = 7
-        , COL_SECTOR = 8
-        , COL_INDUSTRY = 9
-        , COL_WEBPAGE = 10
-        , COL_NOTES = 11
-        , COL_PRECISION = 12
-        , COL_CURRENCY_SYMBOL = 13
+        , COL_TYPE = 5
+        , COL_COUNTRY = 6
+        , COL_SECTOR = 7
+        , COL_INDUSTRY = 8
+        , COL_WEBPAGE = 9
+        , COL_NOTES = 10
+        , COL_PRECISION = 11
+        , COL_CURRENCYID = 12
     };
 
     /** Returns the column name as a string*/
@@ -220,11 +213,10 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         switch(col)
         {
             case COL_TICKERID: return "TICKERID";
-            case COL_UNIQUENAME: return "UNIQUENAME";
             case COL_SOURCE: return "SOURCE";
             case COL_SYMBOL: return "SYMBOL";
-            case COL_SOURCENAME: return "SOURCENAME";
             case COL_MARKET: return "MARKET";
+            case COL_SOURCENAME: return "SOURCENAME";
             case COL_TYPE: return "TYPE";
             case COL_COUNTRY: return "COUNTRY";
             case COL_SECTOR: return "SECTOR";
@@ -232,7 +224,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             case COL_WEBPAGE: return "WEBPAGE";
             case COL_NOTES: return "NOTES";
             case COL_PRECISION: return "PRECISION";
-            case COL_CURRENCY_SYMBOL: return "CURRENCY_SYMBOL";
+            case COL_CURRENCYID: return "CURRENCYID";
             default: break;
         }
         
@@ -243,11 +235,10 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
     static COLUMN name_to_column(const wxString& name)
     {
         if ("TICKERID" == name) return COL_TICKERID;
-        else if ("UNIQUENAME" == name) return COL_UNIQUENAME;
         else if ("SOURCE" == name) return COL_SOURCE;
         else if ("SYMBOL" == name) return COL_SYMBOL;
-        else if ("SOURCENAME" == name) return COL_SOURCENAME;
         else if ("MARKET" == name) return COL_MARKET;
+        else if ("SOURCENAME" == name) return COL_SOURCENAME;
         else if ("TYPE" == name) return COL_TYPE;
         else if ("COUNTRY" == name) return COL_COUNTRY;
         else if ("SECTOR" == name) return COL_SECTOR;
@@ -255,7 +246,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         else if ("WEBPAGE" == name) return COL_WEBPAGE;
         else if ("NOTES" == name) return COL_NOTES;
         else if ("PRECISION" == name) return COL_PRECISION;
-        else if ("CURRENCY_SYMBOL" == name) return COL_CURRENCY_SYMBOL;
+        else if ("CURRENCYID" == name) return COL_CURRENCYID;
 
         return COLUMN(-1);
     }
@@ -263,16 +254,15 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
     /** Data is a single record in the database table*/
     struct Data
     {
-        friend struct DB_Table_TICKERPROPERTIES_V1;
+        friend struct DB_Table_TICKER_V1;
         /** This is a instance pointer to itself in memory. */
         Self* table_;
     
         int TICKERID;//  primary key
-        wxString UNIQUENAME;
         int SOURCE;
         wxString SYMBOL;
-        wxString SOURCENAME;
         wxString MARKET;
+        wxString SOURCENAME;
         int TYPE;
         wxString COUNTRY;
         wxString SECTOR;
@@ -280,7 +270,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         wxString WEBPAGE;
         wxString NOTES;
         int PRECISION;
-        wxString CURRENCY_SYMBOL;
+        int CURRENCYID;
 
         int id() const
         {
@@ -310,6 +300,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             SOURCE = -1;
             TYPE = -1;
             PRECISION = -1;
+            CURRENCYID = -1;
         }
 
         explicit Data(wxSQLite3ResultSet& q, Self* table = 0)
@@ -317,19 +308,18 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             table_ = table;
         
             TICKERID = q.GetInt(0); // TICKERID
-            UNIQUENAME = q.GetString(1); // UNIQUENAME
-            SOURCE = q.GetInt(2); // SOURCE
-            SYMBOL = q.GetString(3); // SYMBOL
+            SOURCE = q.GetInt(1); // SOURCE
+            SYMBOL = q.GetString(2); // SYMBOL
+            MARKET = q.GetString(3); // MARKET
             SOURCENAME = q.GetString(4); // SOURCENAME
-            MARKET = q.GetString(5); // MARKET
-            TYPE = q.GetInt(6); // TYPE
-            COUNTRY = q.GetString(7); // COUNTRY
-            SECTOR = q.GetString(8); // SECTOR
-            INDUSTRY = q.GetString(9); // INDUSTRY
-            WEBPAGE = q.GetString(10); // WEBPAGE
-            NOTES = q.GetString(11); // NOTES
-            PRECISION = q.GetInt(12); // PRECISION
-            CURRENCY_SYMBOL = q.GetString(13); // CURRENCY_SYMBOL
+            TYPE = q.GetInt(5); // TYPE
+            COUNTRY = q.GetString(6); // COUNTRY
+            SECTOR = q.GetString(7); // SECTOR
+            INDUSTRY = q.GetString(8); // INDUSTRY
+            WEBPAGE = q.GetString(9); // WEBPAGE
+            NOTES = q.GetString(10); // NOTES
+            PRECISION = q.GetInt(11); // PRECISION
+            CURRENCYID = q.GetInt(12); // CURRENCYID
         }
 
         Data& operator=(const Data& other)
@@ -337,11 +327,10 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             if (this == &other) return *this;
 
             TICKERID = other.TICKERID;
-            UNIQUENAME = other.UNIQUENAME;
             SOURCE = other.SOURCE;
             SYMBOL = other.SYMBOL;
-            SOURCENAME = other.SOURCENAME;
             MARKET = other.MARKET;
+            SOURCENAME = other.SOURCENAME;
             TYPE = other.TYPE;
             COUNTRY = other.COUNTRY;
             SECTOR = other.SECTOR;
@@ -349,7 +338,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             WEBPAGE = other.WEBPAGE;
             NOTES = other.NOTES;
             PRECISION = other.PRECISION;
-            CURRENCY_SYMBOL = other.CURRENCY_SYMBOL;
+            CURRENCYID = other.CURRENCYID;
             return *this;
         }
 
@@ -364,11 +353,6 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             return this->TICKERID == in.v_;
         }
 
-        bool match(const Self::UNIQUENAME &in) const
-        {
-            return this->UNIQUENAME.CmpNoCase(in.v_) == 0;
-        }
-
         bool match(const Self::SOURCE &in) const
         {
             return this->SOURCE == in.v_;
@@ -379,14 +363,14 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             return this->SYMBOL.CmpNoCase(in.v_) == 0;
         }
 
-        bool match(const Self::SOURCENAME &in) const
-        {
-            return this->SOURCENAME.CmpNoCase(in.v_) == 0;
-        }
-
         bool match(const Self::MARKET &in) const
         {
             return this->MARKET.CmpNoCase(in.v_) == 0;
+        }
+
+        bool match(const Self::SOURCENAME &in) const
+        {
+            return this->SOURCENAME.CmpNoCase(in.v_) == 0;
         }
 
         bool match(const Self::TYPE &in) const
@@ -424,9 +408,9 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             return this->PRECISION == in.v_;
         }
 
-        bool match(const Self::CURRENCY_SYMBOL &in) const
+        bool match(const Self::CURRENCYID &in) const
         {
-            return this->CURRENCY_SYMBOL.CmpNoCase(in.v_) == 0;
+            return this->CURRENCYID == in.v_;
         }
 
         // Return the data record as a json string
@@ -447,16 +431,14 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         {
             json_writer.Key("TICKERID");
             json_writer.Int(this->TICKERID);
-            json_writer.Key("UNIQUENAME");
-            json_writer.String(this->UNIQUENAME.utf8_str());
             json_writer.Key("SOURCE");
             json_writer.Int(this->SOURCE);
             json_writer.Key("SYMBOL");
             json_writer.String(this->SYMBOL.utf8_str());
-            json_writer.Key("SOURCENAME");
-            json_writer.String(this->SOURCENAME.utf8_str());
             json_writer.Key("MARKET");
             json_writer.String(this->MARKET.utf8_str());
+            json_writer.Key("SOURCENAME");
+            json_writer.String(this->SOURCENAME.utf8_str());
             json_writer.Key("TYPE");
             json_writer.Int(this->TYPE);
             json_writer.Key("COUNTRY");
@@ -471,19 +453,18 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             json_writer.String(this->NOTES.utf8_str());
             json_writer.Key("PRECISION");
             json_writer.Int(this->PRECISION);
-            json_writer.Key("CURRENCY_SYMBOL");
-            json_writer.String(this->CURRENCY_SYMBOL.utf8_str());
+            json_writer.Key("CURRENCYID");
+            json_writer.Int(this->CURRENCYID);
         }
 
         row_t to_row_t() const
         {
             row_t row;
             row(L"TICKERID") = TICKERID;
-            row(L"UNIQUENAME") = UNIQUENAME;
             row(L"SOURCE") = SOURCE;
             row(L"SYMBOL") = SYMBOL;
-            row(L"SOURCENAME") = SOURCENAME;
             row(L"MARKET") = MARKET;
+            row(L"SOURCENAME") = SOURCENAME;
             row(L"TYPE") = TYPE;
             row(L"COUNTRY") = COUNTRY;
             row(L"SECTOR") = SECTOR;
@@ -491,18 +472,17 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             row(L"WEBPAGE") = WEBPAGE;
             row(L"NOTES") = NOTES;
             row(L"PRECISION") = PRECISION;
-            row(L"CURRENCY_SYMBOL") = CURRENCY_SYMBOL;
+            row(L"CURRENCYID") = CURRENCYID;
             return row;
         }
 
         void to_template(html_template& t) const
         {
             t(L"TICKERID") = TICKERID;
-            t(L"UNIQUENAME") = UNIQUENAME;
             t(L"SOURCE") = SOURCE;
             t(L"SYMBOL") = SYMBOL;
-            t(L"SOURCENAME") = SOURCENAME;
             t(L"MARKET") = MARKET;
+            t(L"SOURCENAME") = SOURCENAME;
             t(L"TYPE") = TYPE;
             t(L"COUNTRY") = COUNTRY;
             t(L"SECTOR") = SECTOR;
@@ -510,7 +490,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             t(L"WEBPAGE") = WEBPAGE;
             t(L"NOTES") = NOTES;
             t(L"PRECISION") = PRECISION;
-            t(L"CURRENCY_SYMBOL") = CURRENCY_SYMBOL;
+            t(L"CURRENCYID") = CURRENCYID;
         }
 
         /** Save the record instance in memory to the database. */
@@ -519,7 +499,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
             if (db && db->IsReadOnly()) return false;
             if (!table_ || !db) 
             {
-                wxLogError("can not save TICKERPROPERTIES_V1");
+                wxLogError("can not save TICKER_V1");
                 return false;
             }
 
@@ -531,7 +511,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         {
             if (!table_ || !db) 
             {
-                wxLogError("can not remove TICKERPROPERTIES_V1");
+                wxLogError("can not remove TICKER_V1");
                 return false;
             }
             
@@ -546,17 +526,17 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
 
     enum
     {
-        NUM_COLUMNS = 14
+        NUM_COLUMNS = 13
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
 
     /** Name of the table*/    
-    wxString name() const { return "TICKERPROPERTIES_V1"; }
+    wxString name() const { return "TICKER_V1"; }
 
-    DB_Table_TICKERPROPERTIES_V1() : fake_(new Data())
+    DB_Table_TICKER_V1() : fake_(new Data())
     {
-        query_ = "SELECT TICKERID, UNIQUENAME, SOURCE, SYMBOL, SOURCENAME, MARKET, TYPE, COUNTRY, SECTOR, INDUSTRY, WEBPAGE, NOTES, PRECISION, CURRENCY_SYMBOL FROM TICKERPROPERTIES_V1 ";
+        query_ = "SELECT TICKERID, SOURCE, SYMBOL, MARKET, SOURCENAME, TYPE, COUNTRY, SECTOR, INDUSTRY, WEBPAGE, NOTES, PRECISION, CURRENCYID FROM TICKER_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -586,32 +566,31 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO TICKERPROPERTIES_V1(UNIQUENAME, SOURCE, SYMBOL, SOURCENAME, MARKET, TYPE, COUNTRY, SECTOR, INDUSTRY, WEBPAGE, NOTES, PRECISION, CURRENCY_SYMBOL) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO TICKER_V1(SOURCE, SYMBOL, MARKET, SOURCENAME, TYPE, COUNTRY, SECTOR, INDUSTRY, WEBPAGE, NOTES, PRECISION, CURRENCYID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE TICKERPROPERTIES_V1 SET UNIQUENAME = ?, SOURCE = ?, SYMBOL = ?, SOURCENAME = ?, MARKET = ?, TYPE = ?, COUNTRY = ?, SECTOR = ?, INDUSTRY = ?, WEBPAGE = ?, NOTES = ?, PRECISION = ?, CURRENCY_SYMBOL = ? WHERE TICKERID = ?";
+            sql = "UPDATE TICKER_V1 SET SOURCE = ?, SYMBOL = ?, MARKET = ?, SOURCENAME = ?, TYPE = ?, COUNTRY = ?, SECTOR = ?, INDUSTRY = ?, WEBPAGE = ?, NOTES = ?, PRECISION = ?, CURRENCYID = ? WHERE TICKERID = ?";
         }
 
         try
         {
             wxSQLite3Statement stmt = db->PrepareStatement(sql);
 
-            stmt.Bind(1, entity->UNIQUENAME);
-            stmt.Bind(2, entity->SOURCE);
-            stmt.Bind(3, entity->SYMBOL);
+            stmt.Bind(1, entity->SOURCE);
+            stmt.Bind(2, entity->SYMBOL);
+            stmt.Bind(3, entity->MARKET);
             stmt.Bind(4, entity->SOURCENAME);
-            stmt.Bind(5, entity->MARKET);
-            stmt.Bind(6, entity->TYPE);
-            stmt.Bind(7, entity->COUNTRY);
-            stmt.Bind(8, entity->SECTOR);
-            stmt.Bind(9, entity->INDUSTRY);
-            stmt.Bind(10, entity->WEBPAGE);
-            stmt.Bind(11, entity->NOTES);
-            stmt.Bind(12, entity->PRECISION);
-            stmt.Bind(13, entity->CURRENCY_SYMBOL);
+            stmt.Bind(5, entity->TYPE);
+            stmt.Bind(6, entity->COUNTRY);
+            stmt.Bind(7, entity->SECTOR);
+            stmt.Bind(8, entity->INDUSTRY);
+            stmt.Bind(9, entity->WEBPAGE);
+            stmt.Bind(10, entity->NOTES);
+            stmt.Bind(11, entity->PRECISION);
+            stmt.Bind(12, entity->CURRENCYID);
             if (entity->id() > 0)
-                stmt.Bind(14, entity->TICKERID);
+                stmt.Bind(13, entity->TICKERID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();
@@ -628,7 +607,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         }
         catch(const wxSQLite3Exception &e) 
         { 
-            wxLogError("TICKERPROPERTIES_V1: Exception %s, %s", e.GetMessage().utf8_str(), entity->to_json());
+            wxLogError("TICKER_V1: Exception %s, %s", e.GetMessage().utf8_str(), entity->to_json());
             return false;
         }
 
@@ -646,7 +625,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         if (id <= 0) return false;
         try
         {
-            wxString sql = "DELETE FROM TICKERPROPERTIES_V1 WHERE TICKERID = ?";
+            wxString sql = "DELETE FROM TICKER_V1 WHERE TICKERID = ?";
             wxSQLite3Statement stmt = db->PrepareStatement(sql);
             stmt.Bind(1, id);
             stmt.ExecuteUpdate();
@@ -671,7 +650,7 @@ struct DB_Table_TICKERPROPERTIES_V1 : public DB_Table
         }
         catch(const wxSQLite3Exception &e) 
         { 
-            wxLogError("TICKERPROPERTIES_V1: Exception %s", e.GetMessage().utf8_str());
+            wxLogError("TICKER_V1: Exception %s", e.GetMessage().utf8_str());
             return false;
         }
 
