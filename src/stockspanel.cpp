@@ -749,7 +749,6 @@ bool mmStocksPanel::onlineQuoteRefresh(wxString& msg)
 
 void mmStocksPanel::updateExtraStocksData(int selectedIndex)
 {
-    enableEditDeleteButtons(selectedIndex >= 0);
     if (selectedIndex >= 0)
     {
         const wxString additionInfo = listCtrlAccount_->getStockInfo(selectedIndex);
@@ -759,7 +758,10 @@ void mmStocksPanel::updateExtraStocksData(int selectedIndex)
 
 wxString StocksListCtrl::getStockInfo(int selectedIndex) const
 {
-    wxString additionInfo = "TBD";
+    auto stock = m_stocks[selectedIndex];
+    Model_Ticker::Data* t = Model_Ticker::instance().get(stock.TICKERID);
+
+    wxString additionInfo = t->SOURCENAME;
     return additionInfo;
 }
 
