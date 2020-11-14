@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,13 @@ struct DB_Table_CUSTOMFIELD_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE CUSTOMFIELD_V1 (FIELDID INTEGER NOT NULL PRIMARY KEY, REFTYPE TEXT NOT NULL /* Transaction, Stock, Asset, BankAccount, RepeatingTransaction, Payee */, DESCRIPTION TEXT COLLATE NOCASE, TYPE TEXT NOT NULL /* String, Integer, Decimal, Boolean, Date, Time, SingleChoiche, MultiChoiche */, PROPERTIES TEXT NOT NULL))");
+                db->ExecuteUpdate(R"(CREATE TABLE CUSTOMFIELD_V1 (
+FIELDID INTEGER NOT NULL PRIMARY KEY
+, REFTYPE TEXT NOT NULL /* Transaction, Stock, Asset, BankAccount, RepeatingTransaction, Payee */
+, DESCRIPTION TEXT COLLATE NOCASE
+, TYPE TEXT NOT NULL /* String, Integer, Decimal, Boolean, Date, Time, SingleChoiche, MultiChoiche */
+, PROPERTIES TEXT NOT NULL
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 

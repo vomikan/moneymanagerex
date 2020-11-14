@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,16 @@ struct DB_Table_ASSETS_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE ASSETS_V1(ASSETID integer primary key, STARTDATE TEXT NOT NULL, ASSETNAME TEXT COLLATE NOCASE NOT NULL, VALUE numeric, VALUECHANGE TEXT /* None, Appreciates, Depreciates */, NOTES TEXT, VALUECHANGERATE numeric, ASSETTYPE TEXT /* Property, Automobile, Household Object, Art, Jewellery, Cash, Other */))");
+                db->ExecuteUpdate(R"(CREATE TABLE ASSETS_V1(
+ASSETID integer primary key
+, STARTDATE TEXT NOT NULL
+, ASSETNAME TEXT COLLATE NOCASE NOT NULL
+, VALUE numeric
+, VALUECHANGE TEXT /* None, Appreciates, Depreciates */
+, NOTES TEXT
+, VALUECHANGERATE numeric
+, ASSETTYPE TEXT /* Property, Automobile, Household Object, Art, Jewellery, Cash, Other */
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 

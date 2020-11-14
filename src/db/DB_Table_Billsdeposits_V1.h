@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,25 @@ struct DB_Table_BILLSDEPOSITS_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE BILLSDEPOSITS_V1(BDID integer primary key, ACCOUNTID integer NOT NULL, TOACCOUNTID integer, PAYEEID integer NOT NULL, TRANSCODE TEXT NOT NULL /* Withdrawal, Deposit, Transfer */, TRANSAMOUNT numeric NOT NULL, STATUS TEXT /* None, Reconciled, Void, Follow up, Duplicate */, TRANSACTIONNUMBER TEXT, NOTES TEXT, CATEGID integer, SUBCATEGID integer, TRANSDATE TEXT, FOLLOWUPID integer, TOTRANSAMOUNT numeric, REPEATS integer, NEXTOCCURRENCEDATE TEXT, NUMOCCURRENCES integer))");
+                db->ExecuteUpdate(R"(CREATE TABLE BILLSDEPOSITS_V1(
+BDID integer primary key
+, ACCOUNTID integer NOT NULL
+, TOACCOUNTID integer
+, PAYEEID integer NOT NULL
+, TRANSCODE TEXT NOT NULL /* Withdrawal, Deposit, Transfer */
+, TRANSAMOUNT numeric NOT NULL
+, STATUS TEXT /* None, Reconciled, Void, Follow up, Duplicate */
+, TRANSACTIONNUMBER TEXT
+, NOTES TEXT
+, CATEGID integer
+, SUBCATEGID integer
+, TRANSDATE TEXT
+, FOLLOWUPID integer
+, TOTRANSAMOUNT numeric
+, REPEATS integer
+, NEXTOCCURRENCEDATE TEXT
+, NUMOCCURRENCES integer
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 

@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,10 @@ struct DB_Table_BUDGETYEAR_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE BUDGETYEAR_V1(BUDGETYEARID integer primary key, BUDGETYEARNAME TEXT NOT NULL UNIQUE))");
+                db->ExecuteUpdate(R"(CREATE TABLE BUDGETYEAR_V1(
+BUDGETYEARID integer primary key
+, BUDGETYEARNAME TEXT NOT NULL UNIQUE
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 

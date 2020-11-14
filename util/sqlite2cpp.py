@@ -241,7 +241,7 @@ struct DB_Table_%s : public DB_Table
 
         return true;
     }
-''' % (sql.replace('\n', ''), self._table)
+''' % (sql, self._table)
 
         s += '''
     bool ensure_index(wxSQLite3Database* db)
@@ -255,7 +255,7 @@ struct DB_Table_%s : public DB_Table
             mi.insert(4, 'EXISTS')
             ni = ' '.join(mi)
             s += '''
-            db->ExecuteUpdate(R"(%s)");''' % (ni.replace('\n', ' '))
+            db->ExecuteUpdate(R"(%s)");''' % (ni)
 
         s += '''
         }

@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,33 @@ struct DB_Table_TICKER_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE TICKER_V1(TICKERID INTEGER PRIMARY KEY, SOURCE INTEGER /* Yahoo, MorningStar, MOEX */, SYMBOL TEXT COLLATE NOCASE NOT NULL, MARKET TEXT , SOURCENAME TEXT, TYPE INTEGER DEFAULT 0 /* Share, Fund, Bond */, COUNTRY TEXT , SECTOR TEXT /*Basic Materials, Consumer Cyclical, Financial Services, Real Estate, Consumer Defensive, Healthcare, Utilities, Communication Services, Energy, Industrials, Technology, Other */ , INDUSTRY TEXT, WEBPAGE TEXT, NOTES TEXT, PRECISION INTEGER, CURRENCYID INTEGER NOT NULL, FOREIGN KEY (CURRENCYID) REFERENCES CURRENCYFORMATS_V1(CURRENCYID) ))");
+                db->ExecuteUpdate(R"(CREATE TABLE TICKER_V1(
+TICKERID INTEGER PRIMARY KEY
+, SOURCE INTEGER /* Yahoo, MorningStar, MOEX */
+, SYMBOL TEXT COLLATE NOCASE NOT NULL
+, MARKET TEXT 
+, SOURCENAME TEXT
+, TYPE INTEGER DEFAULT 0 /* Share, Fund, Bond */
+, COUNTRY TEXT 
+, SECTOR TEXT /*Basic Materials
+, Consumer Cyclical
+, Financial Services
+, Real Estate
+, Consumer Defensive
+, Healthcare
+, Utilities
+, Communication Services
+, Energy
+, Industrials
+, Technology
+, Other */ 
+, INDUSTRY TEXT
+, WEBPAGE TEXT
+, NOTES TEXT
+, PRECISION INTEGER
+, CURRENCYID INTEGER NOT NULL
+, FOREIGN KEY (CURRENCYID) REFERENCES CURRENCYFORMATS_V1(CURRENCYID) 
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 

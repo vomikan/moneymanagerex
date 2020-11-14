@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,11 @@ struct DB_Table_INFOTABLE_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE INFOTABLE_V1(INFOID integer not null primary key, INFONAME TEXT COLLATE NOCASE NOT NULL UNIQUE, INFOVALUE TEXT NOT NULL))");
+                db->ExecuteUpdate(R"(CREATE TABLE INFOTABLE_V1(
+INFOID integer not null primary key
+, INFONAME TEXT COLLATE NOCASE NOT NULL UNIQUE
+, INFOVALUE TEXT NOT NULL
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 

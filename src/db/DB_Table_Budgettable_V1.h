@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,14 @@ struct DB_Table_BUDGETTABLE_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE BUDGETTABLE_V1(BUDGETENTRYID integer primary key, BUDGETYEARID integer, CATEGID integer, SUBCATEGID integer, PERIOD TEXT NOT NULL /* None, Weekly, Bi-Weekly, Monthly, Monthly, Bi-Monthly, Quarterly, Half-Yearly, Yearly, Daily*/, AMOUNT numeric NOT NULL))");
+                db->ExecuteUpdate(R"(CREATE TABLE BUDGETTABLE_V1(
+BUDGETENTRYID integer primary key
+, BUDGETYEARID integer
+, CATEGID integer
+, SUBCATEGID integer
+, PERIOD TEXT NOT NULL /* None, Weekly, Bi-Weekly, Monthly, Monthly, Bi-Monthly, Quarterly, Half-Yearly, Yearly, Daily*/
+, AMOUNT numeric NOT NULL
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 

@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,17 @@ struct DB_Table_STOCK_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE STOCK_V1(STOCKID integer primary key, TICKERID integer NOT NULL, HELDAT integer, PURCHASEDATE TEXT NOT NULL, NUMSHARES numeric, PURCHASEPRICE numeric NOT NULL, NOTES TEXT, COMMISSION numeric, FOREIGN KEY (TICKERID) REFERENCES TICKER_V1(TICKERID) ))");
+                db->ExecuteUpdate(R"(CREATE TABLE STOCK_V1(
+STOCKID integer primary key
+, TICKERID integer NOT NULL
+, HELDAT integer
+, PURCHASEDATE TEXT NOT NULL
+, NUMSHARES numeric
+, PURCHASEPRICE numeric NOT NULL
+, NOTES TEXT
+, COMMISSION numeric
+, FOREIGN KEY (TICKERID) REFERENCES TICKER_V1(TICKERID) 
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 

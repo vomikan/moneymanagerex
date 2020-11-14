@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,29 @@ struct DB_Table_ACCOUNTLIST_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE ACCOUNTLIST_V1(ACCOUNTID integer primary key, ACCOUNTNAME TEXT COLLATE NOCASE NOT NULL UNIQUE, ACCOUNTTYPE TEXT NOT NULL /* Checking, Term, Investment, Credit Card */, ACCOUNTNUM TEXT, STATUS TEXT NOT NULL /* Open, Closed */, NOTES TEXT, HELDAT TEXT, WEBSITE TEXT, CONTACTINFO TEXT, ACCESSINFO TEXT, INITIALBAL numeric, FAVORITEACCT TEXT NOT NULL, CURRENCYID integer NOT NULL, STATEMENTLOCKED integer, STATEMENTDATE TEXT, MINIMUMBALANCE numeric, CREDITLIMIT numeric, INTERESTRATE numeric, PAYMENTDUEDATE text, MINIMUMPAYMENT numeric))");
+                db->ExecuteUpdate(R"(CREATE TABLE ACCOUNTLIST_V1(
+ACCOUNTID integer primary key
+, ACCOUNTNAME TEXT COLLATE NOCASE NOT NULL UNIQUE
+, ACCOUNTTYPE TEXT NOT NULL /* Checking, Term, Investment, Credit Card */
+, ACCOUNTNUM TEXT
+, STATUS TEXT NOT NULL /* Open, Closed */
+, NOTES TEXT
+, HELDAT TEXT
+, WEBSITE TEXT
+, CONTACTINFO TEXT
+, ACCESSINFO TEXT
+, INITIALBAL numeric
+, FAVORITEACCT TEXT NOT NULL
+, CURRENCYID integer NOT NULL
+, STATEMENTLOCKED integer
+, STATEMENTDATE TEXT
+, MINIMUMBALANCE numeric
+, CREDITLIMIT numeric
+, INTERESTRATE numeric
+, PAYMENTDUEDATE text
+, MINIMUMPAYMENT numeric
+, FOREIGN KEY (CURRENCYID) REFERENCES CURRENCYFORMATS_V1(CURRENCYID) 
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 

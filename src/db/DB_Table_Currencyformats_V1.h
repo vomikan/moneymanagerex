@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-13 00:31:21.204000.
+ *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -75,7 +75,19 @@ struct DB_Table_CURRENCYFORMATS_V1 : public DB_Table
         {
             try
             {
-                db->ExecuteUpdate(R"(CREATE TABLE CURRENCYFORMATS_V1(CURRENCYID integer primary key, CURRENCYNAME TEXT COLLATE NOCASE NOT NULL UNIQUE, PFX_SYMBOL TEXT, SFX_SYMBOL TEXT, DECIMAL_POINT TEXT, GROUP_SEPARATOR TEXT, UNIT_NAME TEXT COLLATE NOCASE, CENT_NAME TEXT COLLATE NOCASE, SCALE integer, BASECONVRATE numeric, CURRENCY_SYMBOL TEXT COLLATE NOCASE NOT NULL UNIQUE))");
+                db->ExecuteUpdate(R"(CREATE TABLE CURRENCYFORMATS_V1(
+CURRENCYID integer primary key
+, CURRENCYNAME TEXT COLLATE NOCASE NOT NULL UNIQUE
+, PFX_SYMBOL TEXT
+, SFX_SYMBOL TEXT
+, DECIMAL_POINT TEXT
+, GROUP_SEPARATOR TEXT
+, UNIT_NAME TEXT COLLATE NOCASE
+, CENT_NAME TEXT COLLATE NOCASE
+, SCALE integer
+, BASECONVRATE numeric
+, CURRENCY_SYMBOL TEXT COLLATE NOCASE NOT NULL UNIQUE
+))");
                 this->ensure_data(db);
             }
             catch(const wxSQLite3Exception &e) 
