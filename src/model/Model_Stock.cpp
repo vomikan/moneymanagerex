@@ -115,19 +115,23 @@ Model_StockStat::Model_StockStat(int ticker_id, int accountID, double current_pr
 
     Model_Account::Data* a = Model_Account::instance().get(accountID);
     Model_Ticker::Data* t = Model_Ticker::instance().get(ticker_id);
-    Model_Stock::Data_Set s = Model_Stock::instance().find(Model_Stock::HELDAT(a->ACCOUNTID)
-        , Model_Stock::TICKERID(t->TICKERID));
+    Model_Stock::Data_Set s = Model_Stock::instance().find(Model_Stock::HELDAT(a ? a->ACCOUNTID : -1)
+        , Model_Stock::TICKERID(t ? t->TICKERID : -1));
 
     bool marginal = false;
     m_purchase_total = 0.0;
     m_money_total = 0.0;
     m_everage_price = 0.0;
     m_commission = 0.0;
+    m_init_date = wxDate::Today().FormatISODate();
 
     std::vector<double> shares;
 
     for (const auto& item : s)
     {
+        if (m_init_date > item.PURCHASEDATE) {
+            m_init_date = item.PURCHASEDATE;
+        }
         for (int i = 0; i < abs(item.NUMSHARES); i++)
         {
             marginal = !shares.empty() ? shares[0] < 0.0 : item.NUMSHARES < 0;

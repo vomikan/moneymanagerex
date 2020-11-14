@@ -47,7 +47,7 @@ public:
         , long style
         , const wxString& name = "mmStockDialog"
         );
-    int get_stock_id() const;
+    int get_ticker_id() const;
 
 private:
     struct Data

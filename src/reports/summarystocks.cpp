@@ -205,7 +205,7 @@ wxString mmReportChartStocks::getHTMLText()
     wxTimeSpan dist;
     wxDate precDateDt = wxInvalidDateTime;
 #if 0
-    wxIntArray symbols;
+    wxArrayInt symbols;
     for (const auto& stock : Model_Stock::instance().all())
     {
         if (symbols.Index(stock.TICKERID) != wxNOT_FOUND) {

@@ -79,6 +79,7 @@ public:
     double get_gain_loss() const;
     double get_count() const;
     double get_commission() const;
+    wxString get_init_date() const;
 
 private:
     double m_purchase_total;
@@ -87,6 +88,7 @@ private:
     double m_gain_loss;
     double m_count;
     double m_commission;
+    wxString m_init_date;
 };
 
 inline double Model_StockStat::get_purchase_total() const { return m_purchase_total; }
@@ -95,5 +97,6 @@ inline double Model_StockStat::get_everage_price() const { return m_everage_pric
 inline double Model_StockStat::get_gain_loss() const { return m_gain_loss; }
 inline double Model_StockStat::get_count() const { return m_count; }
 inline double Model_StockStat::get_commission() const { return m_commission; }
+inline wxString Model_StockStat::get_init_date() const { return m_init_date; }
 
 #endif // 

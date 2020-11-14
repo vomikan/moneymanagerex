@@ -32,6 +32,8 @@
 #include "mmSimpleDialogs.h"
 #include "mmOnline.h"
 
+#include <wx/busyinfo.h>
+
 wxBEGIN_EVENT_TABLE(mmStockSetup, wxDialog)
     EVT_BUTTON(wxID_OK, mmStockSetup::OnOk)
     EVT_BUTTON(wxID_ADD, mmStockSetup::OnHistoryAddButton)
@@ -351,6 +353,22 @@ void mmStockSetup::OnHistoryDownloadButton(wxCommandEvent& /*event*/)
         i->SOURCE = s;
         i->TYPE = t;
     }
+
+    wxBusyInfo info
+#if (wxMAJOR_VERSION == 3 && wxMINOR_VERSION >= 1)
+        (
+            wxBusyInfoFlags()
+            .Parent(this)
+            .Title(_("Downloading stock prices"))
+            .Text(_("Please wait..."))
+            .Foreground(*wxWHITE)
+            .Background(wxColour(104, 179, 51))
+            .Transparency(4 * wxALPHA_OPAQUE / 5)
+            );
+#else
+        (_("Downloading stock prices"), this);
+#endif
+
 
     wxSharedPtr<mmHistoryOnline> o;
     o = new mmHistoryOnline(i, m_currency_id);

@@ -81,20 +81,6 @@ private:
     };
     wxImageList* m_imageList;
     void sortTable();
-
-
-    struct Data {
-        int ID;
-        wxString date;
-        wxString sector;
-        double number;
-        double value;
-        double current_value;
-        double gain_loss;
-        double commission;
-        double purchase_price;
-    };
-
 };
 
 /* ------------------------------------------------------- */

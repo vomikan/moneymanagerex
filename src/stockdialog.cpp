@@ -403,7 +403,8 @@ void mmStockDialog::ShowStockHistory()
     m_list.clear();
 
     Model_Account::Data* account = Model_Account::instance().get(m_account_id);
-    Model_Stock::Data_Set histData = Model_Stock::instance().find(Model_Stock::TICKERID(m_ticker_id));
+    Model_Stock::Data_Set histData = Model_Stock::instance()
+        .find(Model_Stock::TICKERID(m_ticker_id), Model_Stock::HELDAT(m_account_id));
 
     for (const auto& entry: histData)
     {
@@ -491,31 +492,34 @@ void mmStockDialog::ShowStockHistory()
     m_stock_event_listbox->RefreshItems(0, rows);
 
     Model_Ticker::Data* t = Model_Ticker::instance().get(m_ticker_id);
-    Model_Currency::Data* account_currency = Model_Currency::instance().get(account->CURRENCYID);
-    Model_Currency::Data_Set currencies = Model_Currency::instance().find(Model_Currency::CURRENCYID(t->CURRENCYID));
-    Model_Currency::Data* ticker_currency = account_currency;
-    if (!currencies.empty())
-        ticker_currency = Model_Currency::instance().get(currencies.begin()->CURRENCYID);
+    if (t)
+    {
+        Model_Currency::Data* account_currency = Model_Currency::instance().get(account->CURRENCYID);
+        Model_Currency::Data_Set currencies = Model_Currency::instance().find(Model_Currency::CURRENCYID(t->CURRENCYID));
+        Model_Currency::Data* ticker_currency = account_currency;
+        if (!currencies.empty())
+            ticker_currency = Model_Currency::instance().get(currencies.begin()->CURRENCYID);
 
-    wxSharedPtr<Model_StockStat> s;
-    double current_price = Model_StockHistory::getLastRate(t->TICKERID);
-    s = new Model_StockStat(m_ticker_id, m_account_id, current_price);
+        wxSharedPtr<Model_StockStat> s;
+        double current_price = Model_StockHistory::getLastRate(t->TICKERID);
+        s = new Model_StockStat(m_ticker_id, m_account_id, current_price);
 
-    const wxString valueStr = Model_Currency::toCurrency(s->get_purchase_total(), ticker_currency, m_precision);
-    const wxString commStr = Model_Currency::toCurrency(s->get_commission(), ticker_currency, m_precision);
-    const wxString numberStr = Model_Currency::toString(s->get_count(), ticker_currency, floor(s->get_count()) ? 0 : m_precision);
-    const wxString moneyStr = Model_Currency::toCurrency(s->get_money_total(), ticker_currency, m_precision);
-    const wxString everageStr = Model_Currency::toCurrency(s->get_everage_price(), ticker_currency, m_precision);
-    const wxString gainLossStr = Model_Currency::toCurrency(s->get_gain_loss(), ticker_currency, m_precision);
+        const wxString valueStr = Model_Currency::toCurrency(s->get_purchase_total(), ticker_currency, m_precision);
+        const wxString commStr = Model_Currency::toCurrency(s->get_commission(), ticker_currency, m_precision);
+        const wxString numberStr = Model_Currency::toString(s->get_count(), ticker_currency, floor(s->get_count()) ? 0 : m_precision);
+        const wxString moneyStr = Model_Currency::toCurrency(s->get_money_total(), ticker_currency, m_precision);
+        const wxString everageStr = Model_Currency::toCurrency(s->get_everage_price(), ticker_currency, m_precision);
+        const wxString gainLossStr = Model_Currency::toCurrency(s->get_gain_loss(), ticker_currency, m_precision);
 
-    wxString infoStr = wxString::Format(_("Number of items: %s"), numberStr);
-    infoStr += "\n" + wxString::Format(_("Commission paid: %s"), commStr);
-    infoStr += "\n" + wxString::Format("Invested: %s", valueStr);
-    infoStr += "\n" + wxString::Format("Everage Price: %s", everageStr);
-    infoStr += "\n" + wxString::Format("Gain loss: %s", gainLossStr);
+        wxString infoStr = wxString::Format(_("Number of items: %s"), numberStr);
+        infoStr += "\n" + wxString::Format(_("Commission paid: %s"), commStr);
+        infoStr += "\n" + wxString::Format("Invested: %s", valueStr);
+        infoStr += "\n" + wxString::Format("Everage Price: %s", everageStr);
+        infoStr += "\n" + wxString::Format("Gain loss: %s", gainLossStr);
 
-    m_info_txt->SetLabelText(infoStr);
-    //wxString::Format("%s", t->SOURCENAME);
+        m_info_txt->SetLabelText(infoStr);
+        //wxString::Format("%s", t->SOURCENAME);
+    }
 
 }
 
@@ -530,9 +534,9 @@ void mmStockDialog::OnQuit(wxCloseEvent& /*event*/)
     EndModal(wxID_CANCEL);
 }
 
-int mmStockDialog::get_stock_id() const
+int mmStockDialog::get_ticker_id() const
 {
-    return m_stock_id;
+    return m_ticker_id;
 }
 
 void mmStockDialog::OnListItemActivated(wxListEvent& event)

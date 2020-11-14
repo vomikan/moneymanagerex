@@ -29,6 +29,8 @@
 
 #include "model/allmodel.h"
 
+#include <wx/busyinfo.h>
+
 enum {
     IDC_PANEL_STOCKS_LISTCTRL = wxID_HIGHEST + 1900,
     MENU_TREEPOPUP_EDIT,
@@ -145,52 +147,84 @@ void StocksListCtrl::OnMouseRightClick(wxMouseEvent& event)
 
 wxString StocksListCtrl::OnGetItemText(long item, long column) const
 {
-    int ID = m_stocks[item].STOCKID;
+    int ID = m_stocks[item].TICKERID;
     Model_Ticker::Data* i = Model_Ticker::instance().get(ID);
-
-    wxSharedPtr<Model_StockStat> s;
-    double current_price = Model_StockHistory::getLastRate(i->TICKERID);
-    s = new Model_StockStat(i->TICKERID, m_stock_panel->get_account_id(), current_price);
-
-    Model_Currency::Data_Set c = Model_Currency::instance()
-        .find(Model_Currency::CURRENCYID(i->CURRENCYID));
-    Model_Currency::Data* currency = Model_Currency::instance().get(c.begin()->CURRENCYID);
 
     Model_Account::Data* a = Model_Account::instance().get(m_stock_panel->get_account_id());
     Model_Currency::Data* acc_currency = Model_Currency::instance().get(a->CURRENCYID);
 
-    bool default_curr = (acc_currency == currency);
-
-    switch (column)
+    if (i)
     {
-    case COL_SYMBOL:
-        return Model_Ticker::get_ticker_symbol(m_stocks[item].TICKERID);
-    case COL_CURRPRICE:
-        return default_curr ?
-            Model_Currency::toString(current_price, currency, i->PRECISION)
-            : Model_Currency::toCurrency(current_price, currency, i->PRECISION);
-    case COL_DATE:
-        return mmGetDateForDisplay(m_stocks[item].PURCHASEDATE);
-    case COL_NUMBER:
-        return Model_Currency::toString(m_stocks[item].NUMSHARES, currency
-            , (m_stocks[item].NUMSHARES == floor(m_stocks[item].NUMSHARES) ? 0 : i->PRECISION));
-    case COL_PRICE:
-        return default_curr ?
-            Model_Currency::toString(s->get_everage_price(), currency, i->PRECISION)
-            : Model_Currency::toCurrency(s->get_everage_price(), currency, i->PRECISION);
-    case COL_CURRVALUE:
-        return default_curr ?
-            Model_Currency::toString(s->get_count() * current_price, currency, i->PRECISION)
-            : Model_Currency::toCurrency(s->get_count() * current_price, currency, i->PRECISION);
-    case COL_GAIN_LOSS:
-        return default_curr ?
-            Model_Currency::toString(s->get_gain_loss(), currency, i->PRECISION)
-            : Model_Currency::toCurrency(s->get_gain_loss(), currency, i->PRECISION);
-    case COL_SECTOR:
-        return i->SECTOR;
+        wxSharedPtr<Model_StockStat> s;
+        double current_price = Model_StockHistory::getLastRate(i->TICKERID);
+        s = new Model_StockStat(i->TICKERID, m_stock_panel->get_account_id(), current_price);
 
-    default:
-        break;
+        Model_Currency::Data_Set c = Model_Currency::instance()
+            .find(Model_Currency::CURRENCYID(i->CURRENCYID));
+        Model_Currency::Data* currency = Model_Currency::instance().get(c.begin()->CURRENCYID);
+
+        bool default_curr = (acc_currency == currency);
+
+        switch (column)
+        {
+        case COL_SYMBOL:
+            return Model_Ticker::get_ticker_symbol(m_stocks[item].TICKERID);
+        case COL_CURRPRICE:
+            return default_curr ?
+                Model_Currency::toString(current_price, currency, i->PRECISION)
+                : Model_Currency::toCurrency(current_price, currency, i->PRECISION);
+        case COL_DATE:
+            return mmGetDateForDisplay(m_stocks[item].PURCHASEDATE);
+        case COL_NUMBER:
+            return Model_Currency::toString(m_stocks[item].NUMSHARES, currency
+                , (m_stocks[item].NUMSHARES == floor(m_stocks[item].NUMSHARES) ? 0 : i->PRECISION));
+        case COL_PRICE:
+            return default_curr ?
+                Model_Currency::toString(s->get_everage_price(), currency, i->PRECISION)
+                : Model_Currency::toCurrency(s->get_everage_price(), currency, i->PRECISION);
+        case COL_CURRVALUE:
+            return default_curr ?
+                Model_Currency::toString(s->get_count() * current_price, currency, i->PRECISION)
+                : Model_Currency::toCurrency(s->get_count() * current_price, currency, i->PRECISION);
+        case COL_GAIN_LOSS:
+            return default_curr ?
+                Model_Currency::toString(s->get_gain_loss(), currency, i->PRECISION)
+                : Model_Currency::toCurrency(s->get_gain_loss(), currency, i->PRECISION);
+        case COL_SECTOR:
+            return i->SECTOR;
+
+        default:
+            break;
+        }
+    }
+    else
+    {
+        int currency_id = m_stocks[item].STOCKID;
+        Model_Currency::Data* currency = Model_Currency::instance().get(currency_id);
+
+        bool default_curr = (acc_currency == currency);
+
+        switch (column)
+        {
+        case COL_SYMBOL:
+            return currency->CURRENCYNAME;
+        case COL_CURRPRICE:
+            return !default_curr ?
+                Model_Currency::toString(
+                Model_CurrencyHistory::getLastRate(currency_id)
+                , currency) : "";
+        case COL_DATE:
+            return mmGetDateForDisplay(m_stocks[item].PURCHASEDATE);
+        //case COL_NUMBER:
+
+        //case COL_PRICE:
+
+        //case COL_CURRVALUE:
+
+        //case COL_GAIN_LOSS:
+
+        //case COL_SECTOR:
+        }
     }
 
     return wxEmptyString;
@@ -255,7 +289,7 @@ void StocksListCtrl::OnNewStocks(wxCommandEvent& /*event*/)
 {
     mmStockDialog dlg(this, m_stock_panel->m_frame, -1, m_stock_panel->get_account_id());
     dlg.ShowModal();
-    int id = dlg.get_stock_id();
+    int id = dlg.get_ticker_id();
     doRefreshItems(id);
 
 }
@@ -333,7 +367,7 @@ void StocksListCtrl::OnColClick(wxListEvent& event)
     Model_Setting::instance().Set("STOCKS_SORT_COL", m_selected_col);
 
     int trx_id = -1;
-    if (m_selected_row>=0) trx_id = m_stocks[m_selected_row].STOCKID;
+    if (m_selected_row>=0) trx_id = m_stocks[m_selected_row].TICKERID;
     doRefreshItems(trx_id);
     m_stock_panel->OnListItemSelected(-1);
 }
@@ -546,81 +580,86 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
     /* Clear all the records */
     DeleteAllItems();
 
-    wxListItem item;
-    item.SetMask(wxLIST_MASK_IMAGE);
-    item.SetImage(asc ? static_cast<int>(ico::ARROW_DOWN) : static_cast<int>(ico::ARROW_UP));
-    SetColumn(col, item);
+    wxListItem list_item;
+    list_item.SetMask(wxLIST_MASK_IMAGE);
+    list_item.SetImage(asc ? static_cast<int>(ico::ARROW_DOWN) : static_cast<int>(ico::ARROW_UP));
+    SetColumn(col, list_item);
 
-    std::map<int, Data> list;
+    wxArrayInt list;
+    int account_id = m_stock_panel->get_account_id();
 
-    //TODO: Current price
-    //Model_StockHistory::Data_Set histData = Model_StockHistory::instance().find(Model_StockHistory::SYMBOL(i.first));
-    //std::sort(histData.begin(), histData.end(), SorterByDATE());
-
-    Model_Stock::Data_Set stocks = Model_Stock::instance().find(Model_Stock::HELDAT(m_stock_panel->get_account_id()));
+    Model_Stock::Data_Set stocks = Model_Stock::instance()
+        .find(Model_Stock::HELDAT(account_id));
     for (const auto& entry : stocks)
     {
-        Model_Ticker::Data* e = Model_Ticker::instance().get(entry.TICKERID);
-        Data i;
-        if (list.find(e->TICKERID) != list.end())
-        {
-            i = list.at(e->TICKERID);
-            i.date = i.date > entry.PURCHASEDATE ? entry.PURCHASEDATE : i.date;
-            i.number += entry.NUMSHARES;
-            i.commission += entry.COMMISSION;
-            i.gain_loss += 0.0; //TODO: //  (entry.NUMSHARES * entry.CURRENTPRICE - entry.VALUE - entry.COMMISSION);
-            i.current_value += 0.0; //TODO: //  entry.NUMSHARES * entry.CURRENTPRICE;
-            i.value += 0.0; //TODO: //  entry.VALUE;
-            i.purchase_price += entry.PURCHASEPRICE * fabs(entry.NUMSHARES);
+        if (list.Index(entry.TICKERID) == wxNOT_FOUND) {
+            list.Add(entry.TICKERID);
         }
-        else
-        {
-            i.date = entry.PURCHASEDATE;
-            i.number = entry.NUMSHARES;
-            i.commission = entry.COMMISSION;
-            i.gain_loss = 0.0; //TODO: //  (entry.NUMSHARES * entry.CURRENTPRICE - entry.VALUE - entry.COMMISSION);
-            i.current_value = 0.0; //TODO: //  entry.NUMSHARES * entry.CURRENTPRICE;
-            i.value = 0.0; //TODO: //  entry.VALUE;
-            i.purchase_price = entry.PURCHASEPRICE * fabs(entry.NUMSHARES);
-        }
-        i.ID = e->TICKERID;
-        i.sector = e->SECTOR;
-        list[e->TICKERID] = i;
     }
 
     m_stocks.clear();
-    for (const auto& i : list)
+    for (const auto& entry : list)
     {
-        Model_Stock::Data* entry = Model_Stock::instance().create();
-        entry->PURCHASEDATE = i.second.date;
-        entry->NUMSHARES = i.second.number;
-        entry->PURCHASEPRICE = i.second.purchase_price;
-        entry->HELDAT = m_stock_panel->get_account_id();
-        entry->TICKERID = i.first;
-        entry->COMMISSION = i.second.commission;
-        entry->STOCKID = i.second.ID;
+        Model_Stock::Data* item = Model_Stock::instance().create();
 
-        m_stocks.push_back(*entry);
+        Model_Ticker::Data* t = Model_Ticker::instance().get(entry);
+
+        wxSharedPtr<Model_StockStat> s;
+        double current_price = Model_StockHistory::getLastRate(t->TICKERID);
+        s = new Model_StockStat(t->TICKERID, account_id, current_price);
+
+        item->PURCHASEDATE = s->get_init_date();
+        item->NUMSHARES = s->get_count();
+        item->PURCHASEPRICE = s->get_everage_price();
+        item->HELDAT = m_stock_panel->get_account_id();
+        item->TICKERID = entry;
+        item->COMMISSION = s->get_commission();
+        item->STOCKID = -1;
+
+        m_stocks.push_back(*item);
     }
 
     sortTable();
 
-    int cnt = 0, selected_item = -1;
-    for (const auto& stock: m_stocks)
+    //Default currency for the stock account
+    std::map <int, wxString> currency;
+    Model_Account::Data* account = Model_Account::instance().get(account_id);
+    int curr = account->CURRENCYID;
+    wxString init_date = stocks.begin()->PURCHASEDATE;
+    currency[curr] = init_date;
+
+    Model_Checking::Data_Set money = Model_Checking::instance().find_or(Model_Checking::ACCOUNTID(account_id)
+        , Model_Checking::TOACCOUNTID(account_id));
+
+    for (const auto& entry : money)
     {
-        if (id == stock.STOCKID)
-        {
-            selected_item = cnt;
-            break;
-        }
-        ++cnt;
+        account = Model_Account::instance().get(entry.ACCOUNTID);
+        curr = account->CURRENCYID;
+        currency[curr] = currency.find(curr)!= currency.end() && entry.TRANSDATE > currency[curr] ? currency[curr] : entry.TRANSDATE;
+    }
+
+    for (const auto& i : currency)
+    {
+        Model_Stock::Data* item = Model_Stock::instance().create();
+
+        item->PURCHASEDATE = i.second;
+        item->NUMSHARES = 0;
+        item->HELDAT = account_id;
+        item->TICKERID = -1;
+        item->COMMISSION = 0.0;
+        item->STOCKID = i.first;
+
+        Model_Currency::Data* c = Model_Currency::instance().get(i.first);
+        item->NOTES = c->CURRENCYNAME;
+        item->PURCHASEPRICE = Model_CurrencyHistory::getLastRate(i.first);
+
+        m_stocks.push_back(*item);
     }
 
     SetItemCount(m_stocks.size());
-
     m_stock_panel->updateHeader();
 
-    return selected_item;
+    return id;
 }
 
 void mmStocksPanel::updateHeader()
@@ -730,6 +769,21 @@ bool mmStocksPanel::onlineQuoteRefresh(wxString& msg)
     refresh_button_->SetBitmapLabel(mmBitmap(png::LED_YELLOW));
     stock_details_->SetLabelText(_("Connecting..."));
 
+    wxBusyInfo info
+#if (wxMAJOR_VERSION == 3 && wxMINOR_VERSION >= 1)
+        (
+            wxBusyInfoFlags()
+            .Parent(this)
+            .Title(_("Downloading stock prices"))
+            .Text(_("Please wait..."))
+            .Foreground(*wxWHITE)
+            .Background(wxColour(104, 179, 51))
+            .Transparency(4 * wxALPHA_OPAQUE / 5)
+            );
+#else
+        (_("Downloading stock prices"), this);
+#endif
+
     wxSharedPtr<mmOnline> o;
     o = new mmOnline();
 
@@ -761,7 +815,7 @@ wxString StocksListCtrl::getStockInfo(int selectedIndex) const
     auto stock = m_stocks[selectedIndex];
     Model_Ticker::Data* t = Model_Ticker::instance().get(stock.TICKERID);
 
-    wxString additionInfo = t->SOURCENAME;
+    wxString additionInfo = t ? t->SOURCENAME : "$";
     return additionInfo;
 }
 
@@ -790,7 +844,7 @@ void mmStocksPanel::call_dialog(int selectedIndex)
     Model_Stock::Data* stock = &listCtrlAccount_->m_stocks[selectedIndex];
     mmStockDialog dlg(this, m_frame, stock->TICKERID, m_account_id);
     dlg.ShowModal();
-    int id = dlg.get_stock_id();
+    int id = dlg.get_ticker_id();
 
     listCtrlAccount_->doRefreshItems(id);
 
