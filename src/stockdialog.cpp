@@ -421,7 +421,7 @@ void mmStockDialog::ShowStockHistory()
 
 
     //
-    wxString symbol = Model_Ticker::instance().get_ticker_name(m_ticker_id);
+    wxString symbol = Model_Ticker::instance().get_ticker_symbol(m_ticker_id);
     Model_Payee::Data* payee = Model_Payee::instance().get(symbol);
     int payee_id = payee ? payee->PAYEEID : -1;
 

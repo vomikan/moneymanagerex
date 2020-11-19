@@ -177,6 +177,8 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     stockdialog.h
     stockspanel.cpp
     stockspanel.h
+    stocks_list.cpp
+    stocks_list.h
     stock_item.cpp
     stock_item.h
     stock_settings.cpp
