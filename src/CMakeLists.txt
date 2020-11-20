@@ -112,6 +112,8 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     maincurrencydialog.h
     minimal_editor.cpp
     minimal_editor.h
+    money_list.cpp
+    money_list.h
     mmcheckingpanel.cpp
     mmcheckingpanel.h
     mmchecking_list.cpp

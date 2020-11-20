@@ -21,6 +21,7 @@
 #define MM_EX_STOCKSPANEL_H_
 
 #include "stocks_list.h"
+#include "money_list.h"
 #include <wx/tglbtn.h>
 #include "model/Model_Stock.h"
 #include "model/Model_Currency.h"
@@ -76,7 +77,7 @@ public:
 
 private:
     int m_account_id;
-    wxListCtrl* m_listCtrlAccount;
+    MoneyListCtrl* m_listCtrlAccount;
     StocksListCtrl* listCtrlAccount_;
     wxStaticText* stock_details_;
     void call_dialog(int selectedIndex);

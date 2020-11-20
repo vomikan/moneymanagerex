@@ -85,4 +85,5 @@ private:
 
 inline long StocksListCtrl::get_selectedIndex() { return m_selected_row; }
 inline int StocksListCtrl::getColumnsNumber() { return COL_MAX; }
+
 #endif

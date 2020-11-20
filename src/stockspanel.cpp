@@ -112,33 +112,7 @@ void mmStocksPanel::dataToControls()
 {
     listCtrlAccount_->initVirtualListControl();
 
-    int account_id = get_account_id();
-    Model_Checking::Data_Set m_money = Model_Checking::instance().find_or(Model_Checking::ACCOUNTID(account_id)
-        , Model_Checking::TOACCOUNTID(account_id));
-
-    //Default currency for the stock account
-    Model_Account::Data* account = Model_Account::instance().get(account_id);
-    Model_Currency::Data* currency = Model_Account::currency(account);
-
-    for (long idx = 0; idx < m_money.size(); idx++)
-    {
-        auto &i = m_money.at(static_cast<size_t>(idx));
-
-        wxListItem item;
-        item.SetId(idx);
-        item.SetData(i.TRANSID);
-
-        m_listCtrlAccount->InsertItem(item);
-
-        m_listCtrlAccount->SetItem(idx, 0, wxGetTranslation(i.TRANSCODE));
-
-        m_listCtrlAccount->SetItem(idx, 1, mmGetDateForDisplay(i.TRANSDATE));
-        double value = i.TRANSAMOUNT;
-        m_listCtrlAccount->SetItem(idx, 2, Model_Payee::get_payee_name(i.PAYEEID));
-        m_listCtrlAccount->SetItem(idx, 3, Model_Account::toString(value, account, log10(currency->SCALE)));
-        m_listCtrlAccount->SetItem(idx, 4, i.NOTES);
-    }
-    m_listCtrlAccount->RefreshItems(0L, static_cast<long>(m_money.size()));
+    m_listCtrlAccount->initVirtualListControl();
 
 }
 
@@ -187,8 +161,7 @@ void mmStocksPanel::CreateControls()
     wxBoxSizer *others_sizer = new wxBoxSizer(wxVERTICAL);
     others_tab->SetSizer(others_sizer);
 
-    m_listCtrlAccount = new wxListCtrl(others_tab, wxID_ANY, wxDefaultPosition, wxDefaultSize
-        , wxLC_REPORT | wxLC_SINGLE_SEL);
+    m_listCtrlAccount = new MoneyListCtrl(this, others_tab, wxID_ANY);
     m_listCtrlAccount->SetMinSize(wxSize(500, 150));
 
     others_sizer->Add(m_listCtrlAccount, g_flagsExpand);
@@ -234,30 +207,6 @@ void mmStocksPanel::CreateControls()
     BoxSizerVBottom->Add(stock_details_, g_flagsExpandBorder1);
 
     updateExtraStocksData(-1);
-
-    // load the global variables
-//mmListCtrl::m_selected_col = Model_Setting::instance().GetIntSetting("MONEY_SORT_COL", col_sort());
-//m_asc = Model_Setting::instance().GetBoolSetting("STOCKS_ASC", true);
-    std::vector<PANEL_COLUMN> m_columns;
-    m_columns.push_back(PANEL_COLUMN(_("Event"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_LEFT));
-    m_columns.push_back(PANEL_COLUMN(_("Date"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_RIGHT));
-    m_columns.push_back(PANEL_COLUMN(_("Payee"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_LEFT));
-    m_columns.push_back(PANEL_COLUMN(_("Value"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_RIGHT));
-    m_columns.push_back(PANEL_COLUMN(_("Notes"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_RIGHT));
-
-
-    wxString m_col_width = "MONEY_COL%ld_WIDTH";
-    //m_default_sort_column = col_sort();
-
-    for (const auto& entry : m_columns)
-    {
-        long count = m_listCtrlAccount->GetColumnCount();
-        wxListItem col;
-        col.SetId(count);
-        col.SetText(entry.HEADER);
-        col.SetWidth(Model_Setting::instance().GetIntSetting(wxString::Format(m_col_width, count), entry.WIDTH));
-        m_listCtrlAccount->InsertColumn(count, col);
-    }
 
 }
 

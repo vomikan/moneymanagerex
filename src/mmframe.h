@@ -39,7 +39,7 @@ class mmPanelBase;
 class mmHomePagePanel;
 class mmTreeItemData;
 class mmCheckingPanel;
-class mmStockPanel;
+class mmStocksPanel;
 class mmBudgetingPanel;
 class mmBillsDepositsPanel;
 class mmFileHistory;
