@@ -21,7 +21,6 @@
 #define MM_EX_STOCKS_LIST_H_
 
 #include "mmpanelbase.h"
-#include <wx/tglbtn.h>
 #include "model/Model_Stock.h"
 #include "model/Model_Currency.h"
 #include "model/Model_Account.h"
@@ -45,8 +44,8 @@ public:
     void OnDeleteStocks(wxCommandEvent& event);
     void OnEditStocks(wxCommandEvent& event);
     void OnStockWebPage(wxCommandEvent& event);
-    long get_selectedIndex() { return m_selected_row; }
-    int getColumnsNumber() { return COL_MAX; }
+    long get_selectedIndex();
+    int getColumnsNumber();
     int col_sort() { return COL_DATE; }
     wxString getStockInfo(int selectedIndex) const;
     /* Helper Functions/data */
@@ -84,4 +83,6 @@ private:
     void sortTable();
 };
 
+inline long StocksListCtrl::get_selectedIndex() { return m_selected_row; }
+inline int StocksListCtrl::getColumnsNumber() { return COL_MAX; }
 #endif

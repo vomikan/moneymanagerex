@@ -18,7 +18,6 @@
  ********************************************************/
 
 #include "stockspanel.h"
-#include "constants.h"
 #include "images_list.h"
 #include "mmSimpleDialogs.h"
 #include "mmTips.h"
@@ -182,15 +181,15 @@ void mmStocksPanel::CreateControls()
     wxPanel* others_tab = new wxPanel(m_notebook, wxID_ANY);
     m_notebook->AddPage(others_tab, _("Money"));
 
-    m_listCtrlAccount = new wxListCtrl(others_tab, wxID_ANY, wxDefaultPosition, wxDefaultSize
-        , wxLC_REPORT | wxLC_SINGLE_SEL);
-    m_listCtrlAccount->SetMinSize(wxSize(500, 150));
-
     listCtrlAccount_ = new StocksListCtrl(this, notes_tab, wxID_ANY);
     notes_sizer->Add(listCtrlAccount_, g_flagsExpand);
 
     wxBoxSizer *others_sizer = new wxBoxSizer(wxVERTICAL);
     others_tab->SetSizer(others_sizer);
+
+    m_listCtrlAccount = new wxListCtrl(others_tab, wxID_ANY, wxDefaultPosition, wxDefaultSize
+        , wxLC_REPORT | wxLC_SINGLE_SEL);
+    m_listCtrlAccount->SetMinSize(wxSize(500, 150));
 
     others_sizer->Add(m_listCtrlAccount, g_flagsExpand);
 

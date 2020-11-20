@@ -18,18 +18,13 @@
  ********************************************************/
 
 #include "stockspanel.h"
-#include "constants.h"
+#include "stocks_list.h"
 #include "images_list.h"
-#include "mmSimpleDialogs.h"
-#include "mmTips.h"
 #include "stockdialog.h"
 #include "util.h"
 #include "mmOnline.h"
 
 #include "model/allmodel.h"
-
-#include <wx/busyinfo.h>
-#include <algorithm>
 
 enum {
     IDC_PANEL_STOCKS_LISTCTRL = wxID_HIGHEST + 1900,
