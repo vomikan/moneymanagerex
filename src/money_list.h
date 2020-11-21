@@ -85,7 +85,7 @@ public:
     void setSortColumn(EColumn col);
 
 public:
-    void OnNewTransaction(wxCommandEvent& event);
+    void OnMenuHandler(wxCommandEvent& event);
 
     void OnDeleteTransaction(wxCommandEvent& event);
     void OnEditTransaction(wxCommandEvent& event);
@@ -140,9 +140,11 @@ private:
     wxString m_today;
     wxSharedPtr<wxImageList> m_imageList;
     void createColumns(mmListCtrl &lst);
+    void OnMarkTransaction(const wxString & status);
 
     enum
     {
+        MENU_TREEPOPUP_MIN,
         MENU_TREEPOPUP_1,
         MENU_TREEPOPUP_2,
         MENU_TREEPOPUP_3,
@@ -161,7 +163,11 @@ private:
         MENU_TREEPOPUP_DELETE_VIEWED,
         MENU_TREEPOPUP_DELETE_FLAGGED,
         MENU_TREEPOPUP_DELETE_UNRECONCILED,
-        MENU_TREEPOPUP_MARKRECONCILED
+        MENU_TREEPOPUP_MARKRECONCILED,
+        MENU_TREEPOPUP_MARKUNRECONCILED,
+        MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP,
+        MENU_TREEPOPUP_MARKVOID,
+        MENU_TREEPOPUP_MAX,
     };
 
 };

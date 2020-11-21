@@ -353,9 +353,9 @@ wxString Model_Checking::Full_Data::real_payee_name(int account_id) const
     if (TYPE::TRANSFER == type(this->TRANSCODE))
     {
         if (this->ACCOUNTID == account_id || account_id == -1)
-            return ("> " + this->TOACCOUNTNAME);
+            return (this->TOACCOUNTNAME + " <-");
         else
-            return ("< " + this->ACCOUNTNAME);
+            return (this->ACCOUNTNAME + " ->");
     }
 
     return this->PAYEENAME;

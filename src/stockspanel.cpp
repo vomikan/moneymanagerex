@@ -24,6 +24,7 @@
 #include "stockdialog.h"
 #include "util.h"
 #include "mmOnline.h"
+#include "transdialog.h"
 
 #include "model/allmodel.h"
 
@@ -264,7 +265,10 @@ wxString mmStocksPanel::BuildPage() const
 
 void mmStocksPanel::OnDeleteStocks(wxCommandEvent& event)
 {
-    listCtrlAccount_->OnDeleteStocks(event);
+    if (m_view_mode == 0)
+        listCtrlAccount_->OnDeleteStocks(event);
+    else
+        m_listCtrlMoney->OnDeleteTransaction(event);
 }
 
 void mmStocksPanel::OnNewStocks(wxCommandEvent& event)
@@ -385,7 +389,6 @@ void mmStocksPanel::enableEditDeleteButtons(bool en)
 
 void mmStocksPanel::call_dialog(int selectedIndex)
 {
-
     int id = -1;
 
     if (m_view_mode == 0)
@@ -406,8 +409,12 @@ void mmStocksPanel::call_dialog(int selectedIndex)
             , money->TRANSAMOUNT
             , money->NOTES);
         }
-        //mmMoneyDialog dlg(this, m_frame, money->TRANSID, m_account_id);
-        //id = dlg.get_ticker_id();
+
+        mmTransDialog dlg(this, m_account_id, money->TRANSID, 0);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+
+        }
     }
 
     dataToControls();

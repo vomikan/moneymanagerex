@@ -46,8 +46,7 @@ wxBEGIN_EVENT_TABLE(MoneyListCtrl, mmListCtrl)
     EVT_RIGHT_DOWN(MoneyListCtrl::OnMouseRightClick)
     EVT_LEFT_DOWN(MoneyListCtrl::OnListLeftClick)
     EVT_LIST_KEY_DOWN(wxID_ANY, MoneyListCtrl::OnListKeyDown)
-
-    EVT_MENU_RANGE(MENU_TREEPOPUP_3, MENU_TREEPOPUP_4, MoneyListCtrl::OnNewTransaction)
+    EVT_MENU_RANGE(MENU_TREEPOPUP_MIN, MENU_TREEPOPUP_MAX, MoneyListCtrl::OnMenuHandler)
     EVT_CHAR(MoneyListCtrl::OnChar)
 wxEND_EVENT_TABLE();
 
@@ -298,7 +297,7 @@ wxString MoneyListCtrl::OnGetItemText(long item, long column) const
     switch (column)
     {
     case COL_TYPE:
-        return m_money[item].TRANSCODE;
+        return tran.TRANSCODE;
 
     case COL_DATE:
         return mmGetDateForDisplay(tran.TRANSDATE);
@@ -307,7 +306,7 @@ wxString MoneyListCtrl::OnGetItemText(long item, long column) const
         return tran.STATUS;
 
     case COL_VALUE:
-        return Model_Currency::toString(std::fabs(tran.AMOUNT), currency);
+        return Model_Currency::toCurrency(tran.AMOUNT, currency);
 
     case COL_PAYEE_STR:
         return tran.PAYEENAME;
@@ -486,19 +485,46 @@ int MoneyListCtrl::OnPaste(Model_Checking::Data* tran)
 
 void MoneyListCtrl::OnListKeyDown(wxListEvent& event)
 {
-    switch (event.GetKeyCode())
+    if (wxGetKeyState(WXK_COMMAND) || wxGetKeyState(WXK_ALT) || wxGetKeyState(WXK_CONTROL)
+        || m_selected_row == -1) {
+        event.Skip();
+        return;
+    }
+
+    //Read status of the selected transaction
+    wxString status = m_money[m_selected_row].STATUS;
+
+    if (wxGetKeyState(wxKeyCode('R')) && status != "R") {
+        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_TREEPOPUP_MARKRECONCILED);
+        AddPendingEvent(evt);
+    }
+    else if (wxGetKeyState(wxKeyCode('U')) && status != "") {
+        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_TREEPOPUP_MARKUNRECONCILED);
+        AddPendingEvent(evt);
+    }
+    else if (wxGetKeyState(wxKeyCode('F')) && status != "F") {
+        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP);
+        AddPendingEvent(evt);
+    }
+    else if (wxGetKeyState(wxKeyCode('V')) && status != "V") {
+        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_TREEPOPUP_MARKVOID);
+        AddPendingEvent(evt);
+    }
+    else if ((wxGetKeyState(WXK_DELETE) || wxGetKeyState(WXK_NUMPAD_DELETE)) && status != "V")
     {
-    case WXK_DELETE:
+        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_TREEPOPUP_MARKVOID);
+        AddPendingEvent(evt);
+    }
+    else if (wxGetKeyState(WXK_DELETE) || wxGetKeyState(WXK_NUMPAD_DELETE))
     {
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_TREEPOPUP_DELETE2);
-        OnDeleteTransaction(evt);
+        AddPendingEvent(evt);
     }
-    break;
-
-    default:
+    else {
         event.Skip();
-        break;
+        return;
     }
+
 }
 //----------------------------------------------------------------------------
 
@@ -509,7 +535,7 @@ void MoneyListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
 
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 
-    Model_Checking::Data checking_entry = m_money[m_selected_row];
+    Model_Checking::Data& checking_entry = m_money[m_selected_row];
     if (TransactionLocked(checking_entry.TRANSDATE))
     {
         return;
@@ -537,6 +563,9 @@ void MoneyListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
                 if (x <= m_topItemIndex) m_topItemIndex--;
                 if (!m_money.empty() && m_selected_row > 0) m_selected_row--;
                 if (m_selectedForCopy == transID) m_selectedForCopy = -1;
+
+                m_money.erase(m_money.begin() + x);
+                break;
             }
             x++;
         }
@@ -569,12 +598,10 @@ bool MoneyListCtrl::TransactionLocked(const wxString& transdate)
 
 void MoneyListCtrl::OnEditTransaction(wxCommandEvent& event)
 {
-
         if (m_selected_row < 0) return;
 
         wxListEvent evt(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, event.GetId());
         AddPendingEvent(evt);
-
 
 }
 
@@ -587,15 +614,58 @@ void MoneyListCtrl::setColumnImage(EColumn col, int image)
     SetColumn(col, item);
 }
 
-void MoneyListCtrl::OnNewTransaction(wxCommandEvent& event)
+void MoneyListCtrl::OnMarkTransaction(const wxString& status)
 {
-    int type = event.GetId() == MENU_TREEPOPUP_NEW_DEPOSIT ? Model_Checking::DEPOSIT : Model_Checking::WITHDRAWAL;
-    mmTransDialog dlg(this, m_sp->get_account_id(), 0, 0 /*TODO*/, false, type);
-    if (dlg.ShowModal() == wxID_OK)
+
+    wxString org_status = "";
+
+    Model_Checking::Data *trx = Model_Checking::instance().get(m_money[m_selected_row].TRANSID);
+    if (trx)
     {
-        //m_cp->mmPlayTransactionSound();
-        doRefreshItems(dlg.GetTransactionID());
+        org_status = trx->STATUS;
+        if (org_status != status) {
+            m_money[m_selected_row].STATUS = status;
+            trx->STATUS = status;
+            Model_Checking::instance().save(trx);
+        }
     }
+}
+
+void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
+{
+    int event_id = event.GetId();
+
+    if (MENU_TREEPOPUP_NEW_DEPOSIT == event_id) {
+        mmTransDialog dlg(this, m_sp->get_account_id(), -1, 0 /*TODO*/, false, Model_Checking::DEPOSIT);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+            //m_cp->mmPlayTransactionSound();
+            doRefreshItems(dlg.GetTransactionID());
+        }
+    }
+    else if (MENU_TREEPOPUP_NEW_WITHDRAWAL == event_id)
+    {
+        mmTransDialog dlg(this, m_sp->get_account_id(), -1, 0 /*TODO*/, false, Model_Checking::WITHDRAWAL);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+            //m_cp->mmPlayTransactionSound();
+            doRefreshItems(dlg.GetTransactionID());
+        }
+    }
+    else if (MENU_TREEPOPUP_MARKRECONCILED == event_id) {
+        OnMarkTransaction("R");
+    }
+    else if (MENU_TREEPOPUP_MARKUNRECONCILED == event_id) {
+        OnMarkTransaction("");
+    }
+    else if (MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP == event_id) {
+        OnMarkTransaction("F");
+    }
+    else if (MENU_TREEPOPUP_MARKVOID == event_id) {
+        OnMarkTransaction("V");
+    }
+
+    doRefreshItems();
 }
 
 
@@ -613,7 +683,7 @@ void MoneyListCtrl::doRefreshItems(int trans_id, bool filter)
     SetItemCount(m_money.size());
     Show();
     sortTable();
-    //m_cp->markSelectedTransaction(trans_id);
+    //markSelectedTransaction(trans_id);
 
     long i = static_cast<long>(m_money.size());
     if (m_topItemIndex >= i)
