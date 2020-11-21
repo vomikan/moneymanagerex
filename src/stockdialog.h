@@ -37,14 +37,14 @@ public:
         , mmGUIFrame* gui_frame
         , int ticker_id
         , int accountID
-        , const wxString& name = "mmStockDialog"
         );
 
-    bool Create(wxWindow* parent, wxWindowID id
-        , const wxString& caption
-        , const wxPoint& pos
-        , const wxSize& size
-        , long style
+    bool Create(wxWindow* parent
+        , wxWindowID id = wxID_ANY
+        , const wxString caption = wxEmptyString
+        , wxPoint pos = wxDefaultPosition
+        , wxSize size = wxDefaultSize
+        , long style = wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCLOSE_BOX
         , const wxString& name = "mmStockDialog"
         );
     int get_ticker_id() const;

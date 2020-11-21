@@ -53,6 +53,7 @@ public:
     /* updates thstockide checking panel data */
     int initVirtualListControl(int trx_id = -1, int col = 0, bool asc = true);
 
+    void OnListKeyDown(wxListEvent& event);
 private:
     /* required overrides for virtual style list control */
     virtual wxString OnGetItemText(long item, long column) const;
@@ -62,7 +63,6 @@ private:
     void OnListLeftClick(wxMouseEvent& event);
     void OnListItemActivated(wxListEvent& event);
     void OnColClick(wxListEvent& event);
-    void OnListKeyDown(wxListEvent& event);
     void OnListItemSelected(wxListEvent& event);
 
     mmStocksPanel* m_stock_panel;

@@ -67,7 +67,6 @@ mmStockDialog::mmStockDialog(wxWindow* parent
     , mmGUIFrame* gui_frame
     , int ticker_id
     , int accountID
-    , const wxString& name
     )
     : m_gui_frame(gui_frame)
     , m_ticker_id(ticker_id)
@@ -79,7 +78,8 @@ mmStockDialog::mmStockDialog(wxWindow* parent
     , m_stock_event_listbox(nullptr)
 {
     long style = wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCLOSE_BOX;
-    Create(parent, wxID_ANY, "", wxDefaultPosition, wxSize(600, 300), style, name);
+    Create(parent);
+    SetMinSize(wxSize(600, 300));
 
     if (!m_edit) {
         wxCommandEvent* evt = new wxCommandEvent(wxEVT_BUTTON, wxID_SETUP);
@@ -88,8 +88,8 @@ mmStockDialog::mmStockDialog(wxWindow* parent
     }
 }
 
-bool mmStockDialog::Create(wxWindow* parent, wxWindowID id, const wxString& caption
-    , const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+bool mmStockDialog::Create(wxWindow* parent, wxWindowID id, const wxString caption
+    , wxPoint pos, wxSize size, long style, const wxString& name)
 {
     SetExtraStyle(GetExtraStyle()|wxWS_EX_BLOCK_EVENTS);
     wxDialog::Create(parent, id, caption, pos, size, style, name);

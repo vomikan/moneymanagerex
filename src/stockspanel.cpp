@@ -45,26 +45,13 @@ enum class ico { GAIN, LOSS, ZERO, ARROW_UP, ARROW_DOWN };
 
 BEGIN_EVENT_TABLE(mmStocksPanel, wxPanel)
 EVT_BUTTON(wxID_NEW, mmStocksPanel::OnNewStocks)
-EVT_BUTTON(wxID_EDIT, mmStocksPanel::OnEditStocks)
-EVT_BUTTON(wxID_ADD, mmStocksPanel::OnEditStocks)
-EVT_BUTTON(wxID_VIEW_DETAILS, mmStocksPanel::OnEditStocks)
+EVT_BUTTON(wxID_EDIT, mmStocksPanel::OnEditRecord)
+EVT_BUTTON(wxID_ADD, mmStocksPanel::OnEditRecord)
+EVT_BUTTON(wxID_VIEW_DETAILS, mmStocksPanel::OnEditRecord)
 EVT_BUTTON(wxID_DELETE, mmStocksPanel::OnDeleteStocks)
 EVT_BUTTON(wxID_REFRESH, mmStocksPanel::OnRefreshQuotes)
+EVT_NOTEBOOK_PAGE_CHANGED(wxID_ANY, mmStocksPanel::OnNotebookPageChanged)
 END_EVENT_TABLE()
-
-
-void mmStocksPanel::OnListItemSelected(int selectedIndex)
-{
-    updateExtraStocksData(selectedIndex);
-    enableEditDeleteButtons(selectedIndex >= 0);
-}
-
-
-void mmStocksPanel::OnListItemActivated(int selectedIndex)
-{
-    call_dialog(selectedIndex);
-    updateExtraStocksData(selectedIndex);
-}
 
 mmStocksPanel::mmStocksPanel(int accountID
     , mmGUIFrame* frame
@@ -74,6 +61,7 @@ mmStocksPanel::mmStocksPanel(int accountID
     : m_account_id(accountID)
     , m_frame(frame)
     , m_currency()
+    , m_view_mode(0)
 {
     Create(parent, winid, pos, size, style, name);
 }
@@ -112,7 +100,7 @@ void mmStocksPanel::dataToControls()
 {
     listCtrlAccount_->initVirtualListControl();
 
-    m_listCtrlAccount->initVirtualListControl();
+    m_listCtrlMoney->initVirtualListControl();
 
 }
 
@@ -161,10 +149,10 @@ void mmStocksPanel::CreateControls()
     wxBoxSizer *others_sizer = new wxBoxSizer(wxVERTICAL);
     others_tab->SetSizer(others_sizer);
 
-    m_listCtrlAccount = new MoneyListCtrl(this, others_tab, wxID_ANY);
-    m_listCtrlAccount->SetMinSize(wxSize(500, 150));
+    m_listCtrlMoney = new MoneyListCtrl(this, others_tab, wxID_ANY);
+    m_listCtrlMoney->SetMinSize(wxSize(500, 150));
 
-    others_sizer->Add(m_listCtrlAccount, g_flagsExpand);
+    others_sizer->Add(m_listCtrlMoney, g_flagsExpand);
 
     //
     wxPanel* BottomPanel = new wxPanel(itemSplitterWindow10, wxID_ANY
@@ -208,6 +196,24 @@ void mmStocksPanel::CreateControls()
 
     updateExtraStocksData(-1);
 
+}
+
+void mmStocksPanel::OnListItemSelected(int selectedIndex)
+{
+    updateExtraStocksData(selectedIndex);
+    enableEditDeleteButtons(selectedIndex >= 0);
+}
+
+void mmStocksPanel::OnNotebookPageChanged(wxBookCtrlEvent & event)
+{
+    m_view_mode = event.GetSelection();
+    wxLogDebug("%i Mode", m_view_mode);
+}
+
+void mmStocksPanel::OnListItemActivated(int selectedIndex)
+{
+    call_dialog(selectedIndex);
+    updateExtraStocksData(selectedIndex);
 }
 
 void mmStocksPanel::updateHeader()
@@ -274,9 +280,12 @@ void mmStocksPanel::OnNewStocks(wxCommandEvent& event)
     listCtrlAccount_->OnNewStocks(event);
 }
 
-void mmStocksPanel::OnEditStocks(wxCommandEvent& event)
+void mmStocksPanel::OnEditRecord(wxCommandEvent& event)
 {
-    listCtrlAccount_->OnEditStocks(event);
+    if (m_view_mode == 0)
+        listCtrlAccount_->OnEditStocks(event);
+    else
+        m_listCtrlMoney->OnEditTransaction(event);
 }
 
 void mmStocksPanel::OnRefreshQuotes(wxCommandEvent& WXUNUSED(event))
@@ -353,7 +362,10 @@ void mmStocksPanel::updateExtraStocksData(int selectedIndex)
 {
     if (selectedIndex >= 0)
     {
-        const wxString additionInfo = listCtrlAccount_->getStockInfo(selectedIndex);
+        const wxString additionInfo =
+            m_view_mode == 0
+            ? listCtrlAccount_->getStockInfo(selectedIndex)
+            : m_listCtrlMoney->getMoneyInfo(selectedIndex);
         stock_details_->SetLabelText(additionInfo);
     }
 }
@@ -381,11 +393,32 @@ void mmStocksPanel::enableEditDeleteButtons(bool en)
 
 void mmStocksPanel::call_dialog(int selectedIndex)
 {
-    Model_Stock::Data* stock = &listCtrlAccount_->m_stocks[selectedIndex];
-    mmStockDialog dlg(this, m_frame, stock->TICKERID, m_account_id);
-    dlg.ShowModal();
-    int id = dlg.get_ticker_id();
 
-    listCtrlAccount_->doRefreshItems(id);
+    int id = -1;
+
+    if (m_view_mode == 0)
+    {
+        Model_Stock::Data* stock = &listCtrlAccount_->m_stocks[selectedIndex];
+        mmStockDialog dlg(this, m_frame, stock->TICKERID, m_account_id);
+        dlg.ShowModal();
+        id = dlg.get_ticker_id();
+    }
+    else
+    {
+        Model_Checking::Data* money = &m_listCtrlMoney->m_money[selectedIndex];
+
+        if (money) {
+            wxLogDebug("%s %s %.2f %s"
+            , money->TRANSCODE
+            , money->TRANSDATE
+            , money->TRANSAMOUNT
+            , money->NOTES);
+        }
+        //mmMoneyDialog dlg(this, m_frame, money->TRANSID, m_account_id);
+        //id = dlg.get_ticker_id();
+    }
+
+
+    listCtrlAccount_->doRefreshItems();
 
 }

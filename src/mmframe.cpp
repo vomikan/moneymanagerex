@@ -3058,8 +3058,8 @@ void mmGUIFrame::OnPayeeRelocation(wxCommandEvent& /*event*/)
                 dlg.updatedPayeesCount())
             << "\n\n";
         wxMessageBox(msgStr, _("Payee Relocation Result"));
-        refreshPanelData();
     }
+    refreshPanelData();
 }
 //----------------------------------------------------------------------------
 

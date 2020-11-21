@@ -58,8 +58,7 @@ MoneyListCtrl::MoneyListCtrl(
     const wxWindowID id
 ) :
     mmListCtrl(parent, id),
-    m_cp(sp),
-    m_selectedIndex(-1),
+    m_sp(sp),
     m_selectedForCopy(-1),
     m_attr1(new wxListItemAttr(*wxBLACK, mmColors::listAlternativeColor0, wxNullFont)),
     m_attr2(new wxListItemAttr(*wxBLACK, mmColors::listAlternativeColor1, wxNullFont)),
@@ -73,7 +72,7 @@ MoneyListCtrl::MoneyListCtrl(
     m_selectedID(-1),
     m_topItemIndex(-1)
 {
-    wxASSERT(m_cp);
+    wxASSERT(m_sp);
 
     const wxAcceleratorEntry entries[] =
     {
@@ -90,7 +89,6 @@ MoneyListCtrl::MoneyListCtrl(
     m_columns.push_back(PANEL_COLUMN(_("Date"), 112, wxLIST_FORMAT_LEFT));
     m_columns.push_back(PANEL_COLUMN(_("Payee"), 150, wxLIST_FORMAT_LEFT));
     m_columns.push_back(PANEL_COLUMN(_("Status"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_LEFT));
-    m_columns.push_back(PANEL_COLUMN(_("Category"), 150, wxLIST_FORMAT_LEFT));
     m_columns.push_back(PANEL_COLUMN(_("Value"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_RIGHT));
     m_columns.push_back(PANEL_COLUMN(_("Notes"), 250, wxLIST_FORMAT_LEFT));
 
@@ -117,14 +115,8 @@ MoneyListCtrl::~MoneyListCtrl()
 
 void MoneyListCtrl::OnListItemSelected(wxListEvent& event)
 {
-    m_selectedIndex = event.GetIndex();
-
-    m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
-
-    if (GetSelectedItemCount() > 1)
-        m_cp->enableEditDeleteButtons(true);
-
-    m_selectedID = m_money[m_selectedIndex].TRANSID;
+    m_selected_row = event.GetIndex();
+    m_sp->OnListItemSelected(m_selected_row);
 }
 //----------------------------------------------------------------------------
 
@@ -134,16 +126,8 @@ void MoneyListCtrl::OnListLeftClick(wxMouseEvent& event)
     long index = HitTest(wxPoint(event.m_x, event.m_y), Flags);
     if (index == -1)
     {
-        m_selectedIndex = -1;
-        updateExtraTransactionData(m_selectedIndex);
-    }
-    // Workaround for wxWidgets bug #4541 which affects MSW build
-    if ((m_selectedIndex >= 0) && (index != m_selectedIndex) && event.ShiftDown())
-    {
-        // Note: GetSelectedItemCount() does not return correct count at this time
-        // so we can't call enableEditDeleteButtons() or updateExtraTransactionData()
-        //m_cp->m_btnEdit->Enable(false);
-
+        m_selected_row = -1;
+        m_sp->OnListItemSelected(m_selected_row);
     }
     event.Skip();
 }
@@ -156,22 +140,22 @@ void MoneyListCtrl::updateExtraTransactionData(int selIndex)
 void MoneyListCtrl::OnMouseRightClick(wxMouseEvent& event)
 {
     int Flags = wxLIST_HITTEST_ONITEM;
-    m_selectedIndex = HitTest(wxPoint(event.m_x, event.m_y), Flags);
+    m_selected_row = HitTest(wxPoint(event.m_x, event.m_y), Flags);
 
-    if (m_selectedIndex >= 0)
+    if (m_selected_row >= 0)
     {
-        SetItemState(m_selectedIndex, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-        SetItemState(m_selectedIndex, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+        SetItemState(m_selected_row, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+        SetItemState(m_selected_row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
     }
-    updateExtraTransactionData(m_selectedIndex);
+    updateExtraTransactionData(m_selected_row);
 
-    bool hide_menu_item = (m_selectedIndex < 0);
+    bool hide_menu_item = (m_selected_row < 0);
     bool multiselect = (GetSelectedItemCount() > 1);
     bool type_transfer = false;
     bool have_category = false;
-    if (m_selectedIndex > -1)
+    if (m_selected_row > -1)
     {
-        const Model_Checking::Data& tran = m_money.at(m_selectedIndex);
+        const Model_Checking::Data& tran = m_money.at(m_selected_row);
         if (Model_Checking::type(tran.TRANSCODE) == Model_Checking::TRANSFER)
         {
             type_transfer = true;
@@ -268,10 +252,32 @@ void MoneyListCtrl::OnColClick(wxListEvent& event)
 
 wxString MoneyListCtrl::OnGetItemText(long item, long column) const
 {
+
+    int from_account_id = m_money[item].ACCOUNTID;
+    Model_Account::Data* fa = Model_Account::instance().get(from_account_id);
+    Model_Currency::Data* currency = Model_Currency::instance().get(fa->CURRENCYID);
+
+    const Model_Checking::Full_Data& tran = this->m_money.at(item);
+
     switch (column)
     {
+    case COL_TYPE:
+        return m_money[item].TRANSCODE;
+
     case COL_DATE:
-        return m_money[item].TRANSDATE;
+        return mmGetDateForDisplay(tran.TRANSDATE);
+
+    case COL_STATUS:
+        return tran.STATUS;
+
+    case COL_VALUE:
+        return Model_Currency::toString(std::fabs(tran.AMOUNT), currency);
+
+    case COL_PAYEE_STR:
+        return tran.PAYEENAME;
+
+    case COL_NOTES:
+        return tran.NOTES;
     }
 
 
@@ -345,12 +351,12 @@ void MoneyListCtrl::OnChar(wxKeyEvent& event)
 
 void MoneyListCtrl::OnCopy(wxCommandEvent& WXUNUSED(event))
 {
-    if (m_selectedIndex < 0) return;
+    if (m_selected_row < 0) return;
 
     if (GetSelectedItemCount() > 1)
         m_selectedForCopy = -1;
     else
-        m_selectedForCopy = m_money[m_selectedIndex].TRANSID;
+        m_selectedForCopy = m_money[m_selected_row].TRANSID;
 
     if (wxTheClipboard->Open())
     {
@@ -376,7 +382,7 @@ void MoneyListCtrl::OnCopy(wxCommandEvent& WXUNUSED(event))
             for (int column = 0; column < static_cast<int>(m_columns.size()); column++)
             {
                 if (GetColumnWidth(column) > 0)
-                    data += OnGetItemText(m_selectedIndex, column) + seperator;
+                    data += OnGetItemText(m_selected_row, column) + seperator;
             }
             data += "\n";
         }
@@ -387,14 +393,14 @@ void MoneyListCtrl::OnCopy(wxCommandEvent& WXUNUSED(event))
 
 void MoneyListCtrl::OnDuplicateTransaction(wxCommandEvent& WXUNUSED(event))
 {
-    if ((m_selectedIndex < 0) || (GetSelectedItemCount() > 1)) return;
+    if ((m_selected_row < 0) || (GetSelectedItemCount() > 1)) return;
 
-    int transaction_id = m_money[m_selectedIndex].TRANSID;
-    mmTransDialog dlg(this, m_cp->get_account_id(), transaction_id, 0 /*TODO*/, true);
+    int transaction_id = m_money[m_selected_row].TRANSID;
+    mmTransDialog dlg(this, m_sp->get_account_id(), transaction_id, 0 /*TODO*/, true);
     if (dlg.ShowModal() == wxID_OK)
     {
-        m_selectedIndex = dlg.GetTransactionID();
-        refreshVisualList(m_selectedIndex);
+        m_selected_row = dlg.GetTransactionID();
+        refreshVisualList(m_selected_row);
     }
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 }
@@ -405,8 +411,8 @@ void MoneyListCtrl::OnPaste(wxCommandEvent& WXUNUSED(event))
     Model_Checking::Data* tran = Model_Checking::instance().get(m_selectedForCopy);
     if (tran)
     {
-        if ((m_selectedIndex >= 0) && (GetSelectedItemCount() == 1))
-            SetItemState(m_selectedIndex, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+        if ((m_selected_row >= 0) && (GetSelectedItemCount() == 1))
+            SetItemState(m_selected_row, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
         else if (GetSelectedItemCount() > 1)
         {
             for (int x = 0; x < GetItemCount(); x++)
@@ -425,7 +431,7 @@ int MoneyListCtrl::OnPaste(Model_Checking::Data* tran)
 
     Model_Checking::Data* copy = Model_Checking::instance().clone(tran); //TODO: this function can't clone split transactions
     if (!useOriginalDate) copy->TRANSDATE = wxDateTime::Now().FormatISODate();
-    if (Model_Checking::type(copy->TRANSCODE) != Model_Checking::TRANSFER) copy->ACCOUNTID = m_cp->get_account_id();
+    if (Model_Checking::type(copy->TRANSCODE) != Model_Checking::TRANSFER) copy->ACCOUNTID = m_sp->get_account_id();
     int transactionID = Model_Checking::instance().save(copy);
 
     Model_Splittransaction::Cache copy_split;
@@ -444,29 +450,18 @@ int MoneyListCtrl::OnPaste(Model_Checking::Data* tran)
 
 void MoneyListCtrl::OnListKeyDown(wxListEvent& event)
 {
-    if (wxGetKeyState(WXK_COMMAND) || wxGetKeyState(WXK_ALT) || wxGetKeyState(WXK_CONTROL)
-        || m_selectedIndex == -1) {
-        event.Skip();
-        return;
-    }
-
-    m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
-
-    //Read status of the selected transaction
-    wxString status = m_money[m_selectedIndex].STATUS;
-
-    if (wxGetKeyState(wxKeyCode('R')) && status != "R") {
-        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_TREEPOPUP_MARKRECONCILED);
-        OnMarkTransaction(evt);
-    }
-    else if (wxGetKeyState(WXK_DELETE) || wxGetKeyState(WXK_NUMPAD_DELETE))
+    switch (event.GetKeyCode())
+    {
+    case WXK_DELETE:
     {
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_TREEPOPUP_DELETE2);
         OnDeleteTransaction(evt);
     }
-    else {
+    break;
+
+    default:
         event.Skip();
-        return;
+        break;
     }
 }
 //----------------------------------------------------------------------------
@@ -478,7 +473,7 @@ void MoneyListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
 
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 
-    Model_Checking::Data checking_entry = m_money[m_selectedIndex];
+    Model_Checking::Data checking_entry = m_money[m_selected_row];
     if (TransactionLocked(checking_entry.TRANSDATE))
     {
         return;
@@ -504,7 +499,7 @@ void MoneyListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
                 Model_Checking::instance().remove(transID);
                 mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), transID);
                 if (x <= m_topItemIndex) m_topItemIndex--;
-                if (!m_money.empty() && m_selectedIndex > 0) m_selectedIndex--;
+                if (!m_money.empty() && m_selected_row > 0) m_selected_row--;
                 if (m_selectedForCopy == transID) m_selectedForCopy = -1;
             }
             x++;
@@ -516,7 +511,7 @@ void MoneyListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
 //----------------------------------------------------------------------------
 bool MoneyListCtrl::TransactionLocked(const wxString& transdate)
 {
-    Model_Account::Data* acc = Model_Account::instance().get(m_cp->get_account_id());
+    Model_Account::Data* acc = Model_Account::instance().get(m_sp->get_account_id());
     if (Model_Account::BoolOf(acc->STATEMENTLOCKED))
     {
         wxDateTime transaction_date;
@@ -536,24 +531,15 @@ bool MoneyListCtrl::TransactionLocked(const wxString& transdate)
     return false;
 }
 
-void MoneyListCtrl::OnEditTransaction(wxCommandEvent& /*event*/)
+void MoneyListCtrl::OnEditTransaction(wxCommandEvent& event)
 {
-    if ((m_selectedIndex < 0) || (GetSelectedItemCount() > 1)) return;
-    Model_Checking::Data checking_entry = m_money[m_selectedIndex];
-    int transaction_id = checking_entry.TRANSID;
 
-    if (TransactionLocked(checking_entry.TRANSDATE))
-    {
-        return;
-    }
+        if (m_selected_row < 0) return;
 
-    mmTransDialog dlg(this, m_cp->get_account_id(), transaction_id, 0 /*TODO*/);
-    if (dlg.ShowModal() == wxID_OK)
-    {
-        refreshVisualList(transaction_id);
-    }
-    
-    m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
+        wxListEvent evt(wxEVT_COMMAND_LIST_ITEM_ACTIVATED, event.GetId());
+        AddPendingEvent(evt);
+
+
 }
 
 void MoneyListCtrl::setColumnImage(EColumn col, int image)
@@ -568,7 +554,7 @@ void MoneyListCtrl::setColumnImage(EColumn col, int image)
 void MoneyListCtrl::OnNewTransaction(wxCommandEvent& event)
 {
     int type = event.GetId() == MENU_TREEPOPUP_NEW_DEPOSIT ? Model_Checking::DEPOSIT : Model_Checking::WITHDRAWAL;
-    mmTransDialog dlg(this, m_cp->get_account_id(), 0, 0 /*TODO*/, false, type);
+    mmTransDialog dlg(this, m_sp->get_account_id(), 0, 0 /*TODO*/, false, type);
     if (dlg.ShowModal() == wxID_OK)
     {
         //m_cp->mmPlayTransactionSound();
@@ -596,21 +582,21 @@ void MoneyListCtrl::refreshVisualList(int trans_id, bool filter)
     long i = static_cast<long>(m_money.size());
     if (m_topItemIndex >= i)
         m_topItemIndex = g_asc ? i - 1 : 0;
-    if (m_selectedIndex > i - 1) m_selectedIndex = -1;
-    if (m_topItemIndex < m_selectedIndex) m_topItemIndex = m_selectedIndex;
+    if (m_selected_row > i - 1) m_selected_row = -1;
+    if (m_topItemIndex < m_selected_row) m_topItemIndex = m_selected_row;
 
 
-    if (m_selectedIndex >= 0 && !m_money.empty())
+    if (m_selected_row >= 0 && !m_money.empty())
     {
-        SetItemState(m_selectedIndex, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-        SetItemState(m_selectedIndex, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
-        if (m_topItemIndex < 0 || (m_topItemIndex - m_selectedIndex) > GetCountPerPage())
-            m_topItemIndex = m_selectedIndex;
+        SetItemState(m_selected_row, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+        SetItemState(m_selected_row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
+        if (m_topItemIndex < 0 || (m_topItemIndex - m_selected_row) > GetCountPerPage())
+            m_topItemIndex = m_selected_row;
         EnsureVisible(m_topItemIndex);
     }
 
     //m_cp->setAccountSummary();
-    //m_cp->updateExtraTransactionData(m_selectedIndex);
+    //m_cp->updateExtraTransactionData(m_selected_row);
     this->SetEvtHandlerEnabled(true);
     Refresh();
     Update();
@@ -620,19 +606,27 @@ void MoneyListCtrl::refreshVisualList(int trans_id, bool filter)
 //----------------------------------------------------------------------------
 void MoneyListCtrl::OnListItemActivated(wxListEvent& /*event*/)
 {
-    if (m_selectedIndex < 0) return;
-
-    wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, MENU_TREEPOPUP_EDIT2);
-    AddPendingEvent(evt);
+    m_sp->OnListItemActivated(m_selected_row);
 }
 
 int MoneyListCtrl::initVirtualListControl(int id, int col, bool asc)
 {
 
-    int account_id = m_cp->get_account_id();
+    int account_id = m_sp->get_account_id();
 
-    m_money = Model_Checking::instance().find_or(Model_Checking::ACCOUNTID(account_id)
+    const auto splits = Model_Splittransaction::instance().get_all();
+    Model_Checking::Data_Set trans = Model_Checking::instance().find_or(Model_Checking::ACCOUNTID(account_id)
         , Model_Checking::TOACCOUNTID(account_id));
+
+    for (const auto& tran : trans)
+    {
+        Model_Checking::Full_Data full_tran(tran, splits);
+        full_tran.PAYEENAME = full_tran.real_payee_name(account_id);
+        double transaction_amount = Model_Checking::amount(tran, account_id);
+        full_tran.AMOUNT = transaction_amount;
+
+        m_money.push_back(full_tran);
+    }
 
     SetItemCount(m_money.size());
     if (!m_money.empty())
@@ -641,5 +635,15 @@ int MoneyListCtrl::initVirtualListControl(int id, int col, bool asc)
     //RefreshItems(0L, static_cast<long>(m_money.size()));
 
     return id;
+}
+
+const wxString MoneyListCtrl::getMoneyInfo(int selectedIndex) const
+{
+    if (m_money.size() < 1 || selectedIndex < 0) return wxEmptyString;
+    auto money = m_money[selectedIndex];
+    Model_Checking::Data* t = Model_Checking::instance().get(money.TRANSID);
+
+    wxString additionInfo = t ? t->TRANSDATE : "TBD";
+    return additionInfo;
 }
 

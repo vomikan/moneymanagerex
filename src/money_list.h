@@ -46,8 +46,9 @@ public:
 
     ~MoneyListCtrl();
 
-    Model_Checking::Data_Set m_money;
+    Model_Checking::Full_Data_Set m_money;
     int initVirtualListControl(int trx_id = -1, int col = 0, bool asc = true);
+    const wxString getMoneyInfo(int selectedIndex) const;
 
 public:
     enum EColumn
@@ -55,7 +56,8 @@ public:
         COL_TYPE,
         COL_DATE,
         COL_PAYEE_STR,
-        COL_BALANCE,
+        COL_STATUS,
+        COL_VALUE,
         COL_NOTES,
         COL_MAX, // number of columns
         COL_DEF_SORT = COL_DATE
@@ -89,7 +91,6 @@ public:
     void OnDuplicateTransaction(wxCommandEvent& event);
 
     void refreshVisualList(int trans_id = -1, bool filter = true);
-    long m_selectedIndex;
     long m_selectedForCopy; //The transaction ID if selected for copy
     long m_selectedID; //Selected transaction ID
 
@@ -103,7 +104,7 @@ private:
     DECLARE_NO_COPY_CLASS(MoneyListCtrl)
     wxDECLARE_EVENT_TABLE();
 
-    mmStocksPanel* m_cp;
+    mmStocksPanel* m_sp;
 
     wxSharedPtr<wxListItemAttr> m_attr1;  // style1
     wxSharedPtr<wxListItemAttr> m_attr2;  // style2

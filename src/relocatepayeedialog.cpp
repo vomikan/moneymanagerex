@@ -145,7 +145,7 @@ int relocatePayeeDialog::updatedPayeesCount()
 
 void relocatePayeeDialog::OnCancel(wxCommandEvent& WXUNUSED(event))
 {
-    EndModal(m_changed_records>0 ? wxID_OK : wxID_CANCEL);
+    EndModal(m_changed_records > 0 ? wxID_OK : wxID_CANCEL);
 }
 
 void relocatePayeeDialog::OnOk(wxCommandEvent& WXUNUSED(event))

@@ -60,14 +60,16 @@ public:
     /* Event handlers for Buttons */
     void OnNewStocks(wxCommandEvent& event);
     void OnDeleteStocks(wxCommandEvent& event);
-    void OnEditStocks(wxCommandEvent& event);
+    void OnEditRecord(wxCommandEvent& event);
     void OnRefreshQuotes(wxCommandEvent& event);
     //Unhide the Edit and Delete buttons if any record selected
     void enableEditDeleteButtons(bool en);
     void OnListItemActivated(int selectedIndex);
     void OnListItemSelected(int selectedIndex);
+    void OnNotebookPageChanged(wxBookCtrlEvent& event);
 
-    int get_account_id();
+    int get_account_id() const;
+    int get_view_mode() const;
     Model_Currency::Data * m_currency;
     void updateExtraStocksData(int selIndex);
     void updateHeader();
@@ -76,8 +78,9 @@ public:
     mmGUIFrame* m_frame;
 
 private:
+    int m_view_mode;
     int m_account_id;
-    MoneyListCtrl* m_listCtrlAccount;
+    MoneyListCtrl* m_listCtrlMoney;
     StocksListCtrl* listCtrlAccount_;
     wxStaticText* stock_details_;
     void call_dialog(int selectedIndex);
@@ -92,7 +95,8 @@ private:
 
 };
 
-inline int mmStocksPanel::get_account_id() { return m_account_id; }
+inline int mmStocksPanel::get_account_id() const { return m_account_id; }
+inline int mmStocksPanel::get_view_mode() const { return m_view_mode; }
 inline void mmStocksPanel::sortTable() {}
 
 #endif
