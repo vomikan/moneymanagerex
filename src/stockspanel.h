@@ -53,9 +53,11 @@ public:
                  const wxSize& size = wxDefaultSize,
                  long style = wxTAB_TRAVERSAL | wxNO_BORDER,
                  const wxString& name = "mmStocksPanel");
-
+public:
+    void RefreshList(int transID = -1);
     void CreateControls();
-    void dataToControls();
+    void dataToControls(int transID = -1);
+    void DisplayAccountDetails(int accountID);
 
     /* Event handlers for Buttons */
     void OnNewStocks(wxCommandEvent& event);
@@ -78,6 +80,7 @@ public:
     mmGUIFrame* m_frame;
 
 private:
+    wxNotebook* m_notebook;
     int m_view_mode;
     int m_account_id;
     MoneyListCtrl* m_listCtrlMoney;

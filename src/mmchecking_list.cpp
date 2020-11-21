@@ -862,7 +862,7 @@ void TransactionListCtrl::refreshVisualList(int trans_id, bool filter)
     this->SetEvtHandlerEnabled(true);
     Refresh();
     Update();
-    m_cp->m_listCtrlAccount->SetFocus();
+    SetFocus();
 }
 
 void TransactionListCtrl::OnMoveTransaction(wxCommandEvent& /*event*/)

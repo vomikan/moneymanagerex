@@ -96,14 +96,6 @@ mmStocksPanel::~mmStocksPanel()
 {
 }
 
-void mmStocksPanel::dataToControls()
-{
-    listCtrlAccount_->initVirtualListControl();
-
-    m_listCtrlMoney->initVirtualListControl();
-
-}
-
 void mmStocksPanel::CreateControls()
 {
 
@@ -134,7 +126,7 @@ void mmStocksPanel::CreateControls()
         , wxID_ANY, wxDefaultPosition, wxSize(200, 200)
         , wxSP_3DBORDER | wxSP_3DSASH | wxNO_BORDER);
 
-    wxNotebook* m_notebook = new wxNotebook(itemSplitterWindow10, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_MULTILINE);
+    m_notebook = new wxNotebook(itemSplitterWindow10, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_MULTILINE);
     wxPanel* notes_tab = new wxPanel(m_notebook, wxID_ANY);
     m_notebook->AddPage(notes_tab, _("Stocks"));
     wxBoxSizer *notes_sizer = new wxBoxSizer(wxVERTICAL);
@@ -418,7 +410,30 @@ void mmStocksPanel::call_dialog(int selectedIndex)
         //id = dlg.get_ticker_id();
     }
 
+    dataToControls();
+}
 
-    listCtrlAccount_->doRefreshItems();
+void mmStocksPanel::RefreshList(int transID)
+{
+    dataToControls(transID);
+}
+
+void mmStocksPanel::dataToControls(int transID)
+{
+    listCtrlAccount_->initVirtualListControl(transID);
+    m_listCtrlMoney->initVirtualListControl(transID);
+}
+
+void mmStocksPanel::DisplayAccountDetails(int accountID)
+{
+
+    m_account_id = accountID;
+    Model_Account::Data* account = Model_Account::instance().get(accountID);
+    if (account)
+        m_currency = Model_Account::currency(account);
+
+    m_view_mode = 0;
+    m_notebook->SetSelection(m_view_mode);
+    RefreshList();
 
 }

@@ -77,7 +77,6 @@ mmStockDialog::mmStockDialog(wxWindow* parent
     , m_bAttachments(nullptr)
     , m_stock_event_listbox(nullptr)
 {
-    long style = wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCLOSE_BOX;
     Create(parent);
     SetMinSize(wxSize(600, 300));
 

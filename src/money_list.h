@@ -90,7 +90,7 @@ public:
     void OnEditTransaction(wxCommandEvent& event);
     void OnDuplicateTransaction(wxCommandEvent& event);
 
-    void refreshVisualList(int trans_id = -1, bool filter = true);
+    void doRefreshItems(int trans_id = -1, bool filter = true);
     long m_selectedForCopy; //The transaction ID if selected for copy
     long m_selectedID; //Selected transaction ID
 

@@ -189,6 +189,7 @@ mmGUIFrame::mmGUIFrame(mmGUIApp* app, const wxString& title
     , gotoAccountID_(-1)
     , gotoTransID_(-1)
     , checkingAccountPage_(nullptr)
+    , stockAccountPage_(nullptr)
     , budgetingPage_(nullptr)
     , billsDepositsPanel_(nullptr)
     , homePage_(nullptr)
@@ -2317,7 +2318,7 @@ void mmGUIFrame::refreshPanelData()
     else if (id == mmID_BUDGET)
         budgetingPage_->RefreshList();
     else if (id == mmID_STOCKS)
-        panelCurrent_->Refresh();
+        stockAccountPage_->RefreshList();
     else if (id == mmID_REPORTS)
     {
         if (activeReport_) //TODO: budget reports and transaction report
@@ -2778,12 +2779,19 @@ void mmGUIFrame::createStocksAccountPage(int accountID)
 
     const auto time = wxDateTime::UNow();
 
-    //TODO: Refresh Panel
+    if (panelCurrent_->GetId() == mmID_STOCKS)
+    {
+        stockAccountPage_->DisplayAccountDetails(accountID);
+    }
+    else
     {
         //updateNavTreeControl();
         windowsFreezeThaw(homePanel_);
         wxSizer *sizer = cleanupHomePanel();
-        panelCurrent_ = new mmStocksPanel(accountID, this, homePanel_, mmID_STOCKS);
+
+        stockAccountPage_ = new mmStocksPanel(accountID, this, homePanel_, mmID_STOCKS);
+        panelCurrent_ = stockAccountPage_;
+
         sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
         homePanel_->Layout();
         windowsFreezeThaw(homePanel_);

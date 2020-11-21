@@ -218,7 +218,7 @@ void MoneyListCtrl::OnMarkAllTransactions(wxCommandEvent& event)
     else  wxASSERT(false);
 
 
-    refreshVisualList();
+    doRefreshItems();
 }
 //----------------------------------------------------------------------------
 
@@ -244,7 +244,7 @@ void MoneyListCtrl::OnColClick(wxListEvent& event)
     Model_Setting::instance().Set("CHECK_ASC", (g_asc ? 1 : 0));
     Model_Setting::instance().Set("CHECK_SORT_COL", g_sortcol);
 
-    refreshVisualList(m_selectedID, false);
+    doRefreshItems(m_selectedID, false);
 
 }
 
@@ -400,7 +400,7 @@ void MoneyListCtrl::OnDuplicateTransaction(wxCommandEvent& WXUNUSED(event))
     if (dlg.ShowModal() == wxID_OK)
     {
         m_selected_row = dlg.GetTransactionID();
-        refreshVisualList(m_selected_row);
+        doRefreshItems(m_selected_row);
     }
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 }
@@ -422,7 +422,7 @@ void MoneyListCtrl::OnPaste(wxCommandEvent& WXUNUSED(event))
             }
         }
         int transactionID = OnPaste(tran);
-        refreshVisualList(transactionID);
+        doRefreshItems(transactionID);
     }
 }
 int MoneyListCtrl::OnPaste(Model_Checking::Data* tran)
@@ -505,7 +505,7 @@ void MoneyListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
             x++;
         }
 
-        refreshVisualList();
+        doRefreshItems();
     }
 }
 //----------------------------------------------------------------------------
@@ -558,14 +558,14 @@ void MoneyListCtrl::OnNewTransaction(wxCommandEvent& event)
     if (dlg.ShowModal() == wxID_OK)
     {
         //m_cp->mmPlayTransactionSound();
-        refreshVisualList(dlg.GetTransactionID());
+        doRefreshItems(dlg.GetTransactionID());
     }
 }
 
 
 //----------------------------------------------------------------------------
 
-void MoneyListCtrl::refreshVisualList(int trans_id, bool filter)
+void MoneyListCtrl::doRefreshItems(int trans_id, bool filter)
 {
     m_today = wxDateTime::Today().FormatISODate();
     this->SetEvtHandlerEnabled(false);
@@ -600,7 +600,7 @@ void MoneyListCtrl::refreshVisualList(int trans_id, bool filter)
     this->SetEvtHandlerEnabled(true);
     Refresh();
     Update();
-    //m_cp->m_listCtrlAccount->SetFocus();
+    SetFocus();
 }
 
 //----------------------------------------------------------------------------
@@ -618,6 +618,7 @@ int MoneyListCtrl::initVirtualListControl(int id, int col, bool asc)
     Model_Checking::Data_Set trans = Model_Checking::instance().find_or(Model_Checking::ACCOUNTID(account_id)
         , Model_Checking::TOACCOUNTID(account_id));
 
+    m_money.clear();
     for (const auto& tran : trans)
     {
         Model_Checking::Full_Data full_tran(tran, splits);
@@ -631,8 +632,6 @@ int MoneyListCtrl::initVirtualListControl(int id, int col, bool asc)
     SetItemCount(m_money.size());
     if (!m_money.empty())
         EnsureVisible(m_money.size() - 1);
-
-    //RefreshItems(0L, static_cast<long>(m_money.size()));
 
     return id;
 }
