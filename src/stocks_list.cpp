@@ -62,6 +62,9 @@ StocksListCtrl::StocksListCtrl(mmStocksPanel* sp, wxWindow *parent, wxWindowID w
     : mmListCtrl(parent, winid)
     , m_stock_panel(sp)
     , m_imageList(0)
+    , m_sortCol(COL_DEF_SORT)
+    , g_sortcol(COL_DEF_SORT)
+    , m_prevSortCol(COL_DEF_SORT)
 {
     int x = Option::instance().getIconSize();
     m_imageList = new wxImageList(x, x);
@@ -73,9 +76,6 @@ StocksListCtrl::StocksListCtrl(mmStocksPanel* sp, wxWindow *parent, wxWindowID w
 
     SetImageList(m_imageList, wxIMAGE_LIST_SMALL);
 
-    // load the global variables
-    m_selected_col = Model_Setting::instance().GetIntSetting("STOCKS_SORT_COL", col_sort());
-    m_asc = Model_Setting::instance().GetBoolSetting("STOCKS_ASC", true);
 
     m_columns.push_back(PANEL_COLUMN(" ", 25, wxLIST_FORMAT_LEFT));
     m_columns.push_back(PANEL_COLUMN(_("Name"), wxLIST_AUTOSIZE_USEHEADER, wxLIST_FORMAT_LEFT));
@@ -89,7 +89,6 @@ StocksListCtrl::StocksListCtrl(mmStocksPanel* sp, wxWindow *parent, wxWindowID w
 
 
     m_col_width = "STOCKS_COL%d_WIDTH";
-    m_default_sort_column = col_sort();
 
     for (const auto& entry : m_columns)
     {
@@ -99,6 +98,18 @@ StocksListCtrl::StocksListCtrl(mmStocksPanel* sp, wxWindow *parent, wxWindowID w
             , entry.FORMAT
             , Model_Setting::instance().GetIntSetting(wxString::Format(m_col_width, count), entry.WIDTH));
     }
+
+    m_default_sort_column = col_sort();
+    // load the global variables
+    m_selected_col = Model_Setting::instance().GetIntSetting("STOCKS_SORT_COL", col_sort());
+    m_asc = Model_Setting::instance().GetBoolSetting("STOCKS_ASC", true);
+
+    setSortColumn(g_sortcol);
+    setSortOrder(g_asc);
+    setColumnImage(getSortColumn()
+        , getSortOrder() ? ICON_ASC : ICON_DESC); // asc\desc sort mark (arrow)
+
+    SetFocus();
 }
 
 void StocksListCtrl::OnMouseRightClick(wxMouseEvent& event)
@@ -301,14 +312,24 @@ void StocksListCtrl::OnColClick(wxListEvent& event)
         ColumnNr = event.GetColumn();
     else
         ColumnNr = m_ColumnHeaderNbr;
-    if (0 >= ColumnNr || ColumnNr >= getColumnsNumber()) return;
+    if (0 >= ColumnNr || ColumnNr >= getColumnsNumber() || ColumnNr == COL_ICON) return;
+
+    /* Clear previous column image */
+    if (m_sortCol != ColumnNr) {
+        setColumnImage(m_sortCol, -1);
+    }
 
     if (m_selected_col == ColumnNr && event.GetId() != MENU_HEADER_SORT) m_asc = !m_asc;
+    g_asc = m_asc;
 
-    wxListItem item;
-    item.SetMask(wxLIST_MASK_IMAGE);
-    item.SetImage(-1);
-    SetColumn(m_selected_col, item);
+    m_prevSortCol = m_sortCol;
+    m_sortCol = toEColumn(ColumnNr);
+    g_sortcol = m_sortCol;
+
+   // wxListItem item;
+   // item.SetMask(wxLIST_MASK_IMAGE);
+   // item.SetImage(-1);
+   // SetColumn(m_selected_col, item);
 
     m_selected_col = ColumnNr;
 
@@ -408,11 +429,6 @@ int StocksListCtrl::initVirtualListControl(int id, int col, bool asc)
     /* Clear all the records */
     DeleteAllItems();
 
-    wxListItem list_item;
-    list_item.SetMask(wxLIST_MASK_IMAGE);
-    list_item.SetImage(asc ? static_cast<int>(ico::ARROW_DOWN) : static_cast<int>(ico::ARROW_UP));
-    SetColumn(col, list_item);
-
     wxArrayInt list;
 
     Model_Stock::Data_Set stocks = Model_Stock::instance()
@@ -465,4 +481,13 @@ wxString StocksListCtrl::getStockInfo(int selectedIndex) const
 
     wxString additionInfo = t ? t->SOURCENAME : "$";
     return additionInfo;
+}
+
+void StocksListCtrl::setColumnImage(EColumn col, int image)
+{
+    wxListItem item;
+    item.SetMask(wxLIST_MASK_IMAGE);
+    item.SetImage(image);
+
+    SetColumn(col, item);
 }

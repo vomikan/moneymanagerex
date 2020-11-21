@@ -32,10 +32,92 @@ public:
 
     TransactionListCtrl(mmCheckingPanel* cp, wxWindow* parent
         , const wxWindowID id = wxID_ANY);
-    
+
     ~TransactionListCtrl();
 
+    Model_Checking::Full_Data_Set m_trans;
+
+    void OnNewTransaction(wxCommandEvent& event);
+    void OnNewTransferTransaction(wxCommandEvent& event);
+    void OnDeleteTransaction(wxCommandEvent& event);
+    void OnEditTransaction(wxCommandEvent& event);
+    void OnDuplicateTransaction(wxCommandEvent& event);
+    void OnSetUserColour(wxCommandEvent& event);
+    void OnMoveTransaction(wxCommandEvent& event);
+    void OnOpenAttachment(wxCommandEvent& event);
+    /// Displays the split categories for the selected transaction
+    void OnViewSplitTransaction(wxCommandEvent& event);
+    void OnOrganizeAttachments(wxCommandEvent& event);
+    void OnCreateReoccurance(wxCommandEvent& event);
+    void refreshVisualList(int trans_id = -1, bool filter = true);
+    void sortTable();
+    void markSelectedTransaction(int trans_id);
+
+    bool get_g_asc() { return g_asc; }
+    bool get_sort_needed() { return g_sortcol == TransactionListCtrl::COL_STATUS; }
+    void doSearchTxt(const wxString& txt);
+    long getSelectedID() const;
+    long getSelectedForCopy() const;
+    void setSelectedForCopy(long v);
+    long getSelectedIndex() const;
+    void setSelectedIndex(long v);
+
+protected:
+    /* Sort Columns */
+    virtual void OnColClick(wxListEvent& event);
+
+private:
+    DECLARE_NO_COPY_CLASS(TransactionListCtrl)
+    wxDECLARE_EVENT_TABLE();
+
+    mmCheckingPanel* m_cp;
+
+    wxSharedPtr<wxListItemAttr> m_attr1;  // style1
+    wxSharedPtr<wxListItemAttr> m_attr2;  // style2
+    wxSharedPtr<wxListItemAttr> m_attr3;  // style, for future dates
+    wxSharedPtr<wxListItemAttr> m_attr4;  // style, for future dates
+    wxSharedPtr<wxListItemAttr> m_attr11; // user defined style 1
+    wxSharedPtr<wxListItemAttr> m_attr12; // user defined style 2
+    wxSharedPtr<wxListItemAttr> m_attr13; // user defined style 3
+    wxSharedPtr<wxListItemAttr> m_attr14; // user defined style 4
+    wxSharedPtr<wxListItemAttr> m_attr15; // user defined style 5
+    wxSharedPtr<wxListItemAttr> m_attr16; // user defined style 6
+    wxSharedPtr<wxListItemAttr> m_attr17; // user defined style 7
+    wxSharedPtr<wxImageList> m_imageList;
+
+    /* required overrides for virtual style list control */
+    virtual wxString OnGetItemText(long item, long column) const;
+    virtual int OnGetItemColumnImage(long item, long column) const;
+    virtual wxListItemAttr* OnGetItemAttr(long item) const;
+private:
     void createColumns(mmListCtrl &lst);
+    void OnMouseRightClick(wxMouseEvent& event);
+    void OnListLeftClick(wxMouseEvent& event);
+    void OnListItemSelected(wxListEvent& event);
+    void OnListItemActivated(wxListEvent& event);
+    void OnMarkTransaction(wxCommandEvent& event);
+    void OnMarkAllTransactions(wxCommandEvent& event);
+    void OnListKeyDown(wxListEvent& event);
+    void OnChar(wxKeyEvent& event);
+    void OnCopy(wxCommandEvent& WXUNUSED(event));
+    void OnPaste(wxCommandEvent& WXUNUSED(event));
+    int OnPaste(Model_Checking::Data* tran);
+
+    bool TransactionLocked(const wxString& transdate);
+
+private:
+    /* The topmost visible item - this will be used to set
+    where to display the list again after refresh */
+    long m_topItemIndex;
+    wxString m_today;
+    Model_Currency::Data* m_currency;
+
+    long m_selectedIndex;
+    long m_selectedForCopy; //The transaction ID if selected for copy
+    long m_selectedID; //Selected transaction ID
+    bool g_asc; // asc\desc sorting
+    bool getSortOrder() const;
+
     enum EIcons //m_imageList
     {
         ICON_RECONCILED,
@@ -46,7 +128,7 @@ public:
         ICON_DESC,
         ICON_ASC,
     };
-
+private:
     enum EColumn
     {
         COL_IMGSTATUS = 0,
@@ -70,39 +152,14 @@ public:
 
         return res;
     }
-
+private:
     EColumn g_sortcol; // index of column to sort
     EColumn m_prevSortCol;
-    bool g_asc; // asc\desc sorting
-
-    bool getSortOrder() const { return m_asc; }
+    EColumn m_sortCol;
     EColumn getSortColumn() const { return m_sortCol; }
-
     void setSortOrder(bool asc) { m_asc = asc; }
     void setSortColumn(EColumn col) { m_sortCol = col; }
-
     void setColumnImage(EColumn col, int image);
-
-    void OnNewTransaction(wxCommandEvent& event);
-    void OnNewTransferTransaction(wxCommandEvent& event);
-    void OnDeleteTransaction(wxCommandEvent& event);
-    void OnEditTransaction(wxCommandEvent& event);
-    void OnDuplicateTransaction(wxCommandEvent& event);
-    void OnSetUserColour(wxCommandEvent& event);
-    void OnMoveTransaction(wxCommandEvent& event);
-    void OnOpenAttachment(wxCommandEvent& event);
-    /// Displays the split categories for the selected transaction
-    void OnViewSplitTransaction(wxCommandEvent& event);
-    void OnOrganizeAttachments(wxCommandEvent& event);
-    void OnCreateReoccurance(wxCommandEvent& event);
-    void refreshVisualList(int trans_id = -1, bool filter = true);
-    long m_selectedIndex;
-    long m_selectedForCopy; //The transaction ID if selected for copy
-    long m_selectedID; //Selected transaction ID
-
-protected:
-    /* Sort Columns */
-    virtual void OnColClick(wxListEvent& event);
 
 private:
     enum
@@ -153,49 +210,16 @@ private:
         MENU_TREEPOPUP_DELETE2,
         ID_PANEL_CHECKING_STATIC_BITMAP_VIEW,
     };
-private:
-    DECLARE_NO_COPY_CLASS(TransactionListCtrl)
-    wxDECLARE_EVENT_TABLE();
 
-    mmCheckingPanel* m_cp;
-
-    wxSharedPtr<wxListItemAttr> m_attr1;  // style1
-    wxSharedPtr<wxListItemAttr> m_attr2;  // style2
-    wxSharedPtr<wxListItemAttr> m_attr3;  // style, for future dates
-    wxSharedPtr<wxListItemAttr> m_attr4;  // style, for future dates
-    wxSharedPtr<wxListItemAttr> m_attr11; // user defined style 1
-    wxSharedPtr<wxListItemAttr> m_attr12; // user defined style 2
-    wxSharedPtr<wxListItemAttr> m_attr13; // user defined style 3
-    wxSharedPtr<wxListItemAttr> m_attr14; // user defined style 4
-    wxSharedPtr<wxListItemAttr> m_attr15; // user defined style 5
-    wxSharedPtr<wxListItemAttr> m_attr16; // user defined style 6
-    wxSharedPtr<wxListItemAttr> m_attr17; // user defined style 7
-
-    /* required overrides for virtual style list control */
-    virtual wxString OnGetItemText(long item, long column) const;
-    virtual int OnGetItemColumnImage(long item, long column) const;
-    virtual wxListItemAttr* OnGetItemAttr(long item) const;
-
-    void OnMouseRightClick(wxMouseEvent& event);
-    void OnListLeftClick(wxMouseEvent& event);
-    void OnListItemSelected(wxListEvent& event);
-    void OnListItemActivated(wxListEvent& event);
-    void OnMarkTransaction(wxCommandEvent& event);
-    void OnMarkAllTransactions(wxCommandEvent& event);
-    void OnListKeyDown(wxListEvent& event);
-    void OnChar(wxKeyEvent& event);
-    void OnCopy(wxCommandEvent& WXUNUSED(event));
-    void OnPaste(wxCommandEvent& WXUNUSED(event));
-    int OnPaste(Model_Checking::Data* tran);
-
-    bool TransactionLocked(const wxString& transdate);
-private:
-    /* The topmost visible item - this will be used to set
-    where to display the list again after refresh */
-    long m_topItemIndex;
-    EColumn m_sortCol;
-    wxString m_today;
 };
+
+inline bool TransactionListCtrl::getSortOrder() const { return m_asc; }
+inline long TransactionListCtrl::getSelectedID() const { return m_selectedID; }
+inline long TransactionListCtrl::getSelectedForCopy() const { return m_selectedForCopy; }
+inline void TransactionListCtrl::setSelectedForCopy(long v) { m_selectedForCopy = v; }
+inline long TransactionListCtrl::getSelectedIndex() const { return m_selectedIndex; }
+inline void TransactionListCtrl::setSelectedIndex(long v) { m_selectedIndex = v; }
+
 
 #endif // MM_EX_CHECKING_LIST_H_
 

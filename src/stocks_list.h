@@ -36,6 +36,7 @@ class StocksListCtrl: public mmListCtrl
     wxDECLARE_EVENT_TABLE();
 
 public:
+
     StocksListCtrl(mmStocksPanel* sp, wxWindow *parent, wxWindowID winid = wxID_ANY);
     ~StocksListCtrl();
 
@@ -46,7 +47,7 @@ public:
     void OnStockWebPage(wxCommandEvent& event);
     long get_selectedIndex();
     int getColumnsNumber();
-    int col_sort() { return COL_DATE; }
+    int col_sort() { return COL_DEF_SORT; }
     wxString getStockInfo(int selectedIndex) const;
     /* Helper Functions/data */
     Model_Stock::Data_Set m_stocks;
@@ -54,6 +55,9 @@ public:
     int initVirtualListControl(int trx_id = -1, int col = 0, bool asc = true);
 
     void OnListKeyDown(wxListEvent& event);
+    bool g_asc; // asc\desc sorting
+
+
 private:
     /* required overrides for virtual style list control */
     virtual wxString OnGetItemText(long item, long column) const;
@@ -62,10 +66,27 @@ private:
     void OnMouseRightClick(wxMouseEvent& event);
     void OnListLeftClick(wxMouseEvent& event);
     void OnListItemActivated(wxListEvent& event);
-    void OnColClick(wxListEvent& event);
+    virtual void OnColClick(wxListEvent& event);
     void OnListItemSelected(wxListEvent& event);
 
     mmStocksPanel* m_stock_panel;
+
+    wxImageList* m_imageList;
+    void sortTable();
+
+    int col_sort() const;
+    void setSortOrder(bool asc);
+    bool getSortOrder() const;
+
+    enum EIcons //m_imageList
+    {
+        ICON_PROFIT,
+        ICON_LOSS,
+        ICON_EMPTY,
+        ICON_DESC,
+        ICON_ASC,
+    };
+
     enum EColumn
     {
         COL_ICON = 0,
@@ -78,12 +99,32 @@ private:
         COL_GAIN_LOSS,
         COL_SECTOR,
         COL_MAX, // number of columns
+        COL_DEF_SORT = COL_SYMBOL
     };
-    wxImageList* m_imageList;
-    void sortTable();
+
+    EColumn g_sortcol; // index of column to sort
+    EColumn m_prevSortCol;
+    void setColumnImage(EColumn col, int image);
+    EColumn getSortColumn() const { return m_sortCol; }
+    void setSortColumn(EColumn col);
+    EColumn m_sortCol;
+
+    EColumn toEColumn(long col)
+    {
+        EColumn res = COL_DEF_SORT;
+        if (col >= 0 && col < COL_MAX) res = static_cast<EColumn>(col);
+
+        return res;
+    }
+
 };
 
 inline long StocksListCtrl::get_selectedIndex() { return m_selected_row; }
 inline int StocksListCtrl::getColumnsNumber() { return COL_MAX; }
+
+inline int StocksListCtrl::col_sort() const { return COL_DEF_SORT; }
+inline void StocksListCtrl::setSortColumn(EColumn col) { m_sortCol = col; }
+inline void StocksListCtrl::setSortOrder(bool asc) { m_asc = asc; }
+inline bool StocksListCtrl::getSortOrder() const { return m_asc; }
 
 #endif

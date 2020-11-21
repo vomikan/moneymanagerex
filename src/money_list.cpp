@@ -31,6 +31,7 @@
 #include "attachmentdialog.h"
 #include "model/allmodel.h"
 #include "billsdepositsdialog.h"
+#include "images_list.h"
 #include <wx/clipbrd.h>
 
 #include <wx/srchctrl.h>
@@ -64,7 +65,7 @@ MoneyListCtrl::MoneyListCtrl(
     m_attr2(new wxListItemAttr(*wxBLACK, mmColors::listAlternativeColor1, wxNullFont)),
     m_attr3(new wxListItemAttr(mmColors::listFutureDateColor, mmColors::listAlternativeColor0, wxNullFont)),
     m_attr4(new wxListItemAttr(mmColors::listFutureDateColor, mmColors::listAlternativeColor1, wxNullFont)),
-
+    m_imageList(0),
     m_sortCol(COL_DEF_SORT),
     g_sortcol(COL_DEF_SORT),
     m_prevSortCol(COL_DEF_SORT),
@@ -85,6 +86,24 @@ MoneyListCtrl::MoneyListCtrl(
     wxAcceleratorTable tab(sizeof(entries)/sizeof(*entries), entries);
     SetAcceleratorTable(tab);
 
+    int x = Option::instance().getIconSize();
+    m_imageList.reset(new wxImageList(x, x));
+    m_imageList->Add(mmBitmap(png::RECONCILED));
+    m_imageList->Add(mmBitmap(png::VOID_STAT));
+    m_imageList->Add(mmBitmap(png::FOLLOW_UP));
+    m_imageList->Add(mmBitmap(png::EMPTY));
+    m_imageList->Add(mmBitmap(png::DUPLICATE_STAT));
+    m_imageList->Add(mmBitmap(png::UPARROW));
+    m_imageList->Add(mmBitmap(png::DOWNARROW));
+    SetImageList(m_imageList.get(), wxIMAGE_LIST_SMALL);
+
+    createColumns(*this);
+
+    // load the global variables
+    m_selected_col = Model_Setting::instance().GetIntSetting("STOCKS_SORT_COL", col_sort());
+    m_asc = Model_Setting::instance().GetBoolSetting("STOCKS_ASC", true);
+
+    m_columns.push_back(PANEL_COLUMN(" ", 25, wxLIST_FORMAT_LEFT));
     m_columns.push_back(PANEL_COLUMN(_("Type"), 70, wxLIST_FORMAT_LEFT));
     m_columns.push_back(PANEL_COLUMN(_("Date"), 112, wxLIST_FORMAT_LEFT));
     m_columns.push_back(PANEL_COLUMN(_("Payee"), 150, wxLIST_FORMAT_LEFT));
@@ -106,7 +125,24 @@ MoneyListCtrl::MoneyListCtrl(
     m_default_sort_column = COL_DEF_SORT;
     m_today = wxDateTime::Today().FormatISODate();
 
-    SetSingleStyle(wxLC_SINGLE_SEL, false);
+    SetSingleStyle(wxLC_SINGLE_SEL, true);
+
+    // load the global variables
+    long val = COL_DEF_SORT;
+    wxString strVal = Model_Setting::instance().GetStringSetting("MONEY_SORT_COL", wxString() << val);
+    if (strVal.ToLong(&val)) g_sortcol = toEColumn(val);
+    // --
+    val = 1; // asc sorting default
+    strVal = Model_Setting::instance().GetStringSetting("MONEY_ASC", wxString() << val);
+    if (strVal.ToLong(&val)) g_asc = (val != 0);
+
+    // --
+    setSortColumn(g_sortcol);
+    setSortOrder(g_asc);
+    setColumnImage(getSortColumn()
+        , getSortOrder() ? ICON_ASC : ICON_DESC); // asc\desc sort mark (arrow)
+
+    SetFocus();
 }
 
 MoneyListCtrl::~MoneyListCtrl()
@@ -230,7 +266,7 @@ void MoneyListCtrl::OnColClick(wxListEvent& event)
     else
         ColumnNr = m_ColumnHeaderNbr;
 
-    if (0 > ColumnNr || ColumnNr >= COL_MAX) return;
+    if (0 > ColumnNr || ColumnNr >= COL_MAX || ColumnNr == COL_IMGSTATUS) return;
 
     if(g_sortcol == ColumnNr && event.GetId() != MENU_HEADER_SORT) {
         m_asc = !m_asc; // toggle sort order
@@ -241,8 +277,8 @@ void MoneyListCtrl::OnColClick(wxListEvent& event)
     m_sortCol = toEColumn(ColumnNr);
     g_sortcol = m_sortCol;
 
-    Model_Setting::instance().Set("CHECK_ASC", (g_asc ? 1 : 0));
-    Model_Setting::instance().Set("CHECK_SORT_COL", g_sortcol);
+    Model_Setting::instance().Set("MONEY_ASC", (g_asc ? 1 : 0));
+    Model_Setting::instance().Set("MONEY_SORT_COL", g_sortcol);
 
     doRefreshItems(m_selectedID, false);
 
@@ -576,7 +612,7 @@ void MoneyListCtrl::doRefreshItems(int trans_id, bool filter)
 
     SetItemCount(m_money.size());
     Show();
-    //m_cp->sortTable();
+    sortTable();
     //m_cp->markSelectedTransaction(trans_id);
 
     long i = static_cast<long>(m_money.size());
@@ -644,5 +680,65 @@ const wxString MoneyListCtrl::getMoneyInfo(int selectedIndex) const
 
     wxString additionInfo = t ? t->TRANSDATE : "TBD";
     return additionInfo;
+}
+
+int MoneyListCtrl::OnGetItemColumnImage(long item, long column) const
+{
+    if (m_money.empty())
+        return ICON_NONE;
+
+    int res = -1;
+    if (column == COL_IMGSTATUS)
+    {
+        res = ICON_NONE;
+        wxString status = OnGetItemText(item, COL_STATUS);
+
+        if (status == "F")
+            res = ICON_FOLLOWUP;
+        else if (status == "R")
+            res = ICON_RECONCILED;
+        else if (status == "V")
+            res = ICON_VOID;
+        else if (status == "D")
+            res = ICON_DUPLICATE;
+    }
+
+    return res;
+}
+
+void MoneyListCtrl::sortTable()
+{
+    switch (g_sortcol)
+    {
+    case COL_PAYEE_STR:
+        std::stable_sort(this->m_money.begin(), this->m_money.end(), SorterByPAYEENAME());
+        break;
+    case COL_STATUS:
+        std::stable_sort(this->m_money.begin(), this->m_money.end(), SorterBySTATUS());
+        break;
+    case COL_NOTES:
+        std::stable_sort(this->m_money.begin(), this->m_money.end(), SorterByNOTES());
+        break;
+    case COL_DATE:
+        std::stable_sort(this->m_money.begin(), this->m_money.end(), SorterByTRANSDATE());
+        break;
+    default:
+        break;
+    }
+
+    if (!g_asc)
+        std::reverse(this->m_money.begin(), this->m_money.end());
+}
+
+void MoneyListCtrl::createColumns(mmListCtrl &lst)
+{
+    for (const auto& entry : m_columns)
+    {
+        int count = lst.GetColumnCount();
+        lst.InsertColumn(count
+            , entry.HEADER
+            , entry.FORMAT
+            , Model_Setting::instance().GetIntSetting(wxString::Format(m_col_width, count), entry.WIDTH));
+    }
 }
 

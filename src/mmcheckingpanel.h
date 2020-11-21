@@ -1,7 +1,7 @@
 /*******************************************************
 Copyright (C) 2006 Madhan Kanagavel
 Copyright (C) 2011, 2012 Stefano Giorgio
-Copyright (C) 2013, 2014 Nikolay
+Copyright (C) 2013, 2014, 2020 Nikolay
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -54,56 +54,10 @@ public:
     void RefreshList(int transID = -1);
 
     wxString BuildPage() const;
+    int get_account_id();
+    void sortTable();
 
 private:
-    enum
-    {
-        ID_PANEL_CHECKING_STATIC_BALHEADER1 = wxID_HIGHEST + 50,
-        ID_PANEL_CHECKING_STATIC_BALHEADER2,
-        ID_PANEL_CHECKING_STATIC_BALHEADER3,
-        ID_PANEL_CHECKING_STATIC_BALHEADER4,
-        ID_PANEL_CHECKING_STATIC_BALHEADER5,
-        ID_PANEL_CHECKING_STATIC_DETAILS,
-        ID_TRX_FILTER,
-    };
-
-    enum menu
-    {
-        MENU_VIEW_ALLTRANSACTIONS = 0,
-        MENU_VIEW_TODAY,
-        MENU_VIEW_CURRENTMONTH,
-        MENU_VIEW_LAST30,
-        MENU_VIEW_LAST90,
-        MENU_VIEW_LASTMONTH,
-        MENU_VIEW_LAST3MONTHS,
-        MENU_VIEW_LAST12MONTHS,
-        MENU_VIEW_CURRENTYEAR,
-        MENU_VIEW_CURRENTFINANCIALYEAR,
-        MENU_VIEW_LASTYEAR,
-        MENU_VIEW_LASTFINANCIALYEAR,
-        MENU_VIEW_STATEMENTDATE,
-        MENU_VIEW_FILTER_DIALOG,
-    };
-private:
-    static wxArrayString menu_labels()
-    {
-        wxArrayString items;
-        items.Add(VIEW_TRANS_ALL_STR); //0
-        items.Add(VIEW_TRANS_TODAY_STR);
-        items.Add(VIEW_TRANS_CURRENT_MONTH_STR);
-        items.Add(VIEW_TRANS_LAST_30_DAYS_STR);
-        items.Add(VIEW_TRANS_LAST_90_DAYS_STR);
-        items.Add(VIEW_TRANS_LAST_MONTH_STR);  //5
-        items.Add(VIEW_TRANS_LAST_3MONTHS_STR);
-        items.Add(VIEW_TRANS_LAST_12MONTHS_STR);
-        items.Add(VIEW_TRANS_CURRENT_YEAR_STR);
-        items.Add(VIEW_TRANS_CRRNT_FIN_YEAR_STR);
-        items.Add(VIEW_TRANS_LAST_YEAR_STR); //10
-        items.Add(VIEW_TRANS_LAST_FIN_YEAR_STR);
-        items.Add(VIEW_TRANS_SINCE_STATEMENT_STR);
-        items.Add(VIEW_TRANS_FILTER_DIALOG_STR);
-        return items;
-    }
 
     wxDECLARE_EVENT_TABLE();
     friend class TransactionListCtrl; // needs access to m_core, initdb_, ...
@@ -134,16 +88,12 @@ private:
     TransactionListCtrl* m_listCtrlAccount;
     Model_Account::Data* m_account;
     Model_Currency::Data* m_currency;
-    wxScopedPtr<wxImageList> m_imageList;
-    Model_Checking::Full_Data_Set m_trans;
 
     void initViewTransactionsHeader();
     void initFilterSettings();
     void setAccountSummary();
-    void sortTable();
     void filterTable();
     void updateTable();
-    void markSelectedTransaction(int trans_id);
     void CreateControls();
 
     bool Create(
@@ -176,12 +126,61 @@ private:
     void updateExtraTransactionData(int selIndex);
     wxString GetPanelTitle(const Model_Account::Data& account) const;
 
-    /* Getter for Virtual List Control */
-    const wxString getItem(long item, long column);
-
     static void mmPlayTransactionSound();
     mmGUIFrame* m_frame;
+
+    static wxArrayString menu_labels()
+    {
+        wxArrayString items;
+        items.Add(VIEW_TRANS_ALL_STR); //0
+        items.Add(VIEW_TRANS_TODAY_STR);
+        items.Add(VIEW_TRANS_CURRENT_MONTH_STR);
+        items.Add(VIEW_TRANS_LAST_30_DAYS_STR);
+        items.Add(VIEW_TRANS_LAST_90_DAYS_STR);
+        items.Add(VIEW_TRANS_LAST_MONTH_STR);  //5
+        items.Add(VIEW_TRANS_LAST_3MONTHS_STR);
+        items.Add(VIEW_TRANS_LAST_12MONTHS_STR);
+        items.Add(VIEW_TRANS_CURRENT_YEAR_STR);
+        items.Add(VIEW_TRANS_CRRNT_FIN_YEAR_STR);
+        items.Add(VIEW_TRANS_LAST_YEAR_STR); //10
+        items.Add(VIEW_TRANS_LAST_FIN_YEAR_STR);
+        items.Add(VIEW_TRANS_SINCE_STATEMENT_STR);
+        items.Add(VIEW_TRANS_FILTER_DIALOG_STR);
+        return items;
+    }
+
+private:
+    enum
+    {
+        ID_PANEL_CHECKING_STATIC_BALHEADER1 = wxID_HIGHEST + 50,
+        ID_PANEL_CHECKING_STATIC_BALHEADER2,
+        ID_PANEL_CHECKING_STATIC_BALHEADER3,
+        ID_PANEL_CHECKING_STATIC_BALHEADER4,
+        ID_PANEL_CHECKING_STATIC_BALHEADER5,
+        ID_PANEL_CHECKING_STATIC_DETAILS,
+        ID_TRX_FILTER,
+    };
+    enum menu
+    {
+        MENU_VIEW_ALLTRANSACTIONS = 0,
+        MENU_VIEW_TODAY,
+        MENU_VIEW_CURRENTMONTH,
+        MENU_VIEW_LAST30,
+        MENU_VIEW_LAST90,
+        MENU_VIEW_LASTMONTH,
+        MENU_VIEW_LAST3MONTHS,
+        MENU_VIEW_LAST12MONTHS,
+        MENU_VIEW_CURRENTYEAR,
+        MENU_VIEW_CURRENTFINANCIALYEAR,
+        MENU_VIEW_LASTYEAR,
+        MENU_VIEW_LASTFINANCIALYEAR,
+        MENU_VIEW_STATEMENTDATE,
+        MENU_VIEW_FILTER_DIALOG,
+    };
+
 };
+
+inline int mmCheckingPanel::get_account_id() { return m_AccountID; }
 
 #endif // MM_EX_CHECKINGPANEL_H_
 

@@ -53,6 +53,7 @@ public:
 public:
     enum EColumn
     {
+        COL_IMGSTATUS = 0,
         COL_TYPE,
         COL_DATE,
         COL_PAYEE_STR,
@@ -77,11 +78,11 @@ public:
     EColumn m_prevSortCol;
     bool g_asc; // asc\desc sorting
 
-    bool getSortOrder() const { return m_asc; }
+    bool getSortOrder() const;
     EColumn getSortColumn() const { return m_sortCol; }
 
-    void setSortOrder(bool asc) { m_asc = asc; }
-    void setSortColumn(EColumn col) { m_sortCol = col; }
+    void setSortOrder(bool asc);
+    void setSortColumn(EColumn col);
 
 public:
     void OnNewTransaction(wxCommandEvent& event);
@@ -98,7 +99,6 @@ protected:
     /* Sort Columns */
     virtual void OnColClick(wxListEvent& event);
 
-private:
 
 private:
     DECLARE_NO_COPY_CLASS(MoneyListCtrl)
@@ -115,7 +115,7 @@ private:
     /* required overrides for virtual style list control */
     virtual wxString OnGetItemText(long item, long column) const;
     virtual wxListItemAttr* OnGetItemAttr(long item) const;
-
+    virtual int OnGetItemColumnImage(long item, long column) const;
     void updateExtraTransactionData(int selIndex);
     void OnMouseRightClick(wxMouseEvent& event);
     void OnListLeftClick(wxMouseEvent& event);
@@ -128,6 +128,8 @@ private:
     void OnCopy(wxCommandEvent& WXUNUSED(event));
     void OnPaste(wxCommandEvent& WXUNUSED(event));
     int OnPaste(Model_Checking::Data* tran);
+    void sortTable();
+    int col_sort() const;
 
     bool TransactionLocked(const wxString& transdate);
 private:
@@ -136,6 +138,8 @@ private:
     long m_topItemIndex;
     EColumn m_sortCol;
     wxString m_today;
+    wxSharedPtr<wxImageList> m_imageList;
+    void createColumns(mmListCtrl &lst);
 
     enum
     {
@@ -162,6 +166,10 @@ private:
 
 };
 
+inline int MoneyListCtrl::col_sort() const { return COL_DEF_SORT; }
+inline void MoneyListCtrl::setSortColumn(EColumn col) { m_sortCol = col; }
+inline void MoneyListCtrl::setSortOrder(bool asc) { m_asc = asc; }
+inline bool MoneyListCtrl::getSortOrder() const { return m_asc; }
 
 #endif // MM_EX_MONEY_LIST_H_
 

@@ -109,49 +109,12 @@ bool mmCheckingPanel::Create(
 
 void mmCheckingPanel::sortTable()
 {
-    switch (m_listCtrlAccount->g_sortcol)
-    {
-    case TransactionListCtrl::COL_ID:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(),SorterByTRANSID());
-        break;
-    case TransactionListCtrl::COL_NUMBER:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), Model_Checking::SorterByNUMBER());
-        break;
-    case TransactionListCtrl::COL_PAYEE_STR:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), SorterByPAYEENAME());
-        break;
-    case TransactionListCtrl::COL_STATUS:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), SorterBySTATUS());
-        break;
-    case TransactionListCtrl::COL_CATEGORY:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), SorterByCATEGNAME());
-        break;
-    case TransactionListCtrl::COL_WITHDRAWAL:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), Model_Checking::SorterByWITHDRAWAL());
-        break;
-    case TransactionListCtrl::COL_DEPOSIT:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), Model_Checking::SorterByDEPOSIT());
-        break;
-    case TransactionListCtrl::COL_BALANCE:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), Model_Checking::SorterByBALANCE());
-        break;
-    case TransactionListCtrl::COL_NOTES:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), SorterByNOTES());
-        break;
-    case TransactionListCtrl::COL_DATE:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), SorterByTRANSDATE());
-        break;
-    default:
-        break;
-    }
-
-    if (!m_listCtrlAccount->g_asc)
-        std::reverse(this->m_trans.begin(), this->m_trans.end());
+    m_listCtrlAccount->sortTable();
 }
 
 void mmCheckingPanel::filterTable()
 {
-    this->m_trans.clear();
+    m_listCtrlAccount->m_trans.clear();
     m_account_balance = m_account ? m_account->INITIALBAL : 0.0;
     m_reconciled_balance = m_account_balance;
     m_filteredBalance = 0.0;
@@ -197,7 +160,7 @@ void mmCheckingPanel::filterTable()
         if (attachments.count(full_tran.TRANSID))
             full_tran.NOTES.Prepend(mmAttachmentManage::GetAttachmentNoteSign());
 
-        this->m_trans.push_back(full_tran);
+        m_listCtrlAccount->m_trans.push_back(full_tran);
     }
 }
 
@@ -218,61 +181,18 @@ void mmCheckingPanel::updateTable()
         m_reconciled_balance += Model_Checking::reconciled(tran, m_AccountID);
     }
     m_filteredBalance = 0.0;
-    for (const auto & tran : m_trans)
+    for (const auto & tran : m_listCtrlAccount->m_trans)
     {
         m_filteredBalance += Model_Checking::amount(tran, m_AccountID);
     }
 
     setAccountSummary();
 
-    if (m_listCtrlAccount->g_sortcol == TransactionListCtrl::COL_STATUS)
+    if (m_listCtrlAccount->get_sort_needed())
     {
         sortTable();
-        m_listCtrlAccount->RefreshItems(0, m_trans.size() - 1);
     }
 }
-
-void mmCheckingPanel::markSelectedTransaction(int trans_id)
-{
-    if (trans_id > 0)
-    {
-        m_listCtrlAccount->m_selectedIndex = -1;
-        m_listCtrlAccount->m_selectedID = -1;
-        long i = 0;
-        for (const auto & tran : m_trans)
-        {
-            //reset any selected items in the list
-            if (m_listCtrlAccount->GetItemState(i, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED)
-            {
-                m_listCtrlAccount->SetItemState(i, 0, wxLIST_STATE_SELECTED);
-            }
-            // discover where the transaction has ended up in the list
-            if (trans_id == tran.TRANSID)
-            {
-                m_listCtrlAccount->m_selectedIndex = i;
-                // set the selected ID to this transaction.
-                m_listCtrlAccount->m_selectedID = trans_id;
-            }
-            ++i;
-        }
-    }
-
-    if (!m_trans.empty() && m_listCtrlAccount->m_selectedIndex < 0)
-    {
-        long i = static_cast<long>(m_trans.size()) - 1;
-        if (!m_listCtrlAccount->g_asc)
-            i =0;
-        m_listCtrlAccount->EnsureVisible(i);
-        m_listCtrlAccount->m_selectedIndex = i;
-        m_listCtrlAccount->m_selectedID = m_trans[i].TRANSID;
-    }
-    else
-    {
-        enableEditDeleteButtons(false);
-        showTips();
-    }
-}
-//----------------------------------------------------------------------------
 
 void mmCheckingPanel::OnMouseLeftDown(wxCommandEvent& event)
 {
@@ -354,39 +274,7 @@ void mmCheckingPanel::CreateControls()
         , wxID_ANY, wxDefaultPosition, wxSize(200, 200)
         , wxSP_3DBORDER | wxSP_3DSASH | wxNO_BORDER);
 
-    int x = Option::instance().getIconSize();
-    m_imageList.reset(new wxImageList(x, x));
-    m_imageList->Add(mmBitmap(png::RECONCILED));
-    m_imageList->Add(mmBitmap(png::VOID_STAT));
-    m_imageList->Add(mmBitmap(png::FOLLOW_UP));
-    m_imageList->Add(mmBitmap(png::EMPTY));
-    m_imageList->Add(mmBitmap(png::DUPLICATE_STAT));
-    m_imageList->Add(mmBitmap(png::UPARROW));
-    m_imageList->Add(mmBitmap(png::DOWNARROW));
-
     m_listCtrlAccount = new TransactionListCtrl(this, itemSplitterWindow10);
-
-    m_listCtrlAccount->SetImageList(m_imageList.get(), wxIMAGE_LIST_SMALL);
-    m_listCtrlAccount->setSortOrder(m_listCtrlAccount->g_asc);
-    m_listCtrlAccount->setSortColumn(m_listCtrlAccount->g_sortcol);
-    m_listCtrlAccount->SetFocus();
-
-    m_listCtrlAccount->createColumns(*m_listCtrlAccount);
-
-    // load the global variables
-    long val = m_listCtrlAccount->COL_DEF_SORT;
-    wxString strVal = Model_Setting::instance().GetStringSetting("CHECK_SORT_COL", wxString() << val);
-    if (strVal.ToLong(&val)) m_listCtrlAccount->g_sortcol = m_listCtrlAccount->toEColumn(val);
-    // --
-    val = 1; // asc sorting default
-    strVal = Model_Setting::instance().GetStringSetting("CHECK_ASC", wxString() << val);
-    if (strVal.ToLong(&val)) m_listCtrlAccount->g_asc = val != 0;
-
-    // --
-    m_listCtrlAccount->setSortColumn(m_listCtrlAccount->g_sortcol);
-    m_listCtrlAccount->setSortOrder(m_listCtrlAccount->g_asc);
-    m_listCtrlAccount->setColumnImage(m_listCtrlAccount->getSortColumn()
-        , m_listCtrlAccount->getSortOrder() ? m_listCtrlAccount->ICON_ASC : m_listCtrlAccount->ICON_DESC); // asc\desc sort mark (arrow)
 
     wxPanel *itemPanel12 = new wxPanel(itemSplitterWindow10, wxID_ANY
         , wxDefaultPosition, wxDefaultSize, wxNO_BORDER|wxTAB_TRAVERSAL);
@@ -509,7 +397,7 @@ void mmCheckingPanel::updateExtraTransactionData(int selIndex)
     if (selIndex > -1)
     {
         enableEditDeleteButtons(true);
-        const Model_Checking::Data& tran = this->m_trans.at(selIndex);
+        const Model_Checking::Data& tran = m_listCtrlAccount->m_trans.at(selIndex);
         Model_Checking::Full_Data full_tran(tran);
         m_info_panel->SetLabelText(tran.NOTES);
         wxString miniStr = full_tran.info();
@@ -686,18 +574,20 @@ void mmCheckingPanel::OnViewPopupSelected(wxCommandEvent& event)
     }
 
     initFilterSettings();
-    RefreshList(m_listCtrlAccount->m_selectedID);
+    RefreshList(m_listCtrlAccount->getSelectedID());
 }
 
 void mmCheckingPanel::DeleteViewedTransactions()
 {
     Model_Checking::instance().Savepoint();
-    for (const auto& tran: this->m_trans)
+    for (const auto& tran: m_listCtrlAccount->m_trans)
     {
         // remove also removes any split transactions
         Model_Checking::instance().remove(tran.TRANSID);
         mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), tran.TRANSID);
-        if (m_listCtrlAccount->m_selectedForCopy == tran.TRANSID) m_listCtrlAccount->m_selectedForCopy = -1;
+        if (m_listCtrlAccount->getSelectedForCopy() == tran.TRANSID) {
+            m_listCtrlAccount->setSelectedForCopy(-1);
+        }
     }
     Model_Checking::instance().ReleaseSavepoint();
 }
@@ -705,49 +595,19 @@ void mmCheckingPanel::DeleteViewedTransactions()
 void mmCheckingPanel::DeleteFlaggedTransactions(const wxString& status)
 {
     Model_Checking::instance().Savepoint();
-    for (const auto& tran: this->m_trans)
+    for (const auto& tran: m_listCtrlAccount->m_trans)
     {
         if (tran.STATUS == status)
         {
             // remove also removes any split transactions
             Model_Checking::instance().remove(tran.TRANSID);
             mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), tran.TRANSID);
-            if (m_listCtrlAccount->m_selectedForCopy == tran.TRANSID) m_listCtrlAccount->m_selectedForCopy = -1;
+            if (m_listCtrlAccount->getSelectedForCopy() == tran.TRANSID) {
+                m_listCtrlAccount->setSelectedForCopy(-1);
+            }
         }
     }
     Model_Checking::instance().ReleaseSavepoint();
-}
-
-const wxString mmCheckingPanel::getItem(long item, long column)
-{
-    if (item < 0 || item >= static_cast<int>(m_trans.size())) return "";
-
-    const Model_Checking::Full_Data& tran = this->m_trans.at(item);
-    switch (column)
-    {
-    case TransactionListCtrl::COL_ID:
-        return wxString::Format("%i", tran.TRANSID).Trim();
-    case TransactionListCtrl::COL_DATE:
-        return mmGetDateForDisplay(tran.TRANSDATE);
-    case TransactionListCtrl::COL_NUMBER:
-        return tran.TRANSACTIONNUMBER;
-    case TransactionListCtrl::COL_CATEGORY:
-        return tran.CATEGNAME;
-    case TransactionListCtrl::COL_PAYEE_STR:
-        return tran.PAYEENAME;
-    case TransactionListCtrl::COL_STATUS:
-        return tran.STATUS;
-    case TransactionListCtrl::COL_WITHDRAWAL:
-        return tran.AMOUNT <= 0 ? Model_Currency::toString(std::fabs(tran.AMOUNT), this->m_currency) : "";
-    case TransactionListCtrl::COL_DEPOSIT:
-        return tran.AMOUNT > 0 ? Model_Currency::toString(tran.AMOUNT, this->m_currency) : "";
-    case TransactionListCtrl::COL_BALANCE:
-        return Model_Currency::toString(tran.BALANCE, this->m_currency);
-    case TransactionListCtrl::COL_NOTES:
-        return tran.NOTES;
-    default:
-        return wxEmptyString;
-    }
 }
 
 void mmCheckingPanel::OnSearchTxtEntered(wxCommandEvent& event)
@@ -755,41 +615,7 @@ void mmCheckingPanel::OnSearchTxtEntered(wxCommandEvent& event)
     const wxString search_string = event.GetString().Lower();
     if (search_string.IsEmpty()) return;
 
-    long last = static_cast<long>(m_listCtrlAccount->GetItemCount() - 1);
-    long selectedItem = m_listCtrlAccount->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-    if (selectedItem <= 0 || selectedItem >= last) //nothing selected
-        selectedItem = m_listCtrlAccount->g_asc ? last : 0;
-
-    while (selectedItem >= 0 && selectedItem <= last)
-    {
-        m_listCtrlAccount->g_asc ? selectedItem-- : selectedItem++;
-
-        for (const auto& t : {
-            getItem(selectedItem, m_listCtrlAccount->COL_NOTES)
-            , getItem(selectedItem, m_listCtrlAccount->COL_NUMBER)
-            , getItem(selectedItem, m_listCtrlAccount->COL_PAYEE_STR)
-            , getItem(selectedItem, m_listCtrlAccount->COL_CATEGORY)
-            , getItem(selectedItem, m_listCtrlAccount->COL_DATE)
-            , getItem(selectedItem, m_listCtrlAccount->COL_WITHDRAWAL)
-            , getItem(selectedItem, m_listCtrlAccount->COL_DEPOSIT)})
-        {
-            if (t.Lower().Matches(search_string + "*"))
-            {
-                //First of all any items should be unselected
-                long cursel = m_listCtrlAccount->GetNextItem(-1
-                    , wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-                if (cursel != wxNOT_FOUND)
-                    m_listCtrlAccount->SetItemState(cursel, 0
-                        , wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-
-                //Then finded item will be selected
-                m_listCtrlAccount->SetItemState(selectedItem
-                    , wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-                m_listCtrlAccount->EnsureVisible(selectedItem);
-                return;
-            }
-        }
-    }
+    m_listCtrlAccount->doSearchTxt(search_string);
 }
 
 void mmCheckingPanel::DisplaySplitCategories(int transID)
@@ -838,9 +664,10 @@ void mmCheckingPanel::DisplayAccountDetails(int accountID)
 
     initViewTransactionsHeader();
     initFilterSettings();
-    if (m_listCtrlAccount->m_selectedIndex > -1)
-        m_listCtrlAccount->SetItemState(m_listCtrlAccount->m_selectedIndex, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-    m_listCtrlAccount->m_selectedIndex = -1;
+    if (m_listCtrlAccount->getSelectedIndex() > -1) {
+        m_listCtrlAccount->SetItemState(m_listCtrlAccount->getSelectedIndex(), 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+    }
+    m_listCtrlAccount->setSelectedIndex(-1);
     RefreshList();
     showTips();
 }
