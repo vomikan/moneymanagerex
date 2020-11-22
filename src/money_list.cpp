@@ -124,7 +124,7 @@ MoneyListCtrl::MoneyListCtrl(
     m_default_sort_column = COL_DEF_SORT;
     m_today = wxDateTime::Today().FormatISODate();
 
-    SetSingleStyle(wxLC_SINGLE_SEL, true);
+    SetSingleStyle(wxLC_SINGLE_SEL, false);
 
     // load the global variables
     long val = COL_DEF_SORT;
@@ -384,7 +384,7 @@ void MoneyListCtrl::OnChar(wxKeyEvent& event)
 }
 //----------------------------------------------------------------------------
 
-void MoneyListCtrl::OnCopy(wxCommandEvent& WXUNUSED(event))
+void MoneyListCtrl::OnCopy()
 {
     if (m_selected_row < 0) return;
 
@@ -426,7 +426,7 @@ void MoneyListCtrl::OnCopy(wxCommandEvent& WXUNUSED(event))
     }
 }
 
-void MoneyListCtrl::OnDuplicateTransaction(wxCommandEvent& WXUNUSED(event))
+void MoneyListCtrl::OnDuplicateTransaction()
 {
     if ((m_selected_row < 0) || (GetSelectedItemCount() > 1)) return;
 
@@ -440,26 +440,17 @@ void MoneyListCtrl::OnDuplicateTransaction(wxCommandEvent& WXUNUSED(event))
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 }
 
-void MoneyListCtrl::OnPaste(wxCommandEvent& WXUNUSED(event))
+void MoneyListCtrl::OnPaste()
 {
     if (m_selectedForCopy < 0) return;
     Model_Checking::Data* tran = Model_Checking::instance().get(m_selectedForCopy);
     if (tran)
     {
-        if ((m_selected_row >= 0) && (GetSelectedItemCount() == 1))
-            SetItemState(m_selected_row, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-        else if (GetSelectedItemCount() > 1)
-        {
-            for (int x = 0; x < GetItemCount(); x++)
-            {
-                if (GetItemState(x, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED)
-                    SetItemState(x, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-            }
-        }
         int transactionID = OnPaste(tran);
         doRefreshItems(transactionID);
     }
 }
+
 int MoneyListCtrl::OnPaste(Model_Checking::Data* tran)
 {
     bool useOriginalDate = Model_Setting::instance().GetBoolSetting(INIDB_USE_ORG_DATE_COPYPASTE, false);
@@ -618,8 +609,8 @@ void MoneyListCtrl::OnMarkTransaction(const wxString& status)
 {
 
     wxString org_status = "";
-
-    Model_Checking::Data *trx = Model_Checking::instance().get(m_money[m_selected_row].TRANSID);
+    int trans_id = m_money[m_selected_row].TRANSID;
+    Model_Checking::Data *trx = Model_Checking::instance().get(trans_id);
     if (trx)
     {
         org_status = trx->STATUS;
@@ -627,33 +618,74 @@ void MoneyListCtrl::OnMarkTransaction(const wxString& status)
             m_money[m_selected_row].STATUS = status;
             trx->STATUS = status;
             Model_Checking::instance().save(trx);
+            doRefreshItems(trans_id);
         }
     }
 }
 
 void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
 {
+    wxString msg = "Nothing done";
     int event_id = event.GetId();
 
-    if (MENU_TREEPOPUP_NEW_DEPOSIT == event_id) {
-        mmTransDialog dlg(this, m_sp->get_account_id(), -1, 0 /*TODO*/, false, Model_Checking::DEPOSIT);
-        if (dlg.ShowModal() == wxID_OK)
-        {
-            //m_cp->mmPlayTransactionSound();
+    if (MENU_TREEPOPUP_EDIT2 == event_id) {
+        int trans_id = m_money[m_selected_row].TRANSID;
+        mmTransDialog dlg(this, m_sp->get_account_id(), trans_id, 0 /*TODO*/, false, Model_Checking::DEPOSIT);
+        if (dlg.ShowModal() == wxID_OK) {
             doRefreshItems(dlg.GetTransactionID());
         }
+        msg = "Edit transaction";
+    }
+    else if (MENU_TREEPOPUP_NEW_DEPOSIT == event_id) {
+        mmTransDialog dlg(this, m_sp->get_account_id(), -1, 0 /*TODO*/, false, Model_Checking::DEPOSIT);
+        if (dlg.ShowModal() == wxID_OK) {
+            initVirtualListControl(dlg.GetTransactionID());
+        }
+        msg = "New deposit transaction";
     }
     else if (MENU_TREEPOPUP_NEW_WITHDRAWAL == event_id)
     {
         mmTransDialog dlg(this, m_sp->get_account_id(), -1, 0 /*TODO*/, false, Model_Checking::WITHDRAWAL);
-        if (dlg.ShowModal() == wxID_OK)
-        {
-            //m_cp->mmPlayTransactionSound();
-            doRefreshItems(dlg.GetTransactionID());
+        if (dlg.ShowModal() == wxID_OK) {
+            initVirtualListControl(dlg.GetTransactionID());
+        }
+        msg = "New withdrawal transaction";
+    }
+    else if (MENU_TREEPOPUP_NEW_TRANSFER == event_id)
+    {
+        mmTransDialog dlg(this, m_sp->get_account_id(), -1, 0 /*TODO*/, false, Model_Checking::TRANSFER);
+        if (dlg.ShowModal() == wxID_OK) {
+            initVirtualListControl(dlg.GetTransactionID());
+        }
+        msg = "New transfer transaction";
+    }
+    else if (MENU_ON_DUPLICATE_TRANSACTION == event_id) {
+
+        try {
+            int trx_id = m_money.at(m_selected_row).TRANSID;
+            Model_Checking::Data* trx = Model_Checking::instance().get(trx_id);
+            if (trx) {
+                mmTransDialog dlg(this, m_sp->get_account_id(), trx_id, 0.0, true);
+                if (dlg.ShowModal() == wxID_OK) {
+                    initVirtualListControl(dlg.GetTransactionID());
+                }
+                msg = "Duplicate transaction";
+            }
+        }
+        catch (const std::out_of_range& oor) {
+            msg = "Out of Range error: " + wxString::FromUTF8(oor.what());
         }
     }
     else if (MENU_TREEPOPUP_MARKRECONCILED == event_id) {
         OnMarkTransaction("R");
+    }
+    else if (MENU_ON_COPY_TRANSACTION == event_id) {
+        OnCopy();
+        msg = wxString::Format("Selected for copy transaction ID: %i", m_selectedForCopy);
+    }
+    else if (MENU_ON_PASTE_TRANSACTION == event_id) {
+        OnPaste();
+        msg = wxString::Format("Past transaction ID: %i", m_selectedForCopy);
     }
     else if (MENU_TREEPOPUP_MARKUNRECONCILED == event_id) {
         OnMarkTransaction("");
@@ -665,9 +697,8 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
         OnMarkTransaction("V");
     }
 
-    doRefreshItems();
+    wxLogDebug(msg +"\nID: %i", event_id);
 }
-
 
 //----------------------------------------------------------------------------
 
@@ -734,6 +765,8 @@ int MoneyListCtrl::initVirtualListControl(int id, int col, bool asc)
 
         m_money.push_back(full_tran);
     }
+
+    sortTable();
 
     SetItemCount(m_money.size());
     if (!m_money.empty())

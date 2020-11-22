@@ -89,7 +89,7 @@ public:
 
     void OnDeleteTransaction(wxCommandEvent& event);
     void OnEditTransaction(wxCommandEvent& event);
-    void OnDuplicateTransaction(wxCommandEvent& event);
+    void OnDuplicateTransaction();
 
     void doRefreshItems(int trans_id = -1, bool filter = true);
     long m_selectedForCopy; //The transaction ID if selected for copy
@@ -125,8 +125,8 @@ private:
     void OnMarkAllTransactions(wxCommandEvent& event);
     void OnListKeyDown(wxListEvent& event);
     void OnChar(wxKeyEvent& event);
-    void OnCopy(wxCommandEvent& WXUNUSED(event));
-    void OnPaste(wxCommandEvent& WXUNUSED(event));
+    void OnCopy();
+    void OnPaste();
     int OnPaste(Model_Checking::Data* tran);
     void sortTable();
     int col_sort() const;
