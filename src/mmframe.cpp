@@ -2242,9 +2242,9 @@ void mmGUIFrame::OnNewAccount(wxCommandEvent& /*event*/)
     wizard->CenterOnParent();
     wizard->RunIt();
 
-    if (wizard->acctID_ != -1)
+    if (wizard->get_account_id() != -1)
     {
-        Model_Account::Data* account = Model_Account::instance().get(wizard->acctID_);
+        Model_Account::Data* account = Model_Account::instance().get(wizard->get_account_id());
         mmNewAcctDialog dlg(account, this);
         dlg.ShowModal();
         if (account->ACCOUNTTYPE == Model_Account::all_type()[Model_Account::ASSET])
@@ -2302,7 +2302,7 @@ void mmGUIFrame::refreshPanelData()
     {
         if (activeReport_) //TODO: budget reports and transaction report
         {
-            mmReportsPanel* rp = dynamic_cast<mmReportsPanel*>(panelCurrent_);
+            mmReportsPanel* rp = static_cast<mmReportsPanel*>(panelCurrent_);
             if (rp) createReportsPage(rp->getPrintableBase(), false);
         }
     }

@@ -30,14 +30,23 @@ class mmAddAccountWizard : public wxWizard
 public:
     mmAddAccountWizard(wxFrame *frame);
     void RunIt();
-    wxString accountName_;
-    int currencyID_;
-    int accountType_;
-
-    int acctID_;
+    const wxString get_account_name() const;
+    void set_account_name(const wxString & v);
+    int get_currency_id() const;
+    void set_currency_id(int v);
+    int get_account_type() const;
+    void set_account_type(int v);
+    int get_account_id() const;
+    void set_account_id(int v);
 
 private:
     wxWizardPageSimple* page1;
+
+    wxString accountName_;
+    int currencyID_;
+    int accountType_;
+    int acctID_;
+
 };
 //----------------------------------------------------------------------------
 
@@ -64,6 +73,14 @@ private:
     mmAddAccountWizard* parent_;
 };
 
-//----------------------------------------------------------------------------
+inline const wxString mmAddAccountWizard::get_account_name() const { return accountName_; }
+inline void mmAddAccountWizard::set_account_name(const wxString& v) { accountName_ = v; }
+inline int mmAddAccountWizard::get_currency_id() const { return currencyID_; }
+inline void mmAddAccountWizard::set_currency_id(int v) { currencyID_ = v; }
+inline int mmAddAccountWizard::get_account_type() const { return accountType_; }
+inline void mmAddAccountWizard::set_account_type(int v) { accountType_ = v; }
+inline int mmAddAccountWizard::get_account_id() const { return acctID_; }
+inline void mmAddAccountWizard::set_account_id(int v) { acctID_ = v; }
+
 #endif // MM_EX_WIZARD_NEWACCOUNT_H_
-//----------------------------------------------------------------------------
+

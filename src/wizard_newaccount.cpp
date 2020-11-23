@@ -22,15 +22,15 @@
 //----------------------------------------------------------------------------
 
 mmAddAccountWizard::mmAddAccountWizard(wxFrame *frame)
-    : wxWizard(frame,wxID_ANY,_("Add Account Wizard")
+    : wxWizard(frame, wxID_ANY, _("Add Account Wizard")
     , wxBitmap(addacctwiz_xpm), wxDefaultPosition
     , wxDEFAULT_DIALOG_STYLE), acctID_(-1)
-    , currencyID_(-1), accountType_(0)
+    , currencyID_(-1), accountType_(Model_Account::CASH)
 {
     // a wizard page may be either an object of predefined class
     page1 = new wxWizardPageSimple(this);
 
-    wxString noteString = wxString::Format(
+    const wxString& noteString = wxString::Format(
         _("%s models all transactions as belonging to accounts."), mmex::getProgramName()) + "\n\n"
         + _("The next pages will help you create a new account.\n"
             "To help you get started, begin by making a list of all\n"
@@ -87,7 +87,7 @@ bool mmAddAccountNamePage::TransferDataFromWindow()
             result = false;
         }
     }
-    parent_->accountName_ = account_name;
+    parent_->set_account_name(account_name);
     return result;
 }
 
@@ -132,7 +132,7 @@ mmAddAccountTypePage::mmAddAccountTypePage(mmAddAccountWizard *parent)
     mainSizer->Add(new wxStaticText(this, wxID_ANY, textMsg), 0, wxALL, 5);
 
     textMsg = "\n";
-    textMsg << _("Investment accounts are specialized accounts that only\n"
+    textMsg << _("Investment accounts are specialized accounts that\n"
         "have stock/mutual fund investments associated with them.");
     mainSizer->Add( new wxStaticText(this, wxID_ANY,textMsg), 0, wxALL, 5);
 
@@ -159,8 +159,8 @@ bool mmAddAccountTypePage::TransferDataFromWindow()
         return false;
     }
 
-    parent_->currencyID_ = currencyID;
-    parent_->accountType_ = itemChoiceType_->GetSelection();
+    parent_->set_currency_id(currencyID);
+    parent_->set_account_type(itemChoiceType_->GetSelection());
 
     return true;
 }
