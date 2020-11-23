@@ -343,12 +343,12 @@ void mmStockDialog::OnStockEventEditButton(wxCommandEvent& event)
 
         if (type == "Dividend")
         {
-            mmTransDialog dlg(this, m_account_id, id, 0, false, Model_Checking::DEPOSIT);
+            mmTransDialog dlg(this, m_account_id, id, false, Model_Checking::DEPOSIT);
             dlg.ShowModal();
         }
         else if (type == "Commission")
         {
-            mmTransDialog dlg(this, m_account_id, id, 0, false, Model_Checking::WITHDRAWAL);
+            mmTransDialog dlg(this, m_account_id, id, false, Model_Checking::WITHDRAWAL);
             dlg.ShowModal();
         }
         else
@@ -624,7 +624,7 @@ void mmStockDialog::OnSell()
 void mmStockDialog::OnDividend()
 {
 
-    mmTransDialog dlg(this, m_account_id, 0, 0, false, Model_Checking::DEPOSIT);
+    mmTransDialog dlg(this, m_account_id, -1, false, Model_Checking::DEPOSIT);
     if (dlg.ShowModal() == wxID_OK)
     {
 

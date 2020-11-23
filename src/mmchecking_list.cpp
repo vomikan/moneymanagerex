@@ -853,7 +853,7 @@ void TransactionListCtrl::OnEditTransaction(wxCommandEvent& /*event*/)
 void TransactionListCtrl::OnNewTransaction(wxCommandEvent& event)
 {
     int type = event.GetId() == MENU_TREEPOPUP_NEW_DEPOSIT ? Model_Checking::DEPOSIT : Model_Checking::WITHDRAWAL;
-    mmTransDialog dlg(this, m_cp->m_AccountID, 0, m_cp->m_account_balance, false, type);
+    mmTransDialog dlg(this, m_cp->m_AccountID, 0, false, type);
     if (dlg.ShowModal() == wxID_OK)
     {
         m_cp->mmPlayTransactionSound();
@@ -863,7 +863,7 @@ void TransactionListCtrl::OnNewTransaction(wxCommandEvent& event)
 
 void TransactionListCtrl::OnNewTransferTransaction(wxCommandEvent& /*event*/)
 {
-    mmTransDialog dlg(this, m_cp->m_AccountID, 0, m_cp->m_account_balance, false, Model_Checking::TRANSFER);
+    mmTransDialog dlg(this, m_cp->m_AccountID, 0, false, Model_Checking::TRANSFER);
     if (dlg.ShowModal() == wxID_OK)
     {
         m_cp->mmPlayTransactionSound();

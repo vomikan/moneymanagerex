@@ -64,6 +64,7 @@ public:
     Data* getByAccNum(const wxString& num);   
 
     static wxString get_account_name(int account_id);
+    static bool is_limit_reached(Model_Checking::Data* t);
 
     /** Remove the Data record from memory and the database. */
     bool remove(int id);

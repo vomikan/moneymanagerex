@@ -635,14 +635,14 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
 
     if (MENU_TREEPOPUP_EDIT2 == event_id) {
         int trans_id = m_money[m_selected_row].TRANSID;
-        mmTransDialog dlg(this, m_sp->get_account_id(), trans_id, 0 /*TODO*/, false, Model_Checking::DEPOSIT);
+        mmTransDialog dlg(this, m_sp->get_account_id(), trans_id, false, Model_Checking::DEPOSIT);
         if (dlg.ShowModal() == wxID_OK) {
             doRefreshItems(dlg.GetTransactionID());
         }
         msg = "Edit transaction";
     }
     else if (MENU_TREEPOPUP_NEW_DEPOSIT == event_id) {
-        mmTransDialog dlg(this, m_sp->get_account_id(), -1, 0 /*TODO*/, false, Model_Checking::DEPOSIT);
+        mmTransDialog dlg(this, m_sp->get_account_id(), -1, false, Model_Checking::DEPOSIT);
         if (dlg.ShowModal() == wxID_OK) {
             initVirtualListControl(dlg.GetTransactionID());
         }
@@ -650,7 +650,7 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
     }
     else if (MENU_TREEPOPUP_NEW_WITHDRAWAL == event_id)
     {
-        mmTransDialog dlg(this, m_sp->get_account_id(), -1, 0 /*TODO*/, false, Model_Checking::WITHDRAWAL);
+        mmTransDialog dlg(this, m_sp->get_account_id(), -1);
         if (dlg.ShowModal() == wxID_OK) {
             initVirtualListControl(dlg.GetTransactionID());
         }
@@ -658,7 +658,7 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
     }
     else if (MENU_TREEPOPUP_NEW_TRANSFER == event_id)
     {
-        mmTransDialog dlg(this, m_sp->get_account_id(), -1, 0 /*TODO*/, false, Model_Checking::TRANSFER);
+        mmTransDialog dlg(this, m_sp->get_account_id(), -1, false, Model_Checking::TRANSFER);
         if (dlg.ShowModal() == wxID_OK) {
             initVirtualListControl(dlg.GetTransactionID());
         }
@@ -784,7 +784,7 @@ const wxString MoneyListCtrl::getMoneyInfo(int selectedIndex) const
 {
     wxString additionInfo;
     try {
-        auto money = m_money[selectedIndex];
+        auto money = m_money.at(selectedIndex);
         Model_Checking::Data* t = Model_Checking::instance().get(money.TRANSID);
         if (t) {
             additionInfo = t->NOTES;

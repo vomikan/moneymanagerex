@@ -49,18 +49,16 @@ public:
         wxWindow* parent
         , int account_id
         , int transaction_id
-        , double current_balance
         , bool duplicate = false
         , int type = Model_Checking::WITHDRAWAL
-        , const wxString& name = "mmTransDialog"
     );
 
     bool Create(wxWindow* parent
-        , wxWindowID id
-        , const wxString& caption
-        , const wxPoint& pos
-        , const wxSize& size
-        , long style
+        , wxWindowID id = wxID_ANY
+        , const wxString& caption = ""
+        , const wxPoint& pos = wxDefaultPosition
+        , const wxSize& size = wxDefaultSize
+        , long style = wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX
         , const wxString& name = "mmTransDialog"
     );
 
@@ -124,7 +122,6 @@ private:
     bool m_duplicate;
     bool categUpdated_;
     bool m_advanced;
-    double m_current_balance;
 
     int object_in_focus_;
     int m_account_id;

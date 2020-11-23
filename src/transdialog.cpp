@@ -86,15 +86,12 @@ void mmTransDialog::SetEventHandlers()
 mmTransDialog::mmTransDialog(wxWindow* parent
     , int account_id
     , int transaction_id
-    , double current_balance
     , bool duplicate
     , int type
-    , const wxString& name
 ) : m_transfer(false)
     , m_duplicate(duplicate)
     , categUpdated_(false)
     , m_advanced(false)
-    , m_current_balance(current_balance)
     , m_account_id(account_id)
     , m_currency(nullptr)
     , m_to_currency(nullptr)
@@ -147,8 +144,7 @@ mmTransDialog::mmTransDialog(wxWindow* parent
     if (m_duplicate || m_new_trx) ref_id = -1;
     m_custom_fields = new mmCustomDataTransaction(this, ref_id, ID_CUSTOMFIELD);
 
-    long style = wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX;
-    Create(parent, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, style, name);
+    Create(parent);
     this->SetMinSize(wxSize(500, 400));
 
     dataToControls();
@@ -709,25 +705,10 @@ bool mmTransDialog::doValidateData()
     }
 
     //Checking account does not exceed limits
-    if (m_new_trx || m_duplicate)
     {
-        bool abort_transaction = false;
-        double new_value = m_trx_data.TRANSAMOUNT;
+        bool abort_transaction = Model_Account::instance().is_limit_reached(&m_trx_data);
 
-        if (m_trx_data.TRANSCODE != Model_Checking::all_type()[Model_Checking::DEPOSIT]) {
-            new_value *= -1;
-        }
-
-        new_value += m_current_balance;
-
-        if ((account->MINIMUMBALANCE != 0) && (new_value < account->MINIMUMBALANCE)) {
-            abort_transaction = true;
-        }
-
-        if ((account->CREDITLIMIT != 0) && (new_value < (account->CREDITLIMIT * -1))) {
-            abort_transaction = true;
-        }
-
+        
         if (abort_transaction && wxMessageBox(_(
             "This transaction will exceed your account limit.\n\n"
             "Do you wish to continue?")
