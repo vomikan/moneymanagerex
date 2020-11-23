@@ -367,11 +367,6 @@ int Option::AccountImageId(int account_id, bool def)
         else if (favorite) selectedImage = img::CASH_ACC_FAVORITE_PNG;
         else selectedImage = img::CASH_ACC_NORMAL_PNG;
         break;
-    case (Model_Account::SHARES) :
-        if (closed) selectedImage = img::LOAN_ACC_CLOSED_PNG;
-        else if (favorite) selectedImage = img::LOAN_ACC_FAVORITE_PNG;
-        else selectedImage = img::LOAN_ACC_NORMAL_PNG;
-        break;
     default:
         wxASSERT(false);
     }

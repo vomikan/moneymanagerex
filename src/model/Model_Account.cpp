@@ -34,7 +34,6 @@ const std::vector<std::pair<Model_Account::TYPE, wxString> > Model_Account::TYPE
     {Model_Account::TERM, wxString(wxTRANSLATE("Term"))},
     {Model_Account::INVESTMENT, wxString(wxTRANSLATE("Investment"))},
     {Model_Account::ASSET, wxString(wxTRANSLATE("Asset"))},
-    {Model_Account::SHARES, wxString(wxTRANSLATE("Shares"))},
 };
 
 Model_Account::Model_Account()
