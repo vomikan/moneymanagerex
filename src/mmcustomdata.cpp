@@ -430,7 +430,7 @@ const wxString mmCustomData::GetWidgetData(wxWindowID controlID) const
     return data;
 }
 
-bool mmCustomData::ValidateCustomValues(int ref_id)
+bool mmCustomData::doValidateCustomValues(int ref_id)
 {
     bool Result = true;
 

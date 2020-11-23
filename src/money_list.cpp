@@ -287,8 +287,14 @@ void MoneyListCtrl::OnColClick(wxListEvent& event)
 
 wxString MoneyListCtrl::OnGetItemText(long item, long column) const
 {
+    int from_account_id = -1;
+    try {
+        from_account_id = m_money.at(item).ACCOUNTID;
+    }
+    catch (const std::out_of_range& oor) {
+        return "Out of Range error: " + wxString::FromUTF8(oor.what());
+    }
 
-    int from_account_id = m_money[item].ACCOUNTID;
     Model_Account::Data* fa = Model_Account::instance().get(from_account_id);
     Model_Currency::Data* currency = Model_Currency::instance().get(fa->CURRENCYID);
 
@@ -327,25 +333,18 @@ wxString MoneyListCtrl::OnGetItemText(long item, long column) const
 */
 wxListItemAttr* MoneyListCtrl::OnGetItemAttr(long item) const
 {
-    if (item < 0 || item >= static_cast<int>(m_money.size())) return 0;
+    if (item < 0 || item >= static_cast<long>(m_money.size())) return 0;
 
     const Model_Checking::Data& tran = m_money[item];
     bool in_the_future = (tran.TRANSDATE > m_today);
 
-    // apply alternating background pattern
-    int user_colour_id = tran.FOLLOWUPID;
-    if (user_colour_id < 0 ) user_colour_id = 0;
-    else if (user_colour_id > 7) user_colour_id = 0;
-
-    if (user_colour_id == 0) {
-        if (in_the_future){
-            return (item % 2 ? m_attr3.get() : m_attr4.get());
-        }
-        return (item % 2 ? m_attr1.get() : m_attr2.get());
+    if (in_the_future) {
+        return (item % 2 ? m_attr3.get() : m_attr4.get());
     }
-
     return (item % 2 ? m_attr1.get() : m_attr2.get());
+
 }
+
 //----------------------------------------------------------------------------
 // If any of these keys are encountered, the search for the event handler
 // should continue as these keys may be processed by the operating system.
@@ -390,8 +389,14 @@ void MoneyListCtrl::OnCopy()
 
     if (GetSelectedItemCount() > 1)
         m_selectedForCopy = -1;
-    else
-        m_selectedForCopy = m_money[m_selected_row].TRANSID;
+    else {
+        try {
+            m_selectedForCopy = m_money.at(m_selected_row).TRANSID;
+        }
+        catch (const std::out_of_range& oor) {
+            wxLogDebug("Out of Range error: %s", wxString::FromUTF8(oor.what()));
+        }
+    }
 
     if (wxTheClipboard->Open())
     {
@@ -777,11 +782,17 @@ int MoneyListCtrl::initVirtualListControl(int id, int col, bool asc)
 
 const wxString MoneyListCtrl::getMoneyInfo(int selectedIndex) const
 {
-    if (m_money.size() < 1 || selectedIndex < 0) return wxEmptyString;
-    auto money = m_money[selectedIndex];
-    Model_Checking::Data* t = Model_Checking::instance().get(money.TRANSID);
-
-    wxString additionInfo = t ? t->TRANSDATE : "TBD";
+    wxString additionInfo;
+    try {
+        auto money = m_money[selectedIndex];
+        Model_Checking::Data* t = Model_Checking::instance().get(money.TRANSID);
+        if (t) {
+            additionInfo = t->NOTES;
+        }
+    }
+    catch (const std::out_of_range& oor) {
+        additionInfo = "Out of Range error: " + wxString::FromUTF8(oor.what());
+    }
     return additionInfo;
 }
 

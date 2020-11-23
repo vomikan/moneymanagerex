@@ -73,7 +73,7 @@ private:
     wxSharedPtr<mmCustomData> m_custom_fields;
     void CreateControls();
     void dataToControls();
-    bool ValidateData();
+    bool doValidateData();
     void SetEventHandlers();
 
     void OnSplitChecked(wxCommandEvent& event);

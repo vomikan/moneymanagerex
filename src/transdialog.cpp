@@ -221,12 +221,13 @@ void mmTransDialog::dataToControls()
         {
             if (!m_advanced)
             {
-                double exch = 1;
-                if (m_to_currency)
+                double exch = 1.0;
+                Model_Account::Data* to_acc = Model_Account::instance().get(m_trx_data.TOACCOUNTID);
+                if (m_to_currency && to_acc
+                    && to_acc->ACCOUNTTYPE != Model_Account::all_type()[Model_Account::INVESTMENT])
                 {
                     const double convRateTo = Model_CurrencyHistory::getDayRate(m_to_currency->CURRENCYID, m_trx_data.TRANSDATE);
-                    if (convRateTo > 0)
-                    {
+                    if (convRateTo > 0.0) {
                         const double convRate = Model_CurrencyHistory::getDayRate(m_currency->CURRENCYID, m_trx_data.TRANSDATE);
                         exch = convRate / convRateTo;
                     }
@@ -614,11 +615,8 @@ void mmTransDialog::CreateControls()
     this->SetSizer(box_sizer);
 }
 
-bool mmTransDialog::ValidateData()
+bool mmTransDialog::doValidateData()
 {
-    if (!m_textAmount->checkValue(m_trx_data.TRANSAMOUNT))
-        return false;
-
     Model_Account::Data* account = Model_Account::instance().get(cbAccount_->GetValue());
     if (!account)
     {
@@ -626,6 +624,25 @@ bool mmTransDialog::ValidateData()
         return false;
     }
     m_trx_data.ACCOUNTID = account->ACCOUNTID;
+
+    /* Check if transaction is to proceed.*/
+    if (Model_Account::BoolOf(account->STATEMENTLOCKED))
+    {
+        if (dpc_->GetValue() <= Model_Account::DateOf(account->STATEMENTDATE))
+        {
+            if (wxMessageBox(_(wxString::Format(
+                "Locked transaction to date: %s\n\n"
+                "Do you wish to continue ? "
+                , mmGetDateForDisplay(account->STATEMENTDATE)))
+                , _("MMEX Transaction Check"), wxYES_NO | wxICON_WARNING) == wxNO)
+            {
+                return false;
+            }
+        }
+    }
+
+    if (!m_textAmount->checkValue(m_trx_data.TRANSAMOUNT))
+        return false;
 
     if (!m_transfer)
     {
@@ -691,42 +708,23 @@ bool mmTransDialog::ValidateData()
         return false;
     }
 
-    /* Check if transaction is to proceed.*/
-    if (Model_Account::BoolOf(account->STATEMENTLOCKED))
-    {
-        if (dpc_->GetValue() <= Model_Account::DateOf(account->STATEMENTDATE))
-        {
-            if (wxMessageBox(_(wxString::Format(
-                "Locked transaction to date: %s\n\n"
-                "Do you wish to continue ? "
-                , mmGetDateForDisplay(account->STATEMENTDATE)))
-                , _("MMEX Transaction Check"), wxYES_NO | wxICON_WARNING) == wxNO)
-            {
-                return false;
-            }
-        }
-    }
-
     //Checking account does not exceed limits
     if (m_new_trx || m_duplicate)
     {
         bool abort_transaction = false;
         double new_value = m_trx_data.TRANSAMOUNT;
 
-        if (m_trx_data.TRANSCODE == Model_Checking::all_type()[Model_Checking::WITHDRAWAL])
-        {
+        if (m_trx_data.TRANSCODE != Model_Checking::all_type()[Model_Checking::DEPOSIT]) {
             new_value *= -1;
         }
 
         new_value += m_current_balance;
 
-        if ((account->MINIMUMBALANCE != 0) && (new_value < account->MINIMUMBALANCE))
-        {
+        if ((account->MINIMUMBALANCE != 0) && (new_value < account->MINIMUMBALANCE)) {
             abort_transaction = true;
         }
 
-        if ((account->CREDITLIMIT != 0) && (new_value < (account->CREDITLIMIT * -1)))
-        {
+        if ((account->CREDITLIMIT != 0) && (new_value < (account->CREDITLIMIT * -1))) {
             abort_transaction = true;
         }
 
@@ -792,7 +790,7 @@ void mmTransDialog::OnFocusChange(wxChildFocusEvent& event)
 
     if (!m_transfer)
     {
-        Model_Payee::Data * payee = Model_Payee::instance().get(cbPayee_->GetValue());
+        Model_Payee::Data* payee = Model_Payee::instance().get(cbPayee_->GetValue());
         if (payee)
         {
             cbPayee_->ChangeValue(payee->PAYEENAME);
@@ -1166,12 +1164,12 @@ void mmTransDialog::OnOk(wxCommandEvent& WXUNUSED(event))
         m_trx_data.STATUS = m_status;
     }
 
-    if (!ValidateData()) return;
-    if(!m_custom_fields->ValidateCustomValues(m_trx_data.TRANSID)) return;
+    if (!doValidateData()) return;
+    if(!m_custom_fields->doValidateCustomValues(m_trx_data.TRANSID)) return;
 
-    Model_Checking::Data *r = Model_Checking::instance().get(m_trx_data.TRANSID);
-    if (m_new_trx || m_duplicate)
-        r = Model_Checking::instance().create();
+    Model_Checking::Data *r = (m_new_trx || m_duplicate)
+        ? Model_Checking::instance().create()
+        : Model_Checking::instance().get(m_trx_data.TRANSID);
 
     Model_Checking::putDataToTransaction(r, m_trx_data);
     m_trx_data.TRANSID = Model_Checking::instance().save(r);
