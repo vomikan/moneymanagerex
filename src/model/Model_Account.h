@@ -61,10 +61,11 @@ public:
     Data* get(const wxString& name);
   
     /** Return the Data record for the given account num */
-    Data* getByAccNum(const wxString& num);   
+    Data* getByAccNum(const wxString& num);
 
     static wxString get_account_name(int account_id);
     static bool is_limit_reached(Model_Checking::Data* t);
+    static double get_account_balance(int acc_id);
 
     /** Remove the Data record from memory and the database. */
     bool remove(int id);

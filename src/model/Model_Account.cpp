@@ -116,19 +116,26 @@ Model_Account::Data* Model_Account::getByAccNum(const wxString& num)
     return account;
 }
 
+double Model_Account::get_account_balance(int acc_id)
+{
+    Model_Account::Data* account = Model_Account::instance().get(acc_id);
+    double acc_balance = account->INITIALBAL;
+    Model_Checking::Data_Set data = Model_Checking::instance().find_or(
+        Model_Checking::ACCOUNTID(acc_id), Model_Checking::TOACCOUNTID(acc_id)
+    );
+    for (const auto& entry : data) {
+        acc_balance += Model_Checking::balance(entry);
+    }
+    return acc_balance;
+}
+
 bool Model_Account::is_limit_reached(Model_Checking::Data* t)
 {
     if (t->TRANSCODE != Model_Checking::all_type()[Model_Checking::DEPOSIT]) {
         Model_Account::Data* account = Model_Account::instance().get(t->ACCOUNTID);
-        double acc_balance = account->INITIALBAL;
-        Model_Checking::Data_Set data = Model_Checking::instance().find_or(
-            Model_Checking::ACCOUNTID(t->ACCOUNTID), Model_Checking::TOACCOUNTID(t->ACCOUNTID)
-        );
-            for (const auto& entry : data) {
-                acc_balance += Model_Checking::balance(entry);
-            }
-            acc_balance += Model_Checking::balance(t);
-            return acc_balance < account->CREDITLIMIT;
+        double acc_balance = get_account_balance(t->ACCOUNTID);
+        acc_balance += Model_Checking::balance(t);
+        return acc_balance < account->CREDITLIMIT;
     }
 
     return false;
