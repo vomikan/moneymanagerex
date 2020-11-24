@@ -141,7 +141,16 @@ bool Model_Account::is_limit_reached(Model_Checking::Data* t)
     return false;
 }
 
-wxString Model_Account::get_account_name(int account_id)
+int Model_Account::get_account_type(int account_id)
+{
+    Data* account = instance().get(account_id);
+    if (account)
+        return all_type().Index(account->ACCOUNTTYPE);
+    else
+        return wxNOT_FOUND;
+}
+
+const wxString Model_Account::get_account_name(int account_id)
 {
     Data* account = instance().get(account_id);
     if (account)
@@ -320,14 +329,9 @@ bool Model_Account::is_used(const Model_Currency::Data& c)
     return is_used(&c);
 }
 
-int Model_Account::money_accounts_num()
+int Model_Account::accounts_num()
 {
-    return
-        Model_Account::instance().find(ACCOUNTTYPE(all_type()[CASH])).size()
-        + Model_Account::instance().find(ACCOUNTTYPE(all_type()[CHECKING])).size()
-        + Model_Account::instance().find(ACCOUNTTYPE(all_type()[CREDIT_CARD])).size()
-        + Model_Account::instance().find(ACCOUNTTYPE(all_type()[LOAN])).size()
-        + Model_Account::instance().find(ACCOUNTTYPE(all_type()[TERM])).size();
+    return Model_Account::instance().all().size();
 }
 
 bool Model_Account::Exist(const wxString& account_name)

@@ -98,7 +98,6 @@ EVT_MENU(MENU_NEWACCT, mmGUIFrame::OnNewAccount)
 EVT_MENU(MENU_ACCTLIST, mmGUIFrame::OnAccountList)
 EVT_MENU(MENU_ACCTEDIT, mmGUIFrame::OnEditAccount)
 EVT_MENU(MENU_ACCTDELETE, mmGUIFrame::OnDeleteAccount)
-EVT_MENU(MENU_ACCOUNT_REALLOCATE, mmGUIFrame::OnReallocateAccount)
 EVT_MENU(MENU_ORGCATEGS, mmGUIFrame::OnOrgCategories)
 EVT_MENU(MENU_ORGPAYEE, mmGUIFrame::OnOrgPayees)
 EVT_MENU(wxID_PREFERENCES, mmGUIFrame::OnOptions)
@@ -142,6 +141,7 @@ EVT_UPDATE_UI(MENU_VIEW_LINKS, mmGUIFrame::OnViewLinksUpdateUI)
 EVT_MENU(MENU_TREEPOPUP_NEW, mmGUIFrame::OnNewTransaction)
 EVT_MENU(MENU_TREEPOPUP_EDIT, mmGUIFrame::OnPopupEditAccount)
 EVT_MENU(MENU_TREEPOPUP_REALLOCATE, mmGUIFrame::OnPopupReallocateAccount)
+EVT_MENU(MENU_ACCOUNT_REALLOCATE, mmGUIFrame::OnReallocateAccount)
 EVT_MENU(MENU_TREEPOPUP_DELETE, mmGUIFrame::OnPopupDeleteAccount)
 
 EVT_TREE_ITEM_MENU(wxID_ANY, mmGUIFrame::OnItemMenu)
@@ -2939,7 +2939,6 @@ void mmGUIFrame::ReallocateAccount(int accountID)
     Model_Account::Data* account = Model_Account::instance().get(accountID);
 
     wxArrayString types = Model_Account::instance().all_type();
-    types.Remove(Model_Account::all_type()[Model_Account::INVESTMENT]);
     wxArrayString t;
     for (const auto entry : types)
         t.Add(wxGetTranslation(entry));

@@ -135,6 +135,7 @@ mmTransDialog::mmTransDialog(wxWindow* parent
         }
         if (m_to_currency) {
             m_advanced = !m_new_trx
+                && Model_Account::get_account_type(m_account_id) != Model_Account::INVESTMENT
                 && (m_currency->CURRENCYID != m_to_currency->CURRENCYID
                     || m_trx_data.TRANSAMOUNT != m_trx_data.TOTRANSAMOUNT);
         }
@@ -229,8 +230,8 @@ void mmTransDialog::dataToControls()
                     }
                 }
                 m_trx_data.TOTRANSAMOUNT = m_trx_data.TRANSAMOUNT * exch;
+                toTextAmount_->SetValue(m_trx_data.TOTRANSAMOUNT, Model_Currency::precision(m_trx_data.TOACCOUNTID));
             }
-            toTextAmount_->SetValue(m_trx_data.TOTRANSAMOUNT, Model_Currency::precision(m_trx_data.TOACCOUNTID));
         }
         else
             toTextAmount_->ChangeValue("");
@@ -807,13 +808,17 @@ void mmTransDialog::OnFocusChange(wxChildFocusEvent& event)
     {
         toTextAmount_->SelectAll();
     }
-    else
+
+    if (m_transfer)
     {
-        if (toTextAmount_->Calculate(Model_Currency::precision(m_trx_data.TOACCOUNTID)))
-        {
+        if (toTextAmount_->Calculate(Model_Currency::precision(m_trx_data.TOACCOUNTID))) {
             toTextAmount_->GetDouble(m_trx_data.TOTRANSAMOUNT);
         }
+        if (!m_advanced) {
+            toTextAmount_->ChangeValue("");
+        }
     }
+
 
     dataToControls();
     event.Skip();

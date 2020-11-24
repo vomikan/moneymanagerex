@@ -63,7 +63,8 @@ public:
     /** Return the Data record for the given account num */
     Data* getByAccNum(const wxString& num);
 
-    static wxString get_account_name(int account_id);
+    static const wxString get_account_name(int account_id);
+    static int get_account_type(int account_id);
     static bool is_limit_reached(Model_Checking::Data* t);
     static double get_account_balance(int acc_id);
 
@@ -108,7 +109,7 @@ public:
     static bool is_used(const Model_Currency::Data* c);
     static bool is_used(const Model_Currency::Data& c);
 
-    static int money_accounts_num();
+    static int accounts_num();
 
     static bool Exist(const wxString& account_name);
 
