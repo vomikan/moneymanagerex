@@ -66,8 +66,8 @@ public:
     void OnRefreshQuotes(wxCommandEvent& event);
     //Unhide the Edit and Delete buttons if any record selected
     void enableEditDeleteButtons(bool en);
-    void OnListItemActivated(int selectedIndex);
-    void OnListItemSelected(int selectedIndex);
+    void doListItemActivated(int selectedIndex);
+    void doListItemSelected(int selectedIndex);
     void OnNotebookPageChanged(wxBookCtrlEvent& event);
 
     int get_account_id() const;
@@ -94,7 +94,7 @@ private:
     wxBitmapButton* refresh_button_;
 
     bool onlineQuoteRefresh(wxString& sError);
-    wxString GetPanelTitle(const Model_Account::Data& account) const;
+    const wxString getPanelTitle(const Model_Account::Data& account) const;
 
 };
 

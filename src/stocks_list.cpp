@@ -124,7 +124,7 @@ void StocksListCtrl::OnMouseRightClick(wxMouseEvent& event)
         SetItemState(m_selected_row, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
         SetItemState(m_selected_row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
     }
-    m_stock_panel->OnListItemSelected(m_selected_row);
+    m_stock_panel->doListItemSelected(m_selected_row);
 
     bool hide_menu_item = (m_selected_row < 0);
 
@@ -205,7 +205,7 @@ wxString StocksListCtrl::OnGetItemText(long item, long column) const
 void StocksListCtrl::OnListItemSelected(wxListEvent& event)
 {
     m_selected_row = event.GetIndex();
-    m_stock_panel->OnListItemSelected(m_selected_row);
+    m_stock_panel->doListItemSelected(m_selected_row);
 }
 
 void StocksListCtrl::OnListLeftClick(wxMouseEvent& event)
@@ -215,7 +215,7 @@ void StocksListCtrl::OnListLeftClick(wxMouseEvent& event)
     if (index == -1)
     {
         m_selected_row = -1;
-        m_stock_panel->OnListItemSelected(m_selected_row);
+        m_stock_panel->doListItemSelected(m_selected_row);
     }
     event.Skip();
 }
@@ -302,7 +302,7 @@ void StocksListCtrl::OnStockWebPage(wxCommandEvent& /*event*/)
 
 void StocksListCtrl::OnListItemActivated(wxListEvent& event)
 {
-    m_stock_panel->OnListItemActivated(m_selected_row);
+    m_stock_panel->doListItemActivated(m_selected_row);
 }
 
 void StocksListCtrl::OnColClick(wxListEvent& event)
@@ -339,7 +339,7 @@ void StocksListCtrl::OnColClick(wxListEvent& event)
     int trx_id = -1;
     if (m_selected_row >= 0) trx_id = m_stocks[m_selected_row].TICKERID;
     doRefreshItems(trx_id);
-    m_stock_panel->OnListItemSelected(-1);
+    m_stock_panel->doListItemSelected(-1);
 }
 
 void StocksListCtrl::doRefreshItems(int trx_id)

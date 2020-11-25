@@ -191,7 +191,7 @@ void mmStocksPanel::CreateControls()
 
 }
 
-void mmStocksPanel::OnListItemSelected(int selectedIndex)
+void mmStocksPanel::doListItemSelected(int selectedIndex)
 {
     updateExtraStocksData(selectedIndex);
     enableEditDeleteButtons(selectedIndex >= 0);
@@ -203,7 +203,7 @@ void mmStocksPanel::OnNotebookPageChanged(wxBookCtrlEvent & event)
     wxLogDebug("%i Mode", m_view_mode);
 }
 
-void mmStocksPanel::OnListItemActivated(int selectedIndex)
+void mmStocksPanel::doListItemActivated(int selectedIndex)
 {
     call_dialog(selectedIndex);
     updateExtraStocksData(selectedIndex);
@@ -212,55 +212,68 @@ void mmStocksPanel::OnListItemActivated(int selectedIndex)
 void mmStocksPanel::updateHeader()
 {
     const Model_Account::Data* account = Model_Account::instance().get(m_account_id);
-    double initVal = 0.0;
-
-    //We need money amount and Total amount
+    double account_balance = 0.0, gain_loss = 0.0;
 
     //Get Stock Investment Account Balance as Init Amount + sum (Value) - sum (Purchase Price)
-    std::pair<double, double> investment_balance;
-    if (account)
-    {
-        header_text_->SetLabelText(GetPanelTitle(*account));
-        //Get Init Value of the account
-        initVal = account->INITIALBAL;
-        investment_balance = Model_Account::investment_balance(account);
-    }
+    header_text_->SetLabelText(getPanelTitle(*account));
+
+    //Get Init Value of the account
+    account_balance = account->INITIALBAL;
 
     // - Income (Dividends), Withdrawal (TAX), Trasfers to other accounts 
     Model_Checking::Data_Set trans_list = Model_Checking::instance().find(Model_Checking::ACCOUNTID(m_account_id));
     for (const auto& i : trans_list)
     {
-        initVal += i.TRANSCODE == Model_Checking::all_type()[Model_Checking::DEPOSIT]
+        account_balance += i.TRANSCODE == Model_Checking::all_type()[Model_Checking::DEPOSIT]
             ? i.TRANSAMOUNT : -i.TRANSAMOUNT;
     }
+
+    auto today = wxDateTime::Today();
     // + Transfered from other accounts
-    trans_list = Model_Checking::instance().find(Model_Checking::TOACCOUNTID(m_account_id));
-    for (const auto& i : trans_list)
+    for (const auto& acc : Model_Account::instance().all())
     {
-        initVal += i.TOTRANSAMOUNT;
+        Model_Currency::Data* currency = Model_Account::currency(acc);
+        double rate = Model_CurrencyHistory::getDayRate(currency->CURRENCYID, today);
+        trans_list = Model_Checking::instance().find(Model_Checking::TOACCOUNTID(m_account_id)
+            , Model_Checking::ACCOUNTID(acc.ACCOUNTID));
+        for (const auto& i : trans_list)
+        {
+            account_balance += i.TOTRANSAMOUNT * rate;
+        }
     }
 
     Model_Stock::Data_Set investment = Model_Stock::instance().find(Model_Stock::HELDAT(m_account_id));
     for (const auto& i : investment)
     {
-        initVal -= i.PURCHASEPRICE * i.NUMSHARES + i.COMMISSION;
+        Model_Ticker::Data* ticker = Model_Ticker::instance().get(i.TICKERID);
+        Model_Currency::Data* currency = Model_Currency::instance().get(ticker->CURRENCYID);
+        double rate = Model_CurrencyHistory::getDayRate(currency->CURRENCYID, today);
+        wxSharedPtr<Model_StockStat> s;
+        double current_price = Model_StockHistory::getLastRate(ticker->TICKERID);
+        s = new Model_StockStat(ticker->TICKERID, m_account_id, current_price);
+        double gl = s->get_gain_loss() * rate;
+        gain_loss += gl;
+        account_balance += gl;
     }
 
-    wxString accBal = Model_Account::instance().toCurrency(initVal, account);
-    header_total_->SetLabelText(accBal);
+    const wxString accBal = wxString::Format(_("Total: %s"), Model_Account::instance().toCurrency(account_balance, account));
+    wxString gail_loss_str = Model_Account::instance().toCurrency(gain_loss, account);
+    gail_loss_str = wxString::Format((gain_loss < 0 ? _("Loss: %s") : _("Gain: %s")), gail_loss_str);
+    header_total_->SetLabelText(wxString::Format("%s %s", accBal, gail_loss_str));
     this->Layout();
 }
 
 
-wxString mmStocksPanel::GetPanelTitle(const Model_Account::Data& account) const
+const wxString mmStocksPanel::getPanelTitle(const Model_Account::Data& account) const
 {
-    return wxString::Format(_("Stock Portfolio: %s"), account.ACCOUNTNAME);
+    Model_Currency::Data* currency = Model_Currency::instance().get(account.CURRENCYID);
+    return wxString::Format(_("Stock Portfolio: %s (%s)"), account.ACCOUNTNAME, currency->CURRENCY_SYMBOL);
 }
 
 wxString mmStocksPanel::BuildPage() const
 { 
     const Model_Account::Data* account = Model_Account::instance().get(m_account_id);
-    return listCtrlAccount_->BuildPage(account ? GetPanelTitle(*account) : "");
+    return listCtrlAccount_->BuildPage(account ? getPanelTitle(*account) : "");
 }
 
 void mmStocksPanel::OnDeleteStocks(wxCommandEvent& event)

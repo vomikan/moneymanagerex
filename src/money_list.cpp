@@ -151,7 +151,7 @@ MoneyListCtrl::~MoneyListCtrl()
 void MoneyListCtrl::OnListItemSelected(wxListEvent& event)
 {
     m_selected_row = event.GetIndex();
-    m_sp->OnListItemSelected(m_selected_row);
+    m_sp->doListItemSelected(m_selected_row);
 }
 //----------------------------------------------------------------------------
 
@@ -162,7 +162,7 @@ void MoneyListCtrl::OnListLeftClick(wxMouseEvent& event)
     if (index == -1)
     {
         m_selected_row = -1;
-        m_sp->OnListItemSelected(m_selected_row);
+        m_sp->doListItemSelected(m_selected_row);
     }
     event.Skip();
 }
@@ -748,7 +748,7 @@ void MoneyListCtrl::doRefreshItems(int trans_id, bool filter)
 //----------------------------------------------------------------------------
 void MoneyListCtrl::OnListItemActivated(wxListEvent& /*event*/)
 {
-    m_sp->OnListItemActivated(m_selected_row);
+    m_sp->doListItemActivated(m_selected_row);
 }
 
 int MoneyListCtrl::initVirtualListControl(int id, int col, bool asc)

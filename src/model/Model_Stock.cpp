@@ -74,7 +74,8 @@ double Model_Stock::InvestmentValue(const Data& r)
 
 double Model_Stock::CurrentValue(const Data* r)
 {
-    return r->NUMSHARES * 1.0; //TODO: // r->CURRENTPRICE;
+    double current_price = Model_StockHistory::getLastRate(r->TICKERID);
+    return r->NUMSHARES * current_price;
 }
 
 double Model_Stock::CurrentValue(const Data& r)
