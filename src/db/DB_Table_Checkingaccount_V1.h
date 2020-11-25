@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
+ *          AUTO GENERATED at 2020-11-26 01:41:45.234000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -90,6 +90,8 @@ TRANSID integer primary key
 , TRANSDATE TEXT
 , FOLLOWUPID integer
 , TOTRANSAMOUNT numeric
+, COLOURID integer
+, CURRENCYID integer
 ))");
                 this->ensure_data(db);
             }
@@ -211,6 +213,18 @@ TRANSID integer primary key
         explicit TOTRANSAMOUNT(const double &v, OP op = EQUAL): DB_Column<double>(v, op) {}
     };
     
+    struct COLOURID : public DB_Column<int>
+    { 
+        static wxString name() { return "COLOURID"; } 
+        explicit COLOURID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
+    struct CURRENCYID : public DB_Column<int>
+    { 
+        static wxString name() { return "CURRENCYID"; } 
+        explicit CURRENCYID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
     typedef TRANSID PRIMARY;
     enum COLUMN
     {
@@ -228,6 +242,8 @@ TRANSID integer primary key
         , COL_TRANSDATE = 11
         , COL_FOLLOWUPID = 12
         , COL_TOTRANSAMOUNT = 13
+        , COL_COLOURID = 14
+        , COL_CURRENCYID = 15
     };
 
     /** Returns the column name as a string*/
@@ -249,6 +265,8 @@ TRANSID integer primary key
             case COL_TRANSDATE: return "TRANSDATE";
             case COL_FOLLOWUPID: return "FOLLOWUPID";
             case COL_TOTRANSAMOUNT: return "TOTRANSAMOUNT";
+            case COL_COLOURID: return "COLOURID";
+            case COL_CURRENCYID: return "CURRENCYID";
             default: break;
         }
         
@@ -272,6 +290,8 @@ TRANSID integer primary key
         else if ("TRANSDATE" == name) return COL_TRANSDATE;
         else if ("FOLLOWUPID" == name) return COL_FOLLOWUPID;
         else if ("TOTRANSAMOUNT" == name) return COL_TOTRANSAMOUNT;
+        else if ("COLOURID" == name) return COL_COLOURID;
+        else if ("CURRENCYID" == name) return COL_CURRENCYID;
 
         return COLUMN(-1);
     }
@@ -297,6 +317,8 @@ TRANSID integer primary key
         wxString TRANSDATE;
         int FOLLOWUPID;
         double TOTRANSAMOUNT;
+        int COLOURID;
+        int CURRENCYID;
 
         int id() const
         {
@@ -331,6 +353,8 @@ TRANSID integer primary key
             SUBCATEGID = -1;
             FOLLOWUPID = -1;
             TOTRANSAMOUNT = 0.0;
+            COLOURID = -1;
+            CURRENCYID = -1;
         }
 
         explicit Data(wxSQLite3ResultSet& q, Self* table = 0)
@@ -351,6 +375,8 @@ TRANSID integer primary key
             TRANSDATE = q.GetString(11); // TRANSDATE
             FOLLOWUPID = q.GetInt(12); // FOLLOWUPID
             TOTRANSAMOUNT = q.GetDouble(13); // TOTRANSAMOUNT
+            COLOURID = q.GetInt(14); // COLOURID
+            CURRENCYID = q.GetInt(15); // CURRENCYID
         }
 
         Data& operator=(const Data& other)
@@ -371,6 +397,8 @@ TRANSID integer primary key
             TRANSDATE = other.TRANSDATE;
             FOLLOWUPID = other.FOLLOWUPID;
             TOTRANSAMOUNT = other.TOTRANSAMOUNT;
+            COLOURID = other.COLOURID;
+            CURRENCYID = other.CURRENCYID;
             return *this;
         }
 
@@ -450,6 +478,16 @@ TRANSID integer primary key
             return this->TOTRANSAMOUNT == in.v_;
         }
 
+        bool match(const Self::COLOURID &in) const
+        {
+            return this->COLOURID == in.v_;
+        }
+
+        bool match(const Self::CURRENCYID &in) const
+        {
+            return this->CURRENCYID == in.v_;
+        }
+
         // Return the data record as a json string
         wxString to_json() const
         {
@@ -494,6 +532,10 @@ TRANSID integer primary key
             json_writer.Int(this->FOLLOWUPID);
             json_writer.Key("TOTRANSAMOUNT");
             json_writer.Double(this->TOTRANSAMOUNT);
+            json_writer.Key("COLOURID");
+            json_writer.Int(this->COLOURID);
+            json_writer.Key("CURRENCYID");
+            json_writer.Int(this->CURRENCYID);
         }
 
         row_t to_row_t() const
@@ -513,6 +555,8 @@ TRANSID integer primary key
             row(L"TRANSDATE") = TRANSDATE;
             row(L"FOLLOWUPID") = FOLLOWUPID;
             row(L"TOTRANSAMOUNT") = TOTRANSAMOUNT;
+            row(L"COLOURID") = COLOURID;
+            row(L"CURRENCYID") = CURRENCYID;
             return row;
         }
 
@@ -532,6 +576,8 @@ TRANSID integer primary key
             t(L"TRANSDATE") = TRANSDATE;
             t(L"FOLLOWUPID") = FOLLOWUPID;
             t(L"TOTRANSAMOUNT") = TOTRANSAMOUNT;
+            t(L"COLOURID") = COLOURID;
+            t(L"CURRENCYID") = CURRENCYID;
         }
 
         /** Save the record instance in memory to the database. */
@@ -567,7 +613,7 @@ TRANSID integer primary key
 
     enum
     {
-        NUM_COLUMNS = 14
+        NUM_COLUMNS = 16
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
@@ -577,7 +623,7 @@ TRANSID integer primary key
 
     DB_Table_CHECKINGACCOUNT_V1() : fake_(new Data())
     {
-        query_ = "SELECT TRANSID, ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT FROM CHECKINGACCOUNT_V1 ";
+        query_ = "SELECT TRANSID, ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT, COLOURID, CURRENCYID FROM CHECKINGACCOUNT_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -607,11 +653,11 @@ TRANSID integer primary key
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO CHECKINGACCOUNT_V1(ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO CHECKINGACCOUNT_V1(ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT, COLOURID, CURRENCYID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE CHECKINGACCOUNT_V1 SET ACCOUNTID = ?, TOACCOUNTID = ?, PAYEEID = ?, TRANSCODE = ?, TRANSAMOUNT = ?, STATUS = ?, TRANSACTIONNUMBER = ?, NOTES = ?, CATEGID = ?, SUBCATEGID = ?, TRANSDATE = ?, FOLLOWUPID = ?, TOTRANSAMOUNT = ? WHERE TRANSID = ?";
+            sql = "UPDATE CHECKINGACCOUNT_V1 SET ACCOUNTID = ?, TOACCOUNTID = ?, PAYEEID = ?, TRANSCODE = ?, TRANSAMOUNT = ?, STATUS = ?, TRANSACTIONNUMBER = ?, NOTES = ?, CATEGID = ?, SUBCATEGID = ?, TRANSDATE = ?, FOLLOWUPID = ?, TOTRANSAMOUNT = ?, COLOURID = ?, CURRENCYID = ? WHERE TRANSID = ?";
         }
 
         try
@@ -631,8 +677,10 @@ TRANSID integer primary key
             stmt.Bind(11, entity->TRANSDATE);
             stmt.Bind(12, entity->FOLLOWUPID);
             stmt.Bind(13, entity->TOTRANSAMOUNT);
+            stmt.Bind(14, entity->COLOURID);
+            stmt.Bind(15, entity->CURRENCYID);
             if (entity->id() > 0)
-                stmt.Bind(14, entity->TRANSID);
+                stmt.Bind(16, entity->TRANSID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();

@@ -596,10 +596,11 @@ void mmAssetsPanel::updateExtraAssetData(int selIndex)
     {
         const Model_Asset::Data& asset = this->m_assets[selIndex];
         enableEditDeleteButtons(true);
-        const auto& change_rate = (Model_Asset::rate(asset) != Model_Asset::RATE_NONE)
-            ? wxString::Format("%.2f %%", asset.VALUECHANGERATE) : "";
-        const wxString& miniInfo = " " + wxString::Format(_("Change in Value: %s %s")
-            , wxGetTranslation(asset.VALUECHANGE), change_rate);
+        const auto& change_rate = (Model_Asset::rate(asset) == Model_Asset::RATE_PERCENTAGE)
+            ? wxString::Format("%.2f %%", asset.VALUECHANGERATE)
+            : wxString::Format("%.2f", asset.VALUECHANGERATE);
+        const wxString& miniInfo = " " + wxString::Format(_("Change in Value: %s")
+            , change_rate);
 
         st->SetLabelText(asset.NOTES);
         stm->SetLabelText(miniInfo);

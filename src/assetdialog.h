@@ -49,7 +49,6 @@ private:
     void OnCancel(wxCommandEvent& event);
     void OnAttachments(wxCommandEvent& event);
     void OnChangeAppreciationType(wxCommandEvent& event);
-    void enableDisableRate(bool en);
     void onTextEntered(wxCommandEvent& event);
     void dataToControls();
     void changeFocus(wxChildFocusEvent& event);

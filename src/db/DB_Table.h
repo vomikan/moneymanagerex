@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
+ *          AUTO GENERATED at 2020-11-26 01:41:45.234000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -316,6 +316,15 @@ struct SorterByCENT_NAME
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.CENT_NAME) < (y.CENT_NAME);
+    }
+};
+
+struct SorterByCOLOURID
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.COLOURID) < (y.COLOURID);
     }
 };
 
@@ -631,6 +640,15 @@ struct SorterByMINIMUMPAYMENT
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.MINIMUMPAYMENT) < (y.MINIMUMPAYMENT);
+    }
+};
+
+struct SorterByMULTICURRENCY
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.MULTICURRENCY) < (y.MULTICURRENCY);
     }
 };
 

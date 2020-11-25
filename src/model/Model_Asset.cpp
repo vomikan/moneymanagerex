@@ -20,9 +20,8 @@
 
 const std::vector<std::pair<Model_Asset::RATE, wxString> > Model_Asset::RATE_CHOICES = 
 {
-    {Model_Asset::RATE_NONE, wxString(wxTRANSLATE("None"))}
-    , {Model_Asset::RATE_APPRECIATE, wxString(wxTRANSLATE("Appreciates"))}
-    , {Model_Asset::RATE_DEPRECIATE, wxString(wxTRANSLATE("Depreciates"))}
+      {Model_Asset::RATE_PERCENTAGE, wxString(wxTRANSLATE("Percentage"))}
+    , {Model_Asset::RATE_VALUE, wxString(wxTRANSLATE("Value"))}
 };
 
 const std::vector<std::pair<Model_Asset::TYPE, wxString> > Model_Asset::TYPE_CHOICES = 
@@ -123,7 +122,10 @@ Model_Asset::TYPE Model_Asset::type(const Data& r)
 
 Model_Asset::RATE Model_Asset::rate(const Data* r)
 {
-    for (const auto & item : RATE_CHOICES) if (item.second.CmpNoCase(r->VALUECHANGE) == 0) return item.first;
+    for (const auto & item : RATE_CHOICES) {
+        if (item.second.CmpNoCase(r->VALUECHANGE) == 0)
+            return item.first;
+    }
     return RATE(-1);
 }
 
@@ -142,17 +144,17 @@ double Model_Asset::value(const Data* r)
     double sum = r->VALUE;
     wxDate start_date = STARTDATE(r);
     const wxDate today = wxDate::Today();
+
     wxTimeSpan diff_time = today - start_date;
     double diff_time_in_days = static_cast<double>(diff_time.GetDays());
     switch (rate(r))
     {
-    case RATE_NONE:
+    case RATE_PERCENTAGE:
+        //sum *= pow(1.0 + (r->VALUECHANGERATE / 365.0 / 100.0), diff_time_in_days);
+        sum += sum /100.0 * (r->VALUECHANGERATE / 365.0 * diff_time_in_days);
         break;
-    case RATE_APPRECIATE:
-        sum *= pow(1.0 + (r->VALUECHANGERATE / 36500.0), diff_time_in_days);
-        break;
-    case RATE_DEPRECIATE:
-        sum *= pow(1.0 - (r->VALUECHANGERATE / 36500.0), diff_time_in_days);
+    case RATE_VALUE:
+        sum += r->VALUECHANGERATE / 365.0 * diff_time_in_days;
         break;
     default:
         break;

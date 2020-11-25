@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
+ *          AUTO GENERATED at 2020-11-26 01:41:45.234000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -76,14 +76,16 @@ struct DB_Table_ASSETS_V1 : public DB_Table
             try
             {
                 db->ExecuteUpdate(R"(CREATE TABLE ASSETS_V1(
-ASSETID integer primary key
+  ASSETID integer primary key
 , STARTDATE TEXT NOT NULL
 , ASSETNAME TEXT COLLATE NOCASE NOT NULL
 , VALUE numeric
-, VALUECHANGE TEXT /* None, Appreciates, Depreciates */
+, VALUECHANGE TEXT /* Value, Percentage */
 , NOTES TEXT
 , VALUECHANGERATE numeric
 , ASSETTYPE TEXT /* Property, Automobile, Household Object, Art, Jewellery, Cash, Other */
+, CURRENCYID INTEGER NOT NULL
+, FOREIGN KEY (CURRENCYID) REFERENCES CURRENCYFORMATS_V1(CURRENCYID) 
 ))");
                 this->ensure_data(db);
             }
@@ -168,6 +170,12 @@ ASSETID integer primary key
         explicit ASSETTYPE(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
+    struct CURRENCYID : public DB_Column<int>
+    { 
+        static wxString name() { return "CURRENCYID"; } 
+        explicit CURRENCYID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
     typedef ASSETID PRIMARY;
     enum COLUMN
     {
@@ -179,6 +187,7 @@ ASSETID integer primary key
         , COL_NOTES = 5
         , COL_VALUECHANGERATE = 6
         , COL_ASSETTYPE = 7
+        , COL_CURRENCYID = 8
     };
 
     /** Returns the column name as a string*/
@@ -194,6 +203,7 @@ ASSETID integer primary key
             case COL_NOTES: return "NOTES";
             case COL_VALUECHANGERATE: return "VALUECHANGERATE";
             case COL_ASSETTYPE: return "ASSETTYPE";
+            case COL_CURRENCYID: return "CURRENCYID";
             default: break;
         }
         
@@ -211,6 +221,7 @@ ASSETID integer primary key
         else if ("NOTES" == name) return COL_NOTES;
         else if ("VALUECHANGERATE" == name) return COL_VALUECHANGERATE;
         else if ("ASSETTYPE" == name) return COL_ASSETTYPE;
+        else if ("CURRENCYID" == name) return COL_CURRENCYID;
 
         return COLUMN(-1);
     }
@@ -230,6 +241,7 @@ ASSETID integer primary key
         wxString NOTES;
         double VALUECHANGERATE;
         wxString ASSETTYPE;
+        int CURRENCYID;
 
         int id() const
         {
@@ -258,6 +270,7 @@ ASSETID integer primary key
             ASSETID = -1;
             VALUE = 0.0;
             VALUECHANGERATE = 0.0;
+            CURRENCYID = -1;
         }
 
         explicit Data(wxSQLite3ResultSet& q, Self* table = 0)
@@ -272,6 +285,7 @@ ASSETID integer primary key
             NOTES = q.GetString(5); // NOTES
             VALUECHANGERATE = q.GetDouble(6); // VALUECHANGERATE
             ASSETTYPE = q.GetString(7); // ASSETTYPE
+            CURRENCYID = q.GetInt(8); // CURRENCYID
         }
 
         Data& operator=(const Data& other)
@@ -286,6 +300,7 @@ ASSETID integer primary key
             NOTES = other.NOTES;
             VALUECHANGERATE = other.VALUECHANGERATE;
             ASSETTYPE = other.ASSETTYPE;
+            CURRENCYID = other.CURRENCYID;
             return *this;
         }
 
@@ -335,6 +350,11 @@ ASSETID integer primary key
             return this->ASSETTYPE.CmpNoCase(in.v_) == 0;
         }
 
+        bool match(const Self::CURRENCYID &in) const
+        {
+            return this->CURRENCYID == in.v_;
+        }
+
         // Return the data record as a json string
         wxString to_json() const
         {
@@ -367,6 +387,8 @@ ASSETID integer primary key
             json_writer.Double(this->VALUECHANGERATE);
             json_writer.Key("ASSETTYPE");
             json_writer.String(this->ASSETTYPE.utf8_str());
+            json_writer.Key("CURRENCYID");
+            json_writer.Int(this->CURRENCYID);
         }
 
         row_t to_row_t() const
@@ -380,6 +402,7 @@ ASSETID integer primary key
             row(L"NOTES") = NOTES;
             row(L"VALUECHANGERATE") = VALUECHANGERATE;
             row(L"ASSETTYPE") = ASSETTYPE;
+            row(L"CURRENCYID") = CURRENCYID;
             return row;
         }
 
@@ -393,6 +416,7 @@ ASSETID integer primary key
             t(L"NOTES") = NOTES;
             t(L"VALUECHANGERATE") = VALUECHANGERATE;
             t(L"ASSETTYPE") = ASSETTYPE;
+            t(L"CURRENCYID") = CURRENCYID;
         }
 
         /** Save the record instance in memory to the database. */
@@ -428,7 +452,7 @@ ASSETID integer primary key
 
     enum
     {
-        NUM_COLUMNS = 8
+        NUM_COLUMNS = 9
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
@@ -438,7 +462,7 @@ ASSETID integer primary key
 
     DB_Table_ASSETS_V1() : fake_(new Data())
     {
-        query_ = "SELECT ASSETID, STARTDATE, ASSETNAME, VALUE, VALUECHANGE, NOTES, VALUECHANGERATE, ASSETTYPE FROM ASSETS_V1 ";
+        query_ = "SELECT ASSETID, STARTDATE, ASSETNAME, VALUE, VALUECHANGE, NOTES, VALUECHANGERATE, ASSETTYPE, CURRENCYID FROM ASSETS_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -468,11 +492,11 @@ ASSETID integer primary key
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO ASSETS_V1(STARTDATE, ASSETNAME, VALUE, VALUECHANGE, NOTES, VALUECHANGERATE, ASSETTYPE) VALUES(?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO ASSETS_V1(STARTDATE, ASSETNAME, VALUE, VALUECHANGE, NOTES, VALUECHANGERATE, ASSETTYPE, CURRENCYID) VALUES(?, ?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE ASSETS_V1 SET STARTDATE = ?, ASSETNAME = ?, VALUE = ?, VALUECHANGE = ?, NOTES = ?, VALUECHANGERATE = ?, ASSETTYPE = ? WHERE ASSETID = ?";
+            sql = "UPDATE ASSETS_V1 SET STARTDATE = ?, ASSETNAME = ?, VALUE = ?, VALUECHANGE = ?, NOTES = ?, VALUECHANGERATE = ?, ASSETTYPE = ?, CURRENCYID = ? WHERE ASSETID = ?";
         }
 
         try
@@ -486,8 +510,9 @@ ASSETID integer primary key
             stmt.Bind(5, entity->NOTES);
             stmt.Bind(6, entity->VALUECHANGERATE);
             stmt.Bind(7, entity->ASSETTYPE);
+            stmt.Bind(8, entity->CURRENCYID);
             if (entity->id() > 0)
-                stmt.Bind(8, entity->ASSETID);
+                stmt.Bind(9, entity->ASSETID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();

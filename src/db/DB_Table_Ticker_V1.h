@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
+ *          AUTO GENERATED at 2020-11-26 01:41:45.234000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -76,7 +76,7 @@ struct DB_Table_TICKER_V1 : public DB_Table
             try
             {
                 db->ExecuteUpdate(R"(CREATE TABLE TICKER_V1(
-TICKERID INTEGER PRIMARY KEY
+  TICKERID INTEGER PRIMARY KEY
 , SOURCE INTEGER /* Yahoo, MorningStar, MOEX */
 , SYMBOL TEXT COLLATE NOCASE NOT NULL
 , MARKET TEXT 

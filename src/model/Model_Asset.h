@@ -26,7 +26,7 @@
 class Model_Asset : public Model<DB_Table_ASSETS_V1>
 {
 public:
-    enum RATE { RATE_NONE = 0, RATE_APPRECIATE, RATE_DEPRECIATE };
+    enum RATE { RATE_PERCENTAGE = 0, RATE_VALUE };
     enum TYPE { TYPE_PROPERTY = 0, TYPE_AUTO, TYPE_HOUSE, TYPE_ART, TYPE_JEWELLERY, TYPE_CASH, TYPE_OTHER };
 
 public:

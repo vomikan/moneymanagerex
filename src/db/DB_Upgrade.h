@@ -7,7 +7,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-14 15:21:31.798000.
+ *          AUTO GENERATED at 2020-11-26 01:41:53.070000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -149,7 +149,7 @@ const std::vector<wxString> dbUpgradeQuery =
         WEBPAGE TEXT,
         NOTES TEXT,
         PRECISION INTEGER,
-        CURRENCYID INTEGER INTEGER NOT NULL,
+        CURRENCYID INTEGER NOT NULL,
         FOREIGN KEY (CURRENCYID) REFERENCES CURRENCYFORMATS_V1(CURRENCYID) 
         );
         CREATE INDEX IF NOT EXISTS IDX_TICKER ON TICKER_V1 (SYMBOL, TICKERID);
@@ -201,7 +201,7 @@ const std::vector<wxString> dbUpgradeQuery =
         CREATE INDEX IDX_STOCK_HELDAT ON STOCK_V1(HELDAT);
         
         
-        CREATE TABLE STOCKHISTORY_V2(
+        CREATE TABLE STOCKHISTORY_NEW(
         HISTID integer primary key
         , TICKERID INTEGER NOT NULL
         , DATE TEXT NOT NULL
@@ -211,7 +211,7 @@ const std::vector<wxString> dbUpgradeQuery =
         , FOREIGN KEY (TICKERID) REFERENCES TICKER_V1(TICKERID)
         );
         
-        INSERT INTO STOCKHISTORY_V2 (TICKERID, DATE, VALUE, UPDTYPE)
+        INSERT INTO STOCKHISTORY_NEW (TICKERID, DATE, VALUE, UPDTYPE)
         with t as (
         select TICKERID,
         (CASE WHEN T.MARKET ='' THEN T.SYMBOL ELSE T.SYMBOL||'.'||T.MARKET END) SYMBOL
@@ -225,13 +225,61 @@ const std::vector<wxString> dbUpgradeQuery =
         
         DROP INDEX IDX_STOCKHISTORY_SYMBOL;
         DROP TABLE STOCKHISTORY_V1;
-        ALTER TABLE STOCKHISTORY_V2 RENAME TO STOCKHISTORY_V1;
+        ALTER TABLE STOCKHISTORY_NEW RENAME TO STOCKHISTORY_V1;
         CREATE INDEX IDX_STOCKHISTORY_SYMBOL ON STOCKHISTORY_V1(TICKERID);
         
         DROP TABLE SHAREINFO_V1;
         DROP TABLE TRANSLINK_V1;
         DROP TABLE ASSETCLASS_V1;
         DROP TABLE ASSETCLASS_STOCK_V1;
+        
+        CREATE TABLE ASSETS_NEW(
+          ASSETID integer primary key
+        , STARTDATE TEXT NOT NULL
+        , ASSETNAME TEXT COLLATE NOCASE NOT NULL
+        , VALUE numeric
+        , VALUECHANGE TEXT /* Value, Percentage */
+        , VALUECHANGERATE numeric default 0
+        , ASSETTYPE TEXT /* Property, Automobile, Household Object, Art, Jewellery, Cash, Other */
+        , NOTES TEXT
+        , CURRENCYID INTEGER NOT NULL
+        , FOREIGN KEY (CURRENCYID) REFERENCES CURRENCYFORMATS_V1(CURRENCYID) 
+        );
+        
+        INSERT INTO ASSETS_NEW (
+          ASSETID
+        , STARTDATE
+        , ASSETNAME
+        , VALUE
+        , VALUECHANGE
+        , VALUECHANGERATE
+        , ASSETTYPE
+        , NOTES
+        , CURRENCYID)
+        select 
+          ASSETID
+        , STARTDATE
+        , ASSETNAME
+        , VALUE
+        , 'Percentage' as VALUECHANGE 
+        , case when VALUECHANGE='Appreciates' then VALUECHANGERATE when VALUECHANGE='Depreciates' then -VALUECHANGERATE else 0 end as VALUECHANGERATE
+        , ASSETTYPE
+        , NOTES
+        , (select INFOVALUE from INFOTABLE_V1 where INFONAME='BASECURRENCYID') as CURRENCYID
+        FROM ASSETS_V1;
+        
+        DROP INDEX IDX_ASSETS_ASSETTYPE;
+        DROP TABLE ASSETS_V1;
+        ALTER TABLE ASSETS_NEW RENAME TO ASSETS_V1;
+        CREATE INDEX IDX_ASSETS_ASSETTYPE ON ASSETS_V1(ASSETTYPE);
+        
+        ALTER TABLE ACCOUNTLIST_V1 ADD COLUMN MULTICURRENCY integer DEFAULT 0;
+        ALTER TABLE CHECKINGACCOUNT_V1 ADD COLUMN CURRENCYID integer;
+        ALTER TABLE CHECKINGACCOUNT_V1 ADD COLUMN COLOURID integer;
+        ALTER TABLE BILLSDEPOSITS_V1 ADD COLUMN CURRENCYID integer;
+        ALTER TABLE BILLSDEPOSITS_V1 ADD COLUMN COLOURID integer;
+        update CHECKINGACCOUNT_V1 set COLOURID = case when FOLLOWUPID >=0 and FOLLOWUPID <= 7 then FOLLOWUPID end;
+        update ACCOUNTLIST_V1 set MULTICURRENCY = 1 where ACCOUNTTYPE in ('Investment', 'Asset');
         
         PRAGMA user_version = 8;
         

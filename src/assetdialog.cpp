@@ -36,9 +36,9 @@ wxBEGIN_EVENT_TABLE( mmAssetDialog, wxDialog )
     EVT_BUTTON(wxID_OK, mmAssetDialog::OnOk)
     EVT_BUTTON(wxID_CANCEL, mmAssetDialog::OnCancel)
     EVT_BUTTON(wxID_FILE, mmAssetDialog::OnAttachments)
-    EVT_CHOICE(IDC_COMBO_TYPE, mmAssetDialog::OnChangeAppreciationType)
     EVT_CHILD_FOCUS(mmAssetDialog::changeFocus)
     EVT_CLOSE(mmAssetDialog::OnQuit)
+    EVT_CHOICE(IDC_COMBO_TYPE, mmAssetDialog::OnChangeAppreciationType)
 wxEND_EVENT_TABLE()
 
 mmAssetDialog::mmAssetDialog(wxWindow* parent, mmGUIFrame* gui_frame, Model_Asset::Data* asset)
@@ -106,7 +106,6 @@ void mmAssetDialog::dataToControls()
     m_valueChangeRate->SetValue(m_asset->VALUECHANGERATE, 3);
 
     m_valueChange->SetSelection(Model_Asset::rate(m_asset));
-    enableDisableRate(Model_Asset::rate(m_asset) != Model_Asset::RATE_NONE);
     m_assetType->SetSelection(Model_Asset::type(m_asset));
 
     if (!m_hidden_trans_entry)
@@ -189,10 +188,10 @@ void mmAssetDialog::CreateControls()
         m_valueChange->Append(wxGetTranslation(a));
 
     m_valueChange->SetToolTip(_("Specify if the value of the asset changes over time"));
-    m_valueChange->SetSelection(Model_Asset::RATE_NONE);
+    m_valueChange->SetSelection(Model_Asset::RATE_PERCENTAGE);
     itemFlexGridSizer6->Add(m_valueChange, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5);
 
-    m_valueChangeRateLabel = new wxStaticText(asset_details_panel, wxID_STATIC, _("% Rate"));
+    m_valueChangeRateLabel = new wxStaticText(asset_details_panel, wxID_STATIC, _("Rate"));
     itemFlexGridSizer6->Add(m_valueChangeRateLabel, g_flagsV);
 
     m_valueChangeRate = new mmTextCtrl(asset_details_panel, IDC_RATE, wxGetEmptyString()
@@ -202,7 +201,6 @@ void mmAssetDialog::CreateControls()
     itemFlexGridSizer6->Add(m_valueChangeRate, g_flagsV);
     m_valueChangeRate->Connect(IDC_RATE, wxEVT_COMMAND_TEXT_ENTER
         , wxCommandEventHandler(mmAssetDialog::onTextEntered), nullptr, this);
-    enableDisableRate(false);
 
     itemFlexGridSizer6->Add(new wxStaticText( asset_details_panel, wxID_STATIC, _("Notes")), g_flagsV);
 
@@ -254,47 +252,23 @@ void mmAssetDialog::HideTransactionPanel()
     //m_transaction_panel->Hide();
 }
 
-void mmAssetDialog::OnChangeAppreciationType(wxCommandEvent& /*event*/)
-{
-    int selection = m_valueChange->GetSelection();
-    // Disable for "None", Enable for "Appreciates" or "Depreciates"
-    enableDisableRate(selection != Model_Asset::RATE_NONE);
-}
-
-void mmAssetDialog::enableDisableRate(bool en)
-{
-    if (en)
-    {
-        m_valueChangeRate->SetEditable(true);
-        m_valueChangeRate->Enable(true);
-        m_valueChangeRateLabel->Enable(true);
-    }
-    else
-    {
-        //m_valueChangeRate->SetValue("0");
-        m_valueChangeRate->SetEditable(false);
-        m_valueChangeRate->Enable(false);
-        m_valueChangeRateLabel->Enable(false);
-    }
-}
-
 void mmAssetDialog::OnOk(wxCommandEvent& /*event*/)
 {
     const wxString name = m_assetName->GetValue().Trim();
     if (name.empty())
     {
-        mmErrorDialogs::InvalidName(m_assetName);
-        return;
+        return mmErrorDialogs::InvalidName(m_assetName);
     }
 
     double value = 0, valueChangeRate = 0;
     if (!m_value->checkValue(value))
     {
-        return;
+        return mmErrorDialogs::ToolTip4Object(m_value
+            , _("Invalid value"), _("Error"));
     }
 
     int valueChangeType = m_valueChange->GetSelection();
-    if (valueChangeType != Model_Asset::RATE_NONE && !m_valueChangeRate->checkValue(valueChangeRate))
+    if (!m_valueChangeRate->checkValue(valueChangeRate, false))
     {
         return;
     }
@@ -409,3 +383,18 @@ void mmAssetDialog::onTextEntered(wxCommandEvent& event)
 
     event.Skip();
 }
+
+void mmAssetDialog::OnChangeAppreciationType(wxCommandEvent& /*event*/)
+{
+    int selection = m_valueChange->GetSelection();
+    m_valueChangeRate->UnsetToolTip();
+
+    if (selection == Model_Asset::RATE_PERCENTAGE) {
+        m_valueChangeRate->SetToolTip(_("Enter the rate at which the asset changes its value in percentage per year"));
+    }
+    else {
+        m_valueChangeRate->SetToolTip(_("Enter the amount at which the asset changes its value per year"));
+    }
+
+}
+

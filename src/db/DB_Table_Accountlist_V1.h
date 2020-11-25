@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
+ *          AUTO GENERATED at 2020-11-26 01:41:45.234000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -78,7 +78,7 @@ struct DB_Table_ACCOUNTLIST_V1 : public DB_Table
                 db->ExecuteUpdate(R"(CREATE TABLE ACCOUNTLIST_V1(
 ACCOUNTID integer primary key
 , ACCOUNTNAME TEXT COLLATE NOCASE NOT NULL UNIQUE
-, ACCOUNTTYPE TEXT NOT NULL /* Checking, Term, Investment, Credit Card */
+, ACCOUNTTYPE TEXT NOT NULL /* Cash, Checking, Credit Card, Loan, Term, Investment, Asset */
 , ACCOUNTNUM TEXT
 , STATUS TEXT NOT NULL /* Open, Closed */
 , NOTES TEXT
@@ -89,6 +89,7 @@ ACCOUNTID integer primary key
 , INITIALBAL numeric
 , FAVORITEACCT TEXT NOT NULL
 , CURRENCYID integer NOT NULL
+, MULTICURRENCY integer DEFAULT 0
 , STATEMENTLOCKED integer
 , STATEMENTDATE TEXT
 , MINIMUMBALANCE numeric
@@ -211,6 +212,12 @@ ACCOUNTID integer primary key
         explicit CURRENCYID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
+    struct MULTICURRENCY : public DB_Column<int>
+    { 
+        static wxString name() { return "MULTICURRENCY"; } 
+        explicit MULTICURRENCY(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
     struct STATEMENTLOCKED : public DB_Column<int>
     { 
         static wxString name() { return "STATEMENTLOCKED"; } 
@@ -269,13 +276,14 @@ ACCOUNTID integer primary key
         , COL_INITIALBAL = 10
         , COL_FAVORITEACCT = 11
         , COL_CURRENCYID = 12
-        , COL_STATEMENTLOCKED = 13
-        , COL_STATEMENTDATE = 14
-        , COL_MINIMUMBALANCE = 15
-        , COL_CREDITLIMIT = 16
-        , COL_INTERESTRATE = 17
-        , COL_PAYMENTDUEDATE = 18
-        , COL_MINIMUMPAYMENT = 19
+        , COL_MULTICURRENCY = 13
+        , COL_STATEMENTLOCKED = 14
+        , COL_STATEMENTDATE = 15
+        , COL_MINIMUMBALANCE = 16
+        , COL_CREDITLIMIT = 17
+        , COL_INTERESTRATE = 18
+        , COL_PAYMENTDUEDATE = 19
+        , COL_MINIMUMPAYMENT = 20
     };
 
     /** Returns the column name as a string*/
@@ -296,6 +304,7 @@ ACCOUNTID integer primary key
             case COL_INITIALBAL: return "INITIALBAL";
             case COL_FAVORITEACCT: return "FAVORITEACCT";
             case COL_CURRENCYID: return "CURRENCYID";
+            case COL_MULTICURRENCY: return "MULTICURRENCY";
             case COL_STATEMENTLOCKED: return "STATEMENTLOCKED";
             case COL_STATEMENTDATE: return "STATEMENTDATE";
             case COL_MINIMUMBALANCE: return "MINIMUMBALANCE";
@@ -325,6 +334,7 @@ ACCOUNTID integer primary key
         else if ("INITIALBAL" == name) return COL_INITIALBAL;
         else if ("FAVORITEACCT" == name) return COL_FAVORITEACCT;
         else if ("CURRENCYID" == name) return COL_CURRENCYID;
+        else if ("MULTICURRENCY" == name) return COL_MULTICURRENCY;
         else if ("STATEMENTLOCKED" == name) return COL_STATEMENTLOCKED;
         else if ("STATEMENTDATE" == name) return COL_STATEMENTDATE;
         else if ("MINIMUMBALANCE" == name) return COL_MINIMUMBALANCE;
@@ -356,6 +366,7 @@ ACCOUNTID integer primary key
         double INITIALBAL;
         wxString FAVORITEACCT;
         int CURRENCYID;
+        int MULTICURRENCY;
         int STATEMENTLOCKED;
         wxString STATEMENTDATE;
         double MINIMUMBALANCE;
@@ -391,6 +402,7 @@ ACCOUNTID integer primary key
             ACCOUNTID = -1;
             INITIALBAL = 0.0;
             CURRENCYID = -1;
+            MULTICURRENCY = -1;
             STATEMENTLOCKED = -1;
             MINIMUMBALANCE = 0.0;
             CREDITLIMIT = 0.0;
@@ -415,13 +427,14 @@ ACCOUNTID integer primary key
             INITIALBAL = q.GetDouble(10); // INITIALBAL
             FAVORITEACCT = q.GetString(11); // FAVORITEACCT
             CURRENCYID = q.GetInt(12); // CURRENCYID
-            STATEMENTLOCKED = q.GetInt(13); // STATEMENTLOCKED
-            STATEMENTDATE = q.GetString(14); // STATEMENTDATE
-            MINIMUMBALANCE = q.GetDouble(15); // MINIMUMBALANCE
-            CREDITLIMIT = q.GetDouble(16); // CREDITLIMIT
-            INTERESTRATE = q.GetDouble(17); // INTERESTRATE
-            PAYMENTDUEDATE = q.GetString(18); // PAYMENTDUEDATE
-            MINIMUMPAYMENT = q.GetDouble(19); // MINIMUMPAYMENT
+            MULTICURRENCY = q.GetInt(13); // MULTICURRENCY
+            STATEMENTLOCKED = q.GetInt(14); // STATEMENTLOCKED
+            STATEMENTDATE = q.GetString(15); // STATEMENTDATE
+            MINIMUMBALANCE = q.GetDouble(16); // MINIMUMBALANCE
+            CREDITLIMIT = q.GetDouble(17); // CREDITLIMIT
+            INTERESTRATE = q.GetDouble(18); // INTERESTRATE
+            PAYMENTDUEDATE = q.GetString(19); // PAYMENTDUEDATE
+            MINIMUMPAYMENT = q.GetDouble(20); // MINIMUMPAYMENT
         }
 
         Data& operator=(const Data& other)
@@ -441,6 +454,7 @@ ACCOUNTID integer primary key
             INITIALBAL = other.INITIALBAL;
             FAVORITEACCT = other.FAVORITEACCT;
             CURRENCYID = other.CURRENCYID;
+            MULTICURRENCY = other.MULTICURRENCY;
             STATEMENTLOCKED = other.STATEMENTLOCKED;
             STATEMENTDATE = other.STATEMENTDATE;
             MINIMUMBALANCE = other.MINIMUMBALANCE;
@@ -522,6 +536,11 @@ ACCOUNTID integer primary key
             return this->CURRENCYID == in.v_;
         }
 
+        bool match(const Self::MULTICURRENCY &in) const
+        {
+            return this->MULTICURRENCY == in.v_;
+        }
+
         bool match(const Self::STATEMENTLOCKED &in) const
         {
             return this->STATEMENTLOCKED == in.v_;
@@ -599,6 +618,8 @@ ACCOUNTID integer primary key
             json_writer.String(this->FAVORITEACCT.utf8_str());
             json_writer.Key("CURRENCYID");
             json_writer.Int(this->CURRENCYID);
+            json_writer.Key("MULTICURRENCY");
+            json_writer.Int(this->MULTICURRENCY);
             json_writer.Key("STATEMENTLOCKED");
             json_writer.Int(this->STATEMENTLOCKED);
             json_writer.Key("STATEMENTDATE");
@@ -631,6 +652,7 @@ ACCOUNTID integer primary key
             row(L"INITIALBAL") = INITIALBAL;
             row(L"FAVORITEACCT") = FAVORITEACCT;
             row(L"CURRENCYID") = CURRENCYID;
+            row(L"MULTICURRENCY") = MULTICURRENCY;
             row(L"STATEMENTLOCKED") = STATEMENTLOCKED;
             row(L"STATEMENTDATE") = STATEMENTDATE;
             row(L"MINIMUMBALANCE") = MINIMUMBALANCE;
@@ -656,6 +678,7 @@ ACCOUNTID integer primary key
             t(L"INITIALBAL") = INITIALBAL;
             t(L"FAVORITEACCT") = FAVORITEACCT;
             t(L"CURRENCYID") = CURRENCYID;
+            t(L"MULTICURRENCY") = MULTICURRENCY;
             t(L"STATEMENTLOCKED") = STATEMENTLOCKED;
             t(L"STATEMENTDATE") = STATEMENTDATE;
             t(L"MINIMUMBALANCE") = MINIMUMBALANCE;
@@ -698,7 +721,7 @@ ACCOUNTID integer primary key
 
     enum
     {
-        NUM_COLUMNS = 20
+        NUM_COLUMNS = 21
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
@@ -708,7 +731,7 @@ ACCOUNTID integer primary key
 
     DB_Table_ACCOUNTLIST_V1() : fake_(new Data())
     {
-        query_ = "SELECT ACCOUNTID, ACCOUNTNAME, ACCOUNTTYPE, ACCOUNTNUM, STATUS, NOTES, HELDAT, WEBSITE, CONTACTINFO, ACCESSINFO, INITIALBAL, FAVORITEACCT, CURRENCYID, STATEMENTLOCKED, STATEMENTDATE, MINIMUMBALANCE, CREDITLIMIT, INTERESTRATE, PAYMENTDUEDATE, MINIMUMPAYMENT FROM ACCOUNTLIST_V1 ";
+        query_ = "SELECT ACCOUNTID, ACCOUNTNAME, ACCOUNTTYPE, ACCOUNTNUM, STATUS, NOTES, HELDAT, WEBSITE, CONTACTINFO, ACCESSINFO, INITIALBAL, FAVORITEACCT, CURRENCYID, MULTICURRENCY, STATEMENTLOCKED, STATEMENTDATE, MINIMUMBALANCE, CREDITLIMIT, INTERESTRATE, PAYMENTDUEDATE, MINIMUMPAYMENT FROM ACCOUNTLIST_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -738,11 +761,11 @@ ACCOUNTID integer primary key
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO ACCOUNTLIST_V1(ACCOUNTNAME, ACCOUNTTYPE, ACCOUNTNUM, STATUS, NOTES, HELDAT, WEBSITE, CONTACTINFO, ACCESSINFO, INITIALBAL, FAVORITEACCT, CURRENCYID, STATEMENTLOCKED, STATEMENTDATE, MINIMUMBALANCE, CREDITLIMIT, INTERESTRATE, PAYMENTDUEDATE, MINIMUMPAYMENT) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO ACCOUNTLIST_V1(ACCOUNTNAME, ACCOUNTTYPE, ACCOUNTNUM, STATUS, NOTES, HELDAT, WEBSITE, CONTACTINFO, ACCESSINFO, INITIALBAL, FAVORITEACCT, CURRENCYID, MULTICURRENCY, STATEMENTLOCKED, STATEMENTDATE, MINIMUMBALANCE, CREDITLIMIT, INTERESTRATE, PAYMENTDUEDATE, MINIMUMPAYMENT) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE ACCOUNTLIST_V1 SET ACCOUNTNAME = ?, ACCOUNTTYPE = ?, ACCOUNTNUM = ?, STATUS = ?, NOTES = ?, HELDAT = ?, WEBSITE = ?, CONTACTINFO = ?, ACCESSINFO = ?, INITIALBAL = ?, FAVORITEACCT = ?, CURRENCYID = ?, STATEMENTLOCKED = ?, STATEMENTDATE = ?, MINIMUMBALANCE = ?, CREDITLIMIT = ?, INTERESTRATE = ?, PAYMENTDUEDATE = ?, MINIMUMPAYMENT = ? WHERE ACCOUNTID = ?";
+            sql = "UPDATE ACCOUNTLIST_V1 SET ACCOUNTNAME = ?, ACCOUNTTYPE = ?, ACCOUNTNUM = ?, STATUS = ?, NOTES = ?, HELDAT = ?, WEBSITE = ?, CONTACTINFO = ?, ACCESSINFO = ?, INITIALBAL = ?, FAVORITEACCT = ?, CURRENCYID = ?, MULTICURRENCY = ?, STATEMENTLOCKED = ?, STATEMENTDATE = ?, MINIMUMBALANCE = ?, CREDITLIMIT = ?, INTERESTRATE = ?, PAYMENTDUEDATE = ?, MINIMUMPAYMENT = ? WHERE ACCOUNTID = ?";
         }
 
         try
@@ -761,15 +784,16 @@ ACCOUNTID integer primary key
             stmt.Bind(10, entity->INITIALBAL);
             stmt.Bind(11, entity->FAVORITEACCT);
             stmt.Bind(12, entity->CURRENCYID);
-            stmt.Bind(13, entity->STATEMENTLOCKED);
-            stmt.Bind(14, entity->STATEMENTDATE);
-            stmt.Bind(15, entity->MINIMUMBALANCE);
-            stmt.Bind(16, entity->CREDITLIMIT);
-            stmt.Bind(17, entity->INTERESTRATE);
-            stmt.Bind(18, entity->PAYMENTDUEDATE);
-            stmt.Bind(19, entity->MINIMUMPAYMENT);
+            stmt.Bind(13, entity->MULTICURRENCY);
+            stmt.Bind(14, entity->STATEMENTLOCKED);
+            stmt.Bind(15, entity->STATEMENTDATE);
+            stmt.Bind(16, entity->MINIMUMBALANCE);
+            stmt.Bind(17, entity->CREDITLIMIT);
+            stmt.Bind(18, entity->INTERESTRATE);
+            stmt.Bind(19, entity->PAYMENTDUEDATE);
+            stmt.Bind(20, entity->MINIMUMPAYMENT);
             if (entity->id() > 0)
-                stmt.Bind(20, entity->ACCOUNTID);
+                stmt.Bind(21, entity->ACCOUNTID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();

@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-14 15:21:27.622000.
+ *          AUTO GENERATED at 2020-11-26 01:41:45.234000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -93,6 +93,8 @@ BDID integer primary key
 , REPEATS integer
 , NEXTOCCURRENCEDATE TEXT
 , NUMOCCURRENCES integer
+, CURRENCYID integer
+, COLOURID integer
 ))");
                 this->ensure_data(db);
             }
@@ -231,6 +233,18 @@ BDID integer primary key
         explicit NUMOCCURRENCES(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
+    struct CURRENCYID : public DB_Column<int>
+    { 
+        static wxString name() { return "CURRENCYID"; } 
+        explicit CURRENCYID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
+    struct COLOURID : public DB_Column<int>
+    { 
+        static wxString name() { return "COLOURID"; } 
+        explicit COLOURID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
     typedef BDID PRIMARY;
     enum COLUMN
     {
@@ -251,6 +265,8 @@ BDID integer primary key
         , COL_REPEATS = 14
         , COL_NEXTOCCURRENCEDATE = 15
         , COL_NUMOCCURRENCES = 16
+        , COL_CURRENCYID = 17
+        , COL_COLOURID = 18
     };
 
     /** Returns the column name as a string*/
@@ -275,6 +291,8 @@ BDID integer primary key
             case COL_REPEATS: return "REPEATS";
             case COL_NEXTOCCURRENCEDATE: return "NEXTOCCURRENCEDATE";
             case COL_NUMOCCURRENCES: return "NUMOCCURRENCES";
+            case COL_CURRENCYID: return "CURRENCYID";
+            case COL_COLOURID: return "COLOURID";
             default: break;
         }
         
@@ -301,6 +319,8 @@ BDID integer primary key
         else if ("REPEATS" == name) return COL_REPEATS;
         else if ("NEXTOCCURRENCEDATE" == name) return COL_NEXTOCCURRENCEDATE;
         else if ("NUMOCCURRENCES" == name) return COL_NUMOCCURRENCES;
+        else if ("CURRENCYID" == name) return COL_CURRENCYID;
+        else if ("COLOURID" == name) return COL_COLOURID;
 
         return COLUMN(-1);
     }
@@ -329,6 +349,8 @@ BDID integer primary key
         int REPEATS;
         wxString NEXTOCCURRENCEDATE;
         int NUMOCCURRENCES;
+        int CURRENCYID;
+        int COLOURID;
 
         int id() const
         {
@@ -365,6 +387,8 @@ BDID integer primary key
             TOTRANSAMOUNT = 0.0;
             REPEATS = -1;
             NUMOCCURRENCES = -1;
+            CURRENCYID = -1;
+            COLOURID = -1;
         }
 
         explicit Data(wxSQLite3ResultSet& q, Self* table = 0)
@@ -388,6 +412,8 @@ BDID integer primary key
             REPEATS = q.GetInt(14); // REPEATS
             NEXTOCCURRENCEDATE = q.GetString(15); // NEXTOCCURRENCEDATE
             NUMOCCURRENCES = q.GetInt(16); // NUMOCCURRENCES
+            CURRENCYID = q.GetInt(17); // CURRENCYID
+            COLOURID = q.GetInt(18); // COLOURID
         }
 
         Data& operator=(const Data& other)
@@ -411,6 +437,8 @@ BDID integer primary key
             REPEATS = other.REPEATS;
             NEXTOCCURRENCEDATE = other.NEXTOCCURRENCEDATE;
             NUMOCCURRENCES = other.NUMOCCURRENCES;
+            CURRENCYID = other.CURRENCYID;
+            COLOURID = other.COLOURID;
             return *this;
         }
 
@@ -505,6 +533,16 @@ BDID integer primary key
             return this->NUMOCCURRENCES == in.v_;
         }
 
+        bool match(const Self::CURRENCYID &in) const
+        {
+            return this->CURRENCYID == in.v_;
+        }
+
+        bool match(const Self::COLOURID &in) const
+        {
+            return this->COLOURID == in.v_;
+        }
+
         // Return the data record as a json string
         wxString to_json() const
         {
@@ -555,6 +593,10 @@ BDID integer primary key
             json_writer.String(this->NEXTOCCURRENCEDATE.utf8_str());
             json_writer.Key("NUMOCCURRENCES");
             json_writer.Int(this->NUMOCCURRENCES);
+            json_writer.Key("CURRENCYID");
+            json_writer.Int(this->CURRENCYID);
+            json_writer.Key("COLOURID");
+            json_writer.Int(this->COLOURID);
         }
 
         row_t to_row_t() const
@@ -577,6 +619,8 @@ BDID integer primary key
             row(L"REPEATS") = REPEATS;
             row(L"NEXTOCCURRENCEDATE") = NEXTOCCURRENCEDATE;
             row(L"NUMOCCURRENCES") = NUMOCCURRENCES;
+            row(L"CURRENCYID") = CURRENCYID;
+            row(L"COLOURID") = COLOURID;
             return row;
         }
 
@@ -599,6 +643,8 @@ BDID integer primary key
             t(L"REPEATS") = REPEATS;
             t(L"NEXTOCCURRENCEDATE") = NEXTOCCURRENCEDATE;
             t(L"NUMOCCURRENCES") = NUMOCCURRENCES;
+            t(L"CURRENCYID") = CURRENCYID;
+            t(L"COLOURID") = COLOURID;
         }
 
         /** Save the record instance in memory to the database. */
@@ -634,7 +680,7 @@ BDID integer primary key
 
     enum
     {
-        NUM_COLUMNS = 17
+        NUM_COLUMNS = 19
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
@@ -644,7 +690,7 @@ BDID integer primary key
 
     DB_Table_BILLSDEPOSITS_V1() : fake_(new Data())
     {
-        query_ = "SELECT BDID, ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT, REPEATS, NEXTOCCURRENCEDATE, NUMOCCURRENCES FROM BILLSDEPOSITS_V1 ";
+        query_ = "SELECT BDID, ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT, REPEATS, NEXTOCCURRENCEDATE, NUMOCCURRENCES, CURRENCYID, COLOURID FROM BILLSDEPOSITS_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -674,11 +720,11 @@ BDID integer primary key
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO BILLSDEPOSITS_V1(ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT, REPEATS, NEXTOCCURRENCEDATE, NUMOCCURRENCES) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO BILLSDEPOSITS_V1(ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT, REPEATS, NEXTOCCURRENCEDATE, NUMOCCURRENCES, CURRENCYID, COLOURID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE BILLSDEPOSITS_V1 SET ACCOUNTID = ?, TOACCOUNTID = ?, PAYEEID = ?, TRANSCODE = ?, TRANSAMOUNT = ?, STATUS = ?, TRANSACTIONNUMBER = ?, NOTES = ?, CATEGID = ?, SUBCATEGID = ?, TRANSDATE = ?, FOLLOWUPID = ?, TOTRANSAMOUNT = ?, REPEATS = ?, NEXTOCCURRENCEDATE = ?, NUMOCCURRENCES = ? WHERE BDID = ?";
+            sql = "UPDATE BILLSDEPOSITS_V1 SET ACCOUNTID = ?, TOACCOUNTID = ?, PAYEEID = ?, TRANSCODE = ?, TRANSAMOUNT = ?, STATUS = ?, TRANSACTIONNUMBER = ?, NOTES = ?, CATEGID = ?, SUBCATEGID = ?, TRANSDATE = ?, FOLLOWUPID = ?, TOTRANSAMOUNT = ?, REPEATS = ?, NEXTOCCURRENCEDATE = ?, NUMOCCURRENCES = ?, CURRENCYID = ?, COLOURID = ? WHERE BDID = ?";
         }
 
         try
@@ -701,8 +747,10 @@ BDID integer primary key
             stmt.Bind(14, entity->REPEATS);
             stmt.Bind(15, entity->NEXTOCCURRENCEDATE);
             stmt.Bind(16, entity->NUMOCCURRENCES);
+            stmt.Bind(17, entity->CURRENCYID);
+            stmt.Bind(18, entity->COLOURID);
             if (entity->id() > 0)
-                stmt.Bind(17, entity->BDID);
+                stmt.Bind(19, entity->BDID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();
