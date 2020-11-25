@@ -466,7 +466,7 @@ void mmReportsPanel::OnNewWindow(wxWebViewEvent& evt)
             Model_Checking::Data* transaction = Model_Checking::instance().get(transId);
             if (transaction && transaction->TRANSID > -1)
             {
-                mmTransDialog dlg(m_frame, -1, transId, 0.0);
+                mmTransDialog dlg(m_frame, -1, transId);
                 if (dlg.ShowModal() == wxID_OK)
                 {
                     rb_->getHTMLText();

@@ -135,7 +135,8 @@ mmTransDialog::mmTransDialog(wxWindow* parent
         }
         if (m_to_currency) {
             m_advanced = !m_new_trx
-                && Model_Account::get_account_type(m_account_id) != Model_Account::INVESTMENT
+                && (Model_Account::get_account_type(m_account_id) != Model_Account::INVESTMENT
+                     && Model_Account::get_account_type(to_acc->ACCOUNTID) != Model_Account::INVESTMENT)
                 && (m_currency->CURRENCYID != m_to_currency->CURRENCYID
                     || m_trx_data.TRANSAMOUNT != m_trx_data.TOTRANSAMOUNT);
         }
@@ -216,20 +217,8 @@ void mmTransDialog::dataToControls()
     {
         if (m_transfer)
         {
-            if (!m_advanced)
+            if (m_advanced)
             {
-                double exch = 1.0;
-                Model_Account::Data* to_acc = Model_Account::instance().get(m_trx_data.TOACCOUNTID);
-                if (m_to_currency && to_acc
-                    && to_acc->ACCOUNTTYPE != Model_Account::all_type()[Model_Account::INVESTMENT])
-                {
-                    const double convRateTo = Model_CurrencyHistory::getDayRate(m_to_currency->CURRENCYID, m_trx_data.TRANSDATE);
-                    if (convRateTo > 0.0) {
-                        const double convRate = Model_CurrencyHistory::getDayRate(m_currency->CURRENCYID, m_trx_data.TRANSDATE);
-                        exch = convRate / convRateTo;
-                    }
-                }
-                m_trx_data.TOTRANSAMOUNT = m_trx_data.TRANSAMOUNT * exch;
                 toTextAmount_->SetValue(m_trx_data.TOTRANSAMOUNT, Model_Currency::precision(m_trx_data.TOACCOUNTID));
             }
         }
@@ -1054,8 +1043,32 @@ void mmTransDialog::OnAutoTransNum(wxCommandEvent& WXUNUSED(event))
     textNumber_->SetValue(wxString::FromDouble(next_number, 0));
 }
 
-void mmTransDialog::OnAdvanceChecked(wxCommandEvent& WXUNUSED(event))
+void mmTransDialog::OnAdvanceChecked(wxCommandEvent& event)
 {
+    int id = event.GetSelection();
+
+    if (id == wxCHK_CHECKED)
+    {
+        double exch = 1.0;
+        Model_Account::Data* to_acc = Model_Account::instance().get(m_trx_data.TOACCOUNTID);
+        if (m_to_currency && to_acc
+            && to_acc->ACCOUNTTYPE != Model_Account::all_type()[Model_Account::INVESTMENT])
+        {
+            const double convRateTo = Model_CurrencyHistory::getDayRate(m_to_currency->CURRENCYID, m_trx_data.TRANSDATE);
+            if (convRateTo > 0.0) {
+                const double convRate = Model_CurrencyHistory::getDayRate(m_currency->CURRENCYID, m_trx_data.TRANSDATE);
+                exch = convRate / convRateTo;
+            }
+        }
+        m_trx_data.TOTRANSAMOUNT = m_trx_data.TRANSAMOUNT * exch;
+        toTextAmount_->SetValue(m_trx_data.TOTRANSAMOUNT, Model_Currency::precision(m_trx_data.TOACCOUNTID));
+    }
+    else if (id == wxCHK_UNCHECKED)
+    {
+        m_trx_data.TOTRANSAMOUNT = m_trx_data.TRANSAMOUNT;
+        toTextAmount_->ChangeValue("");
+    }
+
     m_advanced = cAdvanced_->IsChecked();
     skip_amount_init_ = false;
     dataToControls();

@@ -436,7 +436,7 @@ void MoneyListCtrl::OnDuplicateTransaction()
     if ((m_selected_row < 0) || (GetSelectedItemCount() > 1)) return;
 
     int transaction_id = m_money[m_selected_row].TRANSID;
-    mmTransDialog dlg(this, m_sp->get_account_id(), transaction_id, 0 /*TODO*/, true);
+    mmTransDialog dlg(this, m_sp->get_account_id(), transaction_id, true);
     if (dlg.ShowModal() == wxID_OK)
     {
         m_selected_row = dlg.GetTransactionID();
@@ -670,7 +670,7 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
             int trx_id = m_money.at(m_selected_row).TRANSID;
             Model_Checking::Data* trx = Model_Checking::instance().get(trx_id);
             if (trx) {
-                mmTransDialog dlg(this, m_sp->get_account_id(), trx_id, 0.0, true);
+                mmTransDialog dlg(this, m_sp->get_account_id(), trx_id, true);
                 if (dlg.ShowModal() == wxID_OK) {
                     initVirtualListControl(dlg.GetTransactionID());
                 }

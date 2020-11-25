@@ -2338,7 +2338,7 @@ void mmGUIFrame::OnNewTransaction(wxCommandEvent& /*event*/)
     if (m_db)
     {
         if (Model_Account::instance().all_account_names().empty()) return;
-        mmTransDialog dlg(this, gotoAccountID_, 0, 0);
+        mmTransDialog dlg(this, gotoAccountID_, -1);
 
         if (dlg.ShowModal() == wxID_OK)
         {

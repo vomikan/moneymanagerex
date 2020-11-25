@@ -410,7 +410,7 @@ void mmStocksPanel::call_dialog(int selectedIndex)
             , money->NOTES);
         }
 
-        mmTransDialog dlg(this, m_account_id, money->TRANSID, 0);
+        mmTransDialog dlg(this, m_account_id, money->TRANSID);
         if (dlg.ShowModal() == wxID_OK)
         {
 

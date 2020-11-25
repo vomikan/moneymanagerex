@@ -654,7 +654,7 @@ void TransactionListCtrl::OnDuplicateTransaction(wxCommandEvent& WXUNUSED(event)
     if ((m_selectedIndex < 0) || (GetSelectedItemCount() > 1)) return;
 
     int transaction_id = m_trans[m_selectedIndex].TRANSID;
-    mmTransDialog dlg(this, m_cp->m_AccountID, transaction_id, m_cp->m_account_balance, true);
+    mmTransDialog dlg(this, m_cp->m_AccountID, transaction_id, true);
     if (dlg.ShowModal() == wxID_OK)
     {
         m_selectedIndex = dlg.GetTransactionID();
@@ -841,7 +841,7 @@ void TransactionListCtrl::OnEditTransaction(wxCommandEvent& /*event*/)
         return;
     }
 
-    mmTransDialog dlg(this, m_cp->m_AccountID, transaction_id, m_cp->m_account_balance);
+    mmTransDialog dlg(this, m_cp->m_AccountID, transaction_id);
     if (dlg.ShowModal() == wxID_OK)
     {
         refreshVisualList(transaction_id);
@@ -853,7 +853,7 @@ void TransactionListCtrl::OnEditTransaction(wxCommandEvent& /*event*/)
 void TransactionListCtrl::OnNewTransaction(wxCommandEvent& event)
 {
     int type = event.GetId() == MENU_TREEPOPUP_NEW_DEPOSIT ? Model_Checking::DEPOSIT : Model_Checking::WITHDRAWAL;
-    mmTransDialog dlg(this, m_cp->m_AccountID, 0, false, type);
+    mmTransDialog dlg(this, m_cp->m_AccountID, -1, false, type);
     if (dlg.ShowModal() == wxID_OK)
     {
         m_cp->mmPlayTransactionSound();
