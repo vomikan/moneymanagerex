@@ -80,6 +80,7 @@ public:
 
     bool getSortOrder() const;
     EColumn getSortColumn() const { return m_sortCol; }
+    long getSelectedID() const;
 
     void setSortOrder(bool asc);
     void setSortColumn(EColumn col);
@@ -89,11 +90,11 @@ public:
 
     void OnDeleteTransaction(wxCommandEvent& event);
     void OnEditTransaction(wxCommandEvent& event);
+    void OnNewTransaction(wxCommandEvent& event);
     void OnDuplicateTransaction();
 
     void doRefreshItems(int trans_id = -1, bool filter = true);
     long m_selectedForCopy; //The transaction ID if selected for copy
-    long m_selectedID; //Selected transaction ID
 
 protected:
     /* Sort Columns */
@@ -130,6 +131,7 @@ private:
     int OnPaste(Model_Checking::Data* tran);
     void sortTable();
     int col_sort() const;
+    long m_selectedID; //Selected transaction ID
 
     bool TransactionLocked(const wxString& transdate);
 private:
@@ -176,6 +178,7 @@ inline int MoneyListCtrl::col_sort() const { return COL_DEF_SORT; }
 inline void MoneyListCtrl::setSortColumn(EColumn col) { m_sortCol = col; }
 inline void MoneyListCtrl::setSortOrder(bool asc) { m_asc = asc; }
 inline bool MoneyListCtrl::getSortOrder() const { return m_asc; }
+inline long MoneyListCtrl::getSelectedID() const { return m_selectedID; }
 
 #endif // MM_EX_MONEY_LIST_H_
 

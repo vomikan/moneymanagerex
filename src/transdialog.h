@@ -80,6 +80,7 @@ private:
     void OnMoreFields(wxCommandEvent& event);
     void OnQuit(wxCloseEvent& event);
     void OnCategs(wxCommandEvent& event);
+    void OnCurrency(wxCommandEvent& event);
     void OnAttachments(wxCommandEvent& event);
     void OnColourButton(wxCommandEvent& event);
     void OnColourSelected(wxCommandEvent& event);
@@ -98,32 +99,33 @@ private:
     void SetTooltips();
     void SetCategoryForPayee(const Model_Payee::Data *payee = nullptr);
 private:
-    mmTextCtrl* textNumber_;
-    mmTextCtrl* m_textAmount;
-    mmTextCtrl* toTextAmount_;
-    wxTextCtrl* textNotes_;
-    wxButton* bCategory_;
-    wxButton* bAttachments_;
-    wxButton* bColours_;
-    wxComboBox* cbAccount_;
-    wxComboBox* cbPayee_;
-    wxCheckBox* cSplit_;
-    wxCheckBox* cAdvanced_;
-    wxButton* itemButtonCancel_;
-    wxChoice* choiceStatus_;
-    wxChoice* transaction_type_;
-    wxDatePickerCtrl* dpc_;
-    wxStaticText* itemStaticTextWeek_;
-    wxStaticText* account_label_;
-    wxStaticText* payee_label_;
+    mmTextCtrl* m_trx_number;
+    mmTextCtrl* m_trx_amount;
+    mmTextCtrl* m_trx_to_amount;
+    wxTextCtrl* m_trx_notes;
+    wxButton* m_trx_curegory_btn;
+    wxButton* m_trx_attachments_btn;
+    wxButton* m_trx_colours_btn;
+    wxButton* m_trx_currency_btn;
+    wxComboBox* m_trx_account;
+    wxComboBox* m_trx_payee_box;
+    wxCheckBox* m_split_box;
+    wxCheckBox* m_trx_advanced;
+    wxButton* m_button_cancel;
+    wxChoice* m_trx_status;
+    wxChoice* m_trx_type;
+    wxDatePickerCtrl* m_date_picker;
+    wxStaticText* m_item_week;
+    wxStaticText* m_account_label;
+    wxStaticText* m_payee_label;
 
-    bool m_transfer;
-    bool m_new_trx;
-    bool m_duplicate;
-    bool categUpdated_;
-    bool m_advanced;
+    bool m_is_transfer;
+    bool m_is_new_trx;
+    bool m_is_duplicate;
+    bool m_is_categ_updated;
+    bool m_is_advanced;
 
-    int object_in_focus_;
+    int m_object_in_focus_id;
     int m_account_id;
     wxString m_status;
 
@@ -146,28 +148,25 @@ private:
     enum
     {
         /* Transaction Dialog */
-        ID_DIALOG_TRANS_TYPE = wxID_HIGHEST + 900,
-        ID_DIALOG_TRANS_TEXTNUMBER,
-        ID_DIALOG_TRANS_BUTTONDATE,
-        ID_DIALOG_TRANS_TEXTNOTES,
-        ID_DIALOG_TRANS_TEXTAMOUNT,
-        ID_DIALOG_TRANS_TOTEXTAMOUNT,
-        ID_DIALOG_TRANS_STATIC_PAYEE,
-        ID_DIALOG_TRANS_BUTTONPAYEE,
-        ID_DIALOG_TRANS_BUTTONTO,
-        ID_DIALOG_TRANS_STATUS,
-        ID_DIALOG_TRANS_ADVANCED_CHECKBOX,
-        ID_DIALOG_TRANS_ADVANCED_FROM,
-        ID_DIALOG_TRANS_ADVANCED_TO,
-        ID_DIALOG_TRANS_SPLITCHECKBOX,
-        ID_DIALOG_TRANS_BUTTONTRANSNUM,
-        ID_DIALOG_TRANS_PAYEECOMBO,
-        ID_DIALOG_TRANS_BUTTON_FREQENTNOTES,
-        ID_DIALOG_TRANS_DATE_SPINNER,
-        ID_DIALOG_TRANS_CUSTOMFIELDS,
-        ID_CUSTOMFIELD,
+        ID_TRX_TYPE = wxID_HIGHEST + 900,
+        ID_TRX_TEXTNUMBER,
+        ID_TRX_BUTTONDATE,
+        ID_TRX_TEXTNOTES,
+        ID_TRX_TEXTAMOUNT,
+        ID_TRX_TOTEXTAMOUNT,
+        ID_TRX_STATUS,
+        ID_TRX_ADVANCED,
+        ID_TRX_ADVANCED_FROM,
+        ID_TRX_ADVANCED_TO,
+        ID_TRX_SPLIT,
+        ID_TRX_TRANSNUM,
+        ID_TRX_PAYEE,
+        ID_TRX_FREQENTNOTES,
+        ID_TRX_DATE_SPINNER,
+        ID_TRX_CUSTOMFIELDS,
+        ID_TRX_CURRENCY,
+        ID_TRX_CUSTOMFIELD,
     };
-
 
 };
 

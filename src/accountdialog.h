@@ -29,16 +29,16 @@ class mmNewAcctDialog : public wxDialog
 
 public:
     mmNewAcctDialog();
-    mmNewAcctDialog(Model_Account::Data* account, wxWindow* parent, const wxString &name = "mmAccountDialog");
+    mmNewAcctDialog(Model_Account::Data* account, wxWindow* parent);
     ~mmNewAcctDialog();
 
     bool Create(wxWindow* parent
         , wxWindowID id
         , const wxString& caption
-        , const wxPoint& pos
-        , const wxSize& size
-        , long style
-        , const wxString& name);
+        , const wxPoint pos = wxDefaultPosition
+        , const wxSize size = wxDefaultSize
+        , long style = wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCLOSE_BOX
+        , const wxString& name = "mmAccountDialog");
 
 private:
     void CreateControls();
@@ -66,7 +66,8 @@ private:
     wxBitmapButton* bAttachments_;
     wxString m_accessInfo;
 
-    wxCheckBox* m_statement_lock_ctrl;
+    wxCheckBox* m_statement_lock_check_box;
+    wxCheckBox* m_multicurrency_check_box;
     wxDatePickerCtrl* m_statement_date_ctrl;
     mmTextCtrl* m_minimum_balance_ctrl;
 
@@ -78,5 +79,8 @@ private:
     int m_currencyID;
     bool m_accessinfo_infocus;
 };
+
+inline wxDateTime Model_Account::get_date_by_string(const wxString& date_str){ return Model::to_date(date_str); }
+inline bool Model_Account::is_positive(int value) { return value > 0 ? true : false; }
 
 #endif

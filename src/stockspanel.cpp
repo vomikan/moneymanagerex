@@ -286,7 +286,15 @@ void mmStocksPanel::OnDeleteStocks(wxCommandEvent& event)
 
 void mmStocksPanel::OnNewStocks(wxCommandEvent& event)
 {
-    listCtrlAccount_->OnNewStocks(event);
+
+    if (m_view_mode == 0) {
+        listCtrlAccount_->OnNewStocks(event);
+        dataToControls();
+    }
+    else {
+        m_listCtrlMoney->OnNewTransaction(event);
+        dataToControls(m_listCtrlMoney->getSelectedID());
+    }
 }
 
 void mmStocksPanel::OnEditRecord(wxCommandEvent& event)

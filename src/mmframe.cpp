@@ -2924,7 +2924,7 @@ void mmGUIFrame::OnReallocateAccount(wxCommandEvent& WXUNUSED(event))
 {
     mmSingleChoiceDialog account_choice(this
         , _("Select the account to reallocate"), _("Account Reallocation")
-        , Model_Account::instance().all_account_names());
+        , Model_Account::instance().all_for_reallocate());
 
     if (account_choice.ShowModal() == wxID_OK)
     {

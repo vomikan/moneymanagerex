@@ -456,6 +456,8 @@ bool Model_Checking::getTransactionData(Data &data, const Data* r)
         data.TRANSACTIONNUMBER = r->TRANSACTIONNUMBER;
         data.PAYEEID = r->PAYEEID;
         data.TRANSID = r->TRANSID;
+        data.CURRENCYID = r->CURRENCYID;
+        data.COLOURID = r->COLOURID;
     }
     return r ? true : false;
 }
@@ -475,6 +477,8 @@ void Model_Checking::putDataToTransaction(Data *r, const Data &data)
     r->NOTES = data.NOTES;
     r->TRANSACTIONNUMBER = data.TRANSACTIONNUMBER;
     r->FOLLOWUPID = data.FOLLOWUPID;
+    r->CURRENCYID = data.CURRENCYID;
+    r->COLOURID = data.COLOURID;
 }
 
 const wxString Model_Checking::Full_Data::to_json()

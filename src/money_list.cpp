@@ -295,10 +295,11 @@ wxString MoneyListCtrl::OnGetItemText(long item, long column) const
         return "Out of Range error: " + wxString::FromUTF8(oor.what());
     }
 
-    Model_Account::Data* fa = Model_Account::instance().get(from_account_id);
-    Model_Currency::Data* currency = Model_Currency::instance().get(fa->CURRENCYID);
-
     const Model_Checking::Full_Data& tran = this->m_money.at(item);
+
+    Model_Account::Data* fa = Model_Account::instance().get(from_account_id);
+    Model_Currency::Data* trx_currency = Model_Currency::instance().get(tran.CURRENCYID);
+    Model_Currency::Data* currency = trx_currency ? trx_currency : Model_Currency::instance().get(fa->CURRENCYID);
 
     switch (column)
     {
@@ -312,7 +313,7 @@ wxString MoneyListCtrl::OnGetItemText(long item, long column) const
         return tran.STATUS;
 
     case COL_VALUE:
-        return Model_Currency::toCurrency(tran.AMOUNT, currency);
+        return Model_Currency::toCurrency(Model_Checking::balance(tran), currency);
 
     case COL_PAYEE_STR:
         return tran.PAYEENAME;
@@ -431,6 +432,17 @@ void MoneyListCtrl::OnCopy()
     }
 }
 
+void MoneyListCtrl::OnNewTransaction(wxCommandEvent & event)
+{
+    mmTransDialog dlg(this, m_sp->get_account_id(), -1);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        m_selectedID = dlg.GetTransactionID();
+        doRefreshItems(m_selectedID);
+    }
+    m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
+}
+
 void MoneyListCtrl::OnDuplicateTransaction()
 {
     if ((m_selected_row < 0) || (GetSelectedItemCount() > 1)) return;
@@ -439,8 +451,8 @@ void MoneyListCtrl::OnDuplicateTransaction()
     mmTransDialog dlg(this, m_sp->get_account_id(), transaction_id, true);
     if (dlg.ShowModal() == wxID_OK)
     {
-        m_selected_row = dlg.GetTransactionID();
-        doRefreshItems(m_selected_row);
+        m_selectedID = dlg.GetTransactionID();
+        doRefreshItems(m_selectedID);
     }
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 }
@@ -573,12 +585,12 @@ void MoneyListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
 bool MoneyListCtrl::TransactionLocked(const wxString& transdate)
 {
     Model_Account::Data* acc = Model_Account::instance().get(m_sp->get_account_id());
-    if (Model_Account::BoolOf(acc->STATEMENTLOCKED))
+    if (Model_Account::is_positive(acc->STATEMENTLOCKED))
     {
         wxDateTime transaction_date;
         if (transaction_date.ParseDate(transdate))
         {
-            if (transaction_date <= Model_Account::DateOf(acc->STATEMENTDATE))
+            if (transaction_date <= Model_Account::get_date_by_string(acc->STATEMENTDATE))
             {
                 wxMessageBox(wxString::Format(_(
                     "Locked transaction to date: %s\n\n"

@@ -524,9 +524,9 @@ void mmCheckingPanel::initFilterSettings()
             , wxAtoi(Option::instance().FinancialYearStartMonth()));
         break;
     case  MENU_VIEW_STATEMENTDATE:
-        if (Model_Account::BoolOf(m_account->STATEMENTLOCKED))
+        if (Model_Account::is_positive(m_account->STATEMENTLOCKED))
         {
-            date_range = new mmSpecifiedRange(Model_Account::DateOf(m_account->STATEMENTDATE)
+            date_range = new mmSpecifiedRange(Model_Account::get_date_by_string(m_account->STATEMENTDATE)
                 .Add(wxDateSpan::Day()), wxDateTime::Today());
             label = mmGetDateForDisplay(date_range->start_date().FormatISODate());
         }

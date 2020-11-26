@@ -65,6 +65,7 @@ public:
 
     static const wxString get_account_name(int account_id);
     static int get_account_type(int account_id);
+    static bool is_multicurrency(Data* a);
     static bool is_limit_reached(Model_Checking::Data* t);
     static double get_account_balance(int acc_id);
 
@@ -73,6 +74,7 @@ public:
 
 public:
     wxArrayString all_account_names(bool skip_closed = false);
+    wxArrayString all_for_reallocate();
 
     static wxArrayString all_status();
     static wxArrayString all_type();
@@ -113,8 +115,8 @@ public:
 
     static bool Exist(const wxString& account_name);
 
-    static wxDateTime DateOf(const wxString& date_str);
-    static bool BoolOf(int value);
+    static wxDateTime get_date_by_string(const wxString& date_str);
+    static bool is_positive(int value);
 };
 
 #endif // 

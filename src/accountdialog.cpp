@@ -36,18 +36,18 @@
 #include <wx/valnum.h>
 
 enum {
-    ID_DIALOG_NEWACCT_BUTTON_CURRENCY = wxID_HIGHEST + 1000,
-    ID_DIALOG_NEWACCT_TEXTCTRL_ACCTNAME,
-    ID_ACCTNUMBER,
-    ID_DIALOG_NEWACCT_TEXTCTRL_HELDAT,
-    ID_DIALOG_NEWACCT_TEXTCTRL_WEBSITE,
-    ID_DIALOG_NEWACCT_TEXTCTRL_CONTACT,
-    ID_DIALOG_NEWACCT_TEXTCTRL_ACCESSINFO,
-    ID_DIALOG_NEWACCT_TEXTCTRL_NOTES,
-    ID_DIALOG_NEWACCT_TEXTCTRL_INITBALANCE,
-    ID_DIALOG_NEWACCT_COMBO_ACCTSTATUS,
-    ID_DIALOG_NEWACCT_CHKBOX_FAVACCOUNT,
-    ID_DIALOG_NEWACCT_COMBO_ACCTTYPE
+    ID_ACC_CURRENCY = wxID_HIGHEST + 1000,
+    ID_ACC_NAME,
+    ID_ACC_NUMBER,
+    ID_ACC_HELDAT,
+    ID_ACC_WEBSITE,
+    ID_ACC_CONTACT,
+    ID_ACC_ACCESSINFO,
+    ID_ACC_NOTES,
+    ID_ACC_INITBALANCE,
+    ID_ACC_STATUS,
+    ID_ACC_FAVACCOUNT,
+    ID_ACC_ACCTTYPE
 };
 
 wxIMPLEMENT_DYNAMIC_CLASS(mmNewAcctDialog, wxDialog);
@@ -55,7 +55,7 @@ wxIMPLEMENT_DYNAMIC_CLASS(mmNewAcctDialog, wxDialog);
 wxBEGIN_EVENT_TABLE(mmNewAcctDialog, wxDialog)
 EVT_BUTTON(wxID_OK, mmNewAcctDialog::OnOk)
 EVT_BUTTON(wxID_CANCEL, mmNewAcctDialog::OnCancel)
-EVT_BUTTON(ID_DIALOG_NEWACCT_BUTTON_CURRENCY, mmNewAcctDialog::OnCurrency)
+EVT_BUTTON(ID_ACC_CURRENCY, mmNewAcctDialog::OnCurrency)
 EVT_BUTTON(wxID_FILE, mmNewAcctDialog::OnAttachments)
 EVT_MENU_RANGE(wxID_HIGHEST, wxID_HIGHEST + acc_img::MAX_XPM, mmNewAcctDialog::OnCustonImage)
 EVT_TEXT_ENTER(wxID_ANY, mmNewAcctDialog::OnTextEntered)
@@ -65,14 +65,15 @@ mmNewAcctDialog::mmNewAcctDialog()
 {
 }
 
-mmNewAcctDialog::mmNewAcctDialog(Model_Account::Data* account, wxWindow* parent, const wxString &name)
+mmNewAcctDialog::mmNewAcctDialog(Model_Account::Data* account, wxWindow* parent)
     : m_account(account)
     , m_textAccountName(nullptr)
     , m_notesCtrl(nullptr)
     , m_initbalance_ctrl(nullptr)
     , m_imageList(nullptr)
     , m_bitmapButtons(nullptr)
-    , m_statement_lock_ctrl(nullptr)
+    , m_statement_lock_check_box(nullptr)
+    , m_multicurrency_check_box(nullptr)
     , m_statement_date_ctrl(nullptr)
     , m_minimum_balance_ctrl(nullptr)
     , m_credit_limit_ctrl(nullptr)
@@ -82,14 +83,13 @@ mmNewAcctDialog::mmNewAcctDialog(Model_Account::Data* account, wxWindow* parent,
     , m_accessinfo_infocus(false)
 {
     m_imageList = navtree_images_list();
-    long style = wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX;
 
     m_currencyID = m_account->CURRENCYID;
     Model_Currency::Data* currency = Model_Currency::instance().get(m_currencyID);
     wxASSERT(currency);
 
-    Create(parent, wxID_ANY, _("New Account"), wxDefaultPosition, wxDefaultSize, style, name);
-    this->SetMinSize(wxSize(550, 300));
+    Create(parent, wxID_ANY, _("New Account"));
+    this->SetMinSize(wxSize(300, 512));
     this->Connect(wxID_ANY, wxEVT_CHILD_FOCUS, wxChildFocusEventHandler(mmNewAcctDialog::OnChangeFocus), nullptr, this);
 }
 
@@ -102,8 +102,8 @@ mmNewAcctDialog::~mmNewAcctDialog()
 bool mmNewAcctDialog::Create(wxWindow* parent
     , wxWindowID id
     , const wxString& caption
-    , const wxPoint& pos
-    , const wxSize& size
+    , const wxPoint pos
+    , const wxSize size
     , long style
     , const wxString& name)
 {
@@ -143,7 +143,7 @@ void mmNewAcctDialog::CreateControls()
 
     grid_sizer->Add(new wxStaticText(this, wxID_STATIC, _("Account Type:")), g_flagsH);
 
-    wxChoice* itemChoice61 = new wxChoice(this, ID_DIALOG_NEWACCT_COMBO_ACCTTYPE);
+    wxChoice* itemChoice61 = new wxChoice(this, ID_ACC_ACCTTYPE);
     for (const auto& type : Model_Account::all_type())
         itemChoice61->Append(wxGetTranslation(type), new wxStringClientData(type));
     if (Model_Account::all_type().Index(m_account->ACCOUNTTYPE) == wxNOT_FOUND)
@@ -154,16 +154,18 @@ void mmNewAcctDialog::CreateControls()
 
     grid_sizer->Add(new wxStaticText(this, wxID_STATIC, _("Account Status:")), g_flagsH);
 
-    wxChoice* itemChoice6 = new wxChoice(this, ID_DIALOG_NEWACCT_COMBO_ACCTSTATUS);
+    wxChoice* itemChoice6 = new wxChoice(this, ID_ACC_STATUS);
     for (const auto& status : Model_Account::all_status())
         itemChoice6->Append(wxGetTranslation(status), new wxStringClientData(status));
-    itemChoice6->SetToolTip(_("Specify if this account has been closed. Closed accounts are inactive in most calculations, reporting etc."));
+    itemChoice6->SetToolTip(_("Specify if this account has been closed. "
+        "Closed accounts are inactive in most calculations, reporting etc."));
     grid_sizer->Add(itemChoice6, g_flagsExpand);
     itemChoice6->SetSelection(0);
 
     grid_sizer->Add(new wxStaticText(this, wxID_STATIC, wxString::Format(_("Initial Balance: %s"), "")), g_flagsH);
 
-    m_initbalance_ctrl = new mmTextCtrl(this, ID_DIALOG_NEWACCT_TEXTCTRL_INITBALANCE, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, mmCalcValidator());
+    m_initbalance_ctrl = new mmTextCtrl(this, ID_ACC_INITBALANCE, ""
+        , wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, mmCalcValidator());
     grid_sizer->Add(m_initbalance_ctrl, g_flagsExpand);
     m_initbalance_ctrl->SetToolTip(_("Enter the initial balance in this account."));
 
@@ -174,13 +176,23 @@ void mmNewAcctDialog::CreateControls()
     if (base_currency)
         currName = base_currency->CURRENCYNAME;
 
-    wxButton* itemButton71 = new wxButton(this, ID_DIALOG_NEWACCT_BUTTON_CURRENCY, currName);
-    itemButton71->SetToolTip(_("Specify the currency to be used by this account."));
-    grid_sizer->Add(itemButton71, g_flagsExpand);
+    wxButton* currency_button = new wxButton(this, ID_ACC_CURRENCY, currName);
+    currency_button->SetToolTip(_("Specify the currency to be used by this account."));
+    grid_sizer->Add(currency_button, g_flagsExpand);
 
-    wxCheckBox* itemCheckBox10 = new wxCheckBox(this, ID_DIALOG_NEWACCT_CHKBOX_FAVACCOUNT, _("Favorite Account"), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE);
+    grid_sizer->AddSpacer(1);
+    m_multicurrency_check_box = new wxCheckBox(this, wxID_ANY
+        , _("Multicurrency"), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE);
+    m_multicurrency_check_box->SetValue(false);
+    m_multicurrency_check_box->Enable(false);
+    m_multicurrency_check_box->SetToolTip(_("Enable to multicurrency support for this account"));
+    grid_sizer->Add(m_multicurrency_check_box, g_flagsExpand);
+
+    wxCheckBox* itemCheckBox10 = new wxCheckBox(this, ID_ACC_FAVACCOUNT
+        , _("Favorite Account"), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE);
     itemCheckBox10->SetValue(TRUE);
-    itemCheckBox10->SetToolTip(_("Select whether this is an account that is used often. This is used to filter accounts display view."));
+    itemCheckBox10->SetToolTip(_("Select whether this is an account that is used often. "
+        "This is used to filter accounts display view."));
     grid_sizer->AddSpacer(1);
     grid_sizer->Add(itemCheckBox10, g_flagsH);
 
@@ -192,7 +204,8 @@ void mmNewAcctDialog::CreateControls()
     wxBoxSizer *notes_sizer = new wxBoxSizer(wxVERTICAL);
     notes_tab->SetSizer(notes_sizer);
 
-    m_notesCtrl = new wxTextCtrl(notes_tab, ID_DIALOG_NEWACCT_TEXTCTRL_NOTES, "", wxDefaultPosition, wxSize(270, 180), wxTE_MULTILINE);
+    m_notesCtrl = new wxTextCtrl(notes_tab, ID_ACC_NOTES, ""
+        , wxDefaultPosition, wxSize(270, 180), wxTE_MULTILINE);
     m_notesCtrl->SetToolTip(_("Enter user notes and details about this account."));
     notes_sizer->Add(m_notesCtrl, g_flagsExpand);
 
@@ -205,29 +218,33 @@ void mmNewAcctDialog::CreateControls()
     grid_sizer2->AddGrowableCol(1, 1);
     others_sizer->Add(grid_sizer2, g_flagsExpand);
 
-    grid_sizer2->Add(new wxStaticText(others_tab, wxID_STATIC, (Model_Account::type(m_account) == Model_Account::CREDIT_CARD ? _("Card Number:") : _("Account Number:"))), g_flagsH);
-    wxTextCtrl* itemTextCtrl6 = new wxTextCtrl(others_tab, ID_ACCTNUMBER, "", wxDefaultPosition, wxDefaultSize);
+    grid_sizer2->Add(new wxStaticText(others_tab, wxID_STATIC
+        , (Model_Account::type(m_account) == Model_Account::CREDIT_CARD
+            ? _("Card Number:") : _("Account Number:")))
+        , g_flagsH);
+    wxTextCtrl* itemTextCtrl6 = new wxTextCtrl(others_tab, ID_ACC_NUMBER, "");
     itemTextCtrl6->SetToolTip(_("Enter the Account Number associated with this account."));
     grid_sizer2->Add(itemTextCtrl6, g_flagsExpand);
 
     grid_sizer2->Add(new wxStaticText(others_tab, wxID_STATIC, _("Held At:")), g_flagsH);
-    wxTextCtrl* itemTextCtrl8 = new wxTextCtrl(others_tab, ID_DIALOG_NEWACCT_TEXTCTRL_HELDAT, "");
+    wxTextCtrl* itemTextCtrl8 = new wxTextCtrl(others_tab, ID_ACC_HELDAT, "");
     itemTextCtrl8->SetToolTip(_("Enter the name of the financial institution in which the account is held."));
     grid_sizer2->Add(itemTextCtrl8, g_flagsExpand);
 
     grid_sizer2->Add(new wxStaticText(others_tab, wxID_STATIC, _("Website:")), g_flagsH);
-    wxTextCtrl* itemTextCtrl10 = new wxTextCtrl(others_tab, ID_DIALOG_NEWACCT_TEXTCTRL_WEBSITE, "");
+    wxTextCtrl* itemTextCtrl10 = new wxTextCtrl(others_tab, ID_ACC_WEBSITE, "");
     itemTextCtrl10->SetToolTip(_("Enter the URL of the website for the financial institution."));
     grid_sizer2->Add(itemTextCtrl10, g_flagsExpand);
 
     grid_sizer2->Add(new wxStaticText(others_tab, wxID_STATIC, _("Contact:")), g_flagsH);
-    wxTextCtrl* itemTextCtrl12 = new wxTextCtrl(others_tab, ID_DIALOG_NEWACCT_TEXTCTRL_CONTACT, "");
+    wxTextCtrl* itemTextCtrl12 = new wxTextCtrl(others_tab, ID_ACC_CONTACT, "");
     itemTextCtrl12->SetToolTip(_("Enter any contact information for the financial institution."));
     grid_sizer2->Add(itemTextCtrl12, g_flagsExpand);
 
     grid_sizer2->Add(new wxStaticText(others_tab, wxID_STATIC, _("Access Info:")), g_flagsH);
-    wxTextCtrl* itemTextCtrl14 = new wxTextCtrl(others_tab, ID_DIALOG_NEWACCT_TEXTCTRL_ACCESSINFO, "********************");
-    itemTextCtrl14->SetToolTip(_("Enter any login/access information for the financial institution. This is not secure as anyone with access to the mmb file can access it."));
+    wxTextCtrl* itemTextCtrl14 = new wxTextCtrl(others_tab, ID_ACC_ACCESSINFO, "********************");
+    itemTextCtrl14->SetToolTip(_("Enter any login/access information for the financial institution. "
+        "This is not secure as anyone with access to the mmb file can access it."));
     grid_sizer2->Add(itemTextCtrl14, g_flagsExpand);
 
     //-------------------------------------------------------------------------------------
@@ -241,17 +258,20 @@ void mmNewAcctDialog::CreateControls()
     statement_sizer->Add(statement_grid_sizer, g_flagsExpand);
 
     statement_grid_sizer->Add(new wxStaticText(statement_tab, wxID_STATIC, _("Statement:")), g_flagsH);
-    m_statement_lock_ctrl = new wxCheckBox(statement_tab, wxID_ANY, _("Locked"), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE);
-    m_statement_lock_ctrl->SetToolTip(_("Enable or disable the transaction Lock"));
-    statement_grid_sizer->Add(m_statement_lock_ctrl, g_flagsExpand);
+    m_statement_lock_check_box = new wxCheckBox(statement_tab, wxID_ANY
+        , _("Locked"), wxDefaultPosition, wxDefaultSize, wxCHK_2STATE);
+    m_statement_lock_check_box->SetToolTip(_("Enable or disable the transaction Lock"));
+    statement_grid_sizer->Add(m_statement_lock_check_box, g_flagsExpand);
 
     statement_grid_sizer->Add(new wxStaticText(statement_tab, wxID_STATIC, _("Reconciled Date:")), g_flagsH);
-    m_statement_date_ctrl = new wxDatePickerCtrl(statement_tab, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN | wxDP_SHOWCENTURY);
+    m_statement_date_ctrl = new wxDatePickerCtrl(statement_tab, wxID_ANY
+        , wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN | wxDP_SHOWCENTURY);
     m_statement_date_ctrl->SetToolTip(_("The date of the transaction lock"));
     statement_grid_sizer->Add(m_statement_date_ctrl, g_flagsExpand);
 
     statement_grid_sizer->Add(new wxStaticText(statement_tab, wxID_STATIC, _("Minimum Bal:")), g_flagsH);
-    m_minimum_balance_ctrl = new mmTextCtrl(statement_tab, wxID_ANY, "0.00", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, mmCalcValidator());
+    m_minimum_balance_ctrl = new mmTextCtrl(statement_tab, wxID_ANY
+        , "0.00", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, mmCalcValidator());
     m_minimum_balance_ctrl->SetToolTip(_("Account balance lower limit. Zero to disable"));
     statement_grid_sizer->Add(m_minimum_balance_ctrl, g_flagsExpand);
 
@@ -266,7 +286,8 @@ void mmNewAcctDialog::CreateControls()
     credit_sizer->Add(credit_grid_sizer, g_flagsExpand);
 
     credit_grid_sizer->Add(new wxStaticText(credit_tab, wxID_STATIC, _("Credit Limit:")), g_flagsH);
-    m_credit_limit_ctrl = new mmTextCtrl(credit_tab, wxID_ANY, "", wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, mmCalcValidator());
+    m_credit_limit_ctrl = new mmTextCtrl(credit_tab, wxID_ANY, ""
+        , wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER, mmCalcValidator());
     m_credit_limit_ctrl->SetToolTip(_("Credit limit for the Account. Zero to disable"));
     credit_grid_sizer->Add(m_credit_limit_ctrl, g_flagsExpand);
 
@@ -275,7 +296,8 @@ void mmNewAcctDialog::CreateControls()
     credit_grid_sizer->Add(m_interest_rate_ctrl, g_flagsExpand);
 
     credit_grid_sizer->Add(new wxStaticText(credit_tab, wxID_STATIC, _("Payment Due Date:")), g_flagsH);
-    m_payment_due_date_ctrl = new wxDatePickerCtrl(credit_tab, wxID_ANY, wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN | wxDP_SHOWCENTURY);
+    m_payment_due_date_ctrl = new wxDatePickerCtrl(credit_tab, wxID_ANY
+        , wxDefaultDateTime, wxDefaultPosition, wxDefaultSize, wxDP_DROPDOWN | wxDP_SHOWCENTURY);
     credit_grid_sizer->Add(m_payment_due_date_ctrl, g_flagsExpand);
 
     credit_grid_sizer->Add(new wxStaticText(credit_tab, wxID_STATIC, _("Minimum Payment:")), g_flagsH);
@@ -283,7 +305,7 @@ void mmNewAcctDialog::CreateControls()
     credit_grid_sizer->Add(m_minimum_payment_ctrl, g_flagsExpand);
     //-------------------------------------------------------------------------------------
 
-    itemBoxSizer3->Add(m_notebook);
+    itemBoxSizer3->Add(m_notebook, g_flagsExpand);
 
     //Buttons
     wxPanel* itemPanel27 = new wxPanel(this, wxID_STATIC, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -293,7 +315,8 @@ void mmNewAcctDialog::CreateControls()
     itemPanel27->SetSizer(itemBoxSizer28);
 
     m_bitmapButtons = new wxBitmapButton(itemPanel27, wxID_STATIC, wxNullBitmap);
-    m_bitmapButtons->Connect(wxID_STATIC, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(mmNewAcctDialog::OnImageButton), nullptr, this);
+    m_bitmapButtons->Connect(wxID_STATIC, wxEVT_COMMAND_BUTTON_CLICKED
+        , wxCommandEventHandler(mmNewAcctDialog::OnImageButton), nullptr, this);
     itemBoxSizer28->Add(m_bitmapButtons, g_flagsH);
 
     bAttachments_ = new wxBitmapButton(itemPanel27, wxID_FILE, mmBitmap(png::CLIP));
@@ -307,6 +330,8 @@ void mmNewAcctDialog::CreateControls()
 
     wxButton* itemButton30 = new wxButton(itemPanel27, wxID_CANCEL, wxGetTranslation(g_CancelLabel));
     itemBoxSizer28->Add(itemButton30, g_flagsH);
+
+    Fit();
 }
 
 void mmNewAcctDialog::fillControls()
@@ -315,33 +340,36 @@ void mmNewAcctDialog::fillControls()
 
     m_textAccountName->SetValue(m_account->ACCOUNTNAME);
 
-    wxTextCtrl* textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_ACCTNUMBER));
+    wxTextCtrl* textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_NUMBER));
     textCtrl->SetValue(m_account->ACCOUNTNUM);
 
-    textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_DIALOG_NEWACCT_TEXTCTRL_HELDAT));
+    textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_HELDAT));
     textCtrl->SetValue(m_account->HELDAT);
 
-    textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_DIALOG_NEWACCT_TEXTCTRL_WEBSITE));
+    textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_WEBSITE));
     textCtrl->SetValue(m_account->WEBSITE);
 
-    textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_DIALOG_NEWACCT_TEXTCTRL_CONTACT));
+    textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_CONTACT));
     textCtrl->SetValue(m_account->CONTACTINFO);
 
-    textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_DIALOG_NEWACCT_TEXTCTRL_NOTES));
+    textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_NOTES));
     textCtrl->SetValue(m_account->NOTES);
 
-    wxChoice* itemAcctType = static_cast<wxChoice*>(FindWindow(ID_DIALOG_NEWACCT_COMBO_ACCTTYPE));
+    wxChoice* itemAcctType = static_cast<wxChoice*>(FindWindow(ID_ACC_ACCTTYPE));
     itemAcctType->SetStringSelection(wxGetTranslation(m_account->ACCOUNTTYPE));
     itemAcctType->Enable(false);
 
-    wxChoice* choice = static_cast<wxChoice*>(FindWindow(ID_DIALOG_NEWACCT_COMBO_ACCTSTATUS));
+    wxChoice* choice = static_cast<wxChoice*>(FindWindow(ID_ACC_STATUS));
     choice->SetSelection(Model_Account::status(m_account));
 
-    wxCheckBox* itemCheckBox = static_cast<wxCheckBox*>(FindWindow(ID_DIALOG_NEWACCT_CHKBOX_FAVACCOUNT));
+    wxCheckBox* itemCheckBox = static_cast<wxCheckBox*>(FindWindow(ID_ACC_FAVACCOUNT));
     itemCheckBox->SetValue(Model_Account::FAVORITEACCT(m_account));
 
-    wxButton* bn = static_cast<wxButton*>(FindWindow(ID_DIALOG_NEWACCT_BUTTON_CURRENCY));
+    wxButton* bn = static_cast<wxButton*>(FindWindow(ID_ACC_CURRENCY));
     bn->SetLabelText(Model_Account::currency(m_account)->CURRENCYNAME);
+
+    bool multicurrency = Model_Account::is_multicurrency(m_account);
+    m_multicurrency_check_box->SetValue(multicurrency);
 
     double initBal = m_account->INITIALBAL;
     m_initbalance_ctrl->SetValue(Model_Currency::toString(initBal, Model_Account::currency(m_account)));
@@ -356,15 +384,15 @@ void mmNewAcctDialog::fillControls()
 
     if (!m_account->PAYMENTDUEDATE.empty())
     {
-        m_payment_due_date_ctrl->SetValue(Model_Account::DateOf(m_account->PAYMENTDUEDATE));
+        m_payment_due_date_ctrl->SetValue(Model_Account::get_date_by_string(m_account->PAYMENTDUEDATE));
     }
     m_minimum_payment_ctrl->SetValue(m_account->MINIMUMPAYMENT, 2);
 
-    m_statement_lock_ctrl->SetValue(Model_Account::BoolOf(m_account->STATEMENTLOCKED));
+    m_statement_lock_check_box->SetValue(Model_Account::is_positive(m_account->STATEMENTLOCKED));
 
     if (!m_account->STATEMENTDATE.empty())
     {
-        m_statement_date_ctrl->SetValue(Model_Account::DateOf(m_account->STATEMENTDATE));
+        m_statement_date_ctrl->SetValue(Model_Account::get_date_by_string(m_account->STATEMENTDATE));
     }
     m_minimum_balance_ctrl->SetValue(m_account->MINIMUMBALANCE, 2);
 }
@@ -374,7 +402,7 @@ void mmNewAcctDialog::OnCurrency(wxCommandEvent& /*event*/)
     if (mmMainCurrencyDialog::Execute(this, m_currencyID))
     {
         Model_Currency::Data* currency = Model_Currency::instance().get(m_currencyID);
-        wxButton* bn = static_cast<wxButton*>(FindWindow(ID_DIALOG_NEWACCT_BUTTON_CURRENCY));
+        wxButton* bn = static_cast<wxButton*>(FindWindow(ID_ACC_CURRENCY));
         bn->SetLabelText(currency->CURRENCYNAME);
 
         double init_balance;
@@ -439,8 +467,8 @@ void mmNewAcctDialog::OnChangeFocus(wxChildFocusEvent& event)
     int oject_in_focus = 0;
     if (w) oject_in_focus = w->GetId();
 
-    wxTextCtrl* textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_DIALOG_NEWACCT_TEXTCTRL_ACCESSINFO));
-    if (oject_in_focus == ID_DIALOG_NEWACCT_TEXTCTRL_ACCESSINFO)
+    wxTextCtrl* textCtrl = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_ACCESSINFO));
+    if (oject_in_focus == ID_ACC_ACCESSINFO)
     {
         if (!m_accessinfo_infocus)
         {
@@ -490,7 +518,7 @@ void mmNewAcctDialog::OnOk(wxCommandEvent& /*event*/)
     if (!currency)
         return mmErrorDialogs::MessageInvalid(this, _("Currency"));
 
-    wxTextCtrl* textCtrlWebsite = static_cast<wxTextCtrl*>(FindWindow(ID_DIALOG_NEWACCT_TEXTCTRL_WEBSITE));
+    wxTextCtrl* textCtrlWebsite = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_WEBSITE));
     wxString Website = textCtrlWebsite->GetValue().Lower().Trim();
     if (!Website.empty() && !Website.StartsWith("http"))
     {
@@ -504,15 +532,17 @@ void mmNewAcctDialog::OnOk(wxCommandEvent& /*event*/)
 
     if (!this->m_account) this->m_account = Model_Account::instance().create();
 
-    wxTextCtrl* textCtrlAcctNumber = static_cast<wxTextCtrl*>(FindWindow(ID_ACCTNUMBER));
-    wxTextCtrl* textCtrlHeldAt = static_cast<wxTextCtrl*>(FindWindow(ID_DIALOG_NEWACCT_TEXTCTRL_HELDAT));
-    wxTextCtrl* textCtrlContact = static_cast<wxTextCtrl*>(FindWindow(ID_DIALOG_NEWACCT_TEXTCTRL_CONTACT));
+    wxTextCtrl* textCtrlAcctNumber = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_NUMBER));
+    wxTextCtrl* textCtrlHeldAt = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_HELDAT));
+    wxTextCtrl* textCtrlContact = static_cast<wxTextCtrl*>(FindWindow(ID_ACC_CONTACT));
 
-    wxChoice* choice = static_cast<wxChoice*>(FindWindow(ID_DIALOG_NEWACCT_COMBO_ACCTSTATUS));
+    wxChoice* choice = static_cast<wxChoice*>(FindWindow(ID_ACC_STATUS));
     m_account->STATUS = Model_Account::all_status()[choice->GetSelection()];
 
-    wxCheckBox* itemCheckBox = static_cast<wxCheckBox*>(FindWindow(ID_DIALOG_NEWACCT_CHKBOX_FAVACCOUNT));
+    wxCheckBox* itemCheckBox = static_cast<wxCheckBox*>(FindWindow(ID_ACC_FAVACCOUNT));
     m_account->FAVORITEACCT = itemCheckBox->IsChecked() ? "TRUE" : "FALSE";
+
+    m_account->MULTICURRENCY = m_multicurrency_check_box->GetValue();
 
     m_account->ACCOUNTNAME = acctName;
     m_account->ACCOUNTNUM = textCtrlAcctNumber->GetValue();
@@ -535,7 +565,7 @@ void mmNewAcctDialog::OnOk(wxCommandEvent& /*event*/)
     m_minimum_payment_ctrl->checkValue(value);
     m_account->MINIMUMPAYMENT = value;
 
-    m_account->STATEMENTLOCKED = m_statement_lock_ctrl->GetValue() ? 1 : 0;
+    m_account->STATEMENTLOCKED = m_statement_lock_check_box->GetValue() ? 1 : 0;
     m_account->STATEMENTDATE = m_statement_date_ctrl->GetValue().FormatISODate();
 
     m_minimum_balance_ctrl->checkValue(value);

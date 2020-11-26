@@ -539,7 +539,7 @@ wxListItemAttr* TransactionListCtrl::OnGetItemAttr(long item) const
     bool in_the_future = (tran.TRANSDATE > m_today);
 
     // apply alternating background pattern
-    int user_colour_id = tran.FOLLOWUPID;
+    int user_colour_id = tran.COLOURID;
     if (user_colour_id < 0 ) user_colour_id = 0;
     else if (user_colour_id > 7) user_colour_id = 0;
 
@@ -811,12 +811,12 @@ void TransactionListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
 //----------------------------------------------------------------------------
 bool TransactionListCtrl::TransactionLocked(const wxString& transdate)
 {
-    if (Model_Account::BoolOf(m_cp->m_account->STATEMENTLOCKED))
+    if (Model_Account::is_positive(m_cp->m_account->STATEMENTLOCKED))
     {
         wxDateTime transaction_date;
         if (transaction_date.ParseDate(transdate))
         {
-            if (transaction_date <= Model_Account::DateOf(m_cp->m_account->STATEMENTDATE))
+            if (transaction_date <= Model_Account::get_date_by_string(m_cp->m_account->STATEMENTDATE))
             {
                 wxMessageBox(_(wxString::Format(
                     "Locked transaction to date: %s\n\n"

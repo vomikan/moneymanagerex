@@ -18,6 +18,7 @@
 
 #include "Model_Account.h"
 #include "Model_Stock.h"
+#include "Model_CurrencyHistory.h"
 
 const std::vector<std::pair<Model_Account::STATUS_ENUM, wxString> > Model_Account::STATUS_CHOICES =
 {
@@ -64,6 +65,21 @@ Model_Account& Model_Account::instance(wxSQLite3Database* db)
 Model_Account& Model_Account::instance()
 {
     return Singleton<Model_Account>::instance();
+}
+
+wxArrayString Model_Account::all_for_reallocate()
+{
+    wxArrayString accounts;
+    for (const auto &account : this->all(COL_ACCOUNTNAME))
+    {
+
+        if (account.ACCOUNTNAME.empty())
+            continue;
+        if (type(account) == ASSET)
+            continue;
+        accounts.Add(account.ACCOUNTNAME);
+    }
+    return accounts;
 }
 
 wxArrayString Model_Account::all_account_names(bool skip_closed)
@@ -132,9 +148,17 @@ double Model_Account::get_account_balance(int acc_id)
 bool Model_Account::is_limit_reached(Model_Checking::Data* t)
 {
     if (t->TRANSCODE != Model_Checking::all_type()[Model_Checking::DEPOSIT]) {
+        double exchange_rate = 1.0;
+
         Model_Account::Data* account = Model_Account::instance().get(t->ACCOUNTID);
         double acc_balance = get_account_balance(t->ACCOUNTID);
-        acc_balance += Model_Checking::balance(t);
+
+        if (Model_Account::is_multicurrency(account)) {
+            Model_Currency::Data* currency = Model_Currency::instance().get(t->CURRENCYID);
+            exchange_rate = currency ? Model_CurrencyHistory::getLastRate(t->CURRENCYID) : 1.0;
+        }
+
+        acc_balance += Model_Checking::balance(t) * exchange_rate;
         return acc_balance < account->CREDITLIMIT;
     }
 
@@ -341,12 +365,8 @@ bool Model_Account::Exist(const wxString& account_name)
     return !list.empty();
 }
 
-wxDateTime Model_Account::DateOf(const wxString& date_str)
+bool Model_Account::is_multicurrency(Data * a)
 {
-    return Model::to_date(date_str);
-}
-
-bool Model_Account::BoolOf(int value)
-{
-    return value > 0 ? true : false;
+    return type(a) == INVESTMENT || type(a) == ASSET;
+    /*TODO: a->MULTICURRENCY*/
 }
