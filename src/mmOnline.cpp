@@ -213,6 +213,12 @@ int mmOnline::getOnlineRatesYahoo()
     std::map<int, wxString> tickers;
 
     Model_Ticker::Data_Set t = Model_Ticker::instance().all();
+    if (t.empty()) {
+        m_error_str = _("Empty value");
+        m_error_code = wxID_NO;
+        return m_error_code;
+    }
+        
     for (const auto &ticker : t)
     {
         wxASSERT(!ticker.SYMBOL.empty());
@@ -228,7 +234,6 @@ int mmOnline::getOnlineRatesYahoo()
 
         }
     }
-
 
     wxString buffer;
     for (const auto& entry : prices)
@@ -258,7 +263,9 @@ int mmOnline::getOnlineRatesYahoo()
         return m_error_code;
     }
 
-    Value r = json_doc["quoteResponse"].GetObject();
+    Value r = json_doc.HasMember("quoteResponse")
+        ? json_doc["quoteResponse"].GetObject()
+        : (json_doc["finance"].GetObject()) ;
 
     Value e = r["result"].GetArray();
 
@@ -267,7 +274,6 @@ int mmOnline::getOnlineRatesYahoo()
         m_error_code = err_code;
         return m_error_code;
     }
-
 
     for (rapidjson::SizeType i = 0; i < e.Size(); i++)
     {
