@@ -263,22 +263,50 @@ int mmOnline::getOnlineRatesYahoo()
         return m_error_code;
     }
 
-    Value r = json_doc.HasMember("quoteResponse")
-        ? json_doc["quoteResponse"].GetObject()
-        : (json_doc["finance"].GetObject()) ;
+    /*
+    {"finance":{"result":null,"error":{"code":"Bad Request","description":"Missing required query parameter=symbols"}}}
 
-    Value e = r["result"].GetArray();
+    */
 
-    if (e.Empty()) {
+
+
+    if (json_doc.HasMember("finance") && json_doc["finance"].IsObject()) {
+        Value e = json_doc["finance"].GetObject();
+        if (e.HasMember("error") && e["error"].IsObject()) {
+            Value err = e["error"].GetObject();
+            if (err.HasMember("description") && err["description"].IsString()) {
+                m_error_code = 1;
+                m_error_str = wxString::FromUTF8(err["description"].GetString());
+                return m_error_code;
+            }
+        }
+    }
+
+
+
+    Value q;
+    if (json_doc.HasMember("quoteResponse"))
+        q = json_doc["quoteResponse"].GetObject();
+
+    Value r;
+    if (q.HasMember("result") && q["result"].IsArray())
+        r = q["result"].GetArray();
+    else {
+        m_error_str = _("JSON Parse Error");
+        m_error_code = err_code;
+        return m_error_code;
+    }
+
+    if (r.Empty()) {
         m_error_str = _("Nothing to update");
         m_error_code = err_code;
         return m_error_code;
     }
 
-    for (rapidjson::SizeType i = 0; i < e.Size(); i++)
+    for (rapidjson::SizeType i = 0; i < r.Size(); i++)
     {
-        if (!e[i].IsObject()) continue;
-        Value v = e[i].GetObject();
+        if (!r[i].IsObject()) continue;
+        Value v = r[i].GetObject();
 
         if (!v.HasMember("symbol") || !v["symbol"].IsString())
             continue;
