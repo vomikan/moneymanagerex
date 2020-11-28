@@ -31,11 +31,7 @@ class mmHelpPanel : public mmPanelBase
 
 public:
     mmHelpPanel(wxWindow *parent, mmGUIFrame* frame,
-                 wxWindowID winid = wxID_ANY,
-                 const wxPoint& pos = wxDefaultPosition,
-                 const wxSize& size = wxDefaultSize,
-                 long style = wxTAB_TRAVERSAL | wxNO_BORDER,
-                 const wxString& name = "mmHelpPanel");
+                 wxWindowID winid = wxID_ANY);
 
     wxString BuildPage() const { return ""; }
     void PrintPage();

@@ -29,18 +29,17 @@ BEGIN_EVENT_TABLE(mmHelpPanel, wxPanel)
     EVT_BUTTON(wxID_FORWARD, mmHelpPanel::OnHelpPageForward)
 END_EVENT_TABLE()
 
-mmHelpPanel::mmHelpPanel(wxWindow *parent, mmGUIFrame* frame, wxWindowID winid
-    , const wxPoint& pos, const wxSize& size, long style, const wxString& name)
+mmHelpPanel::mmHelpPanel(wxWindow *parent, mmGUIFrame* frame, wxWindowID winid)
     : m_frame(frame)
 {
-    Create(parent, winid, pos, size, style, name);
+    Create(parent, winid);
 }
 
 bool mmHelpPanel::Create( wxWindow *parent, wxWindowID winid,
     const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 {
     SetExtraStyle(GetExtraStyle()|wxWS_EX_BLOCK_EVENTS);
-    wxPanel::Create(parent, winid, pos, size, style, name);
+    wxPanel::Create(parent, winid);
 
     CreateControls();
     GetSizer()->Fit(this);

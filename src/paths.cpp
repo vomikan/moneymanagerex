@@ -130,6 +130,7 @@ wxString mmex::getPathDoc(EDocFile f, bool url)
       "help%sindex.html#section11.1",
       "help%sgrm.html",
       "help%sstocks_and_shares.html",
+      "help%sindex.html#section15",
       "help%sbudget.html",
     };
     wxString path = files[f];

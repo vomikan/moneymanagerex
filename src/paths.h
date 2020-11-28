@@ -30,25 +30,36 @@ class wxIcon;
 
 namespace mmex
 {
+    enum EDocFile
+    {
+        F_README = 0
+        , F_CONTRIB
+        , F_LICENSE
+        , HTML_INDEX
+        , HTML_WEBAPP
+        , HTML_CUSTOM_SQL
+        , HTML_INVESTMENT
+        , HTML_ASSETS
+        , HTML_BUDGET
+        , DOC_FILES_MAX
+    };
+    wxString getPathDoc(EDocFile f, bool url = true);
 
-enum EDocFile { F_README = 0, F_CONTRIB, F_LICENSE, HTML_INDEX, HTML_WEBAPP, HTML_CUSTOM_SQL, HTML_INVESTMENT, HTML_BUDGET, DOC_FILES_MAX };
-wxString getPathDoc(EDocFile f, bool url = true);
+    enum EResFile { TRANS_SOUND = 0, HOME_PAGE_TEMPLATE, RES_FILES_MAX };
+    wxString getPathResource(EResFile f);
 
-enum EResFile { TRANS_SOUND = 0, HOME_PAGE_TEMPLATE, RES_FILES_MAX };
-wxString getPathResource(EResFile f);
+    // use instead of getPathResource(PROGRAM_ICON)
+    const wxIcon& getProgramIcon();
 
-// use instead of getPathResource(PROGRAM_ICON)
-const wxIcon& getProgramIcon();
+    enum ESharedFile { LANG_DIR = 0, SHARED_FILES_MAX };
+    const wxString getPathShared(ESharedFile f);
 
-enum ESharedFile { LANG_DIR = 0, SHARED_FILES_MAX };
-const wxString getPathShared(ESharedFile f);
+    enum EUserFile { SETTINGS = 0, DIRECTORY, USER_FILES_MAX };
+    const wxString getPathUser(EUserFile f);
 
-enum EUserFile { SETTINGS = 0, DIRECTORY, USER_FILES_MAX };
-const wxString getPathUser(EUserFile f);
-
-const wxString getPathAttachment(const wxString &AttachmentsFolder);
-bool isPortableMode();
-const wxString getTempFolder();
+    const wxString getPathAttachment(const wxString &AttachmentsFolder);
+    bool isPortableMode();
+    const wxString getTempFolder();
 
 } // namespace mmex
 

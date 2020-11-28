@@ -142,6 +142,7 @@ private:
 private:
     mmBillsDepositsPanel* billsDepositsPanel_;
     void createBillsDeposits();
+    void createAssets();
 
     mmBudgetingPanel* budgetingPage_;
     void createBudgetingPage(int budgetYearID);
@@ -181,7 +182,6 @@ private:
     void OnBillsDeposits(wxCommandEvent& event);
     void OnAssets(wxCommandEvent& event);
     void OnGotoAccount(wxCommandEvent& WXUNUSED(event));
-    void OnGotoStocksAccount(wxCommandEvent& WXUNUSED(event));
 private:
     void OnChangeGUILanguage(wxCommandEvent &event);
 
@@ -256,6 +256,7 @@ private:
 private:
     // any class wishing to process wxWindows events must use this macro
     wxDECLARE_EVENT_TABLE();
+
     enum
     {
         /* Main Menu  */

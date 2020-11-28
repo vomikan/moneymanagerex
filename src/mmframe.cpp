@@ -150,7 +150,7 @@ EVT_TREE_ITEM_EXPANDED(ID_NAVTREECTRL, mmGUIFrame::OnTreeItemExpanded)
 EVT_TREE_ITEM_COLLAPSED(ID_NAVTREECTRL, mmGUIFrame::OnTreeItemCollapsed)
 
 EVT_MENU(MENU_GOTOACCOUNT, mmGUIFrame::OnGotoAccount)
-EVT_MENU(MENU_STOCKS, mmGUIFrame::OnGotoStocksAccount)
+EVT_MENU(MENU_STOCKS, mmGUIFrame::OnGotoAccount)
 
 /* Navigation Panel */
 EVT_MENU(MENU_TREEPOPUP_ACCOUNT_NEW, mmGUIFrame::OnNewAccount)
@@ -711,46 +711,51 @@ void mmGUIFrame::updateNavTreeControl()
     m_nav_tree_ctrl->SetItemData(budgeting, new mmTreeItemData("Budgeting", true));
     m_nav_tree_ctrl->SetItemBold(budgeting, true);
 
-    const auto all_budgets = Model_Budgetyear::instance().all(Model_Budgetyear::COL_BUDGETYEARNAME);
-    if (!all_budgets.empty())
     {
-        std::map <wxString, int> years;
-
-        wxRegEx pattern_year(R"(^([0-9]{4})$)");
-        wxRegEx pattern_month(R"(^([0-9]{4})-([0-9]{2})$)");
-
-        for (const auto& e : all_budgets)
+        const auto all_budgets = Model_Budgetyear::instance().all(Model_Budgetyear::COL_BUDGETYEARNAME);
+        if (!all_budgets.empty())
         {
-            const wxString& name = e.BUDGETYEARNAME;
-            if (pattern_year.Matches(name))
-            {
-                years[name] = e.BUDGETYEARID;
+            std::map <wxString, int> years;
 
-            }
-            else
+            wxRegEx pattern_year(R"(^([0-9]{4})$)");
+            wxRegEx pattern_month(R"(^([0-9]{4})-([0-9]{2})$)");
+
+            for (const auto& e : all_budgets)
             {
-                if (pattern_month.Matches(name)) {
-                    wxString root_year = pattern_month.GetMatch(name, 1);
-                    if (years.find(root_year) == years.end()) {
-                        years[root_year] = e.BUDGETYEARID;
+                const wxString& name = e.BUDGETYEARNAME;
+                if (pattern_year.Matches(name))
+                {
+                    years[name] = e.BUDGETYEARID;
+
+                }
+                else
+                {
+                    if (pattern_month.Matches(name))
+                    {
+                        wxString root_year = pattern_month.GetMatch(name, 1);
+                        if (years.find(root_year) == years.end())
+                        {
+                            years[root_year] = e.BUDGETYEARID;
+                        }
                     }
                 }
             }
-        }
 
-        for (const auto& entry : years)
-        {
-            wxTreeItemId year_budget;
-            for (const auto& e : all_budgets)
+            for (const auto& entry : years)
             {
-                if (entry.second == e.BUDGETYEARID) {
-                    year_budget = m_nav_tree_ctrl->AppendItem(budgeting, e.BUDGETYEARNAME, img::CALENDAR_PNG, img::CALENDAR_PNG);
-                    m_nav_tree_ctrl->SetItemData(year_budget, new mmTreeItemData(e.BUDGETYEARID, true, false));
-                }
-                else if (pattern_month.Matches(e.BUDGETYEARNAME) && pattern_month.GetMatch(e.BUDGETYEARNAME, 1) == entry.first)
+                wxTreeItemId year_budget;
+                for (const auto& e : all_budgets)
                 {
-                    wxTreeItemId month_budget = m_nav_tree_ctrl->AppendItem(year_budget, e.BUDGETYEARNAME, img::CALENDAR_PNG, img::CALENDAR_PNG);
-                    m_nav_tree_ctrl->SetItemData(month_budget, new mmTreeItemData(e.BUDGETYEARID, true, false));
+                    if (entry.second == e.BUDGETYEARID)
+                    {
+                        year_budget = m_nav_tree_ctrl->AppendItem(budgeting, e.BUDGETYEARNAME, img::CALENDAR_PNG, img::CALENDAR_PNG);
+                        m_nav_tree_ctrl->SetItemData(year_budget, new mmTreeItemData(e.BUDGETYEARID, true, false));
+                    }
+                    else if (pattern_month.Matches(e.BUDGETYEARNAME) && pattern_month.GetMatch(e.BUDGETYEARNAME, 1) == entry.first)
+                    {
+                        wxTreeItemId month_budget = m_nav_tree_ctrl->AppendItem(year_budget, e.BUDGETYEARNAME, img::CALENDAR_PNG, img::CALENDAR_PNG);
+                        m_nav_tree_ctrl->SetItemData(month_budget, new mmTreeItemData(e.BUDGETYEARID, true, false));
+                    }
                 }
             }
         }
@@ -999,6 +1004,8 @@ void mmGUIFrame::OnSelChanged(wxTreeEvent& event)
             helpFileIndex_ = mmex::HTML_INDEX;
         else if (data == "item@Stocks")
             helpFileIndex_ = mmex::HTML_INVESTMENT;
+        else if (data == "item@Assets")
+            helpFileIndex_ = mmex::HTML_ASSETS;
         else if (data == "item@Budgeting")
             helpFileIndex_ = mmex::HTML_BUDGET;
         else if (data == "item@Reports")
@@ -1018,9 +1025,7 @@ void mmGUIFrame::OnSelChanged(wxTreeEvent& event)
             return;
         }
         wxSharedPtr<wxCommandEvent> evt;
-        if (data == "item@Assets")
-            evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, MENU_ASSETS);
-        else if (data == "item@Bills & Deposits")
+        if (data == "item@Bills & Deposits")
             evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, MENU_BILLSDEPOSITS);
         else if (data == "item@Transaction Report")
             evt = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, MENU_TRANSACTIONREPORT);
@@ -2545,12 +2550,6 @@ void mmGUIFrame::OnExportToHtml(wxCommandEvent& WXUNUSED(event))
 }
 //----------------------------------------------------------------------------
 
-void mmGUIFrame::OnBillsDeposits(wxCommandEvent& WXUNUSED(event))
-{
-    createBillsDeposits();
-}
-//----------------------------------------------------------------------------
-
 void mmGUIFrame::createHomePage()
 {
     StringBuffer json_buffer;
@@ -2621,8 +2620,7 @@ void mmGUIFrame::createHelpPage()
     m_nav_tree_ctrl->SetEvtHandlerEnabled(false);
     windowsFreezeThaw(homePanel_);
     wxSizer *sizer = cleanupHomePanel();
-    panelCurrent_ = new mmHelpPanel(homePanel_, this, wxID_HELP
-        , wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxTAB_TRAVERSAL);
+    panelCurrent_ = new mmHelpPanel(homePanel_, this, wxID_HELP);
     sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
     homePanel_->Layout();
     windowsFreezeThaw(homePanel_);
@@ -2665,7 +2663,6 @@ void mmGUIFrame::createBillsDeposits()
 
     Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
 }
-//----------------------------------------------------------------------------
 
 void mmGUIFrame::createBudgetingPage(int budgetYearID)
 {
@@ -2704,7 +2701,42 @@ void mmGUIFrame::createBudgetingPage(int budgetYearID)
     menuPrintingEnable(true);
     m_nav_tree_ctrl->SetEvtHandlerEnabled(true);
 }
-//----------------------------------------------------------------------------
+
+void mmGUIFrame::OnBillsDeposits(wxCommandEvent& WXUNUSED(event))
+{
+    createBillsDeposits();
+}
+
+void mmGUIFrame::OnAssets(wxCommandEvent& /*event*/)
+{
+    createAssets();
+}
+
+void mmGUIFrame::createAssets()
+{
+    StringBuffer json_buffer;
+    Writer<StringBuffer> json_writer(json_buffer);
+
+    json_writer.StartObject();
+    json_writer.Key("module");
+    json_writer.String("Asset Panel");
+
+    const auto time = wxDateTime::UNow();
+
+    windowsFreezeThaw(homePanel_);
+    wxSizer *sizer = cleanupHomePanel();
+    panelCurrent_ = new mmAssetsPanel(this, homePanel_, mmID_ASSETS);
+    sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
+    homePanel_->Layout();
+    windowsFreezeThaw(homePanel_);
+    menuPrintingEnable(true);
+
+    json_writer.Key("seconds");
+    json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
+    json_writer.EndObject();
+
+    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+}
 
 void mmGUIFrame::createCheckingAccountPage(int accountID)
 {
@@ -2785,25 +2817,16 @@ void mmGUIFrame::createStocksAccountPage(int accountID)
 
 //----------------------------------------------------------------------------
 
-void mmGUIFrame::OnGotoAccount(wxCommandEvent& WXUNUSED(event))
+void mmGUIFrame::OnGotoAccount(wxCommandEvent& event)
 {
     bool proper_type = false;
     Model_Account::Data *acc = Model_Account::instance().get(gotoAccountID_);
     if (acc)
-        proper_type = Model_Account::type(acc) != Model_Account::INVESTMENT;
+        proper_type = Model_Account::type(acc) != Model_Account::INVESTMENT
+            && Model_Account::type(acc) != Model_Account::ASSET;
+
     if (proper_type)
         createCheckingAccountPage(gotoAccountID_);
-    m_nav_tree_ctrl->Refresh();
-}
-
-void mmGUIFrame::OnGotoStocksAccount(wxCommandEvent& WXUNUSED(event))
-{
-    bool proper_type = false;
-    Model_Account::Data *acc = Model_Account::instance().get(gotoAccountID_);
-    if (acc)
-        proper_type = Model_Account::type(acc) == Model_Account::INVESTMENT;
-    if (proper_type)
-        createStocksAccountPage(gotoAccountID_);
     m_nav_tree_ctrl->Refresh();
 }
 
@@ -2837,32 +2860,6 @@ void mmGUIFrame::OnRates(wxCommandEvent& WXUNUSED(event))
     o = new mmOnline();
 
     refreshPanelData();
-}
-
-void mmGUIFrame::OnAssets(wxCommandEvent& /*event*/)
-{
-    StringBuffer json_buffer;
-    Writer<StringBuffer> json_writer(json_buffer);
-
-    json_writer.StartObject();
-    json_writer.Key("module");
-    json_writer.String("Asset Panel");
-
-    const auto time = wxDateTime::UNow();
-
-    windowsFreezeThaw(homePanel_);
-    wxSizer *sizer = cleanupHomePanel();
-    panelCurrent_ = new mmAssetsPanel(this, homePanel_, mmID_ASSETS);
-    sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
-    homePanel_->Layout();
-    windowsFreezeThaw(homePanel_);
-    menuPrintingEnable(true);
-
-    json_writer.Key("seconds");
-    json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
-    json_writer.EndObject();
-
-    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
 }
 
 //----------------------------------------------------------------------------

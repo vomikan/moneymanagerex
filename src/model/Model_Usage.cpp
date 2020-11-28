@@ -30,6 +30,7 @@ Copyright (C) 2018 Stefano Giorgio (stef145g)
 Model_Usage::Model_Usage()
     : Model<DB_Table_USAGE_V1>()
 {
+    wxLogDebug("Model_Usage()");
 }
 
 Model_Usage::~Model_Usage()
