@@ -93,7 +93,7 @@ public:
                     long style = SYMBOL_UNIVCSVDIALOG_STYLE);
 
     bool isImportCompletedSuccessfully() const;
-    int ImportedAccountID() const;
+    int get_imported_account_id() const;
     bool IsImporter() const;
     bool IsXML() const;
     bool IsCSV() const;
@@ -225,7 +225,7 @@ inline bool mmUnivCSVDialog::isImportCompletedSuccessfully() const
 {
     return importSuccessful_;
 }
-inline int mmUnivCSVDialog::ImportedAccountID() const
+inline int mmUnivCSVDialog::get_imported_account_id() const
 {
     return fromAccountID_;
 }

@@ -140,8 +140,9 @@ private:
     mmBudgetingPanel* budgetingPage_;
 
     void createHomePage();
-    void createCheckingAccountPage(int accountID);
+    void createCheckingAccountPage(int accountID, const wxString& type);
     void createStocksAccountPage(int accountID, const wxString& type);
+    void createAssetsAccountPage(int accountID, const wxString& type);
 
 private:
     void createBillsDeposits();

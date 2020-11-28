@@ -307,10 +307,12 @@ mmGUIFrame::mmGUIFrame(mmGUIApp* app, const wxString& title
 
 mmGUIFrame::~mmGUIFrame()
 {
-    try {
+    try
+    {
         cleanup();
     }
-    catch (...) {
+    catch (...)
+    {
         wxASSERT(false);
     }
 
@@ -824,22 +826,28 @@ void mmGUIFrame::updateNavTreeControl()
 
         loadNavigationTreeItemsStatusFromJson();
 
-        if (!m_nav_tree_ctrl->ItemHasChildren(accounts)) {
+        if (!m_nav_tree_ctrl->ItemHasChildren(accounts))
+        {
             m_nav_tree_ctrl->Delete(accounts);
         }
-        if (!m_nav_tree_ctrl->ItemHasChildren(cardAccounts)) {
+        if (!m_nav_tree_ctrl->ItemHasChildren(cardAccounts))
+        {
             m_nav_tree_ctrl->Delete(cardAccounts);
         }
-        if (!m_nav_tree_ctrl->ItemHasChildren(termAccounts)) {
+        if (!m_nav_tree_ctrl->ItemHasChildren(termAccounts))
+        {
             m_nav_tree_ctrl->Delete(termAccounts);
         }
-        if (!m_nav_tree_ctrl->ItemHasChildren(stocks)) {
+        if (!m_nav_tree_ctrl->ItemHasChildren(stocks))
+        {
             m_nav_tree_ctrl->Delete(stocks);
         }
-        if (!m_nav_tree_ctrl->ItemHasChildren(cashAccounts)) {
+        if (!m_nav_tree_ctrl->ItemHasChildren(cashAccounts))
+        {
             m_nav_tree_ctrl->Delete(cashAccounts);
         }
-        if (!m_nav_tree_ctrl->ItemHasChildren(loanAccounts)) {
+        if (!m_nav_tree_ctrl->ItemHasChildren(loanAccounts))
+        {
             m_nav_tree_ctrl->Delete(loanAccounts);
         }
     }
@@ -860,12 +868,14 @@ void mmGUIFrame::loadNavigationTreeItemsStatusFromJson()
 
     const wxString& str = Model_Infotable::instance().GetStringInfo("NAV_TREE_STATUS", "");
     Document json_doc;
-    if (json_doc.Parse(str.utf8_str()).HasParseError()) {
+    if (json_doc.Parse(str.utf8_str()).HasParseError())
+    {
         json_doc.Parse("{}");
     }
 
     std::stack<wxTreeItemId> items;
-    if (m_nav_tree_ctrl->GetRootItem().IsOk()) {
+    if (m_nav_tree_ctrl->GetRootItem().IsOk())
+    {
         items.push(m_nav_tree_ctrl->GetRootItem());
     }
 
@@ -983,16 +993,17 @@ void mmGUIFrame::OnSelChanged(wxTreeEvent& event)
             if (account)
             {
                 gotoAccountID_ = accountID;
-                if (Model_Account::type(account) == Model_Account::INVESTMENT) {
-                    createStocksAccountPage(gotoAccountID_
-                        , wxString::Format("%s Panel", account->ACCOUNTTYPE));
+                if (Model_Account::type(account) == Model_Account::INVESTMENT)
+                {
+                    createStocksAccountPage(gotoAccountID_, account->ACCOUNTTYPE);
                 }
-                if (Model_Account::type(account) == Model_Account::ASSET) {
-                    createStocksAccountPage(gotoAccountID_
-                        , wxString::Format("%s Panel", account->ACCOUNTTYPE));
+                else if (Model_Account::type(account) == Model_Account::ASSET)
+                {
+                    createAssetsAccountPage(gotoAccountID_, account->ACCOUNTTYPE);
                 }
-                else {
-                    createCheckingAccountPage(gotoAccountID_);
+                else
+                {
+                    createCheckingAccountPage(gotoAccountID_, account->ACCOUNTTYPE);
                 }
 
             }
@@ -1674,10 +1685,12 @@ void mmGUIFrame::CreateToolBar()
     toolBar_->AddSeparator();
 
     wxString news_array;
-    for (const auto& entry : websiteNewsArray_) {
+    for (const auto& entry : websiteNewsArray_)
+    {
         news_array += entry.Title + "\n";
     }
-    if (news_array.empty()) {
+    if (news_array.empty())
+    {
         news_array = _("Register/View Release &Notifications");
     }
     const wxBitmap news_ico = (websiteNewsArray_.size() > 0)
@@ -1902,9 +1915,11 @@ bool mmGUIFrame::openFile(const wxString& fileName, bool openingNew, const wxStr
             menuBar_->FindItem(MENU_CHANGE_ENCRYPT_PASSWORD)->Enable(true);
         }
 
-        if (!m_app->GetSilentParam()) {
+        if (!m_app->GetSilentParam())
+        {
             bool isUsed = Model_Infotable::instance().GetBoolInfo("ISUSED", false);
-            if (isUsed) {
+            if (isUsed)
+            {
                 int response = wxMessageBox(_(
                     "Database that you trying to open has been marked as opened by another MMEX instance...\n"
                     "To avoid data loss or conflict, it's strongly recommended to close all other applications that can use the DB.\n\n"
@@ -2204,8 +2219,8 @@ void mmGUIFrame::OnImportUniversalCSV(wxCommandEvent& /*event*/)
     univCSVDialog.ShowModal();
     if (univCSVDialog.isImportCompletedSuccessfully())
     {
-        Model_Account::Data* account = Model_Account::instance().get(univCSVDialog.ImportedAccountID());
-        createCheckingAccountPage(univCSVDialog.ImportedAccountID());
+        Model_Account::Data* account = Model_Account::instance().get(univCSVDialog.get_imported_account_id());
+        createCheckingAccountPage(univCSVDialog.get_imported_account_id(), account->ACCOUNTTYPE);
         if (account) setAccountNavTreeSection(account->ACCOUNTNAME);
     }
 }
@@ -2223,8 +2238,8 @@ void mmGUIFrame::OnImportXML(wxCommandEvent& /*event*/)
     univCSVDialog.ShowModal();
     if (univCSVDialog.isImportCompletedSuccessfully())
     {
-        Model_Account::Data* account = Model_Account::instance().get(univCSVDialog.ImportedAccountID());
-        createCheckingAccountPage(univCSVDialog.ImportedAccountID());
+        Model_Account::Data* account = Model_Account::instance().get(univCSVDialog.get_imported_account_id());
+        createCheckingAccountPage(univCSVDialog.get_imported_account_id(), account->ACCOUNTTYPE);
         if (account) setAccountNavTreeSection(account->ACCOUNTNAME);
     }
 }
@@ -2234,7 +2249,8 @@ void mmGUIFrame::OnImportXML(wxCommandEvent& /*event*/)
 void mmGUIFrame::OnImportWebApp(wxCommandEvent& /*event*/)
 {
     mmWebAppDialog dlg(this, false);
-    if (dlg.ShowModal() == wxID_HELP) {
+    if (dlg.ShowModal() == wxID_HELP)
+    {
         helpFileIndex_ = mmex::HTML_WEBAPP;
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, wxID_HELP);
         GetEventHandler()->AddPendingEvent(evt);
@@ -2363,7 +2379,7 @@ void mmGUIFrame::OnNewTransaction(wxCommandEvent& /*event*/)
             Model_Account::Data * account = Model_Account::instance().get(gotoAccountID_);
             if (account)
             {
-                createCheckingAccountPage(gotoAccountID_);
+                createCheckingAccountPage(gotoAccountID_, account->ACCOUNTTYPE);
                 setAccountNavTreeSection(account->ACCOUNTNAME);
             }
         }
@@ -2508,7 +2524,8 @@ void mmGUIFrame::OnPrintPage(wxCommandEvent& WXUNUSED(event))
 void mmGUIFrame::showBeginAppDialog(bool fromScratch)
 {
     mmAppStartDialog dlg(this);
-    if (fromScratch) {
+    if (fromScratch)
+    {
         dlg.SetCloseButtonToExit();
     }
 
@@ -2520,7 +2537,8 @@ void mmGUIFrame::showBeginAppDialog(bool fromScratch)
     else if (end_mod == wxID_FILE1)
     {
         wxFileName fname(Model_Setting::instance().getLastDbPath());
-        if (fname.IsOk()) {
+        if (fname.IsOk())
+        {
             SetDatabaseFile(fname.GetFullPath());
         }
     }
@@ -2593,7 +2611,8 @@ void mmGUIFrame::createHomePage()
         homePanel_->Layout();
         windowsFreezeThaw(homePanel_);
     }
-    if (m_nav_tree_ctrl->GetRootItem().IsOk()) {
+    if (m_nav_tree_ctrl->GetRootItem().IsOk())
+    {
         m_nav_tree_ctrl->SelectItem(m_nav_tree_ctrl->GetRootItem());
     }
     m_nav_tree_ctrl->SetEvtHandlerEnabled(true);
@@ -2724,7 +2743,7 @@ void mmGUIFrame::OnAssets(wxCommandEvent& /*event*/)
     //TODO: ??
 }
 
-void mmGUIFrame::createCheckingAccountPage(int accountID)
+void mmGUIFrame::createCheckingAccountPage(int accountID, const wxString& type)
 {
     StringBuffer json_buffer;
     Writer<StringBuffer> json_writer(json_buffer);
@@ -2765,22 +2784,18 @@ void mmGUIFrame::createCheckingAccountPage(int accountID)
     m_nav_tree_ctrl->SetEvtHandlerEnabled(true);
 }
 
-void mmGUIFrame::createStocksAccountPage(int accountID, const wxString& type)
+void mmGUIFrame::createAssetsAccountPage(int accountID, const wxString& type)
 {
     StringBuffer json_buffer;
     Writer<StringBuffer> json_writer(json_buffer);
 
     json_writer.StartObject();
     json_writer.Key("module");
-    json_writer.String(type.utf8_str());
+    json_writer.String(wxString::Format("%s Panel", "Assets").utf8_str());
 
     const auto time = wxDateTime::UNow();
 
-    if (panelCurrent_->GetId() == mmID_STOCKS)
-    {
-        stockAccountPage_->DisplayAccountDetails(accountID);
-    }
-    else if (panelCurrent_->GetId() == mmID_ASSETS)
+    if (panelCurrent_->GetId() == mmID_ASSETS)
     {
         assetsAccountPage_->DisplayAccountDetails(accountID);
     }
@@ -2790,15 +2805,44 @@ void mmGUIFrame::createStocksAccountPage(int accountID, const wxString& type)
         windowsFreezeThaw(homePanel_);
         wxSizer *sizer = cleanupHomePanel();
 
-        if (type == Model_Account::all_type()[Model_Account::INVESTMENT]){
+        assetsAccountPage_ = new mmAssetsPanel(this, homePanel_, accountID, mmID_ASSETS);
+        panelCurrent_ = assetsAccountPage_;
+
+        sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
+        homePanel_->Layout();
+        windowsFreezeThaw(homePanel_);
+    }
+
+    json_writer.Key("seconds");
+    json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
+    json_writer.EndObject();
+
+    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+}
+
+void mmGUIFrame::createStocksAccountPage(int accountID, const wxString& type)
+{
+    StringBuffer json_buffer;
+    Writer<StringBuffer> json_writer(json_buffer);
+
+    json_writer.StartObject();
+    json_writer.Key("module");
+    json_writer.String(wxString::Format("%s Panel", "Investments").utf8_str());
+
+    const auto time = wxDateTime::UNow();
+
+    if (panelCurrent_->GetId() == mmID_STOCKS)
+    {
+        stockAccountPage_->DisplayAccountDetails(accountID);
+    }
+    else
+    {
+        //updateNavTreeControl();
+        windowsFreezeThaw(homePanel_);
+        wxSizer *sizer = cleanupHomePanel();
+
         stockAccountPage_ = new mmStocksPanel(this, homePanel_, accountID, mmID_STOCKS);
         panelCurrent_ = stockAccountPage_;
-        }
-        else
-        {
-            assetsAccountPage_ = new mmAssetsPanel(this, homePanel_, accountID, mmID_ASSETS);
-            panelCurrent_ = assetsAccountPage_;
-        }
 
         sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
         homePanel_->Layout();
@@ -2816,16 +2860,21 @@ void mmGUIFrame::createStocksAccountPage(int accountID, const wxString& type)
 
 void mmGUIFrame::OnGotoAccount(wxCommandEvent& event)
 {
-    bool proper_type = false;
+    int type = 0;
     Model_Account::Data *acc = Model_Account::instance().get(gotoAccountID_);
     if (acc)
-        proper_type = Model_Account::type(acc) != Model_Account::INVESTMENT
-            && Model_Account::type(acc) != Model_Account::ASSET;
-
-    if (proper_type)
-        createCheckingAccountPage(gotoAccountID_);
-    else
+        type = Model_Account::type(acc);
+    switch (type)
+    {
+    case Model_Account::INVESTMENT:
         createStocksAccountPage(gotoAccountID_, acc->ACCOUNTTYPE);
+        break;
+    case Model_Account::ASSET:
+        createAssetsAccountPage(gotoAccountID_, acc->ACCOUNTTYPE);
+        break;
+    default:
+        createCheckingAccountPage(gotoAccountID_, acc->ACCOUNTTYPE);
+    }
 
     m_nav_tree_ctrl->Refresh();
 }
@@ -2843,17 +2892,17 @@ void mmGUIFrame::OnRates(wxCommandEvent& WXUNUSED(event))
 {
     wxBusyInfo info
 #if (wxMAJOR_VERSION == 3 && wxMINOR_VERSION >= 1)
-    (
-        wxBusyInfoFlags()
-        .Parent(this)
-        .Title(_("Downloading stock prices"))
-        .Text(_("Please wait..."))
-        .Foreground(*wxWHITE)
-        .Background(wxColour(104, 179, 51))
-        .Transparency(4 * wxALPHA_OPAQUE / 5)
-    );
+        (
+            wxBusyInfoFlags()
+            .Parent(this)
+            .Title(_("Downloading stock prices"))
+            .Text(_("Please wait..."))
+            .Foreground(*wxWHITE)
+            .Background(wxColour(104, 179, 51))
+            .Transparency(4 * wxALPHA_OPAQUE / 5)
+            );
 #else
-    (_("Downloading stock prices"), this);
+        (_("Downloading stock prices"), this);
 #endif
 
     wxSharedPtr<mmOnline> o;
