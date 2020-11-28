@@ -2790,12 +2790,15 @@ void mmGUIFrame::createStocksAccountPage(int accountID, const wxString& type)
         windowsFreezeThaw(homePanel_);
         wxSizer *sizer = cleanupHomePanel();
 
+        if (type == Model_Account::all_type()[Model_Account::INVESTMENT]){
         stockAccountPage_ = new mmStocksPanel(this, homePanel_, accountID, mmID_STOCKS);
         panelCurrent_ = stockAccountPage_;
-
-        assetsAccountPage_ = new mmAssetsPanel(this, homePanel_, accountID, mmID_ASSETS);
-        panelCurrent_ = assetsAccountPage_;
-
+        }
+        else
+        {
+            assetsAccountPage_ = new mmAssetsPanel(this, homePanel_, accountID, mmID_ASSETS);
+            panelCurrent_ = assetsAccountPage_;
+        }
 
         sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
         homePanel_->Layout();
