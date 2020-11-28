@@ -48,6 +48,7 @@ public:
     void sortTable();
     wxString getItem(long item, long column) const;
     Model_Asset::Data_Set get_m_assets();
+    wxString getAssetInfo(int selectedIndex) const;
 
 protected:
     virtual void OnColClick(wxListEvent& event);
@@ -110,14 +111,15 @@ public:
     void AddAssetTrans(const int selected_index);
     void RefreshList(int transID = -1);
     void dataToControls(int transID = -1);
-    wxStaticText* header_text_;
     int get_account_id() const;
+    void set_header_text(const wxString& text);
 
 private:
     void enableEditDeleteButtons(bool enable);
     void OnSearchTxtEntered(wxCommandEvent& event);
     void OnNotebookPageChanged(wxBookCtrlEvent& event);
 
+    wxStaticText* header_text_;
     mmAssetsListCtrl* m_assets_list;
     wxButton* m_bitmapTransFilter;
     wxNotebook* m_notebook;
@@ -148,10 +150,10 @@ private:
 
     enum {
         IDC_PANEL_ASSET_STATIC_DETAILS = wxID_HIGHEST + 1220,
-        IDC_PANEL_ASSET_STATIC_DETAILS_MINI,
     };
 
 };
 
 inline Model_Asset::Data_Set mmAssetsListCtrl::get_m_assets() { return m_assets; }
 inline int mmAssetsPanel::get_account_id() const { return m_account_id; }
+inline void  mmAssetsPanel::set_header_text(const wxString& text) { header_text_->SetLabelText(text); }

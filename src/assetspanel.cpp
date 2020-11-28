@@ -347,7 +347,8 @@ int mmAssetsListCtrl::initVirtualListControl(int id, int col, bool asc)
 
     double balance = 0.0;
     for (const auto& asset : this->m_assets) balance += Model_Asset::value(asset);
-    m_panel->header_text_->SetLabelText(wxString::Format(_("Total: %s"), Model_Currency::toCurrency(balance))); // balance
+    m_panel->set_header_text(wxString::Format(_("Total: %s"), Model_Currency::toCurrency(balance))); // balance
+    m_panel->updateExtraAssetData(-1);
 
     int selected_item = 0;
     for (const auto& asset : this->m_assets)
@@ -453,6 +454,24 @@ void mmAssetsListCtrl::doSearchTxt(const wxString& search_string)
         }
     }
 
+}
+
+wxString mmAssetsListCtrl::getAssetInfo(int selectedIndex) const
+{
+wxString additionInfo;
+    try
+    {
+        auto asset = m_assets.at(selectedIndex);
+        additionInfo = (Model_Asset::rate(asset) == Model_Asset::RATE_PERCENTAGE)
+            ? wxString::Format("%.2f %%", asset.VALUECHANGERATE)
+            : wxString::Format("%.2f", asset.VALUECHANGERATE);
+    }
+    catch (const std::out_of_range& oor)
+    {
+        additionInfo = "Out of Range error: " + wxString::FromUTF8(oor.what());
+    }
+
+    return additionInfo;
 }
 
 /*******************************************************/
@@ -612,14 +631,10 @@ void mmAssetsPanel::CreateControls()
     BoxSizerHBottom->Add(searchCtrl, 0, wxCENTER, 1);
     searchCtrl->SetToolTip(_("Enter any string to find related assets"));
 
-    //Infobar-mini
-    wxStaticText* itemStaticText44 = new wxStaticText(bottom_panel, IDC_PANEL_ASSET_STATIC_DETAILS_MINI, "");
-    BoxSizerHBottom->Add(itemStaticText44, 1, wxGROW | wxTOP | wxLEFT, 5);
-
     //Infobar
     wxStaticText* itemStaticText33 = new wxStaticText(bottom_panel
         , IDC_PANEL_ASSET_STATIC_DETAILS, "", wxDefaultPosition, wxSize(200, -1), wxTE_MULTILINE | wxTE_WORDWRAP);
-    BoxSizerHBottom->Add(itemStaticText33, g_flagsExpandBorder1);
+    BoxSizerVBottom->Add(itemStaticText33, g_flagsExpandBorder1);
 
     updateExtraAssetData(-1);
 }
@@ -647,23 +662,12 @@ void mmAssetsPanel::OnOpenAttachment(wxCommandEvent& event)
 void mmAssetsPanel::updateExtraAssetData(int selIndex)
 {
     wxStaticText* st = static_cast<wxStaticText*>(FindWindow(IDC_PANEL_ASSET_STATIC_DETAILS));
-    wxStaticText* stm = static_cast<wxStaticText*>(FindWindow(IDC_PANEL_ASSET_STATIC_DETAILS_MINI));
     if (selIndex > -1)
     {
-        const Model_Asset::Data& asset = m_assets_list->get_m_assets()[selIndex];
-        enableEditDeleteButtons(true);
-        const auto& change_rate = (Model_Asset::rate(asset) == Model_Asset::RATE_PERCENTAGE)
-            ? wxString::Format("%.2f %%", asset.VALUECHANGERATE)
-            : wxString::Format("%.2f", asset.VALUECHANGERATE);
-        const wxString& miniInfo = " " + wxString::Format(_("Change in Value: %s")
-            , change_rate);
-
-        st->SetLabelText(asset.NOTES);
-        stm->SetLabelText(miniInfo);
+        st->SetLabelText(m_assets_list->getAssetInfo(selIndex));
     }
     else
     {
-        stm->SetLabelText("");
         st->SetLabelText(this->tips_);
         enableEditDeleteButtons(false);
     }
