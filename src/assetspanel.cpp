@@ -336,9 +336,11 @@ int mmAssetsListCtrl::initVirtualListControl(int id, int col, bool asc)
     SetColumn(col, item);
 
     if (m_panel->m_filter_type == Model_Asset::TYPE(-1)) // ALL
-        this->m_assets = Model_Asset::instance().all();
+        this->m_assets = Model_Asset::instance().find(Model_Asset::ACCOUNTID(m_panel->get_account_id()));
     else
-        this->m_assets = Model_Asset::instance().find(Model_Asset::ASSETTYPE(m_panel->m_filter_type));
+        this->m_assets = Model_Asset::instance().find(
+            Model_Asset::ASSETTYPE(m_panel->m_filter_type)
+            , Model_Asset::ACCOUNTID(m_panel->get_account_id()));
     this->sortTable();
 
     SetItemCount(this->m_assets.size());
@@ -501,9 +503,7 @@ bool mmAssetsPanel::Create(wxWindow *parent
     GetSizer()->Fit(this);
     GetSizer()->SetSizeHints(this);
 
-    m_assets_list->initVirtualListControl(-1, m_assets_list->m_selected_col, m_assets_list->m_asc);
-    if (!m_assets_list->get_m_assets().empty())
-        m_assets_list->EnsureVisible(m_assets_list->get_m_assets().size() - 1);
+    dataToControls();
 
     this->windowsFreezeThaw();
     GetSizer()->Fit(this);
@@ -759,16 +759,10 @@ void mmAssetsPanel::dataToControls(int transID)
 
 void mmAssetsPanel::DisplayAccountDetails(int accountID)
 {
-
     m_account_id = accountID;
-    Model_Account::Data* account = Model_Account::instance().get(accountID);
-    if (account)
-        m_currency = Model_Account::currency(account);
-
     m_view_mode = 0;
     m_notebook->SetSelection(m_view_mode);
     RefreshList();
-
 }
 
 inline void mmAssetsPanel::sortTable() {}

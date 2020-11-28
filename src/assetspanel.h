@@ -111,6 +111,7 @@ public:
     void RefreshList(int transID = -1);
     void dataToControls(int transID = -1);
     wxStaticText* header_text_;
+    int get_account_id() const;
 
 private:
     void enableEditDeleteButtons(bool enable);
@@ -122,7 +123,6 @@ private:
     wxNotebook* m_notebook;
     //MoneyListCtrl* m_listCtrlMoney;
     int m_account_id;
-    Model_Currency::Data * m_currency;
 
     bool Create(wxWindow* parent
         , wxWindowID winid
@@ -154,3 +154,4 @@ private:
 };
 
 inline Model_Asset::Data_Set mmAssetsListCtrl::get_m_assets() { return m_assets; }
+inline int mmAssetsPanel::get_account_id() const { return m_account_id; }
