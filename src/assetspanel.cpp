@@ -85,7 +85,7 @@ mmAssetsListCtrl::mmAssetsListCtrl(mmAssetsPanel* cp, wxWindow *parent, wxWindow
     }
 
     // load the global variables
-    m_default_sort_column = m_panel->col_sort();
+    m_default_sort_column = col_sort();
     m_selected_col = Model_Setting::instance().GetIntSetting("ASSETS_SORT_COL", m_default_sort_column);
     m_asc = Model_Setting::instance().GetBoolSetting("ASSETS_ASC", true);
 }
@@ -136,7 +136,7 @@ void mmAssetsListCtrl::OnListLeftClick(wxMouseEvent& event)
 
 wxString mmAssetsListCtrl::OnGetItemText(long item, long column) const
 {
-    return m_panel->getItem(item, column);
+    return getItem(item, column);
 }
 
 void mmAssetsListCtrl::OnListItemSelected(wxListEvent& event)
@@ -147,7 +147,7 @@ void mmAssetsListCtrl::OnListItemSelected(wxListEvent& event)
 
 int mmAssetsListCtrl::OnGetItemImage(long item) const
 {
-    return Model_Asset::type(m_panel->m_assets[item]);
+    return Model_Asset::type(m_assets[item]);
 }
 
 void mmAssetsListCtrl::OnListKeyDown(wxListEvent& event)
@@ -175,9 +175,9 @@ void mmAssetsListCtrl::OnNewAsset(wxCommandEvent& /*event*/)
 
 void mmAssetsListCtrl::doRefreshItems(int trx_id)
 {
-    int selectedIndex = m_panel->initVirtualListControl(trx_id, m_selected_col, m_asc);
+    int selectedIndex = initVirtualListControl(trx_id, m_selected_col, m_asc);
 
-    long cnt = static_cast<long>(m_panel->m_assets.size());
+    long cnt = static_cast<long>(m_assets.size());
 
     if (selectedIndex >= cnt || selectedIndex < 0)
         selectedIndex = m_asc ? cnt - 1 : 0;
@@ -207,11 +207,11 @@ void mmAssetsListCtrl::OnDeleteAsset(wxCommandEvent& /*event*/)
 
     if (msgDlg.ShowModal() == wxID_YES)
     {
-        const Model_Asset::Data& asset = m_panel->m_assets[m_selected_row];
+        const Model_Asset::Data& asset = m_assets[m_selected_row];
         Model_Asset::instance().remove(asset.ASSETID);
         mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::ASSET), asset.ASSETID);
 
-        m_panel->initVirtualListControl(m_selected_row, m_selected_col, m_asc);
+        initVirtualListControl(m_selected_row, m_selected_col, m_asc);
         m_selected_row = -1;
         m_panel->updateExtraAssetData(m_selected_row);
     }
@@ -229,12 +229,12 @@ void mmAssetsListCtrl::OnDuplicateAsset(wxCommandEvent& /*event*/)
 {
     if (m_selected_row < 0)     return;
 
-    const Model_Asset::Data& asset = m_panel->m_assets[m_selected_row];
+    const Model_Asset::Data& asset = m_assets[m_selected_row];
     Model_Asset::Data* duplicate_asset = Model_Asset::instance().clone(&asset);
 
     if (EditAsset(duplicate_asset))
     {
-        m_panel->initVirtualListControl();
+        initVirtualListControl();
         doRefreshItems(duplicate_asset->ASSETID);
     }
 }
@@ -244,7 +244,7 @@ void mmAssetsListCtrl::OnOrganizeAttachments(wxCommandEvent& /*event*/)
     if (m_selected_row < 0) return;
 
     wxString RefType = Model_Attachment::reftype_desc(Model_Attachment::ASSET);
-    int RefId = m_panel->m_assets[m_selected_row].ASSETID;
+    int RefId = m_assets[m_selected_row].ASSETID;
 
     mmAttachmentDialog dlg(this, RefType, RefId);
     dlg.ShowModal();
@@ -257,7 +257,7 @@ void mmAssetsListCtrl::OnOpenAttachment(wxCommandEvent& /*event*/)
     if (m_selected_row < 0) return;
 
     wxString RefType = Model_Attachment::reftype_desc(Model_Attachment::ASSET);
-    int RefId = m_panel->m_assets[m_selected_row].ASSETID;
+    int RefId = m_assets[m_selected_row].ASSETID;
 
     mmAttachmentManage::OpenAttachmentFromPanelIcon(this, RefType, RefId);
     doRefreshItems(RefId);
@@ -269,7 +269,7 @@ void mmAssetsListCtrl::OnListItemActivated(wxListEvent& event)
     {
         m_selected_row = event.GetIndex();
     }
-    EditAsset(&(m_panel->m_assets[m_selected_row]));
+    EditAsset(&(m_assets[m_selected_row]));
 }
 
 bool mmAssetsListCtrl::EditAsset(Model_Asset::Data* pEntry)
@@ -293,7 +293,7 @@ void mmAssetsListCtrl::OnColClick(wxListEvent& event)
          ColumnNr = event.GetColumn();
     else
          ColumnNr = m_ColumnHeaderNbr;
-    if (0 > ColumnNr || ColumnNr >= m_panel->col_max() || ColumnNr == 0) return;
+    if (0 > ColumnNr || ColumnNr >= col_max() || ColumnNr == 0) return;
 
     if (m_selected_col == ColumnNr && event.GetId() != MENU_HEADER_SORT) m_asc = !m_asc;
 
@@ -311,7 +311,7 @@ void mmAssetsListCtrl::OnColClick(wxListEvent& event)
     Model_Setting::instance().Set("ASSETS_SORT_COL", m_selected_col);
 
     int trx_id = -1;
-    if (m_selected_row>=0) trx_id = m_panel->m_assets[m_selected_row].ASSETID;
+    if (m_selected_row>=0) trx_id = m_assets[m_selected_row].ASSETID;
 
     doRefreshItems(trx_id);
 }
@@ -319,10 +319,138 @@ void mmAssetsListCtrl::OnColClick(wxListEvent& event)
 void mmAssetsListCtrl::OnEndLabelEdit(wxListEvent& event)
 {
     if (event.IsEditCancelled()) return;
-    Model_Asset::Data* asset = &m_panel->m_assets[event.GetIndex()];
+    Model_Asset::Data* asset = &m_assets[event.GetIndex()];
     asset->ASSETNAME = event.m_item.m_text;
     Model_Asset::instance().save(asset);
     RefreshItems(event.GetIndex(), event.GetIndex());
+}
+
+int mmAssetsListCtrl::initVirtualListControl(int id, int col, bool asc)
+{
+    /* Clear all the records */
+    DeleteAllItems();
+
+    wxListItem item;
+    item.SetMask(wxLIST_MASK_IMAGE);
+    item.SetImage(asc ? 8 : 7);
+    SetColumn(col, item);
+
+    if (m_panel->m_filter_type == Model_Asset::TYPE(-1)) // ALL
+        this->m_assets = Model_Asset::instance().all();
+    else
+        this->m_assets = Model_Asset::instance().find(Model_Asset::ASSETTYPE(m_panel->m_filter_type));
+    this->sortTable();
+
+    SetItemCount(this->m_assets.size());
+
+    double balance = 0.0;
+    for (const auto& asset : this->m_assets) balance += Model_Asset::value(asset);
+    m_panel->header_text_->SetLabelText(wxString::Format(_("Total: %s"), Model_Currency::toCurrency(balance))); // balance
+
+    int selected_item = 0;
+    for (const auto& asset : this->m_assets)
+    {
+        if (asset.ASSETID == id) return selected_item;
+        ++selected_item;
+    }
+    return -1;
+}
+
+void mmAssetsListCtrl::sortTable()
+{
+    std::sort(this->m_assets.begin(), this->m_assets.end());
+    std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterBySTARTDATE());
+    switch (m_selected_col)
+    {
+    case COL_ID:
+        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByASSETID());
+        break;
+    case COL_NAME:
+        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByASSETNAME());
+        break;
+    case COL_TYPE:
+        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByASSETTYPE());
+        break;
+    case COL_VALUE_INITIAL:
+        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByVALUE());
+        break;
+    case COL_VALUE_CURRENT:
+        std::stable_sort(this->m_assets.begin(), this->m_assets.end()
+            , [](const Model_Asset::Data& x, const Model_Asset::Data& y)
+        {
+            return Model_Asset::value(x) < Model_Asset::value(y);
+        });
+        break;
+    case COL_DATE:
+        break;
+    case COL_NOTES:
+        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByNOTES());
+    default:
+        break;
+    }
+
+    if (!m_asc) std::reverse(this->m_assets.begin(), this->m_assets.end());
+}
+
+
+wxString mmAssetsListCtrl::getItem(long item, long column) const
+{
+    const Model_Asset::Data& asset = this->m_assets[item];
+    switch (column)
+    {
+    case COL_ICON:
+        return " ";
+    case COL_ID:
+        return wxString::Format("%i", asset.ASSETID).Trim();
+    case COL_NAME:
+        return asset.ASSETNAME;
+    case COL_TYPE:
+        return wxGetTranslation(asset.ASSETTYPE);
+    case COL_VALUE_INITIAL:
+        return Model_Currency::toCurrency(asset.VALUE);
+    case COL_VALUE_CURRENT:
+        return Model_Currency::toCurrency(Model_Asset::value(asset));
+    case COL_DATE:
+        return mmGetDateForDisplay(asset.STARTDATE);
+    case COL_NOTES:
+    {
+        wxString full_notes = asset.NOTES;
+        if (Model_Attachment::NrAttachments(Model_Attachment::reftype_desc(Model_Attachment::ASSET), asset.ASSETID))
+            full_notes = full_notes.Prepend(mmAttachmentManage::GetAttachmentNoteSign());
+        return full_notes;
+    }
+    default:
+        return "";
+    }
+}
+
+void mmAssetsListCtrl::doSearchTxt(const wxString& search_string)
+{
+    if (search_string.IsEmpty()) return;
+
+    long last = GetItemCount();
+    long selectedItem = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    if (selectedItem < 0) //nothing selected
+        selectedItem = m_asc ? last - 1 : 0;
+
+    while (selectedItem > 0 && selectedItem <= last)
+    {
+        m_asc ? selectedItem-- : selectedItem++;
+        const wxString t = getItem(selectedItem, COL_NOTES).Lower();
+        if (t.Matches(search_string + "*"))
+        {
+            //First of all any items should be unselected
+            long cursel = GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+            if (cursel != wxNOT_FOUND)
+                SetItemState(cursel, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+
+            //Then finded item will be selected
+            SetItemState(selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+            EnsureVisible(selectedItem);
+            break;
+        }
+    }
+
 }
 
 /*******************************************************/
@@ -339,9 +467,13 @@ BEGIN_EVENT_TABLE(mmAssetsPanel, wxPanel)
 END_EVENT_TABLE()
 /*******************************************************/
 
-mmAssetsPanel::mmAssetsPanel(mmGUIFrame* frame, wxWindow* parent, wxWindowID winid)
+mmAssetsPanel::mmAssetsPanel(mmGUIFrame* frame
+, wxWindow* parent
+, int account_id
+, wxWindowID winid)
     : m_filter_type(Model_Asset::TYPE(-1))
     , m_frame(frame)
+    , m_account_id(account_id)
     , m_view_mode(0)
     , m_assets_list(nullptr)
     , m_bitmapTransFilter(nullptr)
@@ -369,9 +501,9 @@ bool mmAssetsPanel::Create(wxWindow *parent
     GetSizer()->Fit(this);
     GetSizer()->SetSizeHints(this);
 
-    initVirtualListControl(-1, m_assets_list->m_selected_col, m_assets_list->m_asc);
-    if (!this->m_assets.empty())
-        m_assets_list->EnsureVisible(this->m_assets.size() - 1);
+    m_assets_list->initVirtualListControl(-1, m_assets_list->m_selected_col, m_assets_list->m_asc);
+    if (!m_assets_list->get_m_assets().empty())
+        m_assets_list->EnsureVisible(m_assets_list->get_m_assets().size() - 1);
 
     this->windowsFreezeThaw();
     GetSizer()->Fit(this);
@@ -492,73 +624,6 @@ void mmAssetsPanel::CreateControls()
     updateExtraAssetData(-1);
 }
 
-void mmAssetsPanel::sortTable()
-{
-    std::sort(this->m_assets.begin(), this->m_assets.end());
-    std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterBySTARTDATE());
-    switch (this->m_assets_list->m_selected_col)
-    {
-    case COL_ID:
-        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByASSETID());
-        break;
-    case COL_NAME:
-        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByASSETNAME());
-        break;
-    case COL_TYPE:
-        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByASSETTYPE());
-        break;
-    case COL_VALUE_INITIAL:
-        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByVALUE());
-        break;
-    case COL_VALUE_CURRENT:
-        std::stable_sort(this->m_assets.begin(), this->m_assets.end()
-            , [](const Model_Asset::Data& x, const Model_Asset::Data& y)
-            {
-                return Model_Asset::value(x) < Model_Asset::value(y);
-            });
-        break;
-    case COL_DATE:
-        break;
-    case COL_NOTES:
-        std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByNOTES());
-    default:
-        break;
-    }
-
-    if (!this->m_assets_list->m_asc) std::reverse(this->m_assets.begin(), this->m_assets.end());
-}
-
-int mmAssetsPanel::initVirtualListControl(int id, int col, bool asc)
-{
-    /* Clear all the records */
-    m_assets_list->DeleteAllItems();
-
-    wxListItem item;
-    item.SetMask(wxLIST_MASK_IMAGE);
-    item.SetImage(asc ? 8 : 7);
-    m_assets_list->SetColumn(col, item);
-
-    if (this->m_filter_type == Model_Asset::TYPE(-1)) // ALL
-        this->m_assets = Model_Asset::instance().all();
-    else
-        this->m_assets = Model_Asset::instance().find(Model_Asset::ASSETTYPE(m_filter_type));
-    this->sortTable();
-
-    m_assets_list->SetItemCount(this->m_assets.size());
-
-    double balance = 0.0;
-    for (const auto& asset: this->m_assets) balance += Model_Asset::value(asset); 
-    header_text_->SetLabelText(wxString::Format(_("Total: %s"), Model_Currency::toCurrency(balance))); // balance
-
-    int selected_item = 0;
-    for (const auto& asset: this->m_assets)
-    {
-        if (asset.ASSETID == id) return selected_item;
-        ++ selected_item;
-    }
-    return -1;
-}
-
 void mmAssetsPanel::OnDeleteAsset(wxCommandEvent& event)
 {
     m_assets_list->OnDeleteAsset(event);
@@ -579,44 +644,13 @@ void mmAssetsPanel::OnOpenAttachment(wxCommandEvent& event)
     m_assets_list->OnOpenAttachment(event);
 }
 
-wxString mmAssetsPanel::getItem(long item, long column)
-{
-    const Model_Asset::Data& asset = this->m_assets[item];
-    switch (column)
-    {
-    case COL_ICON:
-        return " ";
-    case COL_ID:
-        return wxString::Format("%i", asset.ASSETID).Trim();
-    case COL_NAME:
-        return asset.ASSETNAME;
-    case COL_TYPE:
-        return wxGetTranslation(asset.ASSETTYPE);
-    case COL_VALUE_INITIAL:
-        return Model_Currency::toCurrency(asset.VALUE);
-    case COL_VALUE_CURRENT:
-        return Model_Currency::toCurrency(Model_Asset::value(asset));
-    case COL_DATE:
-        return mmGetDateForDisplay(asset.STARTDATE);
-    case COL_NOTES:
-    {
-        wxString full_notes = asset.NOTES;
-        if (Model_Attachment::NrAttachments(Model_Attachment::reftype_desc(Model_Attachment::ASSET), asset.ASSETID))
-            full_notes = full_notes.Prepend(mmAttachmentManage::GetAttachmentNoteSign());
-        return full_notes;
-    }
-    default:
-        return "";
-    }
-}
-
 void mmAssetsPanel::updateExtraAssetData(int selIndex)
 {
     wxStaticText* st = static_cast<wxStaticText*>(FindWindow(IDC_PANEL_ASSET_STATIC_DETAILS));
     wxStaticText* stm = static_cast<wxStaticText*>(FindWindow(IDC_PANEL_ASSET_STATIC_DETAILS_MINI));
     if (selIndex > -1)
     {
-        const Model_Asset::Data& asset = this->m_assets[selIndex];
+        const Model_Asset::Data& asset = m_assets_list->get_m_assets()[selIndex];
         enableEditDeleteButtons(true);
         const auto& change_rate = (Model_Asset::rate(asset) == Model_Asset::RATE_PERCENTAGE)
             ? wxString::Format("%.2f %%", asset.VALUECHANGERATE)
@@ -691,35 +725,12 @@ void mmAssetsPanel::OnViewPopupSelected(wxCommandEvent& event)
 void mmAssetsPanel::OnSearchTxtEntered(wxCommandEvent& event)
 {
     const wxString search_string = event.GetString().Lower();
-    if (search_string.IsEmpty()) return;
-
-    long last = m_assets_list->GetItemCount();
-    long selectedItem = m_assets_list->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-    if (selectedItem < 0) //nothing selected
-        selectedItem = m_assets_list->m_asc ? last - 1 : 0;
-
-    while (selectedItem > 0 && selectedItem <= last)
-    {
-        m_assets_list->m_asc ? selectedItem-- : selectedItem++;
-        const wxString t = getItem(selectedItem, COL_NOTES).Lower();
-        if (t.Matches(search_string + "*"))
-        {
-            //First of all any items should be unselected
-            long cursel = m_assets_list->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-            if (cursel != wxNOT_FOUND)
-                m_assets_list->SetItemState(cursel, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-
-            //Then finded item will be selected
-            m_assets_list->SetItemState(selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-            m_assets_list->EnsureVisible(selectedItem);
-            break;
-        }
-    }
+    m_assets_list->doSearchTxt(search_string);
 }
 
 void mmAssetsPanel::AddAssetTrans(const int selected_index)
 {
-    Model_Asset::Data* asset = &m_assets[selected_index];
+    Model_Asset::Data* asset = &m_assets_list->get_m_assets()[selected_index];
     mmAssetDialog asset_dialog(this, m_frame, asset);
 
     if (asset_dialog.ShowModal() == wxID_OK)
@@ -734,3 +745,30 @@ void mmAssetsPanel::OnNotebookPageChanged(wxBookCtrlEvent & event)
     m_view_mode = event.GetSelection();
     wxLogDebug("%i Mode", m_view_mode);
 }
+
+void mmAssetsPanel::RefreshList(int transID)
+{
+    dataToControls(transID);
+}
+
+void mmAssetsPanel::dataToControls(int transID)
+{
+    m_assets_list->initVirtualListControl(transID);
+    //m_listCtrlMoney->initVirtualListControl(transID);
+}
+
+void mmAssetsPanel::DisplayAccountDetails(int accountID)
+{
+
+    m_account_id = accountID;
+    Model_Account::Data* account = Model_Account::instance().get(accountID);
+    if (account)
+        m_currency = Model_Account::currency(account);
+
+    m_view_mode = 0;
+    m_notebook->SetSelection(m_view_mode);
+    RefreshList();
+
+}
+
+inline void mmAssetsPanel::sortTable() {}

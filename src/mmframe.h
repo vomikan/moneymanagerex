@@ -133,18 +133,18 @@ private:
     void refreshPanelData();
 
     mmHomePagePanel* homePage_;
-    void createHomePage();
     mmCheckingPanel* checkingAccountPage_;
-    void createCheckingAccountPage(int accountID);
-
     mmStocksPanel* stockAccountPage_;
-    void createStocksAccountPage(int accountID);
-private:
+    mmAssetsPanel* assetsAccountPage_;
     mmBillsDepositsPanel* billsDepositsPanel_;
-    void createBillsDeposits();
-    void createAssets();
-
     mmBudgetingPanel* budgetingPage_;
+
+    void createHomePage();
+    void createCheckingAccountPage(int accountID);
+    void createStocksAccountPage(int accountID, const wxString& type);
+
+private:
+    void createBillsDeposits();
     void createBudgetingPage(int budgetYearID);
 
     void createControls();

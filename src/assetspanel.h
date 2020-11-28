@@ -41,7 +41,13 @@ public:
     void OnOrganizeAttachments(wxCommandEvent& event);
     void OnOpenAttachment(wxCommandEvent& event);
 
+    int initVirtualListControl(int trx_id = -1, int col = 0, bool asc = true);
+
+    void doSearchTxt(const wxString& txt);
     void doRefreshItems(int trx_id = -1);
+    void sortTable();
+    wxString getItem(long item, long column) const;
+    Model_Asset::Data_Set get_m_assets();
 
 protected:
     virtual void OnColClick(wxListEvent& event);
@@ -49,6 +55,7 @@ protected:
 private:
     mmAssetsPanel* m_panel;
     wxScopedPtr<wxImageList> m_imageList;
+    Model_Asset::Data_Set m_assets;
 
     /* required overrides for virtual style list control */
     virtual wxString OnGetItemText(long item, long column) const;
@@ -61,6 +68,8 @@ private:
     void OnListItemSelected(wxListEvent& event);
     void OnEndLabelEdit(wxListEvent& event);
     bool EditAsset(Model_Asset::Data* pEntry);
+    int col_max() { return COL_MAX; }
+    int col_sort() { return COL_DATE; }
 
     enum {
         MENU_TREEPOPUP_NEW = wxID_HIGHEST + 1200,
@@ -69,6 +78,18 @@ private:
         MENU_ON_DUPLICATE_TRANSACTION,
         MENU_TREEPOPUP_ORGANIZE_ATTACHMENTS,
     };
+    enum EColumn
+    {
+        COL_ICON = 0,
+        COL_ID,
+        COL_NAME,
+        COL_DATE,
+        COL_TYPE,
+        COL_VALUE_INITIAL,
+        COL_VALUE_CURRENT,
+        COL_NOTES,
+        COL_MAX, // number of columns
+    };
 };
 
 class mmAssetsPanel : public mmPanelBase
@@ -76,34 +97,32 @@ class mmAssetsPanel : public mmPanelBase
     wxDECLARE_EVENT_TABLE();
 
 public:
-    mmAssetsPanel(mmGUIFrame* frame, wxWindow* parent, wxWindowID winid);
+    mmAssetsPanel(mmGUIFrame* frame, wxWindow* parent, int account_id, wxWindowID winid);
     mmGUIFrame* m_frame;
 
     void updateExtraAssetData(int selIndex);
-    int initVirtualListControl(int trx_id = -1, int col = 0, bool asc = true);
-    wxString getItem(long item, long column);
 
-    Model_Asset::Data_Set m_assets;
     Model_Asset::TYPE m_filter_type;
-    int col_max() { return COL_MAX; }
-    int col_sort() { return COL_DATE; }
 
     wxString BuildPage() const { return m_assets_list->BuildPage(_("Assets")); }
 
+    void DisplayAccountDetails(int accountID);
     void AddAssetTrans(const int selected_index);
-    void ViewAssetTrans(const int selected_index);
-    void GotoAssetAccount(const int selected_index);
+    void RefreshList(int transID = -1);
+    void dataToControls(int transID = -1);
+    wxStaticText* header_text_;
 
 private:
     void enableEditDeleteButtons(bool enable);
     void OnSearchTxtEntered(wxCommandEvent& event);
     void OnNotebookPageChanged(wxBookCtrlEvent& event);
-    
+
     mmAssetsListCtrl* m_assets_list;
     wxButton* m_bitmapTransFilter;
-    wxStaticText* header_text_;
     wxNotebook* m_notebook;
     //MoneyListCtrl* m_listCtrlMoney;
+    int m_account_id;
+    Model_Currency::Data * m_currency;
 
     bool Create(wxWindow* parent
         , wxWindowID winid
@@ -121,26 +140,17 @@ private:
     void OnMouseLeftDown(wxCommandEvent& event);
 
     void OnViewPopupSelected(wxCommandEvent& event);
-    void sortTable();
 
 private:
     wxString tips_;
     int m_view_mode;
+    void sortTable();
 
     enum {
         IDC_PANEL_ASSET_STATIC_DETAILS = wxID_HIGHEST + 1220,
         IDC_PANEL_ASSET_STATIC_DETAILS_MINI,
     };
-    enum EColumn
-    {
-        COL_ICON = 0,
-        COL_ID,
-        COL_NAME,
-        COL_DATE,
-        COL_TYPE,
-        COL_VALUE_INITIAL,
-        COL_VALUE_CURRENT,
-        COL_NOTES,
-        COL_MAX, // number of columns
-    };
+
 };
+
+inline Model_Asset::Data_Set mmAssetsListCtrl::get_m_assets() { return m_assets; }

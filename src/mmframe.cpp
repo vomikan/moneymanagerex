@@ -189,6 +189,7 @@ mmGUIFrame::mmGUIFrame(mmGUIApp* app, const wxString& title
     , gotoTransID_(-1)
     , checkingAccountPage_(nullptr)
     , stockAccountPage_(nullptr)
+    , assetsAccountPage_(nullptr)
     , budgetingPage_(nullptr)
     , billsDepositsPanel_(nullptr)
     , homePage_(nullptr)
@@ -982,10 +983,18 @@ void mmGUIFrame::OnSelChanged(wxTreeEvent& event)
             if (account)
             {
                 gotoAccountID_ = accountID;
-                if (Model_Account::type(account) != Model_Account::INVESTMENT)
+                if (Model_Account::type(account) == Model_Account::INVESTMENT) {
+                    createStocksAccountPage(gotoAccountID_
+                        , wxString::Format("%s Panel", account->ACCOUNTTYPE));
+                }
+                if (Model_Account::type(account) == Model_Account::ASSET) {
+                    createStocksAccountPage(gotoAccountID_
+                        , wxString::Format("%s Panel", account->ACCOUNTTYPE));
+                }
+                else {
                     createCheckingAccountPage(gotoAccountID_);
-                else
-                    createStocksAccountPage(gotoAccountID_);
+                }
+
             }
             else
             {
@@ -2303,6 +2312,8 @@ void mmGUIFrame::refreshPanelData()
         budgetingPage_->RefreshList();
     else if (id == mmID_STOCKS)
         stockAccountPage_->RefreshList();
+    else if (id == mmID_ASSETS)
+        assetsAccountPage_->RefreshList();
     else if (id == mmID_REPORTS)
     {
         if (activeReport_) //TODO: budget reports and transaction report
@@ -2709,33 +2720,8 @@ void mmGUIFrame::OnBillsDeposits(wxCommandEvent& WXUNUSED(event))
 
 void mmGUIFrame::OnAssets(wxCommandEvent& /*event*/)
 {
-    createAssets();
-}
-
-void mmGUIFrame::createAssets()
-{
-    StringBuffer json_buffer;
-    Writer<StringBuffer> json_writer(json_buffer);
-
-    json_writer.StartObject();
-    json_writer.Key("module");
-    json_writer.String("Asset Panel");
-
-    const auto time = wxDateTime::UNow();
-
-    windowsFreezeThaw(homePanel_);
-    wxSizer *sizer = cleanupHomePanel();
-    panelCurrent_ = new mmAssetsPanel(this, homePanel_, mmID_ASSETS);
-    sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
-    homePanel_->Layout();
-    windowsFreezeThaw(homePanel_);
-    menuPrintingEnable(true);
-
-    json_writer.Key("seconds");
-    json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
-    json_writer.EndObject();
-
-    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+    //createAssets();
+    //TODO: ??
 }
 
 void mmGUIFrame::createCheckingAccountPage(int accountID)
@@ -2779,20 +2765,24 @@ void mmGUIFrame::createCheckingAccountPage(int accountID)
     m_nav_tree_ctrl->SetEvtHandlerEnabled(true);
 }
 
-void mmGUIFrame::createStocksAccountPage(int accountID)
+void mmGUIFrame::createStocksAccountPage(int accountID, const wxString& type)
 {
     StringBuffer json_buffer;
     Writer<StringBuffer> json_writer(json_buffer);
 
     json_writer.StartObject();
     json_writer.Key("module");
-    json_writer.String("Stock Panel");
+    json_writer.String(type.utf8_str());
 
     const auto time = wxDateTime::UNow();
 
     if (panelCurrent_->GetId() == mmID_STOCKS)
     {
         stockAccountPage_->DisplayAccountDetails(accountID);
+    }
+    else if (panelCurrent_->GetId() == mmID_ASSETS)
+    {
+        assetsAccountPage_->DisplayAccountDetails(accountID);
     }
     else
     {
@@ -2802,6 +2792,10 @@ void mmGUIFrame::createStocksAccountPage(int accountID)
 
         stockAccountPage_ = new mmStocksPanel(this, homePanel_, accountID, mmID_STOCKS);
         panelCurrent_ = stockAccountPage_;
+
+        assetsAccountPage_ = new mmAssetsPanel(this, homePanel_, accountID, mmID_ASSETS);
+        panelCurrent_ = assetsAccountPage_;
+
 
         sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
         homePanel_->Layout();
@@ -2827,6 +2821,9 @@ void mmGUIFrame::OnGotoAccount(wxCommandEvent& event)
 
     if (proper_type)
         createCheckingAccountPage(gotoAccountID_);
+    else
+        createStocksAccountPage(gotoAccountID_, acc->ACCOUNTTYPE);
+
     m_nav_tree_ctrl->Refresh();
 }
 
