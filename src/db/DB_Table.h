@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-26 01:41:45.234000.
+ *          AUTO GENERATED at 2020-11-28 20:20:32.998000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -460,6 +460,15 @@ struct SorterByDESCRIPTION
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.DESCRIPTION) < (y.DESCRIPTION);
+    }
+};
+
+struct SorterByENDDATE
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.ENDDATE) < (y.ENDDATE);
     }
 };
 

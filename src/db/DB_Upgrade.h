@@ -7,7 +7,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-26 01:41:53.070000.
+ *          AUTO GENERATED at 2020-11-28 20:20:43.252000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -233,17 +233,34 @@ const std::vector<wxString> dbUpgradeQuery =
         DROP TABLE ASSETCLASS_V1;
         DROP TABLE ASSETCLASS_STOCK_V1;
         
+        insert into ACCOUNTLIST_V1(
+          ACCOUNTNAME
+        , ACCOUNTTYPE
+        , STATUS
+        , INITIALBAL
+        , FAVORITEACCT
+        , CURRENCYID)
+        VALUES (
+        'Asset_'||strftime('%Y-%m-%d', 'now')
+        , 'Asset'
+        , 'Open'
+        , 0
+        , 'TRUE'
+        , (select INFOVALUE from INFOTABLE_V1 where INFONAME='BASECURRENCYID'));
+        
+        
         CREATE TABLE ASSETS_NEW(
           ASSETID integer primary key
         , STARTDATE TEXT NOT NULL
+        , ENDDATE TEXT
         , ASSETNAME TEXT COLLATE NOCASE NOT NULL
         , VALUE numeric
         , VALUECHANGE TEXT /* Value, Percentage */
         , VALUECHANGERATE numeric default 0
         , ASSETTYPE TEXT /* Property, Automobile, Household Object, Art, Jewellery, Cash, Other */
         , NOTES TEXT
-        , CURRENCYID INTEGER NOT NULL
-        , FOREIGN KEY (CURRENCYID) REFERENCES CURRENCYFORMATS_V1(CURRENCYID) 
+        , ACCOUNTID INTEGER NOT NULL
+        , FOREIGN KEY (ACCOUNTID) REFERENCES ACCOUNTLIST_V1(ACCOUNTID) 
         );
         
         INSERT INTO ASSETS_NEW (
@@ -255,7 +272,7 @@ const std::vector<wxString> dbUpgradeQuery =
         , VALUECHANGERATE
         , ASSETTYPE
         , NOTES
-        , CURRENCYID)
+        , ACCOUNTID)
         select 
           ASSETID
         , STARTDATE
@@ -265,7 +282,7 @@ const std::vector<wxString> dbUpgradeQuery =
         , case when VALUECHANGE='Appreciates' then VALUECHANGERATE when VALUECHANGE='Depreciates' then -VALUECHANGERATE else 0 end as VALUECHANGERATE
         , ASSETTYPE
         , NOTES
-        , (select INFOVALUE from INFOTABLE_V1 where INFONAME='BASECURRENCYID') as CURRENCYID
+        , (select ACCOUNTID from ACCOUNTLIST_V1 where ACCOUNTNAME='Asset_'||strftime('%Y-%m-%d', 'now')) as ACCOUNTID
         FROM ASSETS_V1;
         
         DROP INDEX IDX_ASSETS_ASSETTYPE;
@@ -279,7 +296,7 @@ const std::vector<wxString> dbUpgradeQuery =
         ALTER TABLE BILLSDEPOSITS_V1 ADD COLUMN CURRENCYID integer;
         ALTER TABLE BILLSDEPOSITS_V1 ADD COLUMN COLOURID integer;
         update CHECKINGACCOUNT_V1 set COLOURID = case when FOLLOWUPID >=0 and FOLLOWUPID <= 7 then FOLLOWUPID end;
-        update ACCOUNTLIST_V1 set MULTICURRENCY = 1 where ACCOUNTTYPE in ('Investment', 'Asset');
+        update ACCOUNTLIST_V1 set MULTICURRENCY = 1 where ACCOUNTTYPE in ('Investment');
         
         PRAGMA user_version = 8;
         
