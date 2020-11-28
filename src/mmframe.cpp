@@ -2750,7 +2750,7 @@ void mmGUIFrame::createCheckingAccountPage(int accountID, const wxString& type)
 
     json_writer.StartObject();
     json_writer.Key("module");
-    json_writer.String("Checking Panel");
+    json_writer.String(wxString::Format("%s Panel", type).utf8_str());
 
     const auto time = wxDateTime::UNow();
 
@@ -2791,7 +2791,7 @@ void mmGUIFrame::createAssetsAccountPage(int accountID, const wxString& type)
 
     json_writer.StartObject();
     json_writer.Key("module");
-    json_writer.String(wxString::Format("%s Panel", "Assets").utf8_str());
+    json_writer.String(wxString::Format("%s Panel", type).utf8_str());
 
     const auto time = wxDateTime::UNow();
 
@@ -2827,7 +2827,7 @@ void mmGUIFrame::createStocksAccountPage(int accountID, const wxString& type)
 
     json_writer.StartObject();
     json_writer.Key("module");
-    json_writer.String(wxString::Format("%s Panel", "Investments").utf8_str());
+    json_writer.String(wxString::Format("%s Panel", type).utf8_str());
 
     const auto time = wxDateTime::UNow();
 
