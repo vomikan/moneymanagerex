@@ -231,7 +231,7 @@ void mmBillsDepositsPanel::CreateControls()
     itemBoxSizerHHeader2->Add(m_bitmapTransFilter, g_flagsBorder1H);
 
     /* ---------------------- */
-    wxSplitterWindow* itemSplitterWindowBillsDeposit = new wxSplitterWindow(this
+    wxSplitterWindow* splitter_window = new wxSplitterWindow(this
         , wxID_ANY, wxDefaultPosition, wxSize(200, 200)
         , wxSP_3DBORDER | wxSP_3DSASH | wxNO_BORDER);
 
@@ -243,17 +243,17 @@ void mmBillsDepositsPanel::CreateControls()
     m_imageList->Add(mmBitmap(png::UPARROW));
     m_imageList->Add(mmBitmap(png::DOWNARROW));
 
-    listCtrlAccount_ = new billsDepositsListCtrl(this, itemSplitterWindowBillsDeposit);
+    listCtrlAccount_ = new billsDepositsListCtrl(this, splitter_window);
 
     listCtrlAccount_->SetImageList(m_imageList, wxIMAGE_LIST_SMALL);
 
-    wxPanel* bdPanel = new wxPanel(itemSplitterWindowBillsDeposit, wxID_ANY
+    wxPanel* bdPanel = new wxPanel(splitter_window, wxID_ANY
         , wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxTAB_TRAVERSAL);
 
-    itemSplitterWindowBillsDeposit->SplitHorizontally(listCtrlAccount_, bdPanel);
-    itemSplitterWindowBillsDeposit->SetMinimumPaneSize(100);
-    itemSplitterWindowBillsDeposit->SetSashGravity(1.0);
-    itemBoxSizer9->Add(itemSplitterWindowBillsDeposit, g_flagsExpandBorder1);
+    splitter_window->SplitHorizontally(listCtrlAccount_, bdPanel);
+    splitter_window->SetMinimumPaneSize(100);
+    splitter_window->SetSashGravity(1.0);
+    itemBoxSizer9->Add(splitter_window, g_flagsExpandBorder1);
 
     wxBoxSizer* itemBoxSizer4 = new wxBoxSizer(wxVERTICAL);
     bdPanel->SetSizer(itemBoxSizer4);

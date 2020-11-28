@@ -2768,7 +2768,7 @@ void mmGUIFrame::createStocksAccountPage(int accountID)
         windowsFreezeThaw(homePanel_);
         wxSizer *sizer = cleanupHomePanel();
 
-        stockAccountPage_ = new mmStocksPanel(accountID, this, homePanel_, mmID_STOCKS);
+        stockAccountPage_ = new mmStocksPanel(this, homePanel_, accountID, mmID_STOCKS);
         panelCurrent_ = stockAccountPage_;
 
         sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);

@@ -19,6 +19,7 @@
 #include "model/Model_Asset.h"
 #include "model/Model_Account.h"
 #include "mmframe.h"
+//#include "money_list.h"
 
 class wxListEvent;
 class mmAssetsPanel;
@@ -47,6 +48,7 @@ protected:
 
 private:
     mmAssetsPanel* m_panel;
+    wxScopedPtr<wxImageList> m_imageList;
 
     /* required overrides for virtual style list control */
     virtual wxString OnGetItemText(long item, long column) const;
@@ -74,7 +76,7 @@ class mmAssetsPanel : public mmPanelBase
     wxDECLARE_EVENT_TABLE();
 
 public:
-    mmAssetsPanel(mmGUIFrame* frame, wxWindow *parent, wxWindowID winid, const wxString& name="mmAssetsPanel");
+    mmAssetsPanel(mmGUIFrame* frame, wxWindow* parent, wxWindowID winid);
     mmGUIFrame* m_frame;
 
     void updateExtraAssetData(int selIndex);
@@ -86,7 +88,7 @@ public:
     int col_max() { return COL_MAX; }
     int col_sort() { return COL_DATE; }
 
-    wxString BuildPage() const { return m_listCtrlAssets->BuildPage(_("Assets")); }
+    wxString BuildPage() const { return m_assets_list->BuildPage(_("Assets")); }
 
     void AddAssetTrans(const int selected_index);
     void ViewAssetTrans(const int selected_index);
@@ -95,19 +97,20 @@ public:
 private:
     void enableEditDeleteButtons(bool enable);
     void OnSearchTxtEntered(wxCommandEvent& event);
+    void OnNotebookPageChanged(wxBookCtrlEvent& event);
     
-    mmAssetsListCtrl* m_listCtrlAssets;
+    mmAssetsListCtrl* m_assets_list;
     wxButton* m_bitmapTransFilter;
     wxStaticText* header_text_;
+    wxNotebook* m_notebook;
+    //MoneyListCtrl* m_listCtrlMoney;
 
-    wxScopedPtr<wxImageList> m_imageList;
-
-    bool Create(wxWindow *parent
+    bool Create(wxWindow* parent
         , wxWindowID winid
-        , const wxPoint& pos
-        , const wxSize& size
-        , long style
-        , const wxString &name);
+        , const wxPoint& pos = wxDefaultPosition
+        , const wxSize& size =wxDefaultSize
+        , long style = wxTAB_TRAVERSAL
+        , const wxString &name = "mmAssetsPanel");
     void CreateControls();
 
     /* Event handlers for Buttons */
@@ -122,6 +125,8 @@ private:
 
 private:
     wxString tips_;
+    int m_view_mode;
+
     enum {
         IDC_PANEL_ASSET_STATIC_DETAILS = wxID_HIGHEST + 1220,
         IDC_PANEL_ASSET_STATIC_DETAILS_MINI,

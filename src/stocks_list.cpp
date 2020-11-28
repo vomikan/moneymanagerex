@@ -58,7 +58,7 @@ StocksListCtrl::~StocksListCtrl()
     if (m_imageList) delete m_imageList;
 }
 
-StocksListCtrl::StocksListCtrl(mmStocksPanel* sp, wxWindow *parent, wxWindowID winid)
+StocksListCtrl::StocksListCtrl(mmStocksPanel* sp, wxWindow* parent, wxWindowID winid)
     : mmListCtrl(parent, winid)
     , m_stock_panel(sp)
     , m_imageList(0)

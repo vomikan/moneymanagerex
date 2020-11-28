@@ -23,8 +23,10 @@ Copyright (C) 2013, 2014, 2020 Nikolay
 
 #include "mmpanelbase.h"
 #include "stockspanel.h"
+#include "assetspanel.h"
 
 class mmStocksPanel;
+class mmAssetsPanel;
 
 class MoneyListCtrl : public mmListCtrl
 {
@@ -41,8 +43,8 @@ public:
         ICON_ASC,
     };
 
-    MoneyListCtrl(mmStocksPanel* sp, wxWindow* parent
-        , const wxWindowID id = wxID_ANY);
+    //MoneyListCtrl(mmAssetsPanel* ap, wxWindow* parent, wxWindowID winid = wxID_ANY);
+    MoneyListCtrl(mmStocksPanel* sp, wxWindow* parent, wxWindowID id = wxID_ANY);
 
     ~MoneyListCtrl();
 

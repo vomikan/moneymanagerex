@@ -52,10 +52,12 @@ wxEND_EVENT_TABLE();
 
 //----------------------------------------------------------------------------
 
+//MoneyListCtrl::MoneyListCtrl(mmAssetsPanel* ap, wxWindow* parent, wxWindowID id){}
+
 MoneyListCtrl::MoneyListCtrl(
     mmStocksPanel* sp,
     wxWindow *parent,
-    const wxWindowID id
+    wxWindowID id
 ) :
     mmListCtrl(parent, id),
     m_sp(sp),
@@ -73,7 +75,7 @@ MoneyListCtrl::MoneyListCtrl(
     m_topItemIndex(-1)
 {
     wxASSERT(m_sp);
-
+    SetMinSize(wxSize(500, 150));
     const wxAcceleratorEntry entries[] =
     {
         wxAcceleratorEntry(wxACCEL_CTRL, 'C', MENU_ON_COPY_TRANSACTION),

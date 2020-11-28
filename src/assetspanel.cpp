@@ -1,6 +1,6 @@
 /*******************************************************
  Copyright (C) 2006 Madhan Kanagavel
- Copyright (C) 2015 Nikolay
+ Copyright (C) 2015, 2020 Nikolay
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -49,6 +49,20 @@ mmAssetsListCtrl::mmAssetsListCtrl(mmAssetsPanel* cp, wxWindow *parent, wxWindow
 : mmListCtrl(parent, winid)
 , m_panel(cp)
 {
+    int x = Option::instance().getIconSize();
+    m_imageList.reset(new wxImageList(x, x));
+    m_imageList->Add(mmBitmap(png::PROPERTY));
+    m_imageList->Add(mmBitmap(png::CAR));
+    m_imageList->Add(mmBitmap(png::HOUSEHOLD_OBJ));
+    m_imageList->Add(mmBitmap(png::ART));
+    m_imageList->Add(mmBitmap(png::JEWELLERY));
+    m_imageList->Add(mmBitmap(png::CASH));
+    m_imageList->Add(mmBitmap(png::OTHER));
+    m_imageList->Add(mmBitmap(png::UPARROW));
+    m_imageList->Add(mmBitmap(png::DOWNARROW));
+
+    SetImageList(m_imageList.get(), wxIMAGE_LIST_SMALL);
+
     ToggleWindowStyle(wxLC_EDIT_LABELS);
 
     m_columns.push_back(PANEL_COLUMN(" ", 25, wxLIST_FORMAT_LEFT));
@@ -321,18 +335,20 @@ BEGIN_EVENT_TABLE(mmAssetsPanel, wxPanel)
     EVT_MENU(wxID_ANY, mmAssetsPanel::OnViewPopupSelected)
     EVT_SEARCHCTRL_SEARCH_BTN(wxID_FIND, mmAssetsPanel::OnSearchTxtEntered)
     EVT_TEXT_ENTER(wxID_FIND, mmAssetsPanel::OnSearchTxtEntered)
+    EVT_NOTEBOOK_PAGE_CHANGED(wxID_ANY, mmAssetsPanel::OnNotebookPageChanged)
 END_EVENT_TABLE()
 /*******************************************************/
 
-mmAssetsPanel::mmAssetsPanel(mmGUIFrame* frame, wxWindow *parent, wxWindowID winid, const wxString& name)
+mmAssetsPanel::mmAssetsPanel(mmGUIFrame* frame, wxWindow* parent, wxWindowID winid)
     : m_filter_type(Model_Asset::TYPE(-1))
     , m_frame(frame)
-    , m_listCtrlAssets(nullptr)
+    , m_view_mode(0)
+    , m_assets_list(nullptr)
     , m_bitmapTransFilter(nullptr)
     , header_text_(nullptr)
     , tips_()
 {
-    Create(parent, winid, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, name);
+    Create(parent, winid);
 }
 
 bool mmAssetsPanel::Create(wxWindow *parent
@@ -353,9 +369,9 @@ bool mmAssetsPanel::Create(wxWindow *parent
     GetSizer()->Fit(this);
     GetSizer()->SetSizeHints(this);
 
-    initVirtualListControl(-1, m_listCtrlAssets->m_selected_col, m_listCtrlAssets->m_asc);
+    initVirtualListControl(-1, m_assets_list->m_selected_col, m_assets_list->m_asc);
     if (!this->m_assets.empty())
-        m_listCtrlAssets->EnsureVisible(this->m_assets.size() - 1);
+        m_assets_list->EnsureVisible(this->m_assets.size() - 1);
 
     this->windowsFreezeThaw();
     GetSizer()->Fit(this);
@@ -396,76 +412,82 @@ void mmAssetsPanel::CreateControls()
 
     /* ---------------------- */
 
-    wxSplitterWindow* itemSplitterWindow10 = new wxSplitterWindow( this, wxID_STATIC,
-        wxDefaultPosition, wxSize(200, 200), wxSP_3DBORDER|wxSP_3DSASH|wxNO_BORDER);
+    wxSplitterWindow* splitter_window = new wxSplitterWindow(this
+        , wxID_STATIC, wxDefaultPosition, wxSize(200, 200)
+        , wxSP_3DBORDER | wxSP_3DSASH | wxNO_BORDER);
 
-    m_listCtrlAssets = new mmAssetsListCtrl(this, itemSplitterWindow10, wxID_ANY);
+    m_notebook = new wxNotebook(splitter_window, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_MULTILINE);
+    wxPanel* assets_tab = new wxPanel(m_notebook, wxID_ANY);
+    m_notebook->AddPage(assets_tab, _("Assets"));
+    wxBoxSizer *assets_sizer = new wxBoxSizer(wxVERTICAL);
+    assets_tab->SetSizer(assets_sizer);
 
-    int x = Option::instance().getIconSize();
-    m_imageList.reset(new wxImageList(x, x));
-    m_imageList->Add(mmBitmap(png::PROPERTY));
-    m_imageList->Add(mmBitmap(png::CAR));
-    m_imageList->Add(mmBitmap(png::HOUSEHOLD_OBJ));
-    m_imageList->Add(mmBitmap(png::ART));
-    m_imageList->Add(mmBitmap(png::JEWELLERY));
-    m_imageList->Add(mmBitmap(png::CASH));
-    m_imageList->Add(mmBitmap(png::OTHER));
-    m_imageList->Add(mmBitmap(png::UPARROW));
-    m_imageList->Add(mmBitmap(png::DOWNARROW));
+    wxPanel* money_tab = new wxPanel(m_notebook, wxID_ANY);
+    m_notebook->AddPage(money_tab, _("Money"));
 
-    m_listCtrlAssets->SetImageList(m_imageList.get(), wxIMAGE_LIST_SMALL);
+    m_assets_list = new mmAssetsListCtrl(this, assets_tab, wxID_ANY);
+    assets_sizer->Add(m_assets_list, g_flagsExpand);
 
-    wxPanel* assets_panel = new wxPanel(itemSplitterWindow10, wxID_ANY
+    wxBoxSizer *money_sizer = new wxBoxSizer(wxVERTICAL);
+    money_tab->SetSizer(money_sizer);
+
+    wxListCtrl* m_listCtrlMoney = new wxListCtrl(money_tab, wxID_ANY);
+    m_listCtrlMoney->SetMinSize(wxSize(500, 150));
+
+    money_sizer->Add(m_listCtrlMoney, g_flagsExpand);
+
+    //
+    wxPanel* bottom_panel = new wxPanel(splitter_window, wxID_ANY
         , wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxTAB_TRAVERSAL);
 
-    itemSplitterWindow10->SplitHorizontally(m_listCtrlAssets, assets_panel);
-    itemSplitterWindow10->SetMinimumPaneSize(100);
-    itemSplitterWindow10->SetSashGravity(1.0);
-    itemBoxSizer9->Add(itemSplitterWindow10, g_flagsExpandBorder1);
+    splitter_window->SplitHorizontally(m_notebook, bottom_panel);
+    splitter_window->SetMinimumPaneSize(100);
+    splitter_window->SetSashGravity(1.0);
+    itemBoxSizer9->Add(splitter_window, g_flagsExpandBorder1);
 
-    wxBoxSizer* itemBoxSizer4 = new wxBoxSizer(wxVERTICAL);
-    assets_panel->SetSizer(itemBoxSizer4);
+    wxBoxSizer* BoxSizerVBottom = new wxBoxSizer(wxVERTICAL);
+    bottom_panel->SetSizer(BoxSizerVBottom);
 
-    wxBoxSizer* itemBoxSizer5 = new wxBoxSizer(wxHORIZONTAL);
-    itemBoxSizer4->Add(itemBoxSizer5, g_flagsBorder1V);
+    wxBoxSizer* BoxSizerHBottom = new wxBoxSizer(wxHORIZONTAL);
+    BoxSizerVBottom->Add(BoxSizerHBottom, g_flagsBorder1V);
 
-    wxButton* itemButton6 = new wxButton( assets_panel, wxID_NEW, _("&New "));
+    wxButton* itemButton6 = new wxButton(bottom_panel, wxID_NEW, _("&New "));
     itemButton6->SetToolTip(_("New Asset"));
-    itemBoxSizer5->Add(itemButton6, 0, wxRIGHT, 5);
+    BoxSizerHBottom->Add(itemButton6, 0, wxRIGHT, 5);
 
-    wxButton* itemButton81 = new wxButton( assets_panel, wxID_EDIT, _("&Edit "));
+    wxButton* itemButton81 = new wxButton(bottom_panel, wxID_EDIT, _("&Edit "));
     itemButton81->SetToolTip(_("Edit Asset"));
-    itemBoxSizer5->Add(itemButton81, 0, wxRIGHT, 5);
+    BoxSizerHBottom->Add(itemButton81, 0, wxRIGHT, 5);
     itemButton81->Enable(false);
 
-    wxButton* itemButton7 = new wxButton( assets_panel, wxID_DELETE, _("&Delete "));
+    wxButton* itemButton7 = new wxButton(bottom_panel, wxID_DELETE, _("&Delete "));
     itemButton7->SetToolTip(_("Delete Asset"));
-    itemBoxSizer5->Add(itemButton7, 0, wxRIGHT, 5);
+    BoxSizerHBottom->Add(itemButton7, 0, wxRIGHT, 5);
     itemButton7->Enable(false);
 
-    wxBitmapButton* attachment_button_ = new wxBitmapButton(assets_panel
+    wxBitmapButton* attachment_button_ = new wxBitmapButton(bottom_panel
         , wxID_FILE, mmBitmap(png::CLIP), wxDefaultPosition,
         wxSize(30, itemButton7->GetSize().GetY()));
     attachment_button_->SetToolTip(_("Open attachments"));
-    itemBoxSizer5->Add(attachment_button_, 0, wxRIGHT, 5);
+    BoxSizerHBottom->Add(attachment_button_, 0, wxRIGHT, 5);
     attachment_button_->Enable(false);
 
-    wxSearchCtrl* searchCtrl = new wxSearchCtrl(assets_panel
+    wxSearchCtrl* searchCtrl = new wxSearchCtrl(bottom_panel
         , wxID_FIND, wxEmptyString, wxDefaultPosition
         , wxSize(100, itemButton7->GetSize().GetHeight())
         , wxTE_PROCESS_ENTER, wxDefaultValidator, _("Search"));
     searchCtrl->SetHint(_("Search"));
-    itemBoxSizer5->Add(searchCtrl, 0, wxCENTER, 1);
+    BoxSizerHBottom->Add(searchCtrl, 0, wxCENTER, 1);
     searchCtrl->SetToolTip(_("Enter any string to find related assets"));
 
     //Infobar-mini
-    wxStaticText* itemStaticText44 = new wxStaticText(assets_panel, IDC_PANEL_ASSET_STATIC_DETAILS_MINI, "");
-    itemBoxSizer5->Add(itemStaticText44, 1, wxGROW | wxTOP | wxLEFT, 5);
+    wxStaticText* itemStaticText44 = new wxStaticText(bottom_panel, IDC_PANEL_ASSET_STATIC_DETAILS_MINI, "");
+    BoxSizerHBottom->Add(itemStaticText44, 1, wxGROW | wxTOP | wxLEFT, 5);
 
     //Infobar
-    wxStaticText* itemStaticText33 = new wxStaticText(assets_panel
+    wxStaticText* itemStaticText33 = new wxStaticText(bottom_panel
         , IDC_PANEL_ASSET_STATIC_DETAILS, "", wxDefaultPosition, wxSize(200, -1), wxTE_MULTILINE | wxTE_WORDWRAP);
-    itemBoxSizer4->Add(itemStaticText33, g_flagsExpandBorder1);
+    BoxSizerHBottom->Add(itemStaticText33, g_flagsExpandBorder1);
 
     updateExtraAssetData(-1);
 }
@@ -474,7 +496,7 @@ void mmAssetsPanel::sortTable()
 {
     std::sort(this->m_assets.begin(), this->m_assets.end());
     std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterBySTARTDATE());
-    switch (this->m_listCtrlAssets->m_selected_col)
+    switch (this->m_assets_list->m_selected_col)
     {
     case COL_ID:
         std::stable_sort(this->m_assets.begin(), this->m_assets.end(), SorterByASSETID());
@@ -503,18 +525,18 @@ void mmAssetsPanel::sortTable()
         break;
     }
 
-    if (!this->m_listCtrlAssets->m_asc) std::reverse(this->m_assets.begin(), this->m_assets.end());
+    if (!this->m_assets_list->m_asc) std::reverse(this->m_assets.begin(), this->m_assets.end());
 }
 
 int mmAssetsPanel::initVirtualListControl(int id, int col, bool asc)
 {
     /* Clear all the records */
-    m_listCtrlAssets->DeleteAllItems();
+    m_assets_list->DeleteAllItems();
 
     wxListItem item;
     item.SetMask(wxLIST_MASK_IMAGE);
     item.SetImage(asc ? 8 : 7);
-    m_listCtrlAssets->SetColumn(col, item);
+    m_assets_list->SetColumn(col, item);
 
     if (this->m_filter_type == Model_Asset::TYPE(-1)) // ALL
         this->m_assets = Model_Asset::instance().all();
@@ -522,7 +544,7 @@ int mmAssetsPanel::initVirtualListControl(int id, int col, bool asc)
         this->m_assets = Model_Asset::instance().find(Model_Asset::ASSETTYPE(m_filter_type));
     this->sortTable();
 
-    m_listCtrlAssets->SetItemCount(this->m_assets.size());
+    m_assets_list->SetItemCount(this->m_assets.size());
 
     double balance = 0.0;
     for (const auto& asset: this->m_assets) balance += Model_Asset::value(asset); 
@@ -539,22 +561,22 @@ int mmAssetsPanel::initVirtualListControl(int id, int col, bool asc)
 
 void mmAssetsPanel::OnDeleteAsset(wxCommandEvent& event)
 {
-    m_listCtrlAssets->OnDeleteAsset(event);
+    m_assets_list->OnDeleteAsset(event);
 }
 
 void mmAssetsPanel::OnNewAsset(wxCommandEvent& event)
 {
-    m_listCtrlAssets->OnNewAsset(event);
+    m_assets_list->OnNewAsset(event);
 }
 
 void mmAssetsPanel::OnEditAsset(wxCommandEvent& event)
 {
-    m_listCtrlAssets->OnEditAsset(event);
+    m_assets_list->OnEditAsset(event);
 }
 
 void mmAssetsPanel::OnOpenAttachment(wxCommandEvent& event)
 {
-    m_listCtrlAssets->OnOpenAttachment(event);
+    m_assets_list->OnOpenAttachment(event);
 }
 
 wxString mmAssetsPanel::getItem(long item, long column)
@@ -662,7 +684,7 @@ void mmAssetsPanel::OnViewPopupSelected(wxCommandEvent& event)
     }
 
     int trx_id = -1;
-    m_listCtrlAssets->doRefreshItems(trx_id);
+    m_assets_list->doRefreshItems(trx_id);
     updateExtraAssetData(trx_id);
 }
 
@@ -671,25 +693,25 @@ void mmAssetsPanel::OnSearchTxtEntered(wxCommandEvent& event)
     const wxString search_string = event.GetString().Lower();
     if (search_string.IsEmpty()) return;
 
-    long last = m_listCtrlAssets->GetItemCount();
-    long selectedItem = m_listCtrlAssets->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+    long last = m_assets_list->GetItemCount();
+    long selectedItem = m_assets_list->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     if (selectedItem < 0) //nothing selected
-        selectedItem = m_listCtrlAssets->m_asc ? last - 1 : 0;
+        selectedItem = m_assets_list->m_asc ? last - 1 : 0;
 
     while (selectedItem > 0 && selectedItem <= last)
     {
-        m_listCtrlAssets->m_asc ? selectedItem-- : selectedItem++;
+        m_assets_list->m_asc ? selectedItem-- : selectedItem++;
         const wxString t = getItem(selectedItem, COL_NOTES).Lower();
         if (t.Matches(search_string + "*"))
         {
             //First of all any items should be unselected
-            long cursel = m_listCtrlAssets->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
+            long cursel = m_assets_list->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
             if (cursel != wxNOT_FOUND)
-                m_listCtrlAssets->SetItemState(cursel, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+                m_assets_list->SetItemState(cursel, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 
             //Then finded item will be selected
-            m_listCtrlAssets->SetItemState(selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
-            m_listCtrlAssets->EnsureVisible(selectedItem);
+            m_assets_list->SetItemState(selectedItem, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
+            m_assets_list->EnsureVisible(selectedItem);
             break;
         }
     }
@@ -702,7 +724,13 @@ void mmAssetsPanel::AddAssetTrans(const int selected_index)
 
     if (asset_dialog.ShowModal() == wxID_OK)
     {
-        m_listCtrlAssets->doRefreshItems(selected_index);
+        m_assets_list->doRefreshItems(selected_index);
         updateExtraAssetData(selected_index);
     }
+}
+
+void mmAssetsPanel::OnNotebookPageChanged(wxBookCtrlEvent & event)
+{
+    m_view_mode = event.GetSelection();
+    wxLogDebug("%i Mode", m_view_mode);
 }

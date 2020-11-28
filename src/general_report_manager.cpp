@@ -426,23 +426,23 @@ void mmGeneralReportManager::createEditorTab(wxNotebook* editors_notebook, int t
     if (type == ID_SQL_CONTENT)
     {
         wxBoxSizer *box_sizer3 = new wxBoxSizer(wxHORIZONTAL);
-        wxSplitterWindow *splitter_sql = new wxSplitterWindow(panel, wxID_ANY);
-        splitter_sql->SetSashGravity(0.9);
-        splitter_sql->SetMinimumPaneSize(150); // Smalest size of panels
-        box_sizer3->Add(splitter_sql, g_flagsExpand);
+        wxSplitterWindow* splitter_window = new wxSplitterWindow(panel, wxID_ANY);
+        splitter_window->SetSashGravity(0.9);
+        splitter_window->SetMinimumPaneSize(150); // Smalest size of panels
+        box_sizer3->Add(splitter_window, g_flagsExpand);
 
-        MinimalEditor* templateText = new MinimalEditor(splitter_sql, type);
+        MinimalEditor* templateText = new MinimalEditor(splitter_window, type);
 
 #if defined (__WXMSW__)
         long treeCtrlFlags = wxTR_SINGLE | wxTR_HAS_BUTTONS | wxTR_ROW_LINES;
 #else
         long treeCtrlFlags = wxTR_SINGLE | wxTR_HAS_BUTTONS;
 #endif
-        m_dbView = new wxTreeCtrl(splitter_sql, wxID_ANY, wxDefaultPosition
+        m_dbView = new wxTreeCtrl(splitter_window, wxID_ANY, wxDefaultPosition
             , wxDefaultSize, treeCtrlFlags);
 
-        splitter_sql->SplitVertically(templateText, m_dbView);
-        splitter_sql->SetSashPosition(500);
+        splitter_window->SplitVertically(templateText, m_dbView);
+        splitter_window->SetSashPosition(500);
         sizer->Add(box_sizer3, g_flagsExpand);
 
 #if wxUSE_DRAG_AND_DROP

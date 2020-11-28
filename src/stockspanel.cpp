@@ -31,7 +31,8 @@
 #include <wx/busyinfo.h>
 #include <algorithm>
 
-enum {
+enum
+{
     IDC_PANEL_STOCKS_LISTCTRL = wxID_HIGHEST + 1900,
     MENU_TREEPOPUP_EDIT,
     MENU_TREEPOPUP_DELETE,
@@ -54,24 +55,24 @@ EVT_BUTTON(wxID_REFRESH, mmStocksPanel::OnRefreshQuotes)
 EVT_NOTEBOOK_PAGE_CHANGED(wxID_ANY, mmStocksPanel::OnNotebookPageChanged)
 END_EVENT_TABLE()
 
-mmStocksPanel::mmStocksPanel(int accountID
-    , mmGUIFrame* frame
+mmStocksPanel::mmStocksPanel(
+      mmGUIFrame* frame
     , wxWindow *parent
-    , wxWindowID winid, const wxPoint& pos, const wxSize& size, long style
-    , const wxString& name)
+    , int accountID
+    , wxWindowID winid)
     : m_account_id(accountID)
     , m_frame(frame)
     , m_currency()
     , m_view_mode(0)
 {
-    Create(parent, winid, pos, size, style, name);
+    Create(parent, winid);
 }
 
 bool mmStocksPanel::Create(wxWindow *parent
     , wxWindowID winid, const wxPoint& pos
     , const wxSize& size, long style, const wxString& name)
 {
-    SetExtraStyle(GetExtraStyle()|wxWS_EX_BLOCK_EVENTS);
+    SetExtraStyle(GetExtraStyle() | wxWS_EX_BLOCK_EVENTS);
     wxPanel::Create(parent, winid, pos, size, style, name);
 
     this->windowsFreezeThaw();
@@ -105,7 +106,7 @@ void mmStocksPanel::CreateControls()
 
     /* ---------------------- */
     wxPanel* headerPanel = new wxPanel(this, wxID_ANY
-        , wxDefaultPosition , wxDefaultSize, wxNO_BORDER | wxTAB_TRAVERSAL);
+        , wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxTAB_TRAVERSAL);
     itemBoxSizer9->Add(headerPanel, 0, wxALIGN_LEFT);
 
     wxBoxSizer* itemBoxSizerVHeader = new wxBoxSizer(wxVERTICAL);
@@ -123,67 +124,66 @@ void mmStocksPanel::CreateControls()
     itemBoxSizerVHeader->Add(header_total_, 1, wxALL, 1);
 
     /* ---------------------- */
-    wxSplitterWindow* itemSplitterWindow10 = new wxSplitterWindow(this
+    wxSplitterWindow* splitter_window = new wxSplitterWindow(this
         , wxID_ANY, wxDefaultPosition, wxSize(200, 200)
         , wxSP_3DBORDER | wxSP_3DSASH | wxNO_BORDER);
 
-    m_notebook = new wxNotebook(itemSplitterWindow10, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_MULTILINE);
-    wxPanel* notes_tab = new wxPanel(m_notebook, wxID_ANY);
-    m_notebook->AddPage(notes_tab, _("Stocks"));
-    wxBoxSizer *notes_sizer = new wxBoxSizer(wxVERTICAL);
-    notes_tab->SetSizer(notes_sizer);
-    
-    wxPanel* others_tab = new wxPanel(m_notebook, wxID_ANY);
-    m_notebook->AddPage(others_tab, _("Money"));
+    m_notebook = new wxNotebook(splitter_window, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNB_MULTILINE);
+    wxPanel* stocks_tab = new wxPanel(m_notebook, wxID_ANY);
+    m_notebook->AddPage(stocks_tab, _("Stocks"));
+    wxBoxSizer *stocks_sizer = new wxBoxSizer(wxVERTICAL);
+    stocks_tab->SetSizer(stocks_sizer);
 
-    listCtrlAccount_ = new StocksListCtrl(this, notes_tab, wxID_ANY);
-    notes_sizer->Add(listCtrlAccount_, g_flagsExpand);
+    wxPanel* money_tab = new wxPanel(m_notebook, wxID_ANY);
+    m_notebook->AddPage(money_tab, _("Money"));
 
-    wxBoxSizer *others_sizer = new wxBoxSizer(wxVERTICAL);
-    others_tab->SetSizer(others_sizer);
+    m_stock_list = new StocksListCtrl(this, stocks_tab, wxID_ANY);
+    stocks_sizer->Add(m_stock_list, g_flagsExpand);
 
-    m_listCtrlMoney = new MoneyListCtrl(this, others_tab, wxID_ANY);
-    m_listCtrlMoney->SetMinSize(wxSize(500, 150));
+    wxBoxSizer *money_sizer = new wxBoxSizer(wxVERTICAL);
+    money_tab->SetSizer(money_sizer);
 
-    others_sizer->Add(m_listCtrlMoney, g_flagsExpand);
+    m_listCtrlMoney = new MoneyListCtrl(this, money_tab, wxID_ANY);
+
+    money_sizer->Add(m_listCtrlMoney, g_flagsExpand);
 
     //
-    wxPanel* BottomPanel = new wxPanel(itemSplitterWindow10, wxID_ANY
+    wxPanel* bottom_panel = new wxPanel(splitter_window, wxID_ANY
         , wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxTAB_TRAVERSAL);
 
-    itemSplitterWindow10->SplitHorizontally(m_notebook, BottomPanel);
-    itemSplitterWindow10->SetMinimumPaneSize(100);
-    itemSplitterWindow10->SetSashGravity(1.0);
-    itemBoxSizer9->Add(itemSplitterWindow10, g_flagsExpandBorder1);
+    splitter_window->SplitHorizontally(m_notebook, bottom_panel);
+    splitter_window->SetMinimumPaneSize(100);
+    splitter_window->SetSashGravity(1.0);
+    itemBoxSizer9->Add(splitter_window, g_flagsExpandBorder1);
 
     wxBoxSizer* BoxSizerVBottom = new wxBoxSizer(wxVERTICAL);
-    BottomPanel->SetSizer(BoxSizerVBottom);
+    bottom_panel->SetSizer(BoxSizerVBottom);
 
     wxBoxSizer* BoxSizerHBottom = new wxBoxSizer(wxHORIZONTAL);
     BoxSizerVBottom->Add(BoxSizerHBottom, g_flagsBorder1V);
 
-    wxButton* itemButton6 = new wxButton(BottomPanel, wxID_NEW, _("&New "));
+    wxButton* itemButton6 = new wxButton(bottom_panel, wxID_NEW, _("&New "));
     itemButton6->SetToolTip(_("New Stock Investment"));
     BoxSizerHBottom->Add(itemButton6, 0, wxRIGHT, 5);
 
-    wxButton* itemButton81 = new wxButton(BottomPanel, wxID_EDIT, _("&Edit "));
+    wxButton* itemButton81 = new wxButton(bottom_panel, wxID_EDIT, _("&Edit "));
     itemButton81->SetToolTip(_("Edit Stock Investment"));
     BoxSizerHBottom->Add(itemButton81, 0, wxRIGHT, 5);
     itemButton81->Enable(false);
 
-    wxButton* itemButton7 = new wxButton(BottomPanel, wxID_DELETE, _("&Delete "));
+    wxButton* itemButton7 = new wxButton(bottom_panel, wxID_DELETE, _("&Delete "));
     itemButton7->SetToolTip(_("Delete Stock Investment"));
     BoxSizerHBottom->Add(itemButton7, 0, wxRIGHT, 5);
     itemButton7->Enable(false);
 
-    refresh_button_ = new wxBitmapButton(BottomPanel
-        , wxID_REFRESH, mmBitmap (png::LED_OFF), wxDefaultPosition, wxSize(30, itemButton7->GetSize().GetY()));
+    refresh_button_ = new wxBitmapButton(bottom_panel
+        , wxID_REFRESH, mmBitmap(png::LED_OFF), wxDefaultPosition, wxSize(30, itemButton7->GetSize().GetY()));
     refresh_button_->SetLabelText(_("Refresh"));
     refresh_button_->SetToolTip(_("Refresh Stock Prices online"));
     BoxSizerHBottom->Add(refresh_button_, 0, wxRIGHT, 5);
 
     //Infobar
-    stock_details_ = new wxStaticText(BottomPanel, wxID_STATIC, ""
+    stock_details_ = new wxStaticText(bottom_panel, wxID_STATIC, ""
         , wxDefaultPosition, wxSize(200, -1), wxTE_MULTILINE | wxTE_WORDWRAP);
     BoxSizerVBottom->Add(stock_details_, g_flagsExpandBorder1);
 
@@ -271,15 +271,15 @@ const wxString mmStocksPanel::getPanelTitle(const Model_Account::Data& account) 
 }
 
 wxString mmStocksPanel::BuildPage() const
-{ 
+{
     const Model_Account::Data* account = Model_Account::instance().get(m_account_id);
-    return listCtrlAccount_->BuildPage(account ? getPanelTitle(*account) : "");
+    return m_stock_list->BuildPage(account ? getPanelTitle(*account) : "");
 }
 
 void mmStocksPanel::OnDeleteStocks(wxCommandEvent& event)
 {
     if (m_view_mode == 0)
-        listCtrlAccount_->OnDeleteStocks(event);
+        m_stock_list->OnDeleteStocks(event);
     else
         m_listCtrlMoney->OnDeleteTransaction(event);
 }
@@ -287,11 +287,13 @@ void mmStocksPanel::OnDeleteStocks(wxCommandEvent& event)
 void mmStocksPanel::OnNewStocks(wxCommandEvent& event)
 {
 
-    if (m_view_mode == 0) {
-        listCtrlAccount_->OnNewStocks(event);
+    if (m_view_mode == 0)
+    {
+        m_stock_list->OnNewStocks(event);
         dataToControls();
     }
-    else {
+    else
+    {
         m_listCtrlMoney->OnNewTransaction(event);
         dataToControls(m_listCtrlMoney->getSelectedID());
     }
@@ -300,7 +302,7 @@ void mmStocksPanel::OnNewStocks(wxCommandEvent& event)
 void mmStocksPanel::OnEditRecord(wxCommandEvent& event)
 {
     if (m_view_mode == 0)
-        listCtrlAccount_->OnEditStocks(event);
+        m_stock_list->OnEditStocks(event);
     else
         m_listCtrlMoney->OnEditTransaction(event);
 }
@@ -334,7 +336,7 @@ bool mmStocksPanel::onlineQuoteRefresh(wxString& msg)
         return false;
     }
 
-    if (listCtrlAccount_->m_stocks.empty())
+    if (m_stock_list->m_stocks.empty())
     {
         msg = _("Nothing to update");
         return false;
@@ -361,16 +363,17 @@ bool mmStocksPanel::onlineQuoteRefresh(wxString& msg)
     wxSharedPtr<mmOnline> o;
     o = new mmOnline();
 
-    if (o->get_error_code() != 0) {
+    if (o->get_error_code() != 0)
+    {
         msg = o->get_error_str();
         return false;
     }
 
     // Now refresh the display
     int selected_id = -1;
-    if (listCtrlAccount_->get_selectedIndex() > -1)
-        selected_id = listCtrlAccount_->m_stocks[listCtrlAccount_->get_selectedIndex()].STOCKID;
-    listCtrlAccount_->doRefreshItems(selected_id);
+    if (m_stock_list->get_selectedIndex() > -1)
+        selected_id = m_stock_list->m_stocks[m_stock_list->get_selectedIndex()].STOCKID;
+    m_stock_list->doRefreshItems(selected_id);
 
     return true;
 }
@@ -381,7 +384,7 @@ void mmStocksPanel::updateExtraStocksData(int selectedIndex)
     {
         const wxString additionInfo =
             m_view_mode == 0
-            ? listCtrlAccount_->getStockInfo(selectedIndex)
+            ? m_stock_list->getStockInfo(selectedIndex)
             : m_listCtrlMoney->getMoneyInfo(selectedIndex);
         stock_details_->SetLabelText(additionInfo);
     }
@@ -414,7 +417,7 @@ void mmStocksPanel::call_dialog(int selectedIndex)
 
     if (m_view_mode == 0)
     {
-        Model_Stock::Data* stock = &listCtrlAccount_->m_stocks[selectedIndex];
+        Model_Stock::Data* stock = &m_stock_list->m_stocks[selectedIndex];
         mmStockDialog dlg(this, m_frame, stock->TICKERID, m_account_id);
         dlg.ShowModal();
         id = dlg.get_ticker_id();
@@ -423,12 +426,13 @@ void mmStocksPanel::call_dialog(int selectedIndex)
     {
         Model_Checking::Data* money = &m_listCtrlMoney->m_money[selectedIndex];
 
-        if (money) {
+        if (money)
+        {
             wxLogDebug("%s %s %.2f %s"
-            , money->TRANSCODE
-            , money->TRANSDATE
-            , money->TRANSAMOUNT
-            , money->NOTES);
+                , money->TRANSCODE
+                , money->TRANSDATE
+                , money->TRANSAMOUNT
+                , money->NOTES);
         }
 
         mmTransDialog dlg(this, m_account_id, money->TRANSID);
@@ -448,7 +452,7 @@ void mmStocksPanel::RefreshList(int transID)
 
 void mmStocksPanel::dataToControls(int transID)
 {
-    listCtrlAccount_->initVirtualListControl(transID);
+    m_stock_list->initVirtualListControl(transID);
     m_listCtrlMoney->initVirtualListControl(transID);
 }
 

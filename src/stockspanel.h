@@ -37,14 +37,10 @@ class mmStocksPanel : public mmPanelBase
 
 public:
     mmStocksPanel(
-        int accountID,
         mmGUIFrame* frame,
         wxWindow *parent,
-        wxWindowID winid = wxID_ANY,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize,
-        long style = wxTAB_TRAVERSAL | wxNO_BORDER,
-        const wxString& name = "mmStocksPanel"
+        int accountID,
+        wxWindowID winid = wxID_ANY
     );
     ~mmStocksPanel();
 
@@ -84,7 +80,7 @@ private:
     int m_view_mode;
     int m_account_id;
     MoneyListCtrl* m_listCtrlMoney;
-    StocksListCtrl* listCtrlAccount_;
+    StocksListCtrl* m_stock_list;
     wxStaticText* stock_details_;
     void call_dialog(int selectedIndex);
     void sortTable();
