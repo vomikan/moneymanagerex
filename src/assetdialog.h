@@ -54,7 +54,6 @@ private:
     void changeFocus(wxChildFocusEvent& event);
     void OnQuit(wxCloseEvent& event);
     void CreateAssetAccount();
-    void HideTransactionPanel();
 private:
     mmGUIFrame* m_gui_frame;
     wxChoice*  m_assetType;
@@ -68,7 +67,6 @@ private:
     wxBitmapButton* bAttachments_;
     wxStaticBox* m_transaction_frame;
     wxString m_dialog_heading;
-    bool m_hidden_trans_entry;
     bool assetRichText;
 
     enum

@@ -40,6 +40,7 @@
 #include "model/Model_CurrencyHistory.h"
 #include "model/Model_CustomFieldData.h"
 #include "model/Model_Subcategory.h"
+#include "model/Model_Ticker.h"
 
 #include <wx/numformatter.h>
 #include <wx/timectrl.h>
@@ -96,7 +97,6 @@ mmTransDialog::mmTransDialog(wxWindow* parent
     , m_is_advanced(false)
     , m_trx_advanced(nullptr)
     , m_account_id(account_id)
-    , m_currency(nullptr)
     , m_trx_currency_btn(nullptr)
     , m_to_currency(nullptr)
     , skip_date_init_(false)
@@ -130,12 +130,14 @@ mmTransDialog::mmTransDialog(wxWindow* parent
         m_currency = Model_Account::currency(acc);
     }
     else if (Model_Account::is_multicurrency(acc)) {
-        m_currency = Model_Currency::instance().get(m_trx_data.CURRENCYID);
+        m_currency= Model_Currency::instance().get(m_trx_data.CURRENCYID);
     }
 
     if (!m_currency) {
         m_currency = Model_Currency::GetBaseCurrency();
     }
+
+    m_precision = m_currency->SCALE;
 
     if (m_is_transfer)
     {
@@ -163,7 +165,9 @@ mmTransDialog::mmTransDialog(wxWindow* parent
 }
 
 mmTransDialog::~mmTransDialog()
-{}
+{
+    m_currency->SCALE = m_precision;
+}
 
 bool mmTransDialog::Create(wxWindow* parent, wxWindowID id, const wxString& caption
     , const wxPoint& pos, const wxSize& size, long style, const wxString& name)
@@ -300,9 +304,9 @@ void mmTransDialog::dataToControls()
                 m_trx_payee_box->AutoComplete(all_payees);
             }
 
+            Model_Account::Data* account = Model_Account::instance().get(m_trx_account->GetValue());
             if (m_is_new_trx && !m_is_duplicate && Option::instance().TransPayeeSelection() == Option::LASTUSED)
             {
-                Model_Account::Data* account = Model_Account::instance().get(m_trx_account->GetValue());
                 Model_Checking::Data_Set transactions = Model_Checking::instance().find(
                     Model_Checking::TRANSCODE(Model_Checking::TRANSFER, NOT_EQUAL)
                     , Model_Checking::ACCOUNTID(account->ACCOUNTID, EQUAL)
@@ -323,6 +327,14 @@ void mmTransDialog::dataToControls()
             if (payee)
             {
                 m_trx_payee_box->ChangeValue(payee->PAYEENAME);
+
+                if (Model_Account::type(account) == Model_Account::INVESTMENT)
+                {
+                    m_currency->SCALE = static_cast<int>(pow(10, 4));
+                    Model_Ticker::Data_Set t = Model_Ticker::instance().find(Model_Ticker::SYMBOL(payee->PAYEENAME));
+                    //TODO:
+                }
+
             }
 
             mmTransDialog::SetCategoryForPayee();

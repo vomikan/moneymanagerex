@@ -55,7 +55,6 @@ mmAssetDialog::mmAssetDialog(wxWindow* parent, mmGUIFrame* gui_frame, Model_Asse
     , bAttachments_(nullptr)
     , m_transaction_frame(nullptr)
     , m_dialog_heading (_("New Asset"))
-    , m_hidden_trans_entry(true)
     , assetRichText(true)
 {
     if (m_asset)
@@ -94,10 +93,6 @@ void mmAssetDialog::dataToControls()
     if (!this->m_asset) return;
 
     m_assetName->SetValue(m_asset->ASSETNAME);
-    if (Model_Account::instance().get(m_asset->ASSETNAME))
-    {
-        m_assetName->Enable(false);
-    }
 
     m_notes->SetValue(m_asset->NOTES);
     m_dpc->SetValue(Model_Asset::STARTDATE(m_asset));
@@ -107,14 +102,6 @@ void mmAssetDialog::dataToControls()
 
     m_valueChange->SetSelection(Model_Asset::rate(m_asset));
     m_assetType->SetSelection(Model_Asset::type(m_asset));
-
-    if (!m_hidden_trans_entry)
-    {
-        m_assetName->Enable(false);
-        m_assetType->Enable(false);
-        m_dpc->Enable(false);
-        m_value->Enable(false);
-    }
 }
 
 void mmAssetDialog::CreateControls()
@@ -223,7 +210,6 @@ void mmAssetDialog::CreateControls()
     wxStaticBoxSizer* transaction_frame_sizer = new wxStaticBoxSizer(m_transaction_frame, wxVERTICAL);
     right_sizer->Add(transaction_frame_sizer, g_flagsV);
 
-    if (m_hidden_trans_entry) HideTransactionPanel();
     /********************************************************************
     Separation Line
     *********************************************************************/
@@ -244,12 +230,6 @@ void mmAssetDialog::CreateControls()
 
     button_panel_sizer->Add(cancel_button, g_flagsV);
     //cancel_button->SetFocus();
-}
-
-void mmAssetDialog::HideTransactionPanel()
-{
-    m_transaction_frame->Hide();
-    //m_transaction_panel->Hide();
 }
 
 void mmAssetDialog::OnOk(wxCommandEvent& /*event*/)
