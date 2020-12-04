@@ -442,7 +442,7 @@ int mmHistoryOnline::mmYahoo()
 {
     wxLongLong begin = m_date.GetValue();
 
-    wxString ticker = m_ticker;
+    wxString ticker = m_ticker.Lower();
     if (!ticker.Contains(".") && !m_market.empty()) {
         ticker = m_ticker + "." + m_market;
     }
