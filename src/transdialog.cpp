@@ -129,11 +129,10 @@ mmTransDialog::mmTransDialog(wxWindow* parent
     if (acc && !Model_Account::is_multicurrency(acc)) {
         m_currency = Model_Account::currency(acc);
     }
-    else if (Model_Account::is_multicurrency(acc)) {
+    else if (acc && Model_Account::is_multicurrency(acc)) {
         m_currency= Model_Currency::instance().get(m_trx_data.CURRENCYID);
     }
-
-    if (!m_currency) {
+    else {
         m_currency = Model_Currency::GetBaseCurrency();
     }
 
@@ -435,7 +434,8 @@ void mmTransDialog::CreateControls()
     // Date --------------------------------------------
     long date_style = wxDP_DROPDOWN | wxDP_SHOWCENTURY;
 
-    m_date_picker = new wxDatePickerCtrl(this, ID_TRX_BUTTONDATE, wxDateTime::Today(), wxDefaultPosition, wxDefaultSize, date_style);
+    m_date_picker = new wxDatePickerCtrl(this, ID_TRX_BUTTONDATE
+        , wxDateTime::Today(), wxDefaultPosition, wxDefaultSize, date_style);
 
     //Text field for name of day of the week
     wxSize WeekDayNameMaxSize(wxDefaultSize);
@@ -445,7 +445,8 @@ void mmTransDialog::CreateControls()
         WeekDayNameMaxSize.IncTo(GetTextExtent(
             wxGetTranslation(wxDateTime::GetEnglishWeekDayName(d))+ " "));
 
-    m_item_week = new wxStaticText(this, wxID_STATIC, "", wxDefaultPosition, WeekDayNameMaxSize, wxST_NO_AUTORESIZE);
+    m_item_week = new wxStaticText(this, wxID_STATIC, ""
+        , wxDefaultPosition, WeekDayNameMaxSize, wxST_NO_AUTORESIZE);
 
     wxStaticText* name_label = new wxStaticText(this, wxID_STATIC, _("Date"));
     flex_sizer->Add(name_label, g_flagsH);
@@ -517,7 +518,7 @@ void mmTransDialog::CreateControls()
     Model_Account::Data* account = Model_Account::instance().get(m_account_id);
 
     m_trx_currency_btn = new wxButton(this, ID_TRX_CURRENCY, m_currency->CURRENCYNAME);
-    bool multicurrency = Model_Account::is_multicurrency(account);
+    bool multicurrency = account && Model_Account::is_multicurrency(account);
     if (!multicurrency) {
         m_trx_currency_btn->Hide();
         currency_label->Hide();

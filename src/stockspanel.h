@@ -57,8 +57,6 @@ public:
 
     /* Event handlers for Buttons */
     void OnNewStocks(wxCommandEvent& event);
-    void OnDeleteStocks(wxCommandEvent& event);
-    void OnEditRecord(wxCommandEvent& event);
     void OnRefreshQuotes(wxCommandEvent& event);
     //Unhide the Edit and Delete buttons if any record selected
     void enableEditDeleteButtons(bool en);
@@ -77,6 +75,7 @@ public:
 
 private:
     wxNotebook* m_notebook;
+    wxButton* m_new_btn;
     int m_view_mode;
     int m_account_id;
     MoneyListCtrl* m_listCtrlMoney;

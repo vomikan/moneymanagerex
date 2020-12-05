@@ -63,10 +63,8 @@ private:
     friend class TransactionListCtrl; // needs access to m_core, initdb_, ...
 
     wxButton* m_bitmapTransFilter;
-    wxButton* m_btnNew;
-    wxButton* m_btnEdit;
-    wxButton* m_btnDuplicate;
-    wxButton* m_btnDelete;
+    wxButton* m_new_withdrawal_btn;
+    wxButton* m_new_deposit_btn;
     wxButton* m_btnAttachment;
     wxStaticText* m_header_text;
     wxStaticText* m_info_panel;
@@ -106,13 +104,9 @@ private:
     );
 
 private:
-    void enableEditDeleteButtons(bool en);
+    void do_enable_disable_buttons(bool en);
 
     void OnNewTransaction(wxCommandEvent& event);
-    void OnDeleteTransaction(wxCommandEvent& event);
-    void OnEditTransaction(wxCommandEvent& event);
-    void OnDuplicateTransaction(wxCommandEvent& event);
-    void OnMoveTransaction(wxCommandEvent& event);
     void OnOpenAttachment(wxCommandEvent& event);
     void OnMouseLeftDown( wxCommandEvent& event );
     void OnViewPopupSelected(wxCommandEvent& event);

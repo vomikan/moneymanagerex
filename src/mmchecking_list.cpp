@@ -203,7 +203,7 @@ void TransactionListCtrl::OnListItemSelected(wxListEvent& event)
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 
     if (GetSelectedItemCount() > 1)
-        m_cp->enableEditDeleteButtons(true);
+        m_cp->do_enable_disable_buttons(true);
 
     m_selectedID = m_trans[m_selectedIndex].TRANSID;
 }
@@ -223,9 +223,7 @@ void TransactionListCtrl::OnListLeftClick(wxMouseEvent& event)
     {
         // Note: GetSelectedItemCount() does not return correct count at this time
         // so we can't call enableEditDeleteButtons() or updateExtraTransactionData()
-        m_cp->m_btnEdit->Enable(false);
-        m_cp->m_btnDelete->Enable(true);
-        m_cp->m_btnDuplicate->Enable(false);
+        m_cp->m_new_deposit_btn->Enable(false);
         m_cp->m_btnAttachment->Enable(false);
     }
     event.Skip();
@@ -852,7 +850,8 @@ void TransactionListCtrl::OnEditTransaction(wxCommandEvent& /*event*/)
 
 void TransactionListCtrl::OnNewTransaction(wxCommandEvent& event)
 {
-    int type = event.GetId() == MENU_TREEPOPUP_NEW_DEPOSIT ? Model_Checking::DEPOSIT : Model_Checking::WITHDRAWAL;
+    int type = event.GetId() == MENU_TREEPOPUP_NEW_DEPOSIT || event.GetId() == wxID_ADD
+        ? Model_Checking::DEPOSIT : Model_Checking::WITHDRAWAL;
     mmTransDialog dlg(this, m_cp->m_AccountID, -1, false, type);
     if (dlg.ShowModal() == wxID_OK)
     {
@@ -1091,7 +1090,7 @@ void TransactionListCtrl::markSelectedTransaction(int trans_id)
     }
     else
     {
-        m_cp->enableEditDeleteButtons(false);
+        m_cp->do_enable_disable_buttons(false);
         m_cp->showTips();
     }
 }

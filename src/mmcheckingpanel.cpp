@@ -28,6 +28,7 @@
 #include "mmframe.h"
 #include "mmTips.h"
 #include "mmSimpleDialogs.h"
+#include "mmchecking_list.h"
 #include "splittransactionsdialog.h"
 #include "transdialog.h"
 #include "validators.h"
@@ -45,9 +46,7 @@
 
 wxBEGIN_EVENT_TABLE(mmCheckingPanel, wxPanel)
     EVT_BUTTON(wxID_NEW,       mmCheckingPanel::OnNewTransaction)
-    EVT_BUTTON(wxID_EDIT,      mmCheckingPanel::OnEditTransaction)
-    EVT_BUTTON(wxID_REMOVE,    mmCheckingPanel::OnDeleteTransaction)
-    EVT_BUTTON(wxID_DUPLICATE, mmCheckingPanel::OnDuplicateTransaction)
+    EVT_BUTTON(wxID_ADD,      mmCheckingPanel::OnNewTransaction)
     EVT_BUTTON(wxID_FILE,      mmCheckingPanel::OnOpenAttachment)
     EVT_BUTTON(ID_TRX_FILTER,  mmCheckingPanel::OnMouseLeftDown)
     EVT_SEARCHCTRL_SEARCH_BTN(wxID_FIND, mmCheckingPanel::OnSearchTxtEntered)
@@ -291,35 +290,24 @@ void mmCheckingPanel::CreateControls()
     wxBoxSizer* itemButtonsSizer = new wxBoxSizer(wxHORIZONTAL);
     itemBoxSizer4->Add(itemButtonsSizer, g_flagsBorder1V);
 
-    m_btnNew = new wxButton(itemPanel12, wxID_NEW, _("&New "));
-    m_btnNew->SetToolTip(_("New Transaction"));
-    itemButtonsSizer->Add(m_btnNew, 0, wxRIGHT, 5);
+    m_new_withdrawal_btn = new wxButton(itemPanel12, wxID_NEW, _("&Withdraval"));
+    m_new_withdrawal_btn->SetToolTip(_("New Withdrawal Transaction"));
+    itemButtonsSizer->Add(m_new_withdrawal_btn, 0, wxRIGHT, 5);
 
-    m_btnEdit = new wxButton(itemPanel12, wxID_EDIT, _("&Edit "));
-    m_btnEdit->SetToolTip(_("Edit selected transaction"));
-    itemButtonsSizer->Add(m_btnEdit, 0, wxRIGHT, 5);
-    m_btnEdit->Enable(false);
-
-    m_btnDelete = new wxButton(itemPanel12, wxID_REMOVE, _("&Delete "));
-    m_btnDelete->SetToolTip(_("Delete selected transaction"));
-    itemButtonsSizer->Add(m_btnDelete, 0, wxRIGHT, 5);
-    m_btnDelete->Enable(false);
-
-    m_btnDuplicate = new wxButton(itemPanel12, wxID_DUPLICATE, _("D&uplicate "));
-    m_btnDuplicate->SetToolTip(_("Duplicate selected transaction"));
-    itemButtonsSizer->Add(m_btnDuplicate, 0, wxRIGHT, 5);
-    m_btnDuplicate->Enable(false);
+    m_new_deposit_btn = new wxButton(itemPanel12, wxID_ADD, _("&Deposit"));
+    m_new_deposit_btn->SetToolTip(_("New Deposit Transaction"));
+    itemButtonsSizer->Add(m_new_deposit_btn, 0, wxRIGHT, 5);
 
     m_btnAttachment = new wxBitmapButton(itemPanel12, wxID_FILE
         , mmBitmap(png::CLIP), wxDefaultPosition
-        , wxSize(30, m_btnDuplicate->GetSize().GetY()));
+        , wxSize(30, m_new_deposit_btn->GetSize().GetY()));
     m_btnAttachment->SetToolTip(_("Open attachments"));
     itemButtonsSizer->Add(m_btnAttachment, 0, wxRIGHT, 5);
     m_btnAttachment->Enable(false);
 
     wxSearchCtrl* searchCtrl = new wxSearchCtrl(itemPanel12
         , wxID_FIND, wxEmptyString, wxDefaultPosition
-        , wxSize(100, m_btnDuplicate->GetSize().GetHeight())
+        , wxSize(100, m_new_deposit_btn->GetSize().GetHeight())
         , wxTE_NOHIDESEL, wxDefaultValidator);
     searchCtrl->SetDescriptiveText(_("Search"));
     itemButtonsSizer->Add(searchCtrl, 0, wxCENTER, 1);
@@ -373,30 +361,17 @@ void mmCheckingPanel::setAccountSummary()
 }
 
 //----------------------------------------------------------------------------
-void mmCheckingPanel::enableEditDeleteButtons(bool en)
+void mmCheckingPanel::do_enable_disable_buttons(bool en)
 {
-    if (m_listCtrlAccount->GetSelectedItemCount()>1)
-    {
-        m_btnEdit->Enable(false);
-        m_btnDelete->Enable(true);
-        m_btnDuplicate->Enable(false);
-        m_btnAttachment->Enable(false);
-    }
-    else
-    {
-        m_btnEdit->Enable(en);
-        m_btnDelete->Enable(en);
-        m_btnDuplicate->Enable(en);
-        m_btnAttachment->Enable(en);
-    }
+    bool is_item_selected = (m_listCtrlAccount->GetSelectedItemCount() == 1);
+    m_btnAttachment->Enable(is_item_selected & en);
 }
-//----------------------------------------------------------------------------
 
 void mmCheckingPanel::updateExtraTransactionData(int selIndex)
 {
     if (selIndex > -1)
     {
-        enableEditDeleteButtons(true);
+        do_enable_disable_buttons(true);
         const Model_Checking::Data& tran = m_listCtrlAccount->m_trans.at(selIndex);
         Model_Checking::Full_Data full_tran(tran);
         m_info_panel->SetLabelText(tran.NOTES);
@@ -418,7 +393,7 @@ void mmCheckingPanel::updateExtraTransactionData(int selIndex)
     else
     {
         m_info_panel_mini->SetLabelText("");
-        enableEditDeleteButtons(false);
+        do_enable_disable_buttons(false);
         showTips();
     }
 }
@@ -429,44 +404,19 @@ void mmCheckingPanel::showTips()
 }
 //----------------------------------------------------------------------------
 
-void mmCheckingPanel::OnDeleteTransaction(wxCommandEvent& event)
-{
-    m_listCtrlAccount->OnDeleteTransaction(event);
-}
-//----------------------------------------------------------------------------
-
 void mmCheckingPanel::OnNewTransaction(wxCommandEvent& event)
 {
    m_listCtrlAccount->OnNewTransaction(event);
+   m_listCtrlAccount->SetFocus();
 }
-//----------------------------------------------------------------------------
-
-void mmCheckingPanel::OnEditTransaction(wxCommandEvent& event)
-{
-    m_listCtrlAccount->OnEditTransaction(event);
-    m_listCtrlAccount->SetFocus();
-}
-//----------------------------------------------------------------------------
-
-void mmCheckingPanel::OnDuplicateTransaction(wxCommandEvent& event)
-{
-    m_listCtrlAccount->OnDuplicateTransaction(event);
-}
-//----------------------------------------------------------------------------
-
-void mmCheckingPanel::OnMoveTransaction(wxCommandEvent& event)
-{
-    m_listCtrlAccount->OnMoveTransaction(event);
-}
-//----------------------------------------------------------------------------
 
 void mmCheckingPanel::OnOpenAttachment(wxCommandEvent& event)
 {
     m_listCtrlAccount->OnOpenAttachment(event);
     m_listCtrlAccount->SetFocus();
 }
-//----------------------------------------------------------------------------
 
+//----------------------------------------------------------------------------
 
 void mmCheckingPanel::initViewTransactionsHeader()
 {

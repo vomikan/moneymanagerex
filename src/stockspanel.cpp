@@ -47,10 +47,6 @@ enum class ico { GAIN, LOSS, ZERO, ARROW_UP, ARROW_DOWN };
 
 BEGIN_EVENT_TABLE(mmStocksPanel, wxPanel)
 EVT_BUTTON(wxID_NEW, mmStocksPanel::OnNewStocks)
-EVT_BUTTON(wxID_EDIT, mmStocksPanel::OnEditRecord)
-EVT_BUTTON(wxID_ADD, mmStocksPanel::OnEditRecord)
-EVT_BUTTON(wxID_VIEW_DETAILS, mmStocksPanel::OnEditRecord)
-EVT_BUTTON(wxID_DELETE, mmStocksPanel::OnDeleteStocks)
 EVT_BUTTON(wxID_REFRESH, mmStocksPanel::OnRefreshQuotes)
 EVT_NOTEBOOK_PAGE_CHANGED(wxID_ANY, mmStocksPanel::OnNotebookPageChanged)
 END_EVENT_TABLE()
@@ -162,22 +158,13 @@ void mmStocksPanel::CreateControls()
     wxBoxSizer* BoxSizerHBottom = new wxBoxSizer(wxHORIZONTAL);
     BoxSizerVBottom->Add(BoxSizerHBottom, g_flagsBorder1V);
 
-    wxButton* itemButton6 = new wxButton(bottom_panel, wxID_NEW, _("&New "));
-    itemButton6->SetToolTip(_("New Stock Investment"));
-    BoxSizerHBottom->Add(itemButton6, 0, wxRIGHT, 5);
-
-    wxButton* itemButton81 = new wxButton(bottom_panel, wxID_EDIT, _("&Edit "));
-    itemButton81->SetToolTip(_("Edit Stock Investment"));
-    BoxSizerHBottom->Add(itemButton81, 0, wxRIGHT, 5);
-    itemButton81->Enable(false);
-
-    wxButton* itemButton7 = new wxButton(bottom_panel, wxID_DELETE, _("&Delete "));
-    itemButton7->SetToolTip(_("Delete Stock Investment"));
-    BoxSizerHBottom->Add(itemButton7, 0, wxRIGHT, 5);
-    itemButton7->Enable(false);
+    m_new_btn = new wxButton(bottom_panel, wxID_NEW, _("&New "));
+    m_new_btn->SetToolTip(_("New Stock Investment"));
+    BoxSizerHBottom->Add(m_new_btn, 0, wxRIGHT, 5);
 
     refresh_button_ = new wxBitmapButton(bottom_panel
-        , wxID_REFRESH, mmBitmap(png::LED_OFF), wxDefaultPosition, wxSize(30, itemButton7->GetSize().GetY()));
+        , wxID_REFRESH, mmBitmap(png::LED_OFF), wxDefaultPosition
+        , wxSize(30, m_new_btn->GetSize().GetY()));
     refresh_button_->SetLabelText(_("Refresh"));
     refresh_button_->SetToolTip(_("Refresh Stock Prices online"));
     BoxSizerHBottom->Add(refresh_button_, 0, wxRIGHT, 5);
@@ -201,6 +188,11 @@ void mmStocksPanel::OnNotebookPageChanged(wxBookCtrlEvent & event)
 {
     m_view_mode = event.GetSelection();
     wxLogDebug("%i Mode", m_view_mode);
+    m_new_btn->UnsetToolTip();
+    if (event.GetSelection() == 0)
+        m_new_btn->SetToolTip(_("New Stock Investment"));
+    else
+        m_new_btn->SetToolTip(_("New Transaction"));
 }
 
 void mmStocksPanel::doListItemActivated(int selectedIndex)
@@ -276,14 +268,6 @@ wxString mmStocksPanel::BuildPage() const
     return m_stock_list->BuildPage(account ? getPanelTitle(*account) : "");
 }
 
-void mmStocksPanel::OnDeleteStocks(wxCommandEvent& event)
-{
-    if (m_view_mode == 0)
-        m_stock_list->OnDeleteStocks(event);
-    else
-        m_listCtrlMoney->OnDeleteTransaction(event);
-}
-
 void mmStocksPanel::OnNewStocks(wxCommandEvent& event)
 {
 
@@ -297,14 +281,6 @@ void mmStocksPanel::OnNewStocks(wxCommandEvent& event)
         m_listCtrlMoney->OnNewTransaction(event);
         dataToControls(m_listCtrlMoney->getSelectedID());
     }
-}
-
-void mmStocksPanel::OnEditRecord(wxCommandEvent& event)
-{
-    if (m_view_mode == 0)
-        m_stock_list->OnEditStocks(event);
-    else
-        m_listCtrlMoney->OnEditTransaction(event);
 }
 
 void mmStocksPanel::OnRefreshQuotes(wxCommandEvent& WXUNUSED(event))
@@ -393,17 +369,12 @@ void mmStocksPanel::updateExtraStocksData(int selectedIndex)
 
 void mmStocksPanel::enableEditDeleteButtons(bool en)
 {
-    wxButton* bN = static_cast<wxButton*>(FindWindow(wxID_NEW));
-    wxButton* bE = static_cast<wxButton*>(FindWindow(wxID_EDIT));
     wxButton* bA = static_cast<wxButton*>(FindWindow(wxID_ADD));
     wxButton* bV = static_cast<wxButton*>(FindWindow(wxID_VIEW_DETAILS));
-    wxButton* bD = static_cast<wxButton*>(FindWindow(wxID_DELETE));
     wxButton* bM = static_cast<wxButton*>(FindWindow(wxID_MOVE_FRAME));
-    if (bN) bN->Enable(!en);
-    if (bE) bE->Enable(en);
+    m_new_btn->Enable(!en);
     if (bA) bA->Enable(en);
     if (bV) bV->Enable(en);
-    if (bD) bD->Enable(en);
     if (bM) bM->Enable(en);
     if (!en)
     {
