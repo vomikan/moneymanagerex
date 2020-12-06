@@ -78,7 +78,7 @@ mmMainCurrencyDialog::mmMainCurrencyDialog(
 
     m_currency_id = currencyID == -1 ? Option::instance().getBaseCurrencyID() : currencyID;
     Create(parent);
-    SetMinSize(wxSize(700, 550));
+    SetMinSize(wxSize(350, 550));
     Fit();
 }
 
@@ -177,7 +177,8 @@ void mmMainCurrencyDialog::CreateControls()
     itemBoxSizer2->Add(itemBoxSizer3, g_flagsExpand);
 
     //TODO:provide proper style and fix validator (does not working)
-    currencyListBox_ = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize /*, wxDV_HORIZ_RULES, mmDoubleValidator(4)*/);
+    currencyListBox_ = new wxDataViewListCtrl(this, wxID_ANY
+        , wxDefaultPosition, wxDefaultSize /*, wxDV_HORIZ_RULES, mmDoubleValidator(4)*/);
     currencyListBox_->SetMinSize(wxSize(-1, 200));
 
     currencyListBox_->AppendTextColumn(ColName_[CURR_BASE], wxDATAVIEW_CELL_INERT, 30);
@@ -221,6 +222,7 @@ void mmMainCurrencyDialog::CreateControls()
     mainBoxSizer->Add(rightBoxSizer, g_flagsExpand);
 
     historyStaticBox_ = new wxStaticBox(this, wxID_ANY, _("Currency History Options"));
+    if (bEnableSelect_) historyStaticBox_->Hide();
 
     wxStaticBoxSizer* historyStaticBox_Sizer = new wxStaticBoxSizer(historyStaticBox_, wxVERTICAL);
     rightBoxSizer->Add(historyStaticBox_Sizer, g_flagsExpand);
@@ -298,7 +300,7 @@ void mmMainCurrencyDialog::CreateControls()
     buttons_sizer->Add(historyButtonDelete_, g_flagsH);
     buttons_sizer->Add(buttonDelUnusedHistory_, g_flagsH);
 
-    if (!bHistoryEnabled_) {
+    if (bEnableSelect_ || !bHistoryEnabled_) {
         historyStaticBox_->Hide();
         valueListBox_->Hide();
         buttons_panel->Hide();
@@ -312,8 +314,6 @@ void mmMainCurrencyDialog::CreateControls()
         datePickerLabel->Hide();
         textBoxLabel->Hide();
     }
-
-    this->SetMinSize(wxSize(400, 550));
     this->Fit();
 }
 
