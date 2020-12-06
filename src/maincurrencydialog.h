@@ -23,6 +23,7 @@
 #include <map>
 #include <vector>
 #include <wx/dataview.h>
+#include <wx/srchctrl.h>
 
 class wxDatePickerCtrl;
 class mmTextCtrl;
@@ -65,7 +66,9 @@ private:
         HISTORY_DELUNUSED,
         MENU_ITEM1,
         MENU_ITEM2,
-        MENU_ITEM3
+        MENU_ITEM3,
+        MENU_ITEM4,
+        MENU_ITEM5,
     };
 
     bool Create(wxWindow* parent
@@ -78,14 +81,15 @@ private:
     /// Creates the controls and sizers
 
     void CreateControls();
-    void OnBtnAdd(wxCommandEvent& event);
-    void OnBtnEdit(wxCommandEvent& event);
+    void OnBtnAdd();
+    void OnBtnEdit();
+    void OnBtnDelete();
+    void fillControls();
     void OnBtnSelect(wxCommandEvent& event);
-    void OnBtnDelete(wxCommandEvent& event);
     void OnCancel(wxCommandEvent& event);
     void OnListItemActivated(wxDataViewEvent& event);
     void OnListItemSelected(wxDataViewEvent& event);
-    void fillControls();
+    void OnTextChanged(wxCommandEvent& event);
     void OnShowHiddenChbClick(wxCommandEvent& event);
 
     void ShowCurrencyHistory();
@@ -106,10 +110,9 @@ private:
     std::map<int, wxString> ColName_;
     bool bHistoryEnabled_;
     bool bEnableSelect_;
-    wxButton* itemButtonEdit_;
-    wxButton* itemButtonDelete_;
     wxBitmapButton* buttonDownloadHistory_;
     wxBitmapButton* buttonDelUnusedHistory_;
+    wxSearchCtrl* m_maskTextCtrl;
     wxCheckBox* cbShowAll_;
     wxListCtrl* valueListBox_;
     wxDatePickerCtrl* valueDatePicker_;
@@ -118,6 +121,7 @@ private:
     wxButton* historyButtonAdd_;
     wxButton* historyButtonDelete_;
 
+    wxString m_maskStr;
     int m_currency_id;
     bool m_static_dialog;
 

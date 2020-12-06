@@ -60,8 +60,7 @@ mmCurrencyDialog::mmCurrencyDialog(wxWindow* parent, const Model_Currency::Data 
     , sfxTx_(nullptr)
     , decTx_(nullptr)
     , grpTx_(nullptr)
-    , unitTx_(nullptr)
-    , centTx_(nullptr)
+
     , scaleTx_(nullptr)
     , baseConvRate_(nullptr)
 {
@@ -125,8 +124,6 @@ void mmCurrencyDialog::fillControls()
         sfxTx_->ChangeValue(m_currency->SFX_SYMBOL);
         decTx_->ChangeValue(m_currency->DECIMAL_POINT);
         grpTx_->ChangeValue(m_currency->GROUP_SEPARATOR);
-        unitTx_->ChangeValue(m_currency->UNIT_NAME);
-        centTx_->ChangeValue(m_currency->CENT_NAME);
         m_scale = log10(m_currency->SCALE);
         const wxString& scale_value = wxString::Format("%i", m_scale);
         scaleTx_->ChangeValue(scale_value);
@@ -160,14 +157,6 @@ void mmCurrencyDialog::CreateControls()
     m_currencySymbol = new mmTextCtrl(this, ID_DIALOG_CURRENCY, "", wxDefaultPosition, wxSize(220, -1));
     m_currencySymbol->SetMaxLength(3);
     itemFlexGridSizer3->Add(m_currencySymbol, g_flagsExpand);
-
-    itemFlexGridSizer3->Add(new wxStaticText(this, wxID_STATIC, _("Unit Name")), g_flagsH);
-    unitTx_ = new wxTextCtrl(this, ID_DIALOG_CURRENCY, "");
-    itemFlexGridSizer3->Add(unitTx_, g_flagsExpand);
-
-    itemFlexGridSizer3->Add(new wxStaticText(this, wxID_STATIC, _("Cents Name")), g_flagsH);
-    centTx_ = new wxTextCtrl(this, ID_DIALOG_CURRENCY, "");
-    itemFlexGridSizer3->Add(centTx_, g_flagsExpand);
 
     itemFlexGridSizer3->Add(new wxStaticText(this, wxID_STATIC, _("Prefix Symbol")), g_flagsH);
     pfxTx_ = new wxTextCtrl(this, ID_DIALOG_CURRENCY, "");
@@ -293,8 +282,6 @@ void mmCurrencyDialog::OnTextChanged(wxCommandEvent& WXUNUSED(event))
     m_currency->SFX_SYMBOL = sfxTx_->GetValue();
     m_currency->DECIMAL_POINT = decTx_->GetValue();
     m_currency->GROUP_SEPARATOR = grpTx_->GetValue();
-    m_currency->UNIT_NAME = unitTx_->GetValue();
-    m_currency->CENT_NAME = centTx_->GetValue();
     m_currency->SCALE = static_cast<int>(pow(10, scale));
     m_currency->CURRENCY_SYMBOL = m_currencySymbol->GetValue().Trim();
     m_currency->CURRENCYNAME = m_currencyName->GetValue();
