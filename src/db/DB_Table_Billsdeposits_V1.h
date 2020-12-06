@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-28 20:20:32.998000.
+ *          AUTO GENERATED at 2020-12-06 16:34:20.027000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -78,23 +78,24 @@ struct DB_Table_BILLSDEPOSITS_V1 : public DB_Table
                 db->ExecuteUpdate(R"(CREATE TABLE BILLSDEPOSITS_V1(
 BDID integer primary key
 , ACCOUNTID integer NOT NULL
-, TOACCOUNTID integer
-, PAYEEID integer NOT NULL
+, TRANSDATE TEXT
+, TRANSTIME TEXT
 , TRANSCODE TEXT NOT NULL /* Withdrawal, Deposit, Transfer */
 , TRANSAMOUNT numeric NOT NULL
-, STATUS TEXT /* None, Reconciled, Void, Follow up, Duplicate */
-, TRANSACTIONNUMBER TEXT
-, NOTES TEXT
+, PAYEEID integer NOT NULL
 , CATEGID integer
 , SUBCATEGID integer
-, TRANSDATE TEXT
-, FOLLOWUPID integer
+, STATUS TEXT /* None, Reconciled, Void, Follow up, Duplicate */
+, NOTES TEXT
+, TRANSACTIONNUMBER TEXT
+, TOACCOUNTID integer
 , TOTRANSAMOUNT numeric
+, CURRENCYID integer
+, COLOURID integer
+, FOLLOWUPID integer
 , REPEATS integer
 , NEXTOCCURRENCEDATE TEXT
 , NUMOCCURRENCES integer
-, CURRENCYID integer
-, COLOURID integer
 ))");
                 this->ensure_data(db);
             }
@@ -143,16 +144,16 @@ BDID integer primary key
         explicit ACCOUNTID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
-    struct TOACCOUNTID : public DB_Column<int>
+    struct TRANSDATE : public DB_Column<wxString>
     { 
-        static wxString name() { return "TOACCOUNTID"; } 
-        explicit TOACCOUNTID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+        static wxString name() { return "TRANSDATE"; } 
+        explicit TRANSDATE(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
-    struct PAYEEID : public DB_Column<int>
+    struct TRANSTIME : public DB_Column<wxString>
     { 
-        static wxString name() { return "PAYEEID"; } 
-        explicit PAYEEID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+        static wxString name() { return "TRANSTIME"; } 
+        explicit TRANSTIME(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
     struct TRANSCODE : public DB_Column<wxString>
@@ -167,22 +168,10 @@ BDID integer primary key
         explicit TRANSAMOUNT(const double &v, OP op = EQUAL): DB_Column<double>(v, op) {}
     };
     
-    struct STATUS : public DB_Column<wxString>
+    struct PAYEEID : public DB_Column<int>
     { 
-        static wxString name() { return "STATUS"; } 
-        explicit STATUS(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
-    };
-    
-    struct TRANSACTIONNUMBER : public DB_Column<wxString>
-    { 
-        static wxString name() { return "TRANSACTIONNUMBER"; } 
-        explicit TRANSACTIONNUMBER(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
-    };
-    
-    struct NOTES : public DB_Column<wxString>
-    { 
-        static wxString name() { return "NOTES"; } 
-        explicit NOTES(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+        static wxString name() { return "PAYEEID"; } 
+        explicit PAYEEID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
     struct CATEGID : public DB_Column<int>
@@ -197,22 +186,52 @@ BDID integer primary key
         explicit SUBCATEGID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
-    struct TRANSDATE : public DB_Column<wxString>
+    struct STATUS : public DB_Column<wxString>
     { 
-        static wxString name() { return "TRANSDATE"; } 
-        explicit TRANSDATE(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+        static wxString name() { return "STATUS"; } 
+        explicit STATUS(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
     };
     
-    struct FOLLOWUPID : public DB_Column<int>
+    struct NOTES : public DB_Column<wxString>
     { 
-        static wxString name() { return "FOLLOWUPID"; } 
-        explicit FOLLOWUPID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+        static wxString name() { return "NOTES"; } 
+        explicit NOTES(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+    };
+    
+    struct TRANSACTIONNUMBER : public DB_Column<wxString>
+    { 
+        static wxString name() { return "TRANSACTIONNUMBER"; } 
+        explicit TRANSACTIONNUMBER(const wxString &v, OP op = EQUAL): DB_Column<wxString>(v, op) {}
+    };
+    
+    struct TOACCOUNTID : public DB_Column<int>
+    { 
+        static wxString name() { return "TOACCOUNTID"; } 
+        explicit TOACCOUNTID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
     struct TOTRANSAMOUNT : public DB_Column<double>
     { 
         static wxString name() { return "TOTRANSAMOUNT"; } 
         explicit TOTRANSAMOUNT(const double &v, OP op = EQUAL): DB_Column<double>(v, op) {}
+    };
+    
+    struct CURRENCYID : public DB_Column<int>
+    { 
+        static wxString name() { return "CURRENCYID"; } 
+        explicit CURRENCYID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
+    struct COLOURID : public DB_Column<int>
+    { 
+        static wxString name() { return "COLOURID"; } 
+        explicit COLOURID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
+    };
+    
+    struct FOLLOWUPID : public DB_Column<int>
+    { 
+        static wxString name() { return "FOLLOWUPID"; } 
+        explicit FOLLOWUPID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
     struct REPEATS : public DB_Column<int>
@@ -233,40 +252,29 @@ BDID integer primary key
         explicit NUMOCCURRENCES(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
     };
     
-    struct CURRENCYID : public DB_Column<int>
-    { 
-        static wxString name() { return "CURRENCYID"; } 
-        explicit CURRENCYID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
-    };
-    
-    struct COLOURID : public DB_Column<int>
-    { 
-        static wxString name() { return "COLOURID"; } 
-        explicit COLOURID(const int &v, OP op = EQUAL): DB_Column<int>(v, op) {}
-    };
-    
     typedef BDID PRIMARY;
     enum COLUMN
     {
         COL_BDID = 0
         , COL_ACCOUNTID = 1
-        , COL_TOACCOUNTID = 2
-        , COL_PAYEEID = 3
+        , COL_TRANSDATE = 2
+        , COL_TRANSTIME = 3
         , COL_TRANSCODE = 4
         , COL_TRANSAMOUNT = 5
-        , COL_STATUS = 6
-        , COL_TRANSACTIONNUMBER = 7
-        , COL_NOTES = 8
-        , COL_CATEGID = 9
-        , COL_SUBCATEGID = 10
-        , COL_TRANSDATE = 11
-        , COL_FOLLOWUPID = 12
+        , COL_PAYEEID = 6
+        , COL_CATEGID = 7
+        , COL_SUBCATEGID = 8
+        , COL_STATUS = 9
+        , COL_NOTES = 10
+        , COL_TRANSACTIONNUMBER = 11
+        , COL_TOACCOUNTID = 12
         , COL_TOTRANSAMOUNT = 13
-        , COL_REPEATS = 14
-        , COL_NEXTOCCURRENCEDATE = 15
-        , COL_NUMOCCURRENCES = 16
-        , COL_CURRENCYID = 17
-        , COL_COLOURID = 18
+        , COL_CURRENCYID = 14
+        , COL_COLOURID = 15
+        , COL_FOLLOWUPID = 16
+        , COL_REPEATS = 17
+        , COL_NEXTOCCURRENCEDATE = 18
+        , COL_NUMOCCURRENCES = 19
     };
 
     /** Returns the column name as a string*/
@@ -276,23 +284,24 @@ BDID integer primary key
         {
             case COL_BDID: return "BDID";
             case COL_ACCOUNTID: return "ACCOUNTID";
-            case COL_TOACCOUNTID: return "TOACCOUNTID";
-            case COL_PAYEEID: return "PAYEEID";
+            case COL_TRANSDATE: return "TRANSDATE";
+            case COL_TRANSTIME: return "TRANSTIME";
             case COL_TRANSCODE: return "TRANSCODE";
             case COL_TRANSAMOUNT: return "TRANSAMOUNT";
-            case COL_STATUS: return "STATUS";
-            case COL_TRANSACTIONNUMBER: return "TRANSACTIONNUMBER";
-            case COL_NOTES: return "NOTES";
+            case COL_PAYEEID: return "PAYEEID";
             case COL_CATEGID: return "CATEGID";
             case COL_SUBCATEGID: return "SUBCATEGID";
-            case COL_TRANSDATE: return "TRANSDATE";
-            case COL_FOLLOWUPID: return "FOLLOWUPID";
+            case COL_STATUS: return "STATUS";
+            case COL_NOTES: return "NOTES";
+            case COL_TRANSACTIONNUMBER: return "TRANSACTIONNUMBER";
+            case COL_TOACCOUNTID: return "TOACCOUNTID";
             case COL_TOTRANSAMOUNT: return "TOTRANSAMOUNT";
+            case COL_CURRENCYID: return "CURRENCYID";
+            case COL_COLOURID: return "COLOURID";
+            case COL_FOLLOWUPID: return "FOLLOWUPID";
             case COL_REPEATS: return "REPEATS";
             case COL_NEXTOCCURRENCEDATE: return "NEXTOCCURRENCEDATE";
             case COL_NUMOCCURRENCES: return "NUMOCCURRENCES";
-            case COL_CURRENCYID: return "CURRENCYID";
-            case COL_COLOURID: return "COLOURID";
             default: break;
         }
         
@@ -304,23 +313,24 @@ BDID integer primary key
     {
         if ("BDID" == name) return COL_BDID;
         else if ("ACCOUNTID" == name) return COL_ACCOUNTID;
-        else if ("TOACCOUNTID" == name) return COL_TOACCOUNTID;
-        else if ("PAYEEID" == name) return COL_PAYEEID;
+        else if ("TRANSDATE" == name) return COL_TRANSDATE;
+        else if ("TRANSTIME" == name) return COL_TRANSTIME;
         else if ("TRANSCODE" == name) return COL_TRANSCODE;
         else if ("TRANSAMOUNT" == name) return COL_TRANSAMOUNT;
-        else if ("STATUS" == name) return COL_STATUS;
-        else if ("TRANSACTIONNUMBER" == name) return COL_TRANSACTIONNUMBER;
-        else if ("NOTES" == name) return COL_NOTES;
+        else if ("PAYEEID" == name) return COL_PAYEEID;
         else if ("CATEGID" == name) return COL_CATEGID;
         else if ("SUBCATEGID" == name) return COL_SUBCATEGID;
-        else if ("TRANSDATE" == name) return COL_TRANSDATE;
-        else if ("FOLLOWUPID" == name) return COL_FOLLOWUPID;
+        else if ("STATUS" == name) return COL_STATUS;
+        else if ("NOTES" == name) return COL_NOTES;
+        else if ("TRANSACTIONNUMBER" == name) return COL_TRANSACTIONNUMBER;
+        else if ("TOACCOUNTID" == name) return COL_TOACCOUNTID;
         else if ("TOTRANSAMOUNT" == name) return COL_TOTRANSAMOUNT;
+        else if ("CURRENCYID" == name) return COL_CURRENCYID;
+        else if ("COLOURID" == name) return COL_COLOURID;
+        else if ("FOLLOWUPID" == name) return COL_FOLLOWUPID;
         else if ("REPEATS" == name) return COL_REPEATS;
         else if ("NEXTOCCURRENCEDATE" == name) return COL_NEXTOCCURRENCEDATE;
         else if ("NUMOCCURRENCES" == name) return COL_NUMOCCURRENCES;
-        else if ("CURRENCYID" == name) return COL_CURRENCYID;
-        else if ("COLOURID" == name) return COL_COLOURID;
 
         return COLUMN(-1);
     }
@@ -334,23 +344,24 @@ BDID integer primary key
     
         int BDID;//  primary key
         int ACCOUNTID;
-        int TOACCOUNTID;
-        int PAYEEID;
+        wxString TRANSDATE;
+        wxString TRANSTIME;
         wxString TRANSCODE;
         double TRANSAMOUNT;
-        wxString STATUS;
-        wxString TRANSACTIONNUMBER;
-        wxString NOTES;
+        int PAYEEID;
         int CATEGID;
         int SUBCATEGID;
-        wxString TRANSDATE;
-        int FOLLOWUPID;
+        wxString STATUS;
+        wxString NOTES;
+        wxString TRANSACTIONNUMBER;
+        int TOACCOUNTID;
         double TOTRANSAMOUNT;
+        int CURRENCYID;
+        int COLOURID;
+        int FOLLOWUPID;
         int REPEATS;
         wxString NEXTOCCURRENCEDATE;
         int NUMOCCURRENCES;
-        int CURRENCYID;
-        int COLOURID;
 
         int id() const
         {
@@ -378,17 +389,17 @@ BDID integer primary key
         
             BDID = -1;
             ACCOUNTID = -1;
-            TOACCOUNTID = -1;
-            PAYEEID = -1;
             TRANSAMOUNT = 0.0;
+            PAYEEID = -1;
             CATEGID = -1;
             SUBCATEGID = -1;
-            FOLLOWUPID = -1;
+            TOACCOUNTID = -1;
             TOTRANSAMOUNT = 0.0;
-            REPEATS = -1;
-            NUMOCCURRENCES = -1;
             CURRENCYID = -1;
             COLOURID = -1;
+            FOLLOWUPID = -1;
+            REPEATS = -1;
+            NUMOCCURRENCES = -1;
         }
 
         explicit Data(wxSQLite3ResultSet& q, Self* table = 0)
@@ -397,23 +408,24 @@ BDID integer primary key
         
             BDID = q.GetInt(0); // BDID
             ACCOUNTID = q.GetInt(1); // ACCOUNTID
-            TOACCOUNTID = q.GetInt(2); // TOACCOUNTID
-            PAYEEID = q.GetInt(3); // PAYEEID
+            TRANSDATE = q.GetString(2); // TRANSDATE
+            TRANSTIME = q.GetString(3); // TRANSTIME
             TRANSCODE = q.GetString(4); // TRANSCODE
             TRANSAMOUNT = q.GetDouble(5); // TRANSAMOUNT
-            STATUS = q.GetString(6); // STATUS
-            TRANSACTIONNUMBER = q.GetString(7); // TRANSACTIONNUMBER
-            NOTES = q.GetString(8); // NOTES
-            CATEGID = q.GetInt(9); // CATEGID
-            SUBCATEGID = q.GetInt(10); // SUBCATEGID
-            TRANSDATE = q.GetString(11); // TRANSDATE
-            FOLLOWUPID = q.GetInt(12); // FOLLOWUPID
+            PAYEEID = q.GetInt(6); // PAYEEID
+            CATEGID = q.GetInt(7); // CATEGID
+            SUBCATEGID = q.GetInt(8); // SUBCATEGID
+            STATUS = q.GetString(9); // STATUS
+            NOTES = q.GetString(10); // NOTES
+            TRANSACTIONNUMBER = q.GetString(11); // TRANSACTIONNUMBER
+            TOACCOUNTID = q.GetInt(12); // TOACCOUNTID
             TOTRANSAMOUNT = q.GetDouble(13); // TOTRANSAMOUNT
-            REPEATS = q.GetInt(14); // REPEATS
-            NEXTOCCURRENCEDATE = q.GetString(15); // NEXTOCCURRENCEDATE
-            NUMOCCURRENCES = q.GetInt(16); // NUMOCCURRENCES
-            CURRENCYID = q.GetInt(17); // CURRENCYID
-            COLOURID = q.GetInt(18); // COLOURID
+            CURRENCYID = q.GetInt(14); // CURRENCYID
+            COLOURID = q.GetInt(15); // COLOURID
+            FOLLOWUPID = q.GetInt(16); // FOLLOWUPID
+            REPEATS = q.GetInt(17); // REPEATS
+            NEXTOCCURRENCEDATE = q.GetString(18); // NEXTOCCURRENCEDATE
+            NUMOCCURRENCES = q.GetInt(19); // NUMOCCURRENCES
         }
 
         Data& operator=(const Data& other)
@@ -422,23 +434,24 @@ BDID integer primary key
 
             BDID = other.BDID;
             ACCOUNTID = other.ACCOUNTID;
-            TOACCOUNTID = other.TOACCOUNTID;
-            PAYEEID = other.PAYEEID;
+            TRANSDATE = other.TRANSDATE;
+            TRANSTIME = other.TRANSTIME;
             TRANSCODE = other.TRANSCODE;
             TRANSAMOUNT = other.TRANSAMOUNT;
-            STATUS = other.STATUS;
-            TRANSACTIONNUMBER = other.TRANSACTIONNUMBER;
-            NOTES = other.NOTES;
+            PAYEEID = other.PAYEEID;
             CATEGID = other.CATEGID;
             SUBCATEGID = other.SUBCATEGID;
-            TRANSDATE = other.TRANSDATE;
-            FOLLOWUPID = other.FOLLOWUPID;
+            STATUS = other.STATUS;
+            NOTES = other.NOTES;
+            TRANSACTIONNUMBER = other.TRANSACTIONNUMBER;
+            TOACCOUNTID = other.TOACCOUNTID;
             TOTRANSAMOUNT = other.TOTRANSAMOUNT;
+            CURRENCYID = other.CURRENCYID;
+            COLOURID = other.COLOURID;
+            FOLLOWUPID = other.FOLLOWUPID;
             REPEATS = other.REPEATS;
             NEXTOCCURRENCEDATE = other.NEXTOCCURRENCEDATE;
             NUMOCCURRENCES = other.NUMOCCURRENCES;
-            CURRENCYID = other.CURRENCYID;
-            COLOURID = other.COLOURID;
             return *this;
         }
 
@@ -458,14 +471,14 @@ BDID integer primary key
             return this->ACCOUNTID == in.v_;
         }
 
-        bool match(const Self::TOACCOUNTID &in) const
+        bool match(const Self::TRANSDATE &in) const
         {
-            return this->TOACCOUNTID == in.v_;
+            return this->TRANSDATE.CmpNoCase(in.v_) == 0;
         }
 
-        bool match(const Self::PAYEEID &in) const
+        bool match(const Self::TRANSTIME &in) const
         {
-            return this->PAYEEID == in.v_;
+            return this->TRANSTIME.CmpNoCase(in.v_) == 0;
         }
 
         bool match(const Self::TRANSCODE &in) const
@@ -478,19 +491,9 @@ BDID integer primary key
             return this->TRANSAMOUNT == in.v_;
         }
 
-        bool match(const Self::STATUS &in) const
+        bool match(const Self::PAYEEID &in) const
         {
-            return this->STATUS.CmpNoCase(in.v_) == 0;
-        }
-
-        bool match(const Self::TRANSACTIONNUMBER &in) const
-        {
-            return this->TRANSACTIONNUMBER.CmpNoCase(in.v_) == 0;
-        }
-
-        bool match(const Self::NOTES &in) const
-        {
-            return this->NOTES.CmpNoCase(in.v_) == 0;
+            return this->PAYEEID == in.v_;
         }
 
         bool match(const Self::CATEGID &in) const
@@ -503,19 +506,44 @@ BDID integer primary key
             return this->SUBCATEGID == in.v_;
         }
 
-        bool match(const Self::TRANSDATE &in) const
+        bool match(const Self::STATUS &in) const
         {
-            return this->TRANSDATE.CmpNoCase(in.v_) == 0;
+            return this->STATUS.CmpNoCase(in.v_) == 0;
         }
 
-        bool match(const Self::FOLLOWUPID &in) const
+        bool match(const Self::NOTES &in) const
         {
-            return this->FOLLOWUPID == in.v_;
+            return this->NOTES.CmpNoCase(in.v_) == 0;
+        }
+
+        bool match(const Self::TRANSACTIONNUMBER &in) const
+        {
+            return this->TRANSACTIONNUMBER.CmpNoCase(in.v_) == 0;
+        }
+
+        bool match(const Self::TOACCOUNTID &in) const
+        {
+            return this->TOACCOUNTID == in.v_;
         }
 
         bool match(const Self::TOTRANSAMOUNT &in) const
         {
             return this->TOTRANSAMOUNT == in.v_;
+        }
+
+        bool match(const Self::CURRENCYID &in) const
+        {
+            return this->CURRENCYID == in.v_;
+        }
+
+        bool match(const Self::COLOURID &in) const
+        {
+            return this->COLOURID == in.v_;
+        }
+
+        bool match(const Self::FOLLOWUPID &in) const
+        {
+            return this->FOLLOWUPID == in.v_;
         }
 
         bool match(const Self::REPEATS &in) const
@@ -531,16 +559,6 @@ BDID integer primary key
         bool match(const Self::NUMOCCURRENCES &in) const
         {
             return this->NUMOCCURRENCES == in.v_;
-        }
-
-        bool match(const Self::CURRENCYID &in) const
-        {
-            return this->CURRENCYID == in.v_;
-        }
-
-        bool match(const Self::COLOURID &in) const
-        {
-            return this->COLOURID == in.v_;
         }
 
         // Return the data record as a json string
@@ -563,40 +581,42 @@ BDID integer primary key
             json_writer.Int(this->BDID);
             json_writer.Key("ACCOUNTID");
             json_writer.Int(this->ACCOUNTID);
-            json_writer.Key("TOACCOUNTID");
-            json_writer.Int(this->TOACCOUNTID);
-            json_writer.Key("PAYEEID");
-            json_writer.Int(this->PAYEEID);
+            json_writer.Key("TRANSDATE");
+            json_writer.String(this->TRANSDATE.utf8_str());
+            json_writer.Key("TRANSTIME");
+            json_writer.String(this->TRANSTIME.utf8_str());
             json_writer.Key("TRANSCODE");
             json_writer.String(this->TRANSCODE.utf8_str());
             json_writer.Key("TRANSAMOUNT");
             json_writer.Double(this->TRANSAMOUNT);
-            json_writer.Key("STATUS");
-            json_writer.String(this->STATUS.utf8_str());
-            json_writer.Key("TRANSACTIONNUMBER");
-            json_writer.String(this->TRANSACTIONNUMBER.utf8_str());
-            json_writer.Key("NOTES");
-            json_writer.String(this->NOTES.utf8_str());
+            json_writer.Key("PAYEEID");
+            json_writer.Int(this->PAYEEID);
             json_writer.Key("CATEGID");
             json_writer.Int(this->CATEGID);
             json_writer.Key("SUBCATEGID");
             json_writer.Int(this->SUBCATEGID);
-            json_writer.Key("TRANSDATE");
-            json_writer.String(this->TRANSDATE.utf8_str());
-            json_writer.Key("FOLLOWUPID");
-            json_writer.Int(this->FOLLOWUPID);
+            json_writer.Key("STATUS");
+            json_writer.String(this->STATUS.utf8_str());
+            json_writer.Key("NOTES");
+            json_writer.String(this->NOTES.utf8_str());
+            json_writer.Key("TRANSACTIONNUMBER");
+            json_writer.String(this->TRANSACTIONNUMBER.utf8_str());
+            json_writer.Key("TOACCOUNTID");
+            json_writer.Int(this->TOACCOUNTID);
             json_writer.Key("TOTRANSAMOUNT");
             json_writer.Double(this->TOTRANSAMOUNT);
+            json_writer.Key("CURRENCYID");
+            json_writer.Int(this->CURRENCYID);
+            json_writer.Key("COLOURID");
+            json_writer.Int(this->COLOURID);
+            json_writer.Key("FOLLOWUPID");
+            json_writer.Int(this->FOLLOWUPID);
             json_writer.Key("REPEATS");
             json_writer.Int(this->REPEATS);
             json_writer.Key("NEXTOCCURRENCEDATE");
             json_writer.String(this->NEXTOCCURRENCEDATE.utf8_str());
             json_writer.Key("NUMOCCURRENCES");
             json_writer.Int(this->NUMOCCURRENCES);
-            json_writer.Key("CURRENCYID");
-            json_writer.Int(this->CURRENCYID);
-            json_writer.Key("COLOURID");
-            json_writer.Int(this->COLOURID);
         }
 
         row_t to_row_t() const
@@ -604,23 +624,24 @@ BDID integer primary key
             row_t row;
             row(L"BDID") = BDID;
             row(L"ACCOUNTID") = ACCOUNTID;
-            row(L"TOACCOUNTID") = TOACCOUNTID;
-            row(L"PAYEEID") = PAYEEID;
+            row(L"TRANSDATE") = TRANSDATE;
+            row(L"TRANSTIME") = TRANSTIME;
             row(L"TRANSCODE") = TRANSCODE;
             row(L"TRANSAMOUNT") = TRANSAMOUNT;
-            row(L"STATUS") = STATUS;
-            row(L"TRANSACTIONNUMBER") = TRANSACTIONNUMBER;
-            row(L"NOTES") = NOTES;
+            row(L"PAYEEID") = PAYEEID;
             row(L"CATEGID") = CATEGID;
             row(L"SUBCATEGID") = SUBCATEGID;
-            row(L"TRANSDATE") = TRANSDATE;
-            row(L"FOLLOWUPID") = FOLLOWUPID;
+            row(L"STATUS") = STATUS;
+            row(L"NOTES") = NOTES;
+            row(L"TRANSACTIONNUMBER") = TRANSACTIONNUMBER;
+            row(L"TOACCOUNTID") = TOACCOUNTID;
             row(L"TOTRANSAMOUNT") = TOTRANSAMOUNT;
+            row(L"CURRENCYID") = CURRENCYID;
+            row(L"COLOURID") = COLOURID;
+            row(L"FOLLOWUPID") = FOLLOWUPID;
             row(L"REPEATS") = REPEATS;
             row(L"NEXTOCCURRENCEDATE") = NEXTOCCURRENCEDATE;
             row(L"NUMOCCURRENCES") = NUMOCCURRENCES;
-            row(L"CURRENCYID") = CURRENCYID;
-            row(L"COLOURID") = COLOURID;
             return row;
         }
 
@@ -628,23 +649,24 @@ BDID integer primary key
         {
             t(L"BDID") = BDID;
             t(L"ACCOUNTID") = ACCOUNTID;
-            t(L"TOACCOUNTID") = TOACCOUNTID;
-            t(L"PAYEEID") = PAYEEID;
+            t(L"TRANSDATE") = TRANSDATE;
+            t(L"TRANSTIME") = TRANSTIME;
             t(L"TRANSCODE") = TRANSCODE;
             t(L"TRANSAMOUNT") = TRANSAMOUNT;
-            t(L"STATUS") = STATUS;
-            t(L"TRANSACTIONNUMBER") = TRANSACTIONNUMBER;
-            t(L"NOTES") = NOTES;
+            t(L"PAYEEID") = PAYEEID;
             t(L"CATEGID") = CATEGID;
             t(L"SUBCATEGID") = SUBCATEGID;
-            t(L"TRANSDATE") = TRANSDATE;
-            t(L"FOLLOWUPID") = FOLLOWUPID;
+            t(L"STATUS") = STATUS;
+            t(L"NOTES") = NOTES;
+            t(L"TRANSACTIONNUMBER") = TRANSACTIONNUMBER;
+            t(L"TOACCOUNTID") = TOACCOUNTID;
             t(L"TOTRANSAMOUNT") = TOTRANSAMOUNT;
+            t(L"CURRENCYID") = CURRENCYID;
+            t(L"COLOURID") = COLOURID;
+            t(L"FOLLOWUPID") = FOLLOWUPID;
             t(L"REPEATS") = REPEATS;
             t(L"NEXTOCCURRENCEDATE") = NEXTOCCURRENCEDATE;
             t(L"NUMOCCURRENCES") = NUMOCCURRENCES;
-            t(L"CURRENCYID") = CURRENCYID;
-            t(L"COLOURID") = COLOURID;
         }
 
         /** Save the record instance in memory to the database. */
@@ -680,7 +702,7 @@ BDID integer primary key
 
     enum
     {
-        NUM_COLUMNS = 19
+        NUM_COLUMNS = 20
     };
 
     size_t num_columns() const { return NUM_COLUMNS; }
@@ -690,7 +712,7 @@ BDID integer primary key
 
     DB_Table_BILLSDEPOSITS_V1() : fake_(new Data())
     {
-        query_ = "SELECT BDID, ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT, REPEATS, NEXTOCCURRENCEDATE, NUMOCCURRENCES, CURRENCYID, COLOURID FROM BILLSDEPOSITS_V1 ";
+        query_ = "SELECT BDID, ACCOUNTID, TRANSDATE, TRANSTIME, TRANSCODE, TRANSAMOUNT, PAYEEID, CATEGID, SUBCATEGID, STATUS, NOTES, TRANSACTIONNUMBER, TOACCOUNTID, TOTRANSAMOUNT, CURRENCYID, COLOURID, FOLLOWUPID, REPEATS, NEXTOCCURRENCEDATE, NUMOCCURRENCES FROM BILLSDEPOSITS_V1 ";
     }
 
     /** Create a new Data record and add to memory table (cache)*/
@@ -720,11 +742,11 @@ BDID integer primary key
         wxString sql = wxEmptyString;
         if (entity->id() <= 0) //  new & insert
         {
-            sql = "INSERT INTO BILLSDEPOSITS_V1(ACCOUNTID, TOACCOUNTID, PAYEEID, TRANSCODE, TRANSAMOUNT, STATUS, TRANSACTIONNUMBER, NOTES, CATEGID, SUBCATEGID, TRANSDATE, FOLLOWUPID, TOTRANSAMOUNT, REPEATS, NEXTOCCURRENCEDATE, NUMOCCURRENCES, CURRENCYID, COLOURID) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO BILLSDEPOSITS_V1(ACCOUNTID, TRANSDATE, TRANSTIME, TRANSCODE, TRANSAMOUNT, PAYEEID, CATEGID, SUBCATEGID, STATUS, NOTES, TRANSACTIONNUMBER, TOACCOUNTID, TOTRANSAMOUNT, CURRENCYID, COLOURID, FOLLOWUPID, REPEATS, NEXTOCCURRENCEDATE, NUMOCCURRENCES) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         }
         else
         {
-            sql = "UPDATE BILLSDEPOSITS_V1 SET ACCOUNTID = ?, TOACCOUNTID = ?, PAYEEID = ?, TRANSCODE = ?, TRANSAMOUNT = ?, STATUS = ?, TRANSACTIONNUMBER = ?, NOTES = ?, CATEGID = ?, SUBCATEGID = ?, TRANSDATE = ?, FOLLOWUPID = ?, TOTRANSAMOUNT = ?, REPEATS = ?, NEXTOCCURRENCEDATE = ?, NUMOCCURRENCES = ?, CURRENCYID = ?, COLOURID = ? WHERE BDID = ?";
+            sql = "UPDATE BILLSDEPOSITS_V1 SET ACCOUNTID = ?, TRANSDATE = ?, TRANSTIME = ?, TRANSCODE = ?, TRANSAMOUNT = ?, PAYEEID = ?, CATEGID = ?, SUBCATEGID = ?, STATUS = ?, NOTES = ?, TRANSACTIONNUMBER = ?, TOACCOUNTID = ?, TOTRANSAMOUNT = ?, CURRENCYID = ?, COLOURID = ?, FOLLOWUPID = ?, REPEATS = ?, NEXTOCCURRENCEDATE = ?, NUMOCCURRENCES = ? WHERE BDID = ?";
         }
 
         try
@@ -732,25 +754,26 @@ BDID integer primary key
             wxSQLite3Statement stmt = db->PrepareStatement(sql);
 
             stmt.Bind(1, entity->ACCOUNTID);
-            stmt.Bind(2, entity->TOACCOUNTID);
-            stmt.Bind(3, entity->PAYEEID);
+            stmt.Bind(2, entity->TRANSDATE);
+            stmt.Bind(3, entity->TRANSTIME);
             stmt.Bind(4, entity->TRANSCODE);
             stmt.Bind(5, entity->TRANSAMOUNT);
-            stmt.Bind(6, entity->STATUS);
-            stmt.Bind(7, entity->TRANSACTIONNUMBER);
-            stmt.Bind(8, entity->NOTES);
-            stmt.Bind(9, entity->CATEGID);
-            stmt.Bind(10, entity->SUBCATEGID);
-            stmt.Bind(11, entity->TRANSDATE);
-            stmt.Bind(12, entity->FOLLOWUPID);
+            stmt.Bind(6, entity->PAYEEID);
+            stmt.Bind(7, entity->CATEGID);
+            stmt.Bind(8, entity->SUBCATEGID);
+            stmt.Bind(9, entity->STATUS);
+            stmt.Bind(10, entity->NOTES);
+            stmt.Bind(11, entity->TRANSACTIONNUMBER);
+            stmt.Bind(12, entity->TOACCOUNTID);
             stmt.Bind(13, entity->TOTRANSAMOUNT);
-            stmt.Bind(14, entity->REPEATS);
-            stmt.Bind(15, entity->NEXTOCCURRENCEDATE);
-            stmt.Bind(16, entity->NUMOCCURRENCES);
-            stmt.Bind(17, entity->CURRENCYID);
-            stmt.Bind(18, entity->COLOURID);
+            stmt.Bind(14, entity->CURRENCYID);
+            stmt.Bind(15, entity->COLOURID);
+            stmt.Bind(16, entity->FOLLOWUPID);
+            stmt.Bind(17, entity->REPEATS);
+            stmt.Bind(18, entity->NEXTOCCURRENCEDATE);
+            stmt.Bind(19, entity->NUMOCCURRENCES);
             if (entity->id() > 0)
-                stmt.Bind(19, entity->BDID);
+                stmt.Bind(20, entity->BDID);
 
             stmt.ExecuteUpdate();
             stmt.Finalize();

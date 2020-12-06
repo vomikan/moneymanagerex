@@ -43,16 +43,12 @@
 #include "model/Model_Ticker.h"
 
 #include <wx/numformatter.h>
-#include <wx/timectrl.h>
 #include <wx/collpane.h>
-
 
 wxIMPLEMENT_DYNAMIC_CLASS(mmTransDialog, wxDialog);
 
 wxBEGIN_EVENT_TABLE(mmTransDialog, wxDialog)
     EVT_CHILD_FOCUS(mmTransDialog::OnFocusChange)
-    EVT_DATE_CHANGED(ID_TRX_BUTTONDATE, mmTransDialog::OnDateChanged)
-    EVT_SPIN(ID_TRX_DATE_SPINNER, mmTransDialog::OnTransDateSpin)
     EVT_COMBOBOX(wxID_ANY, mmTransDialog::OnAccountOrPayeeUpdated)
     EVT_BUTTON(wxID_VIEW_DETAILS, mmTransDialog::OnCategs)
     EVT_CHOICE(ID_TRX_TYPE, mmTransDialog::OnTransTypeChanged)
@@ -132,7 +128,9 @@ mmTransDialog::mmTransDialog(wxWindow* parent
     else if (acc && Model_Account::is_multicurrency(acc)) {
         m_currency= Model_Currency::instance().get(m_trx_data.CURRENCYID);
     }
-    else {
+
+    if (!acc || !m_currency)
+    {
         m_currency = Model_Currency::GetBaseCurrency();
     }
 
@@ -194,8 +192,8 @@ bool mmTransDialog::Create(wxWindow* parent, wxWindowID id, const wxString& capt
 void mmTransDialog::dataToControls()
 {
     Model_Checking::getFrequentUsedNotes(frequentNotes_, m_trx_data.ACCOUNTID);
-    wxButton* bFrequentUsedNotes = static_cast<wxButton*>(FindWindow(ID_TRX_FREQENTNOTES));
-    bFrequentUsedNotes->Enable(!frequentNotes_.empty());
+    wxButton* frequent_used_notes_btn = static_cast<wxButton*>(FindWindow(ID_TRX_FREQENTNOTES));
+    frequent_used_notes_btn->Enable(!frequentNotes_.empty());
     
     m_trx_colours_btn->SetBackgroundColour(getUDColour(m_trx_data.COLOURID));
 
@@ -205,9 +203,10 @@ void mmTransDialog::dataToControls()
         trx_date.ParseDate(m_trx_data.TRANSDATE);
         m_date_picker->SetValue(trx_date);
         m_date_picker->SetFocus();
-        //process date change event for set weekday name
-        wxDateEvent dateEvent(m_date_picker, trx_date, wxEVT_DATE_CHANGED);
-        GetEventHandler()->ProcessEvent(dateEvent);
+
+        trx_date.ParseTime(m_trx_data.TRANSTIME);
+        m_time_picker->SetValue(trx_date);
+
         skip_date_init_ = true;
     }
 
@@ -434,35 +433,19 @@ void mmTransDialog::CreateControls()
     // Date --------------------------------------------
     long date_style = wxDP_DROPDOWN | wxDP_SHOWCENTURY;
 
-    m_date_picker = new wxDatePickerCtrl(this, ID_TRX_BUTTONDATE
+    m_date_picker = new wxDatePickerCtrl(this, ID_TRX_DATE
         , wxDateTime::Today(), wxDefaultPosition, wxDefaultSize, date_style);
 
-    //Text field for name of day of the week
-    wxSize WeekDayNameMaxSize(wxDefaultSize);
-    for (wxDateTime::WeekDay d = wxDateTime::Sun;
-            d != wxDateTime::Inv_WeekDay;
-            d = wxDateTime::WeekDay(d+1))
-        WeekDayNameMaxSize.IncTo(GetTextExtent(
-            wxGetTranslation(wxDateTime::GetEnglishWeekDayName(d))+ " "));
+    m_time_picker = new wxTimePickerCtrl(this, ID_TRX_TIME
+        , wxDateTime::Now());
 
-    m_item_week = new wxStaticText(this, wxID_STATIC, ""
-        , wxDefaultPosition, WeekDayNameMaxSize, wxST_NO_AUTORESIZE);
-
-    wxStaticText* name_label = new wxStaticText(this, wxID_STATIC, _("Date"));
+    wxStaticText* name_label = new wxStaticText(this, wxID_STATIC, _("Date/Time"));
     flex_sizer->Add(name_label, g_flagsH);
     name_label->SetFont(this->GetFont().Bold());
     wxBoxSizer* date_sizer = new wxBoxSizer(wxHORIZONTAL);
     flex_sizer->Add(date_sizer);
     date_sizer->Add(m_date_picker, g_flagsH);
-#ifdef __WXMSW__
-    wxSpinButton* spinCtrl = new wxSpinButton(this, ID_TRX_DATE_SPINNER
-        , wxDefaultPosition, wxSize(-1, m_date_picker->GetSize().GetHeight())
-        , wxSP_VERTICAL | wxSP_ARROW_KEYS | wxSP_WRAP);
-    spinCtrl->SetRange(-32768, 32768);
-    spinCtrl->SetToolTip(_("Retard or advance the date of the transaction"));
-    date_sizer->Add(spinCtrl, g_flagsH);
-#endif
-    date_sizer->Add(m_item_week, g_flagsH);
+    date_sizer->Add(m_time_picker, g_flagsH);
 
     // Status --------------------------------------------
     m_trx_status = new wxChoice(this, ID_TRX_STATUS);
@@ -911,33 +894,6 @@ void mmTransDialog::SetDialogTitle(const wxString& title)
 }
 
 //** --------------=Event handlers=------------------ **//
-void mmTransDialog::OnDateChanged(wxDateEvent& event)
-{
-    //get weekday name
-    wxDateTime date = m_date_picker->GetValue();
-    if (event.GetDate().IsValid())
-    {
-        m_item_week->SetLabelText(wxGetTranslation(date.GetEnglishWeekDayName(date.GetWeekDay())));
-        m_trx_data.TRANSDATE = date.FormatISODate();
-    }
-}
-
-void mmTransDialog::OnTransDateSpin(wxSpinEvent& event)
-{
-    wxDateTime date = m_date_picker->GetValue();
-    int value = event.GetPosition();
-    wxSpinButton* spinCtrl = static_cast<wxSpinButton*>(event.GetEventObject());
-    if (spinCtrl) spinCtrl->SetValue(0);
-
-    date = date.Add(wxDateSpan::Days(value));
-    m_date_picker->SetValue(date);
-
-    //process date change event for set weekday name
-    wxDateEvent dateEvent(m_date_picker, date, wxEVT_DATE_CHANGED);
-    GetEventHandler()->ProcessEvent(dateEvent);
-
-    event.Skip();
-}
 
 void mmTransDialog::OnTransTypeChanged(wxCommandEvent& event)
 {
@@ -1090,7 +1046,8 @@ void mmTransDialog::OnAutoTransNum(wxCommandEvent& WXUNUSED(event))
 {
     auto d = Model_Checking::TRANSDATE(m_trx_data).Subtract(wxDateSpan::Days(300));
     double next_number = 0, temp_num;
-    const auto numbers = Model_Checking::instance().find(Model_Checking::ACCOUNTID(m_trx_data.ACCOUNTID, EQUAL), Model_Checking::TRANSDATE(d, GREATER_OR_EQUAL));
+    const auto numbers = Model_Checking::instance().find(Model_Checking::ACCOUNTID(m_trx_data.ACCOUNTID, EQUAL)
+        , Model_Checking::TRANSDATE(d, GREATER_OR_EQUAL));
     for (const auto &num : numbers)
     {
         if (num.TRANSACTIONNUMBER.empty() || !num.TRANSACTIONNUMBER.IsNumber()) continue;
@@ -1215,6 +1172,7 @@ void mmTransDialog::OnOk(wxCommandEvent& WXUNUSED(event))
     m_trx_data.NOTES = m_trx_notes->GetValue();
     m_trx_data.TRANSACTIONNUMBER = m_trx_number->GetValue();
     m_trx_data.TRANSDATE = m_date_picker->GetValue().FormatISODate();
+    m_trx_data.TRANSTIME = m_time_picker->GetValue().FormatISOTime();
     wxStringClientData* status_obj = static_cast<wxStringClientData*>(
         m_trx_status->GetClientObject(m_trx_status->GetSelection())
     );

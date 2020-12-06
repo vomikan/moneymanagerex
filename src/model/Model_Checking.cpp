@@ -443,6 +443,7 @@ bool Model_Checking::getTransactionData(Data &data, const Data* r)
 {
     if (r) {
         data.TRANSDATE = r->TRANSDATE;
+        data.TRANSTIME = r->TRANSTIME;
         data.STATUS = r->STATUS;
         data.ACCOUNTID = r->ACCOUNTID;
         data.TOACCOUNTID = r->TOACCOUNTID;
@@ -467,6 +468,7 @@ void Model_Checking::putDataToTransaction(Data *r, const Data &data)
     r->STATUS = data.STATUS;
     r->TRANSCODE = data.TRANSCODE;
     r->TRANSDATE = data.TRANSDATE;
+    r->TRANSTIME = data.TRANSTIME;
     r->PAYEEID = data.PAYEEID;
     r->ACCOUNTID = data.ACCOUNTID;
     r->TRANSAMOUNT = data.TRANSAMOUNT;

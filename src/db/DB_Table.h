@@ -11,7 +11,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-28 20:20:32.998000.
+ *          AUTO GENERATED at 2020-12-06 16:34:20.027000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -1072,6 +1072,15 @@ struct SorterByTRANSID
     bool operator()(const DATA& x, const DATA& y)
     {
         return (x.TRANSID) < (y.TRANSID);
+    }
+};
+
+struct SorterByTRANSTIME
+{ 
+    template<class DATA>
+    bool operator()(const DATA& x, const DATA& y)
+    {
+        return (x.TRANSTIME) < (y.TRANSTIME);
     }
 };
 

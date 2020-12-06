@@ -7,7 +7,7 @@
  *      @brief
  *
  *      Revision History:
- *          AUTO GENERATED at 2020-11-28 20:20:43.252000.
+ *          AUTO GENERATED at 2020-12-06 16:34:23.077000.
  *          DO NOT EDIT!
  */
 //=============================================================================
@@ -291,10 +291,15 @@ const std::vector<wxString> dbUpgradeQuery =
         CREATE INDEX IDX_ASSETS_ASSETTYPE ON ASSETS_V1(ASSETTYPE);
         
         ALTER TABLE ACCOUNTLIST_V1 ADD COLUMN MULTICURRENCY integer DEFAULT 0;
+        
         ALTER TABLE CHECKINGACCOUNT_V1 ADD COLUMN CURRENCYID integer;
         ALTER TABLE CHECKINGACCOUNT_V1 ADD COLUMN COLOURID integer;
+        ALTER TABLE CHECKINGACCOUNT_V1 ADD COLUMN TRANSTIME TEXT;
+        
         ALTER TABLE BILLSDEPOSITS_V1 ADD COLUMN CURRENCYID integer;
         ALTER TABLE BILLSDEPOSITS_V1 ADD COLUMN COLOURID integer;
+        ALTER TABLE BILLSDEPOSITS_V1 ADD COLUMN TRANSTIME TEXT;
+        
         update CHECKINGACCOUNT_V1 set COLOURID = case when FOLLOWUPID >=0 and FOLLOWUPID <= 7 then FOLLOWUPID end;
         update ACCOUNTLIST_V1 set MULTICURRENCY = 1 where ACCOUNTTYPE in ('Investment');
         

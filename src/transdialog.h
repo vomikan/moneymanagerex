@@ -29,7 +29,7 @@
 #include "Model_CustomFieldData.h"
 #include "Model_Splittransaction.h"
 
-#include <wx/spinbutt.h>
+#include <wx/timectrl.h>
 
 class wxDatePickerCtrl;
 class mmTextCtrl;
@@ -90,8 +90,6 @@ private:
     void OnFrequentUsedNotes(wxCommandEvent& event);
     void OnNoteSelected(wxCommandEvent& event);
     void OnTransTypeChanged(wxCommandEvent& event);
-    void OnTransDateSpin(wxSpinEvent&);
-    void OnDateChanged(wxDateEvent& event);
     void OnFocusChange(wxChildFocusEvent& event);
     void OnTextEntered(wxCommandEvent& event);
     void OnAdvanceChecked(wxCommandEvent& event);
@@ -115,7 +113,8 @@ private:
     wxChoice* m_trx_status;
     wxChoice* m_trx_type;
     wxDatePickerCtrl* m_date_picker;
-    wxStaticText* m_item_week;
+    wxTimePickerCtrl* m_time_picker;
+
     wxStaticText* m_account_label;
     wxStaticText* m_payee_label;
 
@@ -151,7 +150,7 @@ private:
         /* Transaction Dialog */
         ID_TRX_TYPE = wxID_HIGHEST + 900,
         ID_TRX_TEXTNUMBER,
-        ID_TRX_BUTTONDATE,
+        ID_TRX_DATE,
         ID_TRX_TEXTNOTES,
         ID_TRX_TEXTAMOUNT,
         ID_TRX_TOTEXTAMOUNT,
@@ -163,7 +162,7 @@ private:
         ID_TRX_TRANSNUM,
         ID_TRX_PAYEE,
         ID_TRX_FREQENTNOTES,
-        ID_TRX_DATE_SPINNER,
+        ID_TRX_TIME,
         ID_TRX_CUSTOMFIELDS,
         ID_TRX_CURRENCY,
         ID_TRX_CUSTOMFIELD,
