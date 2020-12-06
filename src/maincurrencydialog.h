@@ -120,6 +120,7 @@ private:
     wxStaticBox* historyStaticBox_;
     wxButton* historyButtonAdd_;
     wxButton* historyButtonDelete_;
+    wxButton* m_select_btn;
 
     wxString m_maskStr;
     int m_currency_id;

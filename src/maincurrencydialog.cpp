@@ -203,12 +203,12 @@ void mmMainCurrencyDialog::CreateControls()
     itemBoxSizer66->Add(m_maskTextCtrl, g_flagsExpand);
     itemBoxSizer66->Add(new wxStaticText(buttonsPanel, wxID_STATIC, _("Search:")), g_flagsH);
 
-    wxButton* itemButtonSelect = new wxButton(buttonsPanel, wxID_SELECTALL, _("&Select"));
-    itemBoxSizer9->Add(itemButtonSelect, wxSizerFlags(g_flagsExpand).Proportion(4));
+    m_select_btn = new wxButton(buttonsPanel, wxID_SELECTALL, _("&Select"));
+    itemBoxSizer9->Add(m_select_btn, wxSizerFlags(g_flagsExpand).Proportion(4));
     //itemButtonSelect->SetToolTip(_("Select the currently selected currency as the selected currency for the account"));
 
     if (bEnableSelect_ == false)
-        itemButtonSelect->Disable();
+        m_select_btn->Disable();
 
     //Some interfaces has no any close buttons, it may confuse user. Cancel button added
     wxButton* itemCancelButton = new wxButton(buttonsPanel, wxID_CANCEL, wxGetTranslation(g_CloseLabel));
@@ -395,7 +395,10 @@ void mmMainCurrencyDialog::OnListItemSelected(wxDataViewEvent& event)
 {
     int selected_index = currencyListBox_->GetSelectedRow();
 
-    if (selected_index >= 0)
+    bool is_selected = currencyListBox_->GetSelectedRow() > -1;
+    m_select_btn->Enable(is_selected);
+
+    if (is_selected)
     {
         wxDataViewItem item = event.GetItem();
         m_currency_id = static_cast<int>(currencyListBox_->GetItemData(item));
@@ -513,9 +516,10 @@ void mmMainCurrencyDialog::OnItemRightClick(wxDataViewEvent& event)
     if (m_static_dialog) return;
 
     wxCommandEvent ev(wxEVT_COMMAND_MENU_SELECTED, wxID_ANY);
-    ev.SetEventObject( this );
+    ev.SetEventObject(this);
 
     wxMenu* mainMenu = new wxMenu;
+
     mainMenu->Append(new wxMenuItem(mainMenu, MENU_ITEM1, _("Set as Base Currency")));
     mainMenu->Append(new wxMenuItem(mainMenu, MENU_ITEM2, _("Online Update Currency Rate")));
     mainMenu->AppendSeparator();
@@ -523,16 +527,21 @@ void mmMainCurrencyDialog::OnItemRightClick(wxDataViewEvent& event)
     mainMenu->Append(new wxMenuItem(mainMenu, wxID_EDIT, _("&Edit ")));
     mainMenu->Append(new wxMenuItem(mainMenu, wxID_REMOVE, _("&Remove ")));
 
+    bool is_selected = currencyListBox_->GetSelectedRow() > -1;
+    m_select_btn->Enable(is_selected);
     int baseCurrencyID = Option::instance().getBaseCurrencyID();
-    if (baseCurrencyID == m_currency_id) {
-        mainMenu->Enable(MENU_ITEM1, false);
-        mainMenu->Enable(MENU_ITEM2, false);
-    }
+    mainMenu->Enable(MENU_ITEM1, baseCurrencyID != m_currency_id && is_selected);
+    mainMenu->Enable(MENU_ITEM2, baseCurrencyID != m_currency_id && is_selected);
+
+    Model_Currency::Data* currency = Model_Currency::instance().get(m_currency_id);
+    mainMenu->Enable(wxID_REMOVE, !Model_Account::is_used(currency) && is_selected);
+
+    mainMenu->Enable(wxID_EDIT, is_selected);
 
     PopupMenu(mainMenu);
     delete mainMenu;
     event.Skip();
-}
+} 
 
 void mmMainCurrencyDialog::OnShowHiddenChbClick(wxCommandEvent& WXUNUSED(event))
 {
