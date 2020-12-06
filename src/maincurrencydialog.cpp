@@ -77,8 +77,9 @@ mmMainCurrencyDialog::mmMainCurrencyDialog(
     ColName_[BASE_RATE]   = bHistoryEnabled_ ? _("Last Rate") : _("Fixed Rate");
 
     m_currency_id = currencyID == -1 ? Option::instance().getBaseCurrencyID() : currencyID;
-    long style = wxCAPTION | wxRESIZE_BORDER | wxSYSTEM_MENU | wxCLOSE_BOX;
-    Create(parent, wxID_ANY, _("Currency Dialog"), wxDefaultPosition, wxDefaultSize, style);
+    Create(parent);
+    SetMinSize(wxSize(700, 550));
+    Fit();
 }
 
 bool mmMainCurrencyDialog::Create(wxWindow* parent
@@ -393,10 +394,8 @@ bool mmMainCurrencyDialog::Execute(int& currencyID)
 
 void mmMainCurrencyDialog::OnListItemSelected(wxDataViewEvent& event)
 {
-    int selected_index = currencyListBox_->GetSelectedRow();
-
     bool is_selected = currencyListBox_->GetSelectedRow() > -1;
-    m_select_btn->Enable(is_selected);
+    m_select_btn->Enable(is_selected && bEnableSelect_);
 
     if (is_selected)
     {

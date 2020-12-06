@@ -62,8 +62,9 @@ mmAssetDialog::mmAssetDialog(wxWindow* parent, mmGUIFrame* gui_frame, Model_Asse
         m_dialog_heading = _("Edit Asset");
     }
 
-    long style = wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX;
-    Create(parent, wxID_ANY, m_dialog_heading, wxDefaultPosition, wxSize(400, 300), style);
+    Create(parent);
+    SetMinSize(wxSize(400, 300));
+    SetTitle(m_dialog_heading);
 }
 
 bool mmAssetDialog::Create(wxWindow* parent

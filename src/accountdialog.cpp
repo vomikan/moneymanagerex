@@ -88,7 +88,7 @@ mmNewAcctDialog::mmNewAcctDialog(Model_Account::Data* account, wxWindow* parent)
     Model_Currency::Data* currency = Model_Currency::instance().get(m_currencyID);
     wxASSERT(currency);
 
-    Create(parent, wxID_ANY, _("New Account"));
+    Create(parent);
     this->SetMinSize(wxSize(300, 512));
     this->Connect(wxID_ANY, wxEVT_CHILD_FOCUS, wxChildFocusEventHandler(mmNewAcctDialog::OnChangeFocus), nullptr, this);
 }

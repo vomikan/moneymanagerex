@@ -76,9 +76,9 @@ mmCurrencyDialog::mmCurrencyDialog(wxWindow* parent, const Model_Currency::Data 
         m_currency->SCALE = 2;
     }
 
-    long style = wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX;
-    Create(parent, wxID_STATIC, _("Currency Manager"), wxDefaultPosition, wxDefaultSize, style);
-    SetMinSize(wxSize(500, 300));
+    Create(parent);
+    SetMinSize(wxSize(300, 420));
+    Fit();
 }
 
 bool mmCurrencyDialog::Create(wxWindow* parent, wxWindowID id
@@ -92,7 +92,8 @@ bool mmCurrencyDialog::Create(wxWindow* parent, wxWindowID id
 
     if (!m_currency)
     {
-        mmSingleChoiceDialog select_currency_name(this, _("Currency name"), _("Select Currency"), Model_Currency::instance().all_currency_names());
+        mmSingleChoiceDialog select_currency_name(this, _("Currency name"), _("Select Currency")
+            , Model_Currency::instance().all_currency_names());
         if (select_currency_name.ShowModal() == wxID_OK)
         {
             const wxString currencyname = select_currency_name.GetStringSelection();
@@ -145,16 +146,17 @@ void mmCurrencyDialog::CreateControls()
     this->SetSizer(itemBoxSizer2);
 
     wxFlexGridSizer* itemFlexGridSizer3 = new wxFlexGridSizer(0, 2, 0, 0);
-    itemFlexGridSizer3->AddGrowableCol(1);
-    itemBoxSizer2->Add(itemFlexGridSizer3, g_flagsV);
+    itemFlexGridSizer3->AddGrowableCol(1, 1);
+    itemBoxSizer2->Add(itemFlexGridSizer3, g_flagsExpand);
 
     //--------------------------
     itemFlexGridSizer3->Add(new wxStaticText(this, wxID_STATIC, _("Currency Name")), g_flagsH);
-    m_currencyName = new mmTextCtrl(this, ID_DIALOG_CURRENCY, "", wxDefaultPosition, wxSize(220, -1));
-    itemFlexGridSizer3->Add(m_currencyName, g_flagsH);
+    m_currencyName = new mmTextCtrl(this, ID_DIALOG_CURRENCY);
+    m_currencyName->SetMinSize(wxSize(220, -1));
+    itemFlexGridSizer3->Add(m_currencyName, g_flagsExpand);
 
     itemFlexGridSizer3->Add(new wxStaticText(this, wxID_STATIC, _("Currency Symbol")), g_flagsH);
-    m_currencySymbol = new mmTextCtrl(this, ID_DIALOG_CURRENCY, "", wxDefaultPosition, wxSize(220, -1));
+    m_currencySymbol = new mmTextCtrl(this, ID_DIALOG_CURRENCY);
     m_currencySymbol->SetMaxLength(3);
     itemFlexGridSizer3->Add(m_currencySymbol, g_flagsExpand);
 
@@ -207,10 +209,11 @@ void mmCurrencyDialog::CreateControls()
     //--------------------------
     wxStaticBox* itemStaticBox_01 = new wxStaticBox(this, wxID_STATIC, _("Value Display Sample:"));
     wxStaticBoxSizer* itemStaticBoxSizer_01 = new wxStaticBoxSizer(itemStaticBox_01, wxHORIZONTAL);
-    itemBoxSizer2->Add(itemStaticBoxSizer_01, g_flagsExpand);
+    itemBoxSizer2->Add(itemStaticBoxSizer_01, wxSizerFlags(g_flagsExpand).Proportion(0));
 
     sampleText_ = new wxStaticText(this, wxID_STATIC, "");
     itemStaticBoxSizer_01->Add(sampleText_, g_flagsH);
+    sampleText_->SetMinSize(wxSize(220, -1));
 
     //--------------------------
     wxBoxSizer* itemBoxSizer22 = new wxBoxSizer(wxHORIZONTAL);
