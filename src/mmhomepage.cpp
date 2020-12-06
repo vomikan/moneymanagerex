@@ -727,12 +727,11 @@ const wxString htmlWidgetCurrency::getHtmlText()
         for (const auto j : usedRates)
         {
             row += wxString::Format("<td%s>%s</td>" //<td class ='active'>
-                , j.first == i.first ? " class ='active'" : ""
-                , j.first == i.first ? "" : Model_Currency::toString(
-                    j.second / i.second, nullptr, 4)
+                , j.first == i.first ? " class='active'" : " class='text-right'"
+                , j.first == i.first ? "" : Model_Currency::toString(j.second / i.second, nullptr, 4)
             );
         }
-        header += wxString::Format("<th>%s</th>", i.first);
+        header += wxString::Format("<th class='text-center'>%s</th>", i.first);
         r(L"CONVERSION_RATE") = row;
 
         contents += r;
