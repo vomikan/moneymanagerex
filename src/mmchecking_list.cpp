@@ -1042,8 +1042,14 @@ void TransactionListCtrl::sortTable()
         std::stable_sort(this->m_trans.begin(), this->m_trans.end(), SorterByNOTES());
         break;
     case TransactionListCtrl::COL_DATE:
-        std::stable_sort(this->m_trans.begin(), this->m_trans.end(), SorterByTRANSDATE());
+        std::stable_sort(this->m_trans.begin(), this->m_trans.end()
+            , [](const Model_Checking::Full_Data& x, const Model_Checking::Full_Data& y)
+        {
+        if (x.TRANSDATE != y.TRANSDATE) return x.TRANSDATE < y.TRANSDATE;
+        else return x.TRANSTIME < y.TRANSTIME;
+        });
         break;
+
     default:
         break;
     }
