@@ -527,39 +527,6 @@ void mmCheckingPanel::OnViewPopupSelected(wxCommandEvent& event)
     RefreshList(m_listCtrlAccount->getSelectedID());
 }
 
-void mmCheckingPanel::DeleteViewedTransactions()
-{
-    Model_Checking::instance().Savepoint();
-    for (const auto& tran: m_listCtrlAccount->m_trans)
-    {
-        // remove also removes any split transactions
-        Model_Checking::instance().remove(tran.TRANSID);
-        mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), tran.TRANSID);
-        if (m_listCtrlAccount->getSelectedForCopy() == tran.TRANSID) {
-            m_listCtrlAccount->setSelectedForCopy(-1);
-        }
-    }
-    Model_Checking::instance().ReleaseSavepoint();
-}
-
-void mmCheckingPanel::DeleteFlaggedTransactions(const wxString& status)
-{
-    Model_Checking::instance().Savepoint();
-    for (const auto& tran: m_listCtrlAccount->m_trans)
-    {
-        if (tran.STATUS == status)
-        {
-            // remove also removes any split transactions
-            Model_Checking::instance().remove(tran.TRANSID);
-            mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), tran.TRANSID);
-            if (m_listCtrlAccount->getSelectedForCopy() == tran.TRANSID) {
-                m_listCtrlAccount->setSelectedForCopy(-1);
-            }
-        }
-    }
-    Model_Checking::instance().ReleaseSavepoint();
-}
-
 void mmCheckingPanel::OnSearchTxtEntered(wxCommandEvent& event)
 {
     const wxString search_string = event.GetString().Lower();

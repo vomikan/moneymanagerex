@@ -112,9 +112,6 @@ private:
     void OnViewPopupSelected(wxCommandEvent& event);
     void OnSearchTxtEntered(wxCommandEvent& event);
 
-    void DeleteViewedTransactions();
-    void DeleteFlaggedTransactions(const wxString& status);
-
     /* updates the checking panel data */
     void showTips();
     void updateExtraTransactionData(int selIndex);

@@ -102,6 +102,8 @@ private:
     void OnCopy(wxCommandEvent& WXUNUSED(event));
     void OnPaste(wxCommandEvent& WXUNUSED(event));
     int OnPaste(Model_Checking::Data* tran);
+    void DeleteFlaggedTransactions(const wxString& status);
+    void DeleteViewedTransactions();
 
     bool TransactionLocked(const wxString& transdate);
 

@@ -96,7 +96,8 @@ public:
     void OnDuplicateTransaction();
 
     void doRefreshItems(int trans_id = -1, bool filter = true);
-    long m_selectedForCopy; //The transaction ID if selected for copy
+    long getSelectedForCopy() const;
+    void setSelectedForCopy(long v);
 
 protected:
     /* Sort Columns */
@@ -119,7 +120,6 @@ private:
     virtual wxString OnGetItemText(long item, long column) const;
     virtual wxListItemAttr* OnGetItemAttr(long item) const;
     virtual int OnGetItemColumnImage(long item, long column) const;
-    void updateExtraTransactionData(int selIndex);
     void OnMouseRightClick(wxMouseEvent& event);
     void OnListLeftClick(wxMouseEvent& event);
     void OnListItemSelected(wxListEvent& event);
@@ -131,9 +131,15 @@ private:
     void OnCopy();
     void OnPaste();
     int OnPaste(Model_Checking::Data* tran);
-    void sortTable();
+    void do_sort_table();
+    void do_update_extra_trx_data(int selIndex);
+    bool do_delete_trxs_by_status(Model_Checking::STATUS_ENUM status);
+    bool do_delete_viewed_trxs();
+    bool do_delete_selected_trx();
+
     int col_sort() const;
     long m_selectedID; //Selected transaction ID
+    long m_selectedForCopy; //The transaction ID if selected for copy
 
     bool TransactionLocked(const wxString& transdate);
 private:
@@ -181,6 +187,8 @@ inline void MoneyListCtrl::setSortColumn(EColumn col) { m_sortCol = col; }
 inline void MoneyListCtrl::setSortOrder(bool asc) { m_asc = asc; }
 inline bool MoneyListCtrl::getSortOrder() const { return m_asc; }
 inline long MoneyListCtrl::getSelectedID() const { return m_selectedID; }
+inline long MoneyListCtrl::getSelectedForCopy() const { return m_selectedForCopy; }
+inline void MoneyListCtrl::setSelectedForCopy(long v) { m_selectedForCopy = v; }
 
 #endif // MM_EX_MONEY_LIST_H_
 

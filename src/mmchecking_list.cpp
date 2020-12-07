@@ -393,7 +393,7 @@ void TransactionListCtrl::OnMarkAllTransactions(wxCommandEvent& event)
             , wxYES_NO | wxNO_DEFAULT | wxICON_ERROR);
         if (msgDlg.ShowModal() == wxID_YES)
         {
-            m_cp->DeleteViewedTransactions();
+            DeleteViewedTransactions();
         }
     }
     else if (status == "M" || status == "0")
@@ -406,7 +406,7 @@ void TransactionListCtrl::OnMarkAllTransactions(wxCommandEvent& event)
             , wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION);
         if (msgDlg.ShowModal() == wxID_YES)
         {
-            m_cp->DeleteFlaggedTransactions(shotStatusStr);
+            DeleteFlaggedTransactions(shotStatusStr);
         }
     }
     else
@@ -771,12 +771,6 @@ void TransactionListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
 
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 
-    Model_Checking::Data checking_entry = m_trans[m_selectedIndex];
-    if (TransactionLocked(checking_entry.TRANSDATE))
-    {
-        return;
-    }
-
     //ask if they really want to delete
     wxMessageDialog msgDlg(this
         , _("Do you really want to delete the selected transaction?")
@@ -791,6 +785,11 @@ void TransactionListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
             long transID = i.TRANSID;
             if (GetItemState(x, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED)
             {
+                if (TransactionLocked(i.TRANSDATE))
+                {
+                    continue;
+                }
+
                 SetItemState(x, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
 
                 // remove also removes any split transactions
@@ -1139,7 +1138,39 @@ void TransactionListCtrl::doSearchTxt(const wxString& search_string)
             }
         }
     }
-
-
 }
 
+void TransactionListCtrl::DeleteFlaggedTransactions(const wxString& status)
+{
+    Model_Checking::instance().Savepoint();
+    for (const auto& tran : m_trans)
+    {
+        if (tran.STATUS == status)
+        {
+            // remove also removes any split transactions
+            Model_Checking::instance().remove(tran.TRANSID);
+            mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), tran.TRANSID);
+            if (getSelectedForCopy() == tran.TRANSID)
+            {
+                setSelectedForCopy(-1);
+            }
+        }
+    }
+    Model_Checking::instance().ReleaseSavepoint();
+}
+
+void TransactionListCtrl::DeleteViewedTransactions()
+{
+    Model_Checking::instance().Savepoint();
+    for (const auto& tran : m_trans)
+    {
+        // remove also removes any split transactions
+        Model_Checking::instance().remove(tran.TRANSID);
+        mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), tran.TRANSID);
+        if (getSelectedForCopy() == tran.TRANSID)
+        {
+            setSelectedForCopy(-1);
+        }
+    }
+    Model_Checking::instance().ReleaseSavepoint();
+}

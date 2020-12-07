@@ -169,7 +169,7 @@ void MoneyListCtrl::OnListLeftClick(wxMouseEvent& event)
     event.Skip();
 }
 
-void MoneyListCtrl::updateExtraTransactionData(int selIndex)
+void MoneyListCtrl::do_update_extra_trx_data(int selIndex)
 {
 
 }
@@ -184,7 +184,7 @@ void MoneyListCtrl::OnMouseRightClick(wxMouseEvent& event)
         SetItemState(m_selected_row, wxLIST_STATE_SELECTED, wxLIST_STATE_SELECTED);
         SetItemState(m_selected_row, wxLIST_STATE_FOCUSED, wxLIST_STATE_FOCUSED);
     }
-    updateExtraTransactionData(m_selected_row);
+    do_update_extra_trx_data(m_selected_row);
 
     bool hide_menu_item = (m_selected_row < 0);
     bool multiselect = (GetSelectedItemCount() > 1);
@@ -695,15 +695,13 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
             msg = "Out of Range error: " + wxString::FromUTF8(oor.what());
         }
     }
-    else if (MENU_TREEPOPUP_MARKRECONCILED == event_id) {
-        OnMarkTransaction("R");
-    }
     else if (MENU_ON_COPY_TRANSACTION == event_id) {
         OnCopy();
         msg = wxString::Format("Selected for copy transaction ID: %i", m_selectedForCopy);
     }
     else if (MENU_ON_PASTE_TRANSACTION == event_id) {
         OnPaste();
+        initVirtualListControl(m_selectedForCopy);
         msg = wxString::Format("Past transaction ID: %i", m_selectedForCopy);
     }
     else if (MENU_TREEPOPUP_MARKUNRECONCILED == event_id) {
@@ -714,6 +712,31 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
     }
     else if (MENU_TREEPOPUP_MARKVOID == event_id) {
         OnMarkTransaction("V");
+    }
+    else if (MENU_TREEPOPUP_MARKRECONCILED == event_id)
+    {
+        OnMarkTransaction("R");
+    }
+    else if (MENU_TREEPOPUP_DELETE_FLAGGED == event_id)
+    {
+        if (do_delete_trxs_by_status(Model_Checking::FOLLOWUP))
+            initVirtualListControl();
+
+    }
+    else if (event_id == MENU_TREEPOPUP_DELETE_UNRECONCILED)
+    {
+        if (do_delete_trxs_by_status(Model_Checking::NONE))
+            initVirtualListControl();
+    }
+    else if (MENU_TREEPOPUP_DELETE_VIEWED == event_id)
+    {
+        if (do_delete_viewed_trxs())
+            initVirtualListControl();
+    }
+    else if (MENU_TREEPOPUP_DELETE2 == event_id)
+    {
+        if (do_delete_selected_trx())
+            initVirtualListControl();
     }
 
     wxLogDebug(msg +"\nID: %i", event_id);
@@ -732,7 +755,7 @@ void MoneyListCtrl::doRefreshItems(int trans_id, bool filter)
 
     SetItemCount(m_money.size());
     Show();
-    sortTable();
+    do_sort_table();
     //markSelectedTransaction(trans_id);
 
     long i = static_cast<long>(m_money.size());
@@ -785,7 +808,7 @@ int MoneyListCtrl::initVirtualListControl(int id, int col, bool asc)
         m_money.push_back(full_tran);
     }
 
-    sortTable();
+    do_sort_table();
 
     SetItemCount(m_money.size());
     if (!m_money.empty())
@@ -834,7 +857,7 @@ int MoneyListCtrl::OnGetItemColumnImage(long item, long column) const
     return res;
 }
 
-void MoneyListCtrl::sortTable()
+void MoneyListCtrl::do_sort_table()
 {
     switch (g_sortcol)
     {
@@ -870,3 +893,98 @@ void MoneyListCtrl::createColumns(mmListCtrl &lst)
     }
 }
 
+bool MoneyListCtrl::do_delete_trxs_by_status(Model_Checking::STATUS_ENUM status)
+{
+    const wxString status_str = Model_Checking::all_status()[status];
+    wxMessageDialog msgDlg(this
+        , wxString::Format(_("Do you really want to delete all transactions shown in the status: \"%s\"?"), wxGetTranslation(status_str))
+        , _("Confirm Transaction Deletion")
+        , wxYES_NO | wxNO_DEFAULT | wxICON_QUESTION);
+    if (msgDlg.ShowModal() == wxID_YES)
+    {
+        Model_Checking::instance().Savepoint();
+        for (const auto& tran : m_money)
+        {
+            if (tran.STATUS == Model_Checking::toShortStatus(status_str))
+            {
+                // remove also removes any split transactions
+                Model_Checking::instance().remove(tran.TRANSID);
+                mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), tran.TRANSID);
+                if (getSelectedForCopy() == tran.TRANSID)
+                {
+                    setSelectedForCopy(-1);
+                }
+            }
+        }
+        Model_Checking::instance().ReleaseSavepoint();
+        return true;
+    }
+    return false;
+}
+
+bool MoneyListCtrl::do_delete_viewed_trxs()
+{
+    wxMessageDialog msgDlg(this
+        , _("Do you really want to delete all the transactions shown?")
+        , _("Confirm Transaction Deletion")
+        , wxYES_NO | wxNO_DEFAULT | wxICON_ERROR);
+    if (msgDlg.ShowModal() == wxID_YES)
+    {
+        Model_Checking::instance().Savepoint();
+        for (const auto& tran : m_money)
+        {
+            // remove also removes any split transactions
+            Model_Checking::instance().remove(tran.TRANSID);
+            mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), tran.TRANSID);
+            if (getSelectedForCopy() == tran.TRANSID)
+            {
+                setSelectedForCopy(-1);
+            }
+        }
+        Model_Checking::instance().ReleaseSavepoint();
+        return true;
+    }
+    return false;
+}
+
+bool MoneyListCtrl::do_delete_selected_trx()
+{
+    //check if a transaction is selected
+    if (GetSelectedItemCount() < 1) return false;
+
+    m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
+
+    //ask if they really want to delete
+    wxMessageDialog msgDlg(this
+        , _("Do you really want to delete the selected transaction?")
+        , _("Confirm Transaction Deletion")
+        , wxYES_NO | wxYES_DEFAULT | wxICON_ERROR);
+
+    if (msgDlg.ShowModal() == wxID_YES)
+    {
+        long x = 0;
+        for (const auto& i : m_money)
+        {
+            long transID = i.TRANSID;
+            if (GetItemState(x, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED)
+            {
+                if (TransactionLocked(i.TRANSDATE))
+                {
+                    continue;
+                }
+
+                SetItemState(x, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+
+                // remove also removes any split transactions
+                Model_Checking::instance().remove(transID);
+                mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), transID);
+                if (x <= m_topItemIndex) m_topItemIndex--;
+                if (m_selectedForCopy == transID) m_selectedForCopy = -1;
+            }
+            x++;
+        }
+
+        return true;
+    }
+    return false;
+}
