@@ -122,11 +122,14 @@ mmTransDialog::mmTransDialog(wxWindow* parent
     }
 
     Model_Account::Data* acc = Model_Account::instance().get(m_trx_data.ACCOUNTID);
-    if (acc && !Model_Account::is_multicurrency(acc)) {
-        m_currency = Model_Account::currency(acc);
+    if (acc && Model_Account::is_multicurrency(acc)) {
+        m_currency = Model_Currency::instance().get(m_trx_data.CURRENCYID);
+        if (!m_currency)
+            m_currency = Model_Account::currency(acc);
     }
-    else if (acc && Model_Account::is_multicurrency(acc)) {
-        m_currency= Model_Currency::instance().get(m_trx_data.CURRENCYID);
+    else if (acc)
+    {
+        m_currency = Model_Account::currency(acc);
     }
 
     if (!acc || !m_currency)
@@ -196,6 +199,8 @@ void mmTransDialog::dataToControls()
     frequent_used_notes_btn->Enable(!frequentNotes_.empty());
     
     m_trx_colours_btn->SetBackgroundColour(getUDColour(m_trx_data.COLOURID));
+
+    m_trx_currency_btn->SetLabel(m_currency->CURRENCYNAME);
 
     if (!skip_date_init_) //Date
     {
