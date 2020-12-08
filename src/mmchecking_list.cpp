@@ -17,22 +17,24 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  ********************************************************/
 
-#include "filtertransdialog.h"
-#include "mmchecking_list.h"
-#include "paths.h"
+#include "attachmentdialog.h"
+#include "billsdepositsdialog.h"
 #include "constants.h"
+#include "filtertransdialog.h"
 #include "images_list.h"
-#include "util.h"
+#include "mmchecking_list.h"
 #include "mmex.h"
 #include "mmframe.h"
 #include "mmSimpleDialogs.h"
+#include "paths.h"
 #include "splittransactionsdialog.h"
+#include "transactionsupdatedialog.h"
 #include "transdialog.h"
+#include "util.h"
 #include "validators.h"
-#include "attachmentdialog.h"
 #include "model/allmodel.h"
-#include "billsdepositsdialog.h"
 #include <wx/clipbrd.h>
+
 
 #include <wx/srchctrl.h>
 #include <algorithm>
@@ -43,6 +45,7 @@
 wxBEGIN_EVENT_TABLE(TransactionListCtrl, mmListCtrl)
     EVT_LIST_ITEM_SELECTED(wxID_ANY, TransactionListCtrl::OnListItemSelected)
     EVT_LIST_ITEM_ACTIVATED(wxID_ANY, TransactionListCtrl::OnListItemActivated)
+    EVT_LIST_ITEM_FOCUSED(wxID_ANY, TransactionListCtrl::OnListItemFocused)
     EVT_RIGHT_DOWN(TransactionListCtrl::OnMouseRightClick)
     EVT_LEFT_DOWN(TransactionListCtrl::OnListLeftClick)
     EVT_LIST_KEY_DOWN(wxID_ANY, TransactionListCtrl::OnListKeyDown)
@@ -265,10 +268,10 @@ void TransactionListCtrl::OnMouseRightClick(wxMouseEvent& event)
 
     menu.AppendSeparator();
 
-    menu.Append(MENU_TREEPOPUP_EDIT2, _("&Edit Transaction"));
-    if (hide_menu_item || multiselect) menu.Enable(MENU_TREEPOPUP_EDIT2, false);
-
     int i = GetSelectedItemCount();
+    menu.Append(MENU_TREEPOPUP_EDIT2, wxPLURAL("&Edit Transaction", "&Edit Transactions", i));
+    if (hide_menu_item) menu.Enable(MENU_TREEPOPUP_EDIT2, false);
+
     menu.Append(MENU_ON_COPY_TRANSACTION, wxPLURAL("&Copy Transaction", "&Copy Transactions", i));
     if (hide_menu_item) menu.Enable(MENU_ON_COPY_TRANSACTION, false);
 
@@ -749,8 +752,31 @@ bool TransactionListCtrl::TransactionLocked(const wxString& transdate)
 
 void TransactionListCtrl::OnEditTransaction(wxCommandEvent& /*event*/)
 {
-    if ((m_selectedIndex < 0) || (GetSelectedItemCount() > 1)) return;
-    Model_Checking::Data checking_entry = m_trans[m_selectedIndex];
+    if (m_selectedIndex < 0) return;
+
+    if (GetSelectedItemCount() > 1)
+    {
+        std::vector<int> v;
+        long x = 0;
+        for (const auto& i : m_trans)
+        {
+            if (GetItemState(x, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED)
+            {
+                v.push_back(i.TRANSID);
+            }
+            x++;
+        }
+
+        transactionsUpdateDialog dlg(this, m_cp->m_AccountID, v);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+            refreshVisualList();
+        }
+        return;
+    }
+
+
+    Model_Checking::Full_Data& checking_entry = m_trans[m_selectedIndex];
     int transaction_id = checking_entry.TRANSID;
 
     if (TransactionLocked(checking_entry.TRANSDATE))
@@ -846,7 +872,7 @@ void TransactionListCtrl::OnMoveTransaction(wxCommandEvent& /*event*/)
 {
     if ((m_selectedIndex < 0) || (GetSelectedItemCount() > 1)) return;
 
-    Model_Checking::Data checking_entry = m_trans[m_selectedIndex];
+    Model_Checking::Full_Data& checking_entry = m_trans[m_selectedIndex];
     if (TransactionLocked(checking_entry.TRANSDATE))
     {
         return;
@@ -1172,4 +1198,42 @@ void TransactionListCtrl::OnMarkTransaction(wxCommandEvent& event)
         RefreshItems(m_selectedIndex, m_selectedIndex);
         m_cp->updateTable();
     }
+}
+
+void TransactionListCtrl::OnListItemFocused(wxListEvent& WXUNUSED(event))
+{
+    long count = this->GetSelectedItemCount();
+    if (count < 2)
+        return;
+
+    long x = 0;
+    wxString maxDate, minDate;
+    double balance = 0;
+    for (const auto& i : m_trans)
+    {
+        if (GetItemState(x, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED)
+        {
+            balance += Model_Checking::balance(i);
+            if (minDate > i.TRANSDATE || maxDate.empty()) minDate = i.TRANSDATE;
+            if (maxDate < i.TRANSDATE || maxDate.empty()) maxDate = i.TRANSDATE;
+        }
+        x++;
+    }
+
+    wxDateTime min_date, max_date;
+    min_date.ParseISODate(minDate);
+    max_date.ParseISODate(maxDate);
+
+    int days = max_date.Subtract(min_date).GetDays();
+
+    wxString msg;
+    Model_Account::Data *account = Model_Account::instance().get(m_cp->m_AccountID);
+    msg = wxString::Format(_("Transactions selected: %ld"), count);
+    msg += "\n";
+    msg += wxString::Format(_("Selected transactions balance: %s")
+        , Model_Account::toCurrency(balance, account));
+    msg += "\n";
+    msg += wxString::Format(_("Days between selected transactions: %d"), days);
+
+    m_cp->m_info_panel->SetLabelText(msg);
 }
