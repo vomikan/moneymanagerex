@@ -148,7 +148,7 @@ double Model_Account::get_account_balance(int acc_id)
 
 bool Model_Account::is_limit_reached(Model_Checking::Data* t)
 {
-    if (t->TRANSCODE != Model_Checking::all_type()[Model_Checking::DEPOSIT]) {
+    if (t->TRANSCODE != Model_Checking::DEPOSIT_STR) {
         double exchange_rate = 1.0;
 
         Model_Account::Data* account = Model_Account::instance().get(t->ACCOUNTID);

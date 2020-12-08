@@ -212,7 +212,8 @@ void MoneyListCtrl::OnMouseRightClick(wxMouseEvent& event)
     menu.Append(MENU_TREEPOPUP_EDIT2, _("&Edit Transaction"));
     if (hide_menu_item || multiselect) menu.Enable(MENU_TREEPOPUP_EDIT2, false);
 
-    menu.Append(MENU_ON_COPY_TRANSACTION, _("&Copy Transaction"));
+    int i = GetSelectedItemCount();
+    menu.Append(MENU_ON_COPY_TRANSACTION, wxPLURAL("&Copy Transaction", "&Copy Transactions", i));
     if (hide_menu_item) menu.Enable(MENU_ON_COPY_TRANSACTION, false);
 
     menu.Append(MENU_ON_PASTE_TRANSACTION, _("&Paste Transaction"));
@@ -224,12 +225,12 @@ void MoneyListCtrl::OnMouseRightClick(wxMouseEvent& event)
     menu.AppendSeparator();
 
     wxMenu* subGlobalOpMenuDelete = new wxMenu();
-    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE2, _("&Delete Transaction"));
+    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE2, wxPLURAL("&Delete selected transaction", "&Delete selected transactions", i));
     if (hide_menu_item) subGlobalOpMenuDelete->Enable(MENU_TREEPOPUP_DELETE2, false);
     subGlobalOpMenuDelete->AppendSeparator();
     subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_VIEWED, _("Delete all transactions in current view"));
-    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_FLAGGED, _("Delete Viewed \"Follow Up\" Trans."));
-    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_UNRECONCILED, _("Delete Viewed \"Unreconciled\" Trans."));
+    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_FLAGGED, _("Delete Viewed \"Follow Up\" Transactions"));
+    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_UNRECONCILED, _("Delete Viewed \"Unreconciled\" Transactions"));
     menu.Append(MENU_TREEPOPUP_DELETE2, _("&Delete "), subGlobalOpMenuDelete);
 
     PopupMenu(&menu, event.GetPosition());
@@ -955,6 +956,7 @@ bool MoneyListCtrl::do_delete_selected_trx()
     m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
 
     //ask if they really want to delete
+//TODO     wxString text = wxString::Format(wxPLURAL("%d day remaining", "%d days remaining", daysRemaining), daysRemaining);
     wxMessageDialog msgDlg(this
         , _("Do you really want to delete the selected transaction?")
         , _("Confirm Transaction Deletion")

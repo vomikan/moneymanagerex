@@ -268,7 +268,8 @@ void TransactionListCtrl::OnMouseRightClick(wxMouseEvent& event)
     menu.Append(MENU_TREEPOPUP_EDIT2, _("&Edit Transaction"));
     if (hide_menu_item || multiselect) menu.Enable(MENU_TREEPOPUP_EDIT2, false);
 
-    menu.Append(MENU_ON_COPY_TRANSACTION, _("&Copy Transaction"));
+    int i = GetSelectedItemCount();
+    menu.Append(MENU_ON_COPY_TRANSACTION, wxPLURAL("&Copy Transaction", "&Copy Transactions", i));
     if (hide_menu_item) menu.Enable(MENU_ON_COPY_TRANSACTION, false);
 
     menu.Append(MENU_ON_PASTE_TRANSACTION, _("&Paste Transaction"));
@@ -297,28 +298,28 @@ void TransactionListCtrl::OnMouseRightClick(wxMouseEvent& event)
     menu.AppendSeparator();
 
     wxMenu* subGlobalOpMenuDelete = new wxMenu();
-    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE2, _("&Delete Transaction"));
+    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE2, wxPLURAL("&Delete selected transaction", "&Delete selected transactions", i));
     if (hide_menu_item) subGlobalOpMenuDelete->Enable(MENU_TREEPOPUP_DELETE2, false);
     subGlobalOpMenuDelete->AppendSeparator();
     subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_VIEWED, _("Delete all transactions in current view"));
-    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_FLAGGED, _("Delete Viewed \"Follow Up\" Trans."));
-    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_UNRECONCILED, _("Delete Viewed \"Unreconciled\" Trans."));
+    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_FLAGGED, _("Delete Viewed \"Follow Up\" Transactions"));
+    subGlobalOpMenuDelete->Append(MENU_TREEPOPUP_DELETE_UNRECONCILED, _("Delete Viewed \"Unreconciled\" Transactions"));
     menu.Append(MENU_TREEPOPUP_DELETE2, _("&Delete "), subGlobalOpMenuDelete);
 
     menu.AppendSeparator();
 
     wxMenu* subGlobalOpMenuMark = new wxMenu();
-    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARKRECONCILED, _("Mark As &Reconciled"));
-    if (hide_menu_item || multiselect) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARKRECONCILED, false);
-    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARKUNRECONCILED, _("Mark As &Unreconciled"));
-    if (hide_menu_item || multiselect) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARKUNRECONCILED, false);
-    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARKVOID, _("Mark As &Void"));
-    if (hide_menu_item || multiselect) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARKVOID, false);
-    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP, _("Mark For &Followup"));
-    if (hide_menu_item || multiselect) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP, false);
-    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARKDUPLICATE, _("Mark As &Duplicate"));
-    if (hide_menu_item || multiselect) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARKDUPLICATE, false);
-    menu.Append(wxID_ANY, _("Mark"), subGlobalOpMenuMark);
+    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARKRECONCILED, _("as Reconciled"));
+    if (hide_menu_item) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARKRECONCILED, false);
+    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARKUNRECONCILED, _("as Unreconciled"));
+    if (hide_menu_item) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARKUNRECONCILED, false);
+    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARKVOID, _("as Void"));
+    if (hide_menu_item) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARKVOID, false);
+    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP, _("as Followup"));
+    if (hide_menu_item) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP, false);
+    subGlobalOpMenuMark->Append(MENU_TREEPOPUP_MARKDUPLICATE, _("as Duplicate"));
+    if (hide_menu_item) subGlobalOpMenuMark->Enable(MENU_TREEPOPUP_MARKDUPLICATE, false);
+    menu.Append(wxID_ANY, _("Mark all being selected"), subGlobalOpMenuMark);
 
     wxMenu* subGlobalOpMenu = new wxMenu();
     subGlobalOpMenu->Append(MENU_TREEPOPUP_MARKRECONCILED_ALL, _("as Reconciled"));
@@ -330,44 +331,6 @@ void TransactionListCtrl::OnMouseRightClick(wxMouseEvent& event)
 
     PopupMenu(&menu, event.GetPosition());
     this->SetFocus();
-}
-//----------------------------------------------------------------------------
-
-void TransactionListCtrl::OnMarkTransaction(wxCommandEvent& event)
-{
-    if (GetSelectedItemCount() > 1) return;
-
-    int evt = event.GetId();
-    wxString org_status = "";
-    wxString status = "";
-    if (evt == MENU_TREEPOPUP_MARKRECONCILED)              status = "R";
-    else if (evt == MENU_TREEPOPUP_MARKUNRECONCILED)       status = "";
-    else if (evt == MENU_TREEPOPUP_MARKVOID)               status = "V";
-    else if (evt == MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP) status = "F";
-    else if (evt == MENU_TREEPOPUP_MARKDUPLICATE)          status = "D";
-    else wxASSERT(false);
-
-    Model_Checking::Data *trx = Model_Checking::instance().get(m_trans[m_selectedIndex].TRANSID);
-    if (trx)
-    {
-        org_status = trx->STATUS;
-        m_trans[m_selectedIndex].STATUS = status;
-        trx->STATUS = status;
-        Model_Checking::instance().save(trx);
-    }
-
-    bool bRefreshRequired = (status == "V") || (org_status == "V");
-
-    if ((m_cp->m_transFilterActive && m_cp->m_trans_filter_dlg->getStatusCheckBox())
-        || bRefreshRequired)
-    {
-        refreshVisualList(m_trans[m_selectedIndex].TRANSID);
-    }
-    else
-    {
-        RefreshItems(m_selectedIndex, m_selectedIndex);
-        m_cp->updateTable();
-    }
 }
 //----------------------------------------------------------------------------
 
@@ -677,11 +640,12 @@ void TransactionListCtrl::OnPaste(wxCommandEvent& WXUNUSED(event))
                     SetItemState(x, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
             }
         }
-        int transactionID = OnPaste(tran);
+        do_past(tran);
+        int transactionID = tran->TRANSID;
         refreshVisualList(transactionID);
     }
 }
-int TransactionListCtrl::OnPaste(Model_Checking::Data* tran)
+void TransactionListCtrl::do_past(Model_Checking::Data* tran)
 {
     bool useOriginalDate = Model_Setting::instance().GetBoolSetting(INIDB_USE_ORG_DATE_COPYPASTE, false);
 
@@ -698,8 +662,6 @@ int TransactionListCtrl::OnPaste(Model_Checking::Data* tran)
         copy_split.push_back(copy_split_item);
     }
     Model_Splittransaction::instance().save(copy_split);
-
-    return transactionID;
 }
 
 void TransactionListCtrl::OnOpenAttachment(wxCommandEvent& WXUNUSED(event))
@@ -764,48 +726,6 @@ void TransactionListCtrl::OnListKeyDown(wxListEvent& event)
 }
 //----------------------------------------------------------------------------
 
-void TransactionListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
-{
-    //check if a transaction is selected
-    if (GetSelectedItemCount() < 1) return;
-
-    m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
-
-    //ask if they really want to delete
-    wxMessageDialog msgDlg(this
-        , _("Do you really want to delete the selected transaction?")
-        , _("Confirm Transaction Deletion")
-        , wxYES_NO | wxYES_DEFAULT | wxICON_ERROR);
-
-    if (msgDlg.ShowModal() == wxID_YES)
-    {
-        long x = 0;
-        for (const auto& i : m_trans)
-        {
-            long transID = i.TRANSID;
-            if (GetItemState(x, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED)
-            {
-                if (TransactionLocked(i.TRANSDATE))
-                {
-                    continue;
-                }
-
-                SetItemState(x, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
-
-                // remove also removes any split transactions
-                Model_Checking::instance().remove(transID);
-                mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), transID);
-                if (x <= m_topItemIndex) m_topItemIndex--;
-                if (!m_trans.empty() && m_selectedIndex > 0) m_selectedIndex--;
-                if (m_selectedForCopy == transID) m_selectedForCopy = -1;
-            }
-            x++;
-        }
-
-        refreshVisualList();
-    }
-}
-//----------------------------------------------------------------------------
 bool TransactionListCtrl::TransactionLocked(const wxString& transdate)
 {
     if (Model_Account::is_positive(m_cp->m_account->STATEMENTLOCKED))
@@ -878,14 +798,9 @@ void TransactionListCtrl::OnSetUserColour(wxCommandEvent& event)
     user_colour_id -= MENU_ON_SET_UDC0;
     wxLogDebug("id: %i", user_colour_id);
 
-    Model_Checking::Data* transaction = Model_Checking::instance().get(m_selectedID);
-    if (transaction)
-    {
-        transaction->FOLLOWUPID = user_colour_id;
-        Model_Checking::instance().save(transaction);
-        m_trans[m_selectedIndex].FOLLOWUPID = user_colour_id;
-        RefreshItems(m_selectedIndex, m_selectedIndex);
-    }
+    m_trans[m_selectedIndex].COLOURID = user_colour_id;
+    Model_Checking::instance().save(&m_trans[m_selectedIndex]);
+    RefreshItems(m_selectedIndex, m_selectedIndex);
 }
 //----------------------------------------------------------------------------
 
@@ -1173,4 +1088,88 @@ void TransactionListCtrl::DeleteViewedTransactions()
         }
     }
     Model_Checking::instance().ReleaseSavepoint();
+}
+
+void TransactionListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
+{
+    //check if a transaction is selected
+    if (GetSelectedItemCount() < 1) return;
+
+    m_topItemIndex = GetTopItem() + GetCountPerPage() - 1;
+
+    //ask if they really want to delete
+    wxMessageDialog msgDlg(this
+        , _("Do you really want to delete the selected transaction?")
+        , _("Confirm Transaction Deletion")
+        , wxYES_NO | wxYES_DEFAULT | wxICON_ERROR);
+
+    if (msgDlg.ShowModal() == wxID_YES)
+    {
+        long x = 0;
+        Model_Checking::instance().Savepoint();
+        for (const auto& i : m_trans)
+        {
+            long transID = i.TRANSID;
+            if (GetItemState(x, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED)
+            {
+                if (TransactionLocked(i.TRANSDATE))
+                {
+                    continue;
+                }
+
+                SetItemState(x, 0, wxLIST_STATE_SELECTED | wxLIST_STATE_FOCUSED);
+
+                // remove also removes any split transactions
+                Model_Checking::instance().remove(transID);
+                mmAttachmentManage::DeleteAllAttachments(Model_Attachment::reftype_desc(Model_Attachment::TRANSACTION), transID);
+                if (x <= m_topItemIndex) m_topItemIndex--;
+                if (!m_trans.empty() && m_selectedIndex > 0) m_selectedIndex--;
+                if (m_selectedForCopy == transID) m_selectedForCopy = -1;
+            }
+            x++;
+        }
+        Model_Checking::instance().ReleaseSavepoint();
+        refreshVisualList();
+    }
+}
+
+void TransactionListCtrl::OnMarkTransaction(wxCommandEvent& event)
+{
+    int evt = event.GetId();
+    bool bRefreshRequired = false;
+    wxString status = "";
+    switch (evt)
+    {
+    case MENU_TREEPOPUP_MARKRECONCILED:         status = "R"; break;
+    case MENU_TREEPOPUP_MARKUNRECONCILED:       status = ""; break;
+    case MENU_TREEPOPUP_MARKVOID:               status = "V"; break;
+    case MENU_TREEPOPUP_MARK_ADD_FLAG_FOLLOWUP: status = "F"; break;
+    case MENU_TREEPOPUP_MARKDUPLICATE:          status = "D"; break;
+    default: wxASSERT(false);
+    }
+
+    Model_Checking::instance().Savepoint();
+
+    for (int row = 0; row < GetItemCount(); row++)
+    {
+        if (GetItemState(row, wxLIST_STATE_SELECTED) == wxLIST_STATE_SELECTED)
+        {
+            bRefreshRequired |= (status == "V") || (m_trans[row].STATUS == "V");
+            m_trans[row].STATUS = status;
+            Model_Checking::instance().save(&m_trans[row]);
+        }
+    }
+
+    Model_Checking::instance().ReleaseSavepoint();
+
+    if ((m_cp->m_transFilterActive && m_cp->m_trans_filter_dlg->getStatusCheckBox())
+        || bRefreshRequired)
+    {
+        refreshVisualList(m_trans[m_selectedIndex].TRANSID);
+    }
+    else
+    {
+        RefreshItems(m_selectedIndex, m_selectedIndex);
+        m_cp->updateTable();
+    }
 }

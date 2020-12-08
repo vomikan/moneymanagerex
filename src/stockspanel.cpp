@@ -216,7 +216,7 @@ void mmStocksPanel::updateHeader()
     Model_Checking::Data_Set trans_list = Model_Checking::instance().find(Model_Checking::ACCOUNTID(m_account_id));
     for (const auto& i : trans_list)
     {
-        account_balance += i.TRANSCODE == Model_Checking::all_type()[Model_Checking::DEPOSIT]
+        account_balance += i.TRANSCODE == Model_Checking::DEPOSIT_STR
             ? i.TRANSAMOUNT : -i.TRANSAMOUNT;
     }
 

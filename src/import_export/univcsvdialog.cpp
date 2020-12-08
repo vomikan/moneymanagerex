@@ -98,7 +98,7 @@ mmUnivCSVDialog::mmUnivCSVDialog(
     importSuccessful_(false),
     m_userDefinedDateMask(false),
     m_reverce_sign(false),
-    depositType_(Model_Checking::all_type()[Model_Checking::DEPOSIT]),
+    depositType_(Model_Checking::DEPOSIT_STR),
     decimal_(Model_Currency::GetBaseCurrency()->DECIMAL_POINT)
 {
     CSVFieldName_[UNIV_CSV_DATE] = wxTRANSLATE("Date");
@@ -1622,7 +1622,7 @@ void mmUnivCSVDialog::parseToken(int index, const wxString& orig_token, tran_hol
 
         if (std::find(csvFieldOrder_.begin(), csvFieldOrder_.end(), UNIV_CSV_TYPE) == csvFieldOrder_.end()) {
             if ((amount > 0.0 && !m_reverce_sign) || (amount <= 0.0 && m_reverce_sign)) {
-                holder.Type = Model_Checking::all_type()[Model_Checking::DEPOSIT];
+                holder.Type = Model_Checking::DEPOSIT_STR;
             }
         }
 
@@ -1693,12 +1693,12 @@ void mmUnivCSVDialog::parseToken(int index, const wxString& orig_token, tran_hol
         mmTrimAmount(token, decimal_, ".").ToCDouble(&amount);
 
         holder.Amount = fabs(amount);
-        holder.Type = Model_Checking::all_type()[Model_Checking::DEPOSIT];
+        holder.Type = Model_Checking::DEPOSIT_STR;
         break;
 
     case UNIV_CSV_TYPE:
         if (token == "debit") {
-            holder.Type = Model_Checking::all_type()[Model_Checking::DEPOSIT];
+            holder.Type = Model_Checking::DEPOSIT_STR;
         }
         break;
 
@@ -1779,7 +1779,7 @@ void mmUnivCSVDialog::OnChoiceChanged(wxCommandEvent& event)
         if (m_choiceAmountFieldSign->GetSelection() == DefindByType) {
             depositType_ = wxGetTextFromUser(_("Please, type the word indicating positive values in your CSV file, e.g. 'debit'"), _("Enter a value"), depositType_);
             if (depositType_.empty()) {
-                depositType_ = Model_Checking::all_type()[Model_Checking::DEPOSIT];
+                depositType_ = Model_Checking::DEPOSIT_STR;
             }
             m_choiceAmountFieldSign->SetString(DefindByType, wxString::Format(_("Positive if type has '%s'"), depositType_));
             m_choiceAmountFieldSign->SetSelection(DefindByType);

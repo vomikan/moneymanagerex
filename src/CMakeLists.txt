@@ -189,6 +189,8 @@ add_executable(${MMEX_EXE} WIN32 MACOSX_BUNDLE
     stock_settings.h
     transdialog.cpp
     transdialog.h
+    transactionsupdatedialog.cpp
+    transactionsupdatedialog.h
     util.cpp
     util.h
     validators.h

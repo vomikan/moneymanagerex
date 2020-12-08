@@ -467,7 +467,7 @@ void mmTransDialog::CreateControls()
 
     for (const auto& i : Model_Checking::all_type())
     {
-        if (i != Model_Checking::all_type()[Model_Checking::TRANSFER] || Model_Account::instance().all().size() > 1)
+        if (i != Model_Checking::TRANSFER_STR || Model_Account::instance().all().size() > 1)
         {
             m_trx_type->Append(wxGetTranslation(i), new wxStringClientData(i));
         }

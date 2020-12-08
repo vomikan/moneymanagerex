@@ -279,7 +279,7 @@ bool Model_Billsdeposits::AllowTransaction(const Data& r, AccountBalance& bal)
 
     double new_value = r.TRANSAMOUNT;
 
-    if (r.TRANSCODE == Model_Checking::all_type()[Model_Checking::WITHDRAWAL])
+    if (r.TRANSCODE == Model_Checking::WITHDRAWAL_STR)
     {
         new_value *= -1;
     }

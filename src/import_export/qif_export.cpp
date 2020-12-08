@@ -479,7 +479,7 @@ void mmQIFExportDialog::mmExportQIF()
             case JSON:
                 mmExportTransaction::getTransactionJSON(json_writer, full_tran);
                 allAccounts4Export[accID] = "";
-                if (allPayees4Export.Index(full_tran.PAYEEID) == wxNOT_FOUND && full_tran.TRANSCODE != Model_Checking::all_type()[Model_Checking::TRANSFER])
+                if (allPayees4Export.Index(full_tran.PAYEEID) == wxNOT_FOUND && full_tran.TRANSCODE != Model_Checking::TRANSFER_STR)
                     allPayees4Export.Add(full_tran.PAYEEID);
 
                 if (!Model_Attachment::instance().FilterAttachments(RefType, full_tran.id()).empty()

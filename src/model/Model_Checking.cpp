@@ -49,17 +49,23 @@ Model_Checking::~Model_Checking()
 
 wxArrayString Model_Checking::all_type()
 {
-    wxArrayString types;
-    for (const auto& r : TYPE_CHOICES) types.Add(r.second);
-
+    static wxArrayString types;
+    if (types.empty()) {
+        for (const auto& r : TYPE_CHOICES) types.Add(r.second);
+    }
     return types;
 }
 
+const wxString Model_Checking::TRANSFER_STR = all_type()[TRANSFER];
+const wxString Model_Checking::DEPOSIT_STR = all_type()[DEPOSIT];
+const wxString Model_Checking::WITHDRAWAL_STR = all_type()[WITHDRAWAL];
+
 wxArrayString Model_Checking::all_status()
 {
-    wxArrayString status;
-    for (const auto& r : STATUS_ENUM_CHOICES) status.Add(r.second);
-
+    static wxArrayString status;
+    if (status.empty()) {
+        for (const auto& r : STATUS_ENUM_CHOICES) status.Add(r.second);
+    }
     return status;
 }
 
@@ -100,6 +106,11 @@ const Model_Splittransaction::Data_Set Model_Checking::splittransaction(const Da
 const Model_Splittransaction::Data_Set Model_Checking::splittransaction(const Data& r)
 {
     return Model_Splittransaction::instance().find(Model_Splittransaction::TRANSID(r.TRANSID));
+}
+
+DB_Table_CHECKINGACCOUNT_V1::TRANSDATE Model_Checking::TRANSDATE(const wxString& date_iso_str, OP op)
+{
+    return DB_Table_CHECKINGACCOUNT_V1::TRANSDATE(date_iso_str, op);
 }
 
 DB_Table_CHECKINGACCOUNT_V1::TRANSDATE Model_Checking::TRANSDATE(const wxDate& date, OP op)

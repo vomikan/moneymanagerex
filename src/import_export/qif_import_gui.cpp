@@ -521,7 +521,7 @@ bool mmQIFImportDialog::completeTransaction(std::unordered_map <int, wxString> &
             {
                 isTransfer = true;
                 trx[Category] = "Transfer";
-                trx[TrxType] = Model_Checking::all_type()[Model_Checking::TRANSFER];
+                trx[TrxType] = Model_Checking::TRANSFER_STR;
                 trx[ToAccountName] = toAccName;
                 trx[Memo] += (trx[Memo].empty() ? "" : "\n") + trx[Payee];
                 if (m_QIFaccounts.find(toAccName) == m_QIFaccounts.end())
@@ -566,9 +566,9 @@ bool mmQIFImportDialog::completeTransaction(std::unordered_map <int, wxString> &
     wxString amtStr = (trx.find(Amount) == trx.end() ? "" : trx[Amount]);
     if (!isTransfer) {
         if (amtStr.Mid(0, 1) == "-")
-            trx[TrxType] = Model_Checking::all_type()[Model_Checking::WITHDRAWAL];
+            trx[TrxType] = Model_Checking::WITHDRAWAL_STR;
         else if (!amtStr.empty())
-            trx[TrxType] = Model_Checking::all_type()[Model_Checking::DEPOSIT];
+            trx[TrxType] = Model_Checking::DEPOSIT_STR;
     }
 
     return !amtStr.empty();
@@ -613,7 +613,7 @@ void mmQIFImportDialog::refreshTabs(int tabs)
             data.push_back(wxVariant(dateStr));
             data.push_back(wxVariant(trx.find(TransNumber) != trx.end() ? trx.at(TransNumber) : ""));
             const wxString type = (trx.find(TrxType) != trx.end() ? trx.at(TrxType) : "");
-            if (type == Model_Checking::all_type()[Model_Checking::TRANSFER])
+            if (type == Model_Checking::TRANSFER_STR)
                 data.push_back(wxVariant(trx.find(ToAccountName) != trx.end() ? trx.at(ToAccountName) : ""));
             else
                 data.push_back(wxVariant(trx.find(Payee) != trx.end() ? trx.at(Payee) : ""));
@@ -821,7 +821,7 @@ void mmQIFImportDialog::OnOk(wxCommandEvent& WXUNUSED(event))
         Model_Checking::Cache transfer_to_data_set;
         Model_Checking::Cache transfer_from_data_set;
         int count = 0;
-        const wxString transferStr = Model_Checking::all_type()[Model_Checking::TRANSFER];
+        const wxString transferStr = Model_Checking::TRANSFER_STR;
 
         const auto begin_date = toDateCtrl_->GetValue().FormatISODate();
         const auto end_date = fromDateCtrl_->GetValue().FormatISODate();

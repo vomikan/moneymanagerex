@@ -553,21 +553,21 @@ bool mmFilterTransactionsDialog::compareStatus(const wxString& itemStatus) const
 bool mmFilterTransactionsDialog::allowType(const wxString& typeState, bool sameAccount) const
 {
     bool result = false;
-    if (typeState == Model_Checking::all_type()[Model_Checking::TRANSFER]
+    if (typeState == Model_Checking::TRANSFER_STR
         && cbTypeTransferTo_->GetValue() && sameAccount)
     {
         result = true;
     }
-    else if (typeState == Model_Checking::all_type()[Model_Checking::TRANSFER]
+    else if (typeState == Model_Checking::TRANSFER_STR
         && cbTypeTransferFrom_->GetValue() && !sameAccount)
     {
         result = true;
     }
-    else if (typeState == Model_Checking::all_type()[Model_Checking::WITHDRAWAL] && cbTypeWithdrawal_->GetValue())
+    else if (typeState == Model_Checking::WITHDRAWAL_STR && cbTypeWithdrawal_->GetValue())
     {
         result = true;
     }
-    else if (typeState == Model_Checking::all_type()[Model_Checking::DEPOSIT] && cbTypeDeposit_->GetValue())
+    else if (typeState == Model_Checking::DEPOSIT_STR && cbTypeDeposit_->GetValue())
     {
         result = true;
     }
