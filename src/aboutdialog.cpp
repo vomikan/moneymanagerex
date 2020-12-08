@@ -34,28 +34,27 @@ mmAboutDialog::mmAboutDialog()
 {
 }
 
-mmAboutDialog::mmAboutDialog(wxWindow* parent, int tabToOpenNo, const wxString &name)
+mmAboutDialog::mmAboutDialog(wxWindow* parent, int tabToOpenNo)
     : aboutText_(nullptr)
     , authorsText_(nullptr)
     , sponsorsText_(nullptr)
     , licenseText_(nullptr)
     , privacyText_(nullptr)
 {
-    const wxString caption = (tabToOpenNo == 4)
+    const wxString& caption = (tabToOpenNo == 4)
         ? _("License agreement")
         : wxString::Format("%s - %s", ::mmex::getProgramName(), ::mmex::getTitleProgramVersion());
-    createWindow(parent, wxID_ANY, caption, wxDefaultPosition
-        , wxDefaultSize, wxCAPTION | wxRESIZE_BORDER | wxCLOSE_BOX, tabToOpenNo, name);
+    createWindow(parent, caption, tabToOpenNo);
     SetMinClientSize(wxSize(300, 400));
 }
 
 bool mmAboutDialog::createWindow(wxWindow* parent
-    , wxWindowID id
     , const wxString& caption
+    , int tabToOpenNo
+    , wxWindowID id
     , const wxPoint& pos
     , const wxSize& size
     , long style
-    , int tabToOpenNo
     , const wxString &name
 )
 {
