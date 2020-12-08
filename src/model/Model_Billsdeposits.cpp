@@ -58,15 +58,21 @@ Model_Billsdeposits::~Model_Billsdeposits()
 
 wxArrayString Model_Billsdeposits::all_type()
 {
-    wxArrayString types;
-    for (const auto& item : TYPE_CHOICES) types.Add(item.second);
+    static wxArrayString types;
+    if (types.empty())
+    {
+        for (const auto& item : TYPE_CHOICES) types.Add(item.second);
+    }
     return types;
 }
 
 wxArrayString Model_Billsdeposits::all_status()
 {
-    wxArrayString status;
-    for (const auto& item : STATUS_ENUM_CHOICES) status.Add(item.second);
+    static wxArrayString status;
+    if (status.empty())
+    {
+        for (const auto& item : STATUS_ENUM_CHOICES) status.Add(item.second);
+    }
     return status;
 }
 

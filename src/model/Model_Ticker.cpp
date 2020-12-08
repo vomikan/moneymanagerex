@@ -65,30 +65,36 @@ Model_Ticker& Model_Ticker::instance()
 
 wxArrayString Model_Ticker::all_sectors()
 {
-    wxArrayString sector;
-    sector.Add(wxTRANSLATE("Basic Materials"));
-    sector.Add(wxTRANSLATE("Consumer Cyclical"));
-    sector.Add(wxTRANSLATE("Financial Services"));
-    sector.Add(wxTRANSLATE("Real Estate"));
-    sector.Add(wxTRANSLATE("Consumer Defensive"));
-    sector.Add(wxTRANSLATE("Healthcare"));
-    sector.Add(wxTRANSLATE("Utilities"));
-    sector.Add(wxTRANSLATE("Communication Services"));
-    sector.Add(wxTRANSLATE("Energy"));
-    sector.Add(wxTRANSLATE("Industrials"));
-    sector.Add(wxTRANSLATE("Technology"));
-    sector.Add(wxTRANSLATE("Other"));
+    static wxArrayString sector;
+    if (sector.empty())
+    {
+        sector.Add(wxTRANSLATE("Basic Materials"));
+        sector.Add(wxTRANSLATE("Consumer Cyclical"));
+        sector.Add(wxTRANSLATE("Financial Services"));
+        sector.Add(wxTRANSLATE("Real Estate"));
+        sector.Add(wxTRANSLATE("Consumer Defensive"));
+        sector.Add(wxTRANSLATE("Healthcare"));
+        sector.Add(wxTRANSLATE("Utilities"));
+        sector.Add(wxTRANSLATE("Communication Services"));
+        sector.Add(wxTRANSLATE("Energy"));
+        sector.Add(wxTRANSLATE("Industrials"));
+        sector.Add(wxTRANSLATE("Technology"));
+        sector.Add(wxTRANSLATE("Other"));
+    }
     return sector;
 }
 
 wxArrayString Model_Ticker::all_countries()
 {
-    wxArrayString countries;
-    countries.Add(wxTRANSLATE("United States"));
-    countries.Add(wxTRANSLATE("Russia"));
-    countries.Add(wxTRANSLATE("Brazil"));
-    countries.Add(wxTRANSLATE("Germany"));
-    countries.Add(wxTRANSLATE("China"));
+    static wxArrayString countries;
+    if (countries.empty())
+    {
+        countries.Add(wxTRANSLATE("United States"));
+        countries.Add(wxTRANSLATE("Russia"));
+        countries.Add(wxTRANSLATE("Brazil"));
+        countries.Add(wxTRANSLATE("Germany"));
+        countries.Add(wxTRANSLATE("China"));
+    }
     return countries;
 }
 
