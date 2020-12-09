@@ -5,8 +5,6 @@
 
 # Explicitly declare text files you want to always be normalized and
 # converted to native line endings on checkout.
-*.cpp  text
-*.h    text
 *.blk  text
 *.xpm  text
 *.po   text
@@ -14,6 +12,8 @@
 *.html text
 
 # Declare files that will always have LF line endings on checkout.
+*.cpp  text eol=lf
+*.h    text eol=lf
 *.sh      text eol=lf
 *.guess   text eol=lf
 *.sub     text eol=lf
