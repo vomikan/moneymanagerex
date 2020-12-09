@@ -118,7 +118,6 @@ EVT_MENU(MENU_CONVERT_ENC_DB, mmGUIFrame::OnConvertEncryptedDB)
 EVT_MENU(MENU_CHANGE_ENCRYPT_PASSWORD, mmGUIFrame::OnChangeEncryptPassword)
 EVT_MENU(MENU_DB_VACUUM, mmGUIFrame::OnVacuumDB)
 EVT_MENU(MENU_DB_DEBUG, mmGUIFrame::OnDebugDB)
-EVT_MENU(MENU_ASSETS, mmGUIFrame::OnAssets)
 EVT_MENU(MENU_CURRENCY, mmGUIFrame::OnCurrency)
 EVT_MENU(MENU_RATES, mmGUIFrame::OnRates)
 EVT_MENU(MENU_TRANSACTIONREPORT, mmGUIFrame::OnTransactionReport)
@@ -602,7 +601,6 @@ void mmGUIFrame::menuEnableItems(bool enable)
     menuBar_->FindItem(wxID_PREFERENCES)->Enable(enable);
     menuBar_->FindItem(MENU_BILLSDEPOSITS)->Enable(enable);
     menuBar_->FindItem(MENU_CURRENCY)->Enable(enable);
-    menuBar_->FindItem(MENU_ASSETS)->Enable(enable);
     menuBar_->FindItem(MENU_BUDGETSETUPDIALOG)->Enable(enable);
     menuBar_->FindItem(MENU_TRANSACTIONREPORT)->Enable(enable);
 
@@ -1003,7 +1001,7 @@ void mmGUIFrame::OnSelChanged(wxTreeEvent& event)
                 }
                 else
                 {
-                    createCheckingAccountPage(gotoAccountID_, account->ACCOUNTTYPE);
+                    do_create_account_page(gotoAccountID_, account->ACCOUNTTYPE);
                 }
 
             }
@@ -1479,11 +1477,6 @@ void mmGUIFrame::createMenu()
         , _("&Recurring Transactions"), _("Bills && Deposits"));
     menuItemBillsDeposits->SetBitmap(mmBitmap(png::RECURRING));
     menuTools->Append(menuItemBillsDeposits);
-
-    wxMenuItem* menuItemAssets = new wxMenuItem(menuTools, MENU_ASSETS
-        , _("&Assets"), _("Assets"));
-    menuItemAssets->SetBitmap(mmBitmap(png::ASSET));
-    menuTools->Append(menuItemAssets);
 
     menuTools->AppendSeparator();
 
@@ -2220,7 +2213,7 @@ void mmGUIFrame::OnImportUniversalCSV(wxCommandEvent& /*event*/)
     if (univCSVDialog.isImportCompletedSuccessfully())
     {
         Model_Account::Data* account = Model_Account::instance().get(univCSVDialog.get_imported_account_id());
-        createCheckingAccountPage(univCSVDialog.get_imported_account_id(), account->ACCOUNTTYPE);
+        do_create_account_page(univCSVDialog.get_imported_account_id(), account->ACCOUNTTYPE);
         if (account) setAccountNavTreeSection(account->ACCOUNTNAME);
     }
 }
@@ -2239,7 +2232,7 @@ void mmGUIFrame::OnImportXML(wxCommandEvent& /*event*/)
     if (univCSVDialog.isImportCompletedSuccessfully())
     {
         Model_Account::Data* account = Model_Account::instance().get(univCSVDialog.get_imported_account_id());
-        createCheckingAccountPage(univCSVDialog.get_imported_account_id(), account->ACCOUNTTYPE);
+        do_create_account_page(univCSVDialog.get_imported_account_id(), account->ACCOUNTTYPE);
         if (account) setAccountNavTreeSection(account->ACCOUNTNAME);
     }
 }
@@ -2379,7 +2372,7 @@ void mmGUIFrame::OnNewTransaction(wxCommandEvent& /*event*/)
             Model_Account::Data * account = Model_Account::instance().get(gotoAccountID_);
             if (account)
             {
-                createCheckingAccountPage(gotoAccountID_, account->ACCOUNTTYPE);
+                do_create_account_page(gotoAccountID_, account->ACCOUNTTYPE);
                 setAccountNavTreeSection(account->ACCOUNTNAME);
             }
         }
@@ -2603,8 +2596,6 @@ void mmGUIFrame::createHomePage()
         wxSizer *sizer = cleanupHomePanel();
         homePage_ = new mmHomePagePanel(homePanel_
             , this, mmID_HOMEPAGE
-            , wxDefaultPosition, wxDefaultSize
-            , wxNO_BORDER | wxTAB_TRAVERSAL
         );
         panelCurrent_ = homePage_;
         sizer->Add(panelCurrent_, 1, wxGROW | wxALL, 1);
@@ -2621,7 +2612,7 @@ void mmGUIFrame::createHomePage()
     json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
     json_writer.EndObject();
 
-    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString())); //createHomePage()
 }
 //----------------------------------------------------------------------------
 
@@ -2691,7 +2682,7 @@ void mmGUIFrame::createBillsDeposits()
     json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
     json_writer.EndObject();
 
-    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString())); //createBillsDeposits()
 }
 
 void mmGUIFrame::createBudgetingPage(int budgetYearID)
@@ -2726,7 +2717,7 @@ void mmGUIFrame::createBudgetingPage(int budgetYearID)
     json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
     json_writer.EndObject();
 
-    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString())); //createBudgetingPage
 
     menuPrintingEnable(true);
     m_nav_tree_ctrl->SetEvtHandlerEnabled(true);
@@ -2737,13 +2728,7 @@ void mmGUIFrame::OnBillsDeposits(wxCommandEvent& WXUNUSED(event))
     createBillsDeposits();
 }
 
-void mmGUIFrame::OnAssets(wxCommandEvent& /*event*/)
-{
-    //createAssets();
-    //TODO: ??
-}
-
-void mmGUIFrame::createCheckingAccountPage(int accountID, const wxString& type)
+void mmGUIFrame::do_create_account_page(int accountID, const wxString& type)
 {
     StringBuffer json_buffer;
     Writer<StringBuffer> json_writer(json_buffer);
@@ -2774,7 +2759,7 @@ void mmGUIFrame::createCheckingAccountPage(int accountID, const wxString& type)
     json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
     json_writer.EndObject();
 
-    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString())); //do_create_account_page(
 
     menuPrintingEnable(true);
     if (gotoTransID_ > 0)
@@ -2817,7 +2802,7 @@ void mmGUIFrame::createAssetsAccountPage(int accountID, const wxString& type)
     json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
     json_writer.EndObject();
 
-    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString())); //createAssetsAccountPage
 }
 
 void mmGUIFrame::createStocksAccountPage(int accountID, const wxString& type)
@@ -2853,7 +2838,7 @@ void mmGUIFrame::createStocksAccountPage(int accountID, const wxString& type)
     json_writer.Double((wxDateTime::UNow() - time).GetMilliseconds().ToDouble() / 1000);
     json_writer.EndObject();
 
-    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString()));
+    Model_Usage::instance().AppendToUsage(wxString::FromUTF8(json_buffer.GetString())); //createStocksAccountPage(
 }
 
 //----------------------------------------------------------------------------
@@ -2873,7 +2858,7 @@ void mmGUIFrame::OnGotoAccount(wxCommandEvent& event)
         createAssetsAccountPage(gotoAccountID_, acc->ACCOUNTTYPE);
         break;
     default:
-        createCheckingAccountPage(gotoAccountID_, acc->ACCOUNTTYPE);
+        do_create_account_page(gotoAccountID_, acc->ACCOUNTTYPE);
     }
 
     m_nav_tree_ctrl->Refresh();

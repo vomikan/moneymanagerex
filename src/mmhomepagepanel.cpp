@@ -39,15 +39,11 @@ EVT_WEBVIEW_NAVIGATING(wxID_ANY, mmHomePagePanel::OnLinkClicked)
 wxEND_EVENT_TABLE()
 
 mmHomePagePanel::mmHomePagePanel(wxWindow *parent, mmGUIFrame *frame
-    , wxWindowID winid
-    , const wxPoint& pos
-    , const wxSize& size
-    , long style
-    , const wxString& name)
+    , wxWindowID winid)
     : m_frame(frame)
     , browser_(nullptr)
 {
-    Create(parent, winid, pos, size, style, name);
+    Create(parent, winid);
     m_frame->menuPrintingEnable(true);
 }
 
@@ -252,12 +248,6 @@ void mmHomePagePanel::OnNewWindow(wxWebViewEvent& evt)
     if (pattern.Matches(uri))
     {
         wxLaunchDefaultBrowser(uri);
-    }
-    else if (uri.StartsWith("assets:", &sData))
-    {
-        m_frame->setNavTreeSection(_("Assets"));
-        wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, MENU_ASSETS);
-        m_frame->GetEventHandler()->AddPendingEvent(event);
     }
     else if (uri.StartsWith("billsdeposits:", &sData))
     {

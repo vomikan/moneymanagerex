@@ -34,7 +34,7 @@ public:
     virtual ~mmPrintableBase();
     virtual wxString getHTMLText() = 0;
     virtual void RefreshData() {}
-    virtual const wxString getReportTitle() const;
+    virtual const wxString getReportTitle(bool translate = true) const;
     virtual int report_parameters();
     int getReportId() { return m_id; }
     void date_range(const mmDateRange* date_range, int selection);
@@ -93,12 +93,12 @@ public:
 protected:
     int m_chart_selection;
     int m_date_selection;
-    wxString m_title;
     const mmDateRange* m_date_range;
     const wxArrayString* accountArray_;
     bool m_only_active;
 
 private:
+    wxString m_title;
     bool m_initial;
     int m_account_selection;
     int m_id;

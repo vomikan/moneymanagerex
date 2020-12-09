@@ -69,7 +69,7 @@ const char *group_report_template = R"(
 class mmGeneralGroupReport : public mmPrintableBase
 {
 public:
-    mmGeneralGroupReport(const wxString& groupname) : mmPrintableBase(_("General Group Report"))
+    mmGeneralGroupReport(const wxString& groupname) : mmPrintableBase(wxTRANSLATE("General Group Report"))
         , m_group_name(groupname)
     {
         m_sub_reports = Model_Report::instance().find(Model_Report::GROUPNAME(groupname));
@@ -82,7 +82,7 @@ public:
             contents += report.to_row_t();
 
         mm_html_template report(group_report_template);
-        report(L"REPORTNAME") = this->m_title + " For " + this->m_group_name;
+        report(L"REPORTNAME") = this->getReportTitle() + " For " + this->m_group_name;
         report(L"CONTENTS") = contents;
 
         wxString out = wxEmptyString;

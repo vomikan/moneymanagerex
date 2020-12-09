@@ -32,7 +32,7 @@ static const wxString COLORS [] = {
 };
 
 mmReportCashFlow::mmReportCashFlow()
-    : mmPrintableBase(_("Cash Flow"))
+    : mmPrintableBase(wxTRANSLATE("Cash Flow"))
     , today_(wxDateTime::Today())
 {
     m_only_active = true;

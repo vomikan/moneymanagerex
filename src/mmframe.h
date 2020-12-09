@@ -140,7 +140,7 @@ private:
     mmBudgetingPanel* budgetingPage_;
 
     void createHomePage();
-    void createCheckingAccountPage(int accountID, const wxString& type);
+    void do_create_account_page(int accountID, const wxString& type);
     void createStocksAccountPage(int accountID, const wxString& type);
     void createAssetsAccountPage(int accountID, const wxString& type);
 
@@ -181,7 +181,6 @@ private:
     void OnPrintPage(wxCommandEvent& WXUNUSED(event));
     void OnQuit(wxCommandEvent& event);
     void OnBillsDeposits(wxCommandEvent& event);
-    void OnAssets(wxCommandEvent& event);
     void OnGotoAccount(wxCommandEvent& WXUNUSED(event));
 private:
     void OnChangeGUILanguage(wxCommandEvent &event);

@@ -18,7 +18,7 @@
  ********************************************************/
 
 #include "categexp.h"
-#include "budget.h"
+//#include "budget.h"
 #include "reports/htmlbuilder.h"
 #include "reports/mmDateRange.h"
 #include "option.h"
@@ -214,19 +214,19 @@ wxString mmReportCategoryExpenses::getHTMLText()
 }
 
 mmReportCategoryExpensesGoes::mmReportCategoryExpensesGoes()
-    : mmReportCategoryExpenses(_("Where the Money Goes"), TYPE::GOES)
+    : mmReportCategoryExpenses(wxTRANSLATE("Where the Money Goes"), TYPE::GOES)
 {
     setReportParameters(Reports::WheretheMoneyGoes);
 }
 
 mmReportCategoryExpensesComes::mmReportCategoryExpensesComes()
-    : mmReportCategoryExpenses(_("Where the Money Comes From"), TYPE::COME)
+    : mmReportCategoryExpenses(wxTRANSLATE("Where the Money Comes From"), TYPE::COME)
 {
     setReportParameters(Reports::WheretheMoneyComesFrom);
 }
 
 mmReportCategoryExpensesCategories::mmReportCategoryExpensesCategories()
-    : mmReportCategoryExpenses(_("Monthly"), TYPE::MONTHLY)
+    : mmReportCategoryExpenses(wxTRANSLATE("Monthly"), TYPE::MONTHLY)
 {
     m_chart_selection = 1;
     setReportParameters(Reports::CategoriesMonthly);
@@ -235,7 +235,7 @@ mmReportCategoryExpensesCategories::mmReportCategoryExpensesCategories()
 //----------------------------------------------------------------------------
 
 mmReportCategoryOverTimePerformance::mmReportCategoryOverTimePerformance()
-    : mmPrintableBase(_("Category Income/Expenses"))
+    : mmPrintableBase(wxTRANSLATE("Category Income/Expenses"))
 {
     m_date_range = new mmLast12Months();
     setReportParameters(Reports::CategoryOverTimePerformance);

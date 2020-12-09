@@ -328,7 +328,7 @@ void mmPrintableBaseSpecificAccounts::getSpecificAccounts()
         accounts.Add(account.ACCOUNTNAME);
     }
 
-    wxMultiChoiceDialog mcd(0, _("Choose Accounts"), m_title, accounts);
+    wxMultiChoiceDialog mcd(0, _("Choose Accounts"), getReportTitle(), accounts);
     wxButton* ok = static_cast<wxButton*>(mcd.FindWindow(wxID_OK));
     if (ok) ok->SetLabel(_("&OK "));
     wxButton* ca = static_cast<wxButton*>(mcd.FindWindow(wxID_CANCEL));
@@ -365,11 +365,11 @@ void mm_html_template::load_context()
     if (currency) currency->to_template(*this);
 }
 
-const wxString mmPrintableBase::getReportTitle() const
+const wxString mmPrintableBase::getReportTitle(bool translate) const
 {
-    wxString title = m_title;
+    wxString title = translate ? wxGetTranslation(m_title) : m_title;
     if (m_date_range) {
-        title += " - " + m_date_range->local_title();
+        title += " - " + (translate ? m_date_range->local_title() : m_date_range->title());
     }
     return title;
 }

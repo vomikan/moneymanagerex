@@ -52,11 +52,12 @@ public:
     void SetDialogParameters(const Model_Checking::Full_Data& transaction);
 
 private:
-    bool Create(wxWindow* parent, wxWindowID id,
-        const wxString& caption,
-        const wxPoint& pos,
-        const wxSize& size,
-        long style);
+    bool Create(wxWindow* parent,
+        const wxString& caption = wxTRANSLATE("New Recurring Transaction"),
+        wxWindowID id = wxID_ANY,
+        const wxPoint& pos = wxDefaultPosition,
+        const wxSize& size = wxDefaultSize,
+        long style = wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX);
 
     void CreateControls();
 

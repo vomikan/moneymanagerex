@@ -157,16 +157,10 @@ mmBDDialog::mmBDDialog(wxWindow* parent, int bdID, bool edit, bool enterOccur)
     }
 
     m_transfer = (m_bill_data.TRANSCODE == Model_Billsdeposits::all_type()[Model_Billsdeposits::TRANSFER]);
-
-    //---------------------------------------------------
-    long style = wxCAPTION | wxSYSTEM_MENU | wxCLOSE_BOX;
-    Create(parent, wxID_ANY
-        , _("New Recurring Transaction")
-        , wxDefaultPosition, wxDefaultSize, style);
-
+    Create(parent);
 }
 
-bool mmBDDialog::Create(wxWindow* parent, wxWindowID id, const wxString& caption
+bool mmBDDialog::Create(wxWindow* parent, const wxString& caption, wxWindowID id
     , const wxPoint& pos, const wxSize& size, long style)
 {
     SetExtraStyle(GetExtraStyle() | wxWS_EX_BLOCK_EVENTS);

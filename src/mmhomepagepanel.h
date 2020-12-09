@@ -34,11 +34,7 @@ class mmHomePagePanel : public mmPanelBase
 
 public:
     mmHomePagePanel(wxWindow *parent, mmGUIFrame *frame,
-        wxWindowID winid = wxID_ANY,
-        const wxPoint& pos = wxDefaultPosition,
-        const wxSize& size = wxDefaultSize,
-        long style = wxTAB_TRAVERSAL | wxNO_BORDER,
-        const wxString& name = "mmHomePagePanel");
+        wxWindowID winid = wxID_ANY);
 
     bool Create(wxWindow *parent, wxWindowID winid,
         const wxPoint& pos = wxDefaultPosition,
