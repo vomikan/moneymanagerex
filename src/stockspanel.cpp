@@ -204,6 +204,7 @@ void mmStocksPanel::doListItemActivated(int selectedIndex)
 void mmStocksPanel::updateHeader()
 {
     const Model_Account::Data* account = Model_Account::instance().get(m_account_id);
+    const Model_Currency::Data* base_currency = Model_Currency::GetBaseCurrency();
     double account_balance = 0.0, gain_loss = 0.0;
 
     //Get Stock Investment Account Balance as Init Amount + sum (Value) - sum (Purchase Price)
@@ -234,18 +235,34 @@ void mmStocksPanel::updateHeader()
         }
     }
 
+    wxArrayInt ticker_id;
     Model_Stock::Data_Set investment = Model_Stock::instance().find(Model_Stock::HELDAT(m_account_id));
+    
     for (const auto& i : investment)
     {
-        Model_Ticker::Data* ticker = Model_Ticker::instance().get(i.TICKERID);
-        Model_Currency::Data* currency = Model_Currency::instance().get(ticker->CURRENCYID);
-        double rate = Model_CurrencyHistory::getDayRate(currency->CURRENCYID, today);
-        wxSharedPtr<Model_StockStat> s;
-        double current_price = Model_StockHistory::getLastRate(ticker->TICKERID);
-        s = new Model_StockStat(ticker->TICKERID, m_account_id, current_price);
-        double gl = s->get_gain_loss() * rate;
-        gain_loss += gl;
-        account_balance += gl;
+        if (ticker_id.Index(i.TICKERID) == wxNOT_FOUND)
+        {
+            ticker_id.Add(i.TICKERID);
+            Model_Ticker::Data* ticker = Model_Ticker::instance().get(i.TICKERID);
+
+            double rate = 1.0;
+
+            if (ticker->CURRENCYID != account->CURRENCYID)
+            {
+                double t_rate = base_currency->CURRENCYID == ticker->CURRENCYID
+                    ? 1.0 : Model_CurrencyHistory::getDayRate(ticker->CURRENCYID, today);
+                double a_rate = Model_CurrencyHistory::getDayRate(account->CURRENCYID, today);
+                rate = t_rate / a_rate;
+            }
+
+
+            wxSharedPtr<Model_StockStat> s;
+            double current_price = Model_StockHistory::getLastRate(ticker->TICKERID);
+            s = new Model_StockStat(ticker->TICKERID, m_account_id, current_price);
+            double gl = s->get_gain_loss() * rate;
+            gain_loss += gl;
+            account_balance += gl;
+        }
     }
 
     const wxString accBal = wxString::Format(_("Total: %s"), Model_Account::instance().toCurrency(account_balance, account));
