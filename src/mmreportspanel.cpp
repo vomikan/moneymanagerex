@@ -101,7 +101,7 @@ bool mmReportsPanel::Create(wxWindow *parent, wxWindowID winid
     GetSizer()->SetSizeHints(this);
 
     saveReportText();
-
+    this->SetLabel(rb_->getReportTitle(false));
     Model_Usage::instance().pageview(this);
 
     return TRUE;
