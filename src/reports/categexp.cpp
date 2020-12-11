@@ -226,7 +226,7 @@ mmReportCategoryExpensesComes::mmReportCategoryExpensesComes()
 }
 
 mmReportCategoryExpensesCategories::mmReportCategoryExpensesCategories()
-    : mmReportCategoryExpenses(wxTRANSLATE("Monthly"), TYPE::MONTHLY)
+    : mmReportCategoryExpenses(wxTRANSLATE("Categories Summary Monthly"), TYPE::MONTHLY)
 {
     m_chart_selection = 1;
     setReportParameters(Reports::CategoriesMonthly);
