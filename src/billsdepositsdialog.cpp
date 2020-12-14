@@ -1432,21 +1432,8 @@ void mmBDDialog::setCategoryLabel()
 
 void mmBDDialog::OnPaidDateChanged(wxDateEvent& WXUNUSED(event))
 {
-    wxDateTime paid_date = m_date_paid->GetValue();
-    wxDateTime due_date = m_date_due->GetValue();
-    if (paid_date > due_date)
-    {
-        m_date_due->SetValue(paid_date);
-    }
 }
 
 void mmBDDialog::OnDueDateChanged(wxDateEvent& WXUNUSED(event))
 {
-    wxDateTime due_date = m_date_due->GetValue();
-    wxDateTime paid_date = m_date_paid->GetValue();
-
-    if (!m_enter_occur && paid_date > due_date)
-    {
-        m_date_paid->SetValue(due_date);
-    }
 }
