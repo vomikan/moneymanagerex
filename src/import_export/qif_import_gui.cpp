@@ -1209,6 +1209,7 @@ void mmQIFImportDialog::getOrCreatePayees()
             {
                 is_exists = true;
                 payee_name = payee.PAYEENAME;
+                m_QIFpayeeNames[item] = payee.PAYEEID;
                 continue;
             }
         }
@@ -1223,11 +1224,6 @@ void mmQIFImportDialog::getOrCreatePayees()
             log_field_->AppendText(wxString() << sMsg << "\n");
             int id = Model_Payee::instance().save(p);
             m_QIFpayeeNames[item] = id;
-        }
-        else
-        {
-            Model_Payee::Data* p = Model_Payee::instance().get(payee_name);
-            m_QIFpayeeNames[item] = p->PAYEEID;
         }
     }
 

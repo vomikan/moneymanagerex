@@ -145,7 +145,8 @@ void mmStockDialog::CreateControls()
     wxStaticBoxSizer* itemStaticBoxSizer4 = new wxStaticBoxSizer(itemStaticBoxSizer4Static, wxVERTICAL);
     leftBoxSizer->Add(itemStaticBoxSizer4, g_flagsExpand);
 
-    wxPanel* itemPanel5 = new wxPanel(this, wxID_STATIC, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+    wxPanel* itemPanel5 = new wxPanel(this, wxID_STATIC
+        , wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
     itemStaticBoxSizer4->Add(itemPanel5, g_flagsV);
 
     wxFlexGridSizer* itemFlexGridSizer6 = new wxFlexGridSizer(0, 2, 0, 0);
@@ -156,8 +157,7 @@ void mmStockDialog::CreateControls()
     itemFlexGridSizer6->Add(symbol, g_flagsH);
     symbol->SetFont(this->GetFont().Bold());
 
-    m_stock_symbol_ctrl = new mmTextCtrl(itemPanel5, ID_TEXTCTRL_STOCK_SYMBOL
-        , "", wxDefaultPosition, wxSize(150, -1), 0);
+    m_stock_symbol_ctrl = new mmTextCtrl(itemPanel5, ID_TEXTCTRL_STOCK_SYMBOL);
     itemFlexGridSizer6->Add(m_stock_symbol_ctrl, g_flagsH);
     m_stock_symbol_ctrl->SetToolTip(_("Enter the stock symbol."));
 
@@ -631,3 +631,4 @@ void mmStockDialog::OnDividend()
     }
     ShowStockHistory();
 }
+

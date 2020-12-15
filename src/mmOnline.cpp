@@ -92,7 +92,7 @@ int mmOnline::getOnlineRatesMOEX()
         m_error_code = http_get_data(wxString(item.second), xml);
         if (m_error_code != CURLE_OK)
         {
-            m_error_str = xml;
+            m_error_str = curl_easy_strerror(static_cast<CURLcode>(m_error_code));
             return m_error_code;
         }
 
@@ -215,7 +215,7 @@ int mmOnline::getOnlineRatesYahoo()
     Model_Ticker::Data_Set t = Model_Ticker::instance().all();
     if (t.empty()) {
         m_error_str = _("Empty value");
-        m_error_code = wxID_NO;
+        m_error_code = CURLE_GOT_NOTHING;
         return m_error_code;
     }
         
@@ -455,6 +455,7 @@ int mmHistoryOnline::mmYahoo()
     m_error_str = json_data;
 
     if (m_error_code != CURLE_OK) {
+        m_error_str = curl_easy_strerror(static_cast<CURLcode>(m_error_code));
         return m_error_code;
     }
 
@@ -674,10 +675,16 @@ int mmHistoryOnline::mmMorningStar()
         "http://tools.morningstar.es/es/util/searchfundbyname.aspx?ModuleId=69&LanguageId=es-ES&limit=100&q=%s"
         , m_ticker.Lower());
 
-    m_error_code = http_get_data(URL, m_error_str);
+    m_error_code = static_cast<int>(http_get_data(URL, m_error_str));
 
     if (m_error_code != CURLE_OK) {
+        m_error_str = curl_easy_strerror(static_cast<CURLcode>(m_error_code));
         return m_error_code;
+    }
+
+    if (m_error_str.empty()) {
+        m_error_str = _("Empty value");
+        return -1;
     }
 
     wxString fund;
@@ -728,13 +735,14 @@ int mmHistoryOnline::mmMorningStar()
         "http://tools.morningstar.es/api/rest.svc/timeseries_price/2nhcdckzon?id=%s&currencyId=%s&idtype=Morningstar&priceType=&frequency=daily&startDate=%s&endDate=%s&outputType=COMPACTJSON"
         , fund, m_currency_symbol, begin, today);
 
-    m_error_str = "";
-    m_error_code = http_get_data(URL2, m_error_str);
+    wxString json_data;
+    m_error_code = http_get_data(URL2, json_data);
 
-    wxString json_data = m_error_str;
-
-    if (m_error_code == CURLE_OK)
-        m_error_str = "";
+    if (m_error_code != CURLE_OK)
+    {
+        m_error_str = curl_easy_strerror(static_cast<CURLcode>(m_error_code));
+        return m_error_code;
+    }
 
     Document json_doc;
     if (json_doc.Parse(json_data.utf8_str()).HasParseError()) {
