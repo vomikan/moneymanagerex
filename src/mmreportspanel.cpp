@@ -437,7 +437,7 @@ void mmReportsPanel::OnNewWindow(wxWebViewEvent& evt)
     const wxString uri = evt.GetURL();
     wxString sData;
 
-    wxRegEx pattern(R"(^https?:\/\/)");
+    wxRegEx pattern(R"(^(https?:)|(file:)\/\/)");
     if (pattern.Matches(uri))
     {
         wxLaunchDefaultBrowser(uri);
