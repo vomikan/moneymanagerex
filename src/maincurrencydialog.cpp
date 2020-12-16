@@ -120,7 +120,7 @@ void mmMainCurrencyDialog::fillControls()
         if (skip_unused && !(Model_Account::is_used(currency) || currencyID == base_currency_id)) continue;
         if (!m_maskStr.IsEmpty())
         {
-            if (!currency.CURRENCYNAME.Lower().Matches("*" + m_maskStr + "*"))
+            if (!currency.CURRENCYNAME.Lower().Matches(m_maskStr) && !currency.CURRENCY_SYMBOL.Lower().Matches(m_maskStr))
                 continue;
         }
 
@@ -799,6 +799,7 @@ void mmMainCurrencyDialog::OnTextChanged(wxCommandEvent& event)
     if (id == wxID_FIND)
     {
         m_maskStr = event.GetString();
+        if (!m_maskStr.empty()) m_maskStr = "*" + m_maskStr.Lower() + "*";
         fillControls();
     }
 }
