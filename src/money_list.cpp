@@ -62,7 +62,7 @@ MoneyListCtrl::MoneyListCtrl(
 ) :
     mmListCtrl(parent, id),
     m_account_id(account_id),
-    m_sp(static_cast<mmStocksPanel*>(sp)),
+    m_sp(sp),
     m_selectedForCopy(-1),
     m_attr1(new wxListItemAttr(*wxBLACK, mmColors::listAlternativeColor0, wxNullFont)),
     m_attr2(new wxListItemAttr(*wxBLACK, mmColors::listAlternativeColor1, wxNullFont)),

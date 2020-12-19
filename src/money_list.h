@@ -108,7 +108,7 @@ private:
     DECLARE_NO_COPY_CLASS(MoneyListCtrl)
     wxDECLARE_EVENT_TABLE();
 
-    mmStocksPanel* m_sp;
+    mmPanelBase* m_sp;
 
     wxSharedPtr<wxListItemAttr> m_attr1;  // style1
     wxSharedPtr<wxListItemAttr> m_attr2;  // style2

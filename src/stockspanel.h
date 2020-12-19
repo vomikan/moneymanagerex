@@ -60,8 +60,8 @@ public:
     void OnRefreshQuotes(wxCommandEvent& event);
     //Unhide the Edit and Delete buttons if any record selected
     void enableEditDeleteButtons(bool en);
-    void doListItemActivated(int selectedIndex);
-    void doListItemSelected(int selectedIndex);
+    virtual void doListItemActivated(int selectedIndex);
+    virtual void doListItemSelected(int selectedIndex);
     void OnNotebookPageChanged(wxBookCtrlEvent& event);
 
     int get_account_id() const;

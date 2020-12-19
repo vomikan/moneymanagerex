@@ -114,9 +114,13 @@ public:
     void dataToControls(int transID = -1);
     int get_account_id() const;
     void set_header_text(const wxString& text);
+    void call_dialog(int selectedIndex);
+
+    void enableEditDeleteButtons(bool en);
+    virtual void doListItemActivated(int selectedIndex);
+    virtual void doListItemSelected(int selectedIndex);
 
 private:
-    void enableEditDeleteButtons(bool enable);
     void OnSearchTxtEntered(wxCommandEvent& event);
     void OnNotebookPageChanged(wxBookCtrlEvent& event);
 

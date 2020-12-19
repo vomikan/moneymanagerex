@@ -87,8 +87,15 @@ public:
 
     virtual wxString BuildPage() const;
     virtual void PrintPage();
+    virtual void doListItemSelected(int selectedIndex);
+    virtual void doListItemActivated(int selectedIndex);
+
     void windowsFreezeThaw();
 
     virtual void sortTable() = 0;
 };
+
+inline void mmPanelBase::doListItemSelected(int selectedIndex){}
+inline void mmPanelBase::doListItemActivated(int selectedIndex){}
+
 //----------------------------------------------------------------------------

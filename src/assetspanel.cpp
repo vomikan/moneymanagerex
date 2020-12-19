@@ -22,6 +22,7 @@
 #include "attachmentdialog.h"
 #include "constants.h"
 #include "images_list.h"
+#include "transdialog.h"
 
 #include "model/allmodel.h"
 #include <wx/srchctrl.h>
@@ -758,7 +759,7 @@ void mmAssetsPanel::RefreshList(int transID)
 void mmAssetsPanel::dataToControls(int transID)
 {
     m_assets_list->initVirtualListControl(transID);
-    //m_listCtrlMoney->initVirtualListControl(transID);
+    m_listCtrlMoney->initVirtualListControl(transID);
 }
 
 void mmAssetsPanel::DisplayAccountDetails(int accountID)
@@ -769,4 +770,54 @@ void mmAssetsPanel::DisplayAccountDetails(int accountID)
     RefreshList();
 }
 
-inline void mmAssetsPanel::sortTable() {}
+void mmAssetsPanel::sortTable()
+{}
+
+void mmAssetsPanel::doListItemActivated(int selectedIndex)
+{
+    call_dialog(selectedIndex);
+    updateExtraAssetData(selectedIndex);
+}
+
+void mmAssetsPanel::doListItemSelected(int selectedIndex)
+{
+    updateExtraAssetData(selectedIndex);
+    enableEditDeleteButtons(selectedIndex >= 0);
+}
+
+void mmAssetsPanel::call_dialog(int selectedIndex)
+{
+    int id = -1;
+
+    if (m_view_mode == 0)
+    {
+        Model_Asset::Data* asset = &m_assets_list->get_m_assets()[selectedIndex];
+        //mmAssetDialog dlg(m_assets_list->GetParent(), m_frame, asset->ASSETID);
+        //if (dlg.ShowModal() == wxID_OK)
+        {
+            //doRefreshItems(dlg.m_asset->ASSETID);
+            m_frame->RefreshNavigationTree();
+        }
+    }
+    else
+    {
+        Model_Checking::Data* money = &m_listCtrlMoney->m_money[selectedIndex];
+
+        if (money)
+        {
+            wxLogDebug("%s %s %.2f %s"
+                , money->TRANSCODE
+                , money->TRANSDATE
+                , money->TRANSAMOUNT
+                , money->NOTES);
+        }
+
+        mmTransDialog dlg(this, m_account_id, money->TRANSID);
+        if (dlg.ShowModal() == wxID_OK)
+        {
+
+        }
+    }
+
+    dataToControls();
+}
