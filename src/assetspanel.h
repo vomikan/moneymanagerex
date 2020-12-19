@@ -19,8 +19,9 @@
 #include "model/Model_Asset.h"
 #include "model/Model_Account.h"
 #include "mmframe.h"
-//#include "money_list.h"
+#include "money_list.h"
 
+class MoneyListCtrl;
 class wxListEvent;
 class mmAssetsPanel;
 class wxButton;
@@ -123,7 +124,7 @@ private:
     mmAssetsListCtrl* m_assets_list;
     wxButton* m_bitmapTransFilter;
     wxNotebook* m_notebook;
-    //MoneyListCtrl* m_listCtrlMoney;
+    MoneyListCtrl* m_listCtrlMoney;
     int m_account_id;
 
     bool Create(wxWindow* parent

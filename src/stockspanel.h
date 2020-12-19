@@ -28,7 +28,7 @@
 #include "model/Model_Account.h"
 #include "mmframe.h"
 
-//class StocksListCtrl;
+class MoneyListCtrl;
 class mmStocksPanel;
 
 class mmStocksPanel : public mmPanelBase

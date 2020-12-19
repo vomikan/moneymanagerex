@@ -139,7 +139,7 @@ void mmStocksPanel::CreateControls()
     wxBoxSizer *money_sizer = new wxBoxSizer(wxVERTICAL);
     money_tab->SetSizer(money_sizer);
 
-    m_listCtrlMoney = new MoneyListCtrl(this, money_tab, wxID_ANY);
+    m_listCtrlMoney = new MoneyListCtrl(m_account_id, this, money_tab, wxID_ANY);
 
     money_sizer->Add(m_listCtrlMoney, g_flagsExpand);
 

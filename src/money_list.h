@@ -44,7 +44,7 @@ public:
     };
 
     //MoneyListCtrl(mmAssetsPanel* ap, wxWindow* parent, wxWindowID winid = wxID_ANY);
-    MoneyListCtrl(mmStocksPanel* sp, wxWindow* parent, wxWindowID id = wxID_ANY);
+    MoneyListCtrl(int account_id, mmPanelBase* sp, wxWindow* parent, wxWindowID id = wxID_ANY);
 
     ~MoneyListCtrl();
 
@@ -137,6 +137,7 @@ private:
     bool do_delete_viewed_trxs();
     bool do_delete_selected_trx();
 
+    int m_account_id;
     int col_sort() const;
     long m_selectedID; //Selected transaction ID
     long m_selectedForCopy; //The transaction ID if selected for copy

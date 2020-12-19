@@ -55,12 +55,14 @@ wxEND_EVENT_TABLE();
 //MoneyListCtrl::MoneyListCtrl(mmAssetsPanel* ap, wxWindow* parent, wxWindowID id){}
 
 MoneyListCtrl::MoneyListCtrl(
-    mmStocksPanel* sp,
+    int account_id,
+    mmPanelBase* sp,
     wxWindow *parent,
     wxWindowID id
 ) :
     mmListCtrl(parent, id),
-    m_sp(sp),
+    m_account_id(account_id),
+    m_sp(static_cast<mmStocksPanel*>(sp)),
     m_selectedForCopy(-1),
     m_attr1(new wxListItemAttr(*wxBLACK, mmColors::listAlternativeColor0, wxNullFont)),
     m_attr2(new wxListItemAttr(*wxBLACK, mmColors::listAlternativeColor1, wxNullFont)),
@@ -437,7 +439,7 @@ void MoneyListCtrl::OnCopy()
 
 void MoneyListCtrl::OnNewTransaction(wxCommandEvent & event)
 {
-    mmTransDialog dlg(this, m_sp->get_account_id(), -1);
+    mmTransDialog dlg(this, m_account_id, -1);
     if (dlg.ShowModal() == wxID_OK)
     {
         m_selectedID = dlg.GetTransactionID();
@@ -451,7 +453,7 @@ void MoneyListCtrl::OnDuplicateTransaction()
     if ((m_selected_row < 0) || (GetSelectedItemCount() > 1)) return;
 
     int transaction_id = m_money[m_selected_row].TRANSID;
-    mmTransDialog dlg(this, m_sp->get_account_id(), transaction_id, true);
+    mmTransDialog dlg(this, m_account_id, transaction_id, true);
     if (dlg.ShowModal() == wxID_OK)
     {
         m_selectedID = dlg.GetTransactionID();
@@ -477,7 +479,7 @@ int MoneyListCtrl::OnPaste(Model_Checking::Data* tran)
 
     Model_Checking::Data* copy = Model_Checking::instance().clone(tran); //TODO: this function can't clone split transactions
     if (!useOriginalDate) copy->TRANSDATE = wxDateTime::Now().FormatISODate();
-    if (Model_Checking::type(copy->TRANSCODE) != Model_Checking::TRANSFER) copy->ACCOUNTID = m_sp->get_account_id();
+    if (Model_Checking::type(copy->TRANSCODE) != Model_Checking::TRANSFER) copy->ACCOUNTID = m_account_id;
     int transactionID = Model_Checking::instance().save(copy);
 
     Model_Splittransaction::Cache copy_split;
@@ -587,7 +589,7 @@ void MoneyListCtrl::OnDeleteTransaction(wxCommandEvent& /*event*/)
 //----------------------------------------------------------------------------
 bool MoneyListCtrl::TransactionLocked(const wxString& transdate)
 {
-    Model_Account::Data* acc = Model_Account::instance().get(m_sp->get_account_id());
+    Model_Account::Data* acc = Model_Account::instance().get(m_account_id);
     if (Model_Account::is_positive(acc->STATEMENTLOCKED))
     {
         wxDateTime transaction_date;
@@ -650,14 +652,14 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
 
     if (MENU_TREEPOPUP_EDIT2 == event_id) {
         int trans_id = m_money[m_selected_row].TRANSID;
-        mmTransDialog dlg(this, m_sp->get_account_id(), trans_id, false, Model_Checking::DEPOSIT);
+        mmTransDialog dlg(this, m_account_id, trans_id, false, Model_Checking::DEPOSIT);
         if (dlg.ShowModal() == wxID_OK) {
             doRefreshItems(dlg.GetTransactionID());
         }
         msg = "Edit transaction";
     }
     else if (MENU_TREEPOPUP_NEW_DEPOSIT == event_id) {
-        mmTransDialog dlg(this, m_sp->get_account_id(), -1, false, Model_Checking::DEPOSIT);
+        mmTransDialog dlg(this, m_account_id, -1, false, Model_Checking::DEPOSIT);
         if (dlg.ShowModal() == wxID_OK) {
             initVirtualListControl(dlg.GetTransactionID());
         }
@@ -665,7 +667,7 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
     }
     else if (MENU_TREEPOPUP_NEW_WITHDRAWAL == event_id)
     {
-        mmTransDialog dlg(this, m_sp->get_account_id(), -1);
+        mmTransDialog dlg(this, m_account_id, -1);
         if (dlg.ShowModal() == wxID_OK) {
             initVirtualListControl(dlg.GetTransactionID());
         }
@@ -673,7 +675,7 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
     }
     else if (MENU_TREEPOPUP_NEW_TRANSFER == event_id)
     {
-        mmTransDialog dlg(this, m_sp->get_account_id(), -1, false, Model_Checking::TRANSFER);
+        mmTransDialog dlg(this, m_account_id, -1, false, Model_Checking::TRANSFER);
         if (dlg.ShowModal() == wxID_OK) {
             initVirtualListControl(dlg.GetTransactionID());
         }
@@ -685,7 +687,7 @@ void MoneyListCtrl::OnMenuHandler(wxCommandEvent& event)
             int trx_id = m_money.at(m_selected_row).TRANSID;
             Model_Checking::Data* trx = Model_Checking::instance().get(trx_id);
             if (trx) {
-                mmTransDialog dlg(this, m_sp->get_account_id(), trx_id, true);
+                mmTransDialog dlg(this, m_account_id, trx_id, true);
                 if (dlg.ShowModal() == wxID_OK) {
                     initVirtualListControl(dlg.GetTransactionID());
                 }
@@ -791,19 +793,16 @@ void MoneyListCtrl::OnListItemActivated(wxListEvent& /*event*/)
 
 int MoneyListCtrl::initVirtualListControl(int id, int col, bool asc)
 {
-
-    int account_id = m_sp->get_account_id();
-
     const auto splits = Model_Splittransaction::instance().get_all();
-    Model_Checking::Data_Set trans = Model_Checking::instance().find_or(Model_Checking::ACCOUNTID(account_id)
-        , Model_Checking::TOACCOUNTID(account_id));
+    Model_Checking::Data_Set trans = Model_Checking::instance().find_or(Model_Checking::ACCOUNTID(m_account_id)
+        , Model_Checking::TOACCOUNTID(m_account_id));
 
     m_money.clear();
     for (const auto& tran : trans)
     {
         Model_Checking::Full_Data full_tran(tran, splits);
-        full_tran.PAYEENAME = full_tran.real_payee_name(account_id);
-        double transaction_amount = Model_Checking::amount(tran, account_id);
+        full_tran.PAYEENAME = full_tran.real_payee_name(m_account_id);
+        double transaction_amount = Model_Checking::amount(tran, m_account_id);
         full_tran.AMOUNT = transaction_amount;
 
         m_money.push_back(full_tran);
