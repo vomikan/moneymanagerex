@@ -93,12 +93,12 @@ public:
 protected:
     int m_chart_selection;
     int m_date_selection;
+    wxString m_title;
     const mmDateRange* m_date_range;
     const wxArrayString* accountArray_;
     bool m_only_active;
 
 private:
-    wxString m_title;
     bool m_initial;
     int m_account_selection;
     int m_id;

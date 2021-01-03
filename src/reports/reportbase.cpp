@@ -67,7 +67,7 @@ void mmPrintableBase::setReportParameters(int id)
     case DailyCashFlow:               m_parameters = ACCOUNTS_LIST | CHART; break;
     case StocksReportPerformance:     m_parameters = DATE_RANGE; break;
     case StocksReportSummary:         m_parameters = NONE; break;
-    case ForecastReport:              m_parameters = SINGLE_DATE; break;
+    case ForecastReport:              m_parameters = DATE_RANGE; break;
     case BugReport:                   m_parameters = NONE; break;
     case CategoryOverTimePerformance: m_parameters = MONTHES | CHART | ACCOUNTS_LIST; break;
     default:                          m_parameters = NONE; break;
@@ -328,7 +328,7 @@ void mmPrintableBaseSpecificAccounts::getSpecificAccounts()
         accounts.Add(account.ACCOUNTNAME);
     }
 
-    wxMultiChoiceDialog mcd(0, _("Choose Accounts"), getReportTitle(), accounts);
+    wxMultiChoiceDialog mcd(0, _("Choose Accounts"), m_title, accounts);
     wxButton* ok = static_cast<wxButton*>(mcd.FindWindow(wxID_OK));
     if (ok) ok->SetLabel(_("&OK "));
     wxButton* ca = static_cast<wxButton*>(mcd.FindWindow(wxID_CANCEL));
@@ -368,7 +368,8 @@ void mm_html_template::load_context()
 const wxString mmPrintableBase::getReportTitle(bool translate) const
 {
     wxString title = translate ? wxGetTranslation(m_title) : m_title;
-    if (m_date_range) {
+    if (m_date_range)
+    {
         title += " - " + (translate ? m_date_range->local_title() : m_date_range->title());
     }
     return title;
