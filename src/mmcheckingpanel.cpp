@@ -65,8 +65,7 @@ mmCheckingPanel::mmCheckingPanel(wxWindow *parent, mmGUIFrame *frame, int accoun
     , m_trans_filter_dlg(nullptr)
     , m_frame(frame)
 {
-    long style = wxTAB_TRAVERSAL | wxNO_BORDER;
-    Create(parent, mmID_CHECKING, wxDefaultPosition, wxDefaultSize, style);
+    Create(parent);
 }
 //----------------------------------------------------------------------------
 
@@ -85,15 +84,15 @@ bool mmCheckingPanel::Create(
 )
 {
     SetExtraStyle(GetExtraStyle()|wxWS_EX_BLOCK_EVENTS);
-    if (! wxPanel::Create(parent, winid, pos, size, style, name)) return false;
+    if (! wxPanel::Create(parent, winid, pos, size, style, name))
+        return false;
 
     this->windowsFreezeThaw();
     CreateControls();
+    initViewTransactionsHeader();
 
     m_transFilterActive = false;
     m_trans_filter_dlg = new mmFilterTransactionsDialog(this);
-
-    initViewTransactionsHeader();
     initFilterSettings();
 
     RefreshList();
@@ -482,7 +481,6 @@ void mmCheckingPanel::initFilterSettings()
         }
         break;
     case MENU_VIEW_FILTER_DIALOG:
-        m_trans_filter_dlg->SetStoredSettings(-1);
         m_bitmapTransFilter->SetToolTip(m_trans_filter_dlg->getDescriptionToolTip());
         m_transFilterActive = true;
         break;

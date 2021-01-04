@@ -96,7 +96,7 @@ private:
 
     bool Create(
         wxWindow* parent,
-        wxWindowID winid,
+        wxWindowID winid = mmID_CHECKING,
         const wxPoint& pos = wxDefaultPosition,
         const wxSize& size = wxDefaultSize,
         long style = wxTAB_TRAVERSAL | wxNO_BORDER,
