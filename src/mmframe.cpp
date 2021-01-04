@@ -229,8 +229,8 @@ mmGUIFrame::mmGUIFrame(mmGUIApp* app, const wxString& title
 
     /* Create the Controls for the frame */
     createMenu();
-    CreateToolBar();
     createControls();
+    CreateToolBar();
 
 #if wxUSE_STATUSBAR
     CreateStatusBar();
