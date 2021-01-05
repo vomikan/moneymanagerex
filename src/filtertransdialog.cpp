@@ -478,6 +478,11 @@ bool mmFilterTransactionsDialog::isValuesCorrect()
 void mmFilterTransactionsDialog::OnButtonOkClick(wxCommandEvent& /*event*/)
 {
     if (isValuesCorrect()) {
+        settings_string_ = to_json();
+        int id = Model_Infotable::instance().GetIntInfo("TRANSACTIONS_FILTER_VIEW_NO", 0);
+        Model_Infotable::instance().Set("TRANSACTIONS_FILTER_VIEW_NO", id);
+        Model_Infotable::instance().Set(wxString::Format("TRANSACTIONS_FILTER_%d", id), settings_string_);
+        wxLogDebug("Settings Saved to registry %i\n %s", id, settings_string_);
         EndModal(wxID_OK);
     }
 }

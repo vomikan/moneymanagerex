@@ -595,7 +595,6 @@ int mmBudgetingPanel::GetItemImage(long item) const
 {
     try
     {
-
         double estimated = 0;
         double actual = 0;
         if (budget_[item].first < 0)
