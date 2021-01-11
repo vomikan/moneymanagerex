@@ -79,7 +79,7 @@ struct DB_Table_CUSTOMFIELD_V1 : public DB_Table
 FIELDID INTEGER NOT NULL PRIMARY KEY
 , REFTYPE TEXT NOT NULL /* Transaction, Stock, Asset, BankAccount, RepeatingTransaction, Payee */
 , DESCRIPTION TEXT COLLATE NOCASE
-, TYPE TEXT NOT NULL /* String, Integer, Decimal, Boolean, Date, Time, SingleChoiche, MultiChoiche */
+, TYPE TEXT NOT NULL /* String, Integer, Decimal, Boolean, Date, Time, SingleChoice, MultiChoice */
 , PROPERTIES TEXT NOT NULL
 ))");
                 this->ensure_data(db);

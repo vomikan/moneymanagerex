@@ -70,7 +70,7 @@ const std::vector<wxString> dbUpgradeQuery =
         FIELDID INTEGER NOT NULL PRIMARY KEY
         , REFTYPE TEXT NOT NULL /* Transaction, Stock, Asset, BankAccount, RepeatingTransaction, Payee */
         , DESCRIPTION TEXT COLLATE NOCASE
-        , TYPE TEXT NOT NULL /* String, Integer, Decimal, Boolean, Date, Time, SingleChoiche, MultiChoiche */
+        , TYPE TEXT NOT NULL /* String, Integer, Decimal, Boolean, Date, Time, SingleChoice, MultiChoice */
         , PROPERTIES TEXT NOT NULL
         );
         CREATE INDEX IF NOT EXISTS IDX_CUSTOMFIELD_REF ON CUSTOMFIELD_V1 (REFTYPE);
@@ -228,10 +228,10 @@ const std::vector<wxString> dbUpgradeQuery =
         ALTER TABLE STOCKHISTORY_NEW RENAME TO STOCKHISTORY_V1;
         CREATE INDEX IDX_STOCKHISTORY_SYMBOL ON STOCKHISTORY_V1(TICKERID);
         
-        DROP TABLE SHAREINFO_V1;
-        DROP TABLE TRANSLINK_V1;
-        DROP TABLE ASSETCLASS_V1;
-        DROP TABLE ASSETCLASS_STOCK_V1;
+        DROP TABLE IF EXISTS SHAREINFO_V1;
+        DROP TABLE IF EXISTS TRANSLINK_V1;
+        DROP TABLE IF EXISTS ASSETCLASS_V1;
+        DROP TABLE IF EXISTS ASSETCLASS_STOCK_V1;
         
         insert into ACCOUNTLIST_V1(
           ACCOUNTNAME
