@@ -80,9 +80,9 @@ private:
     void DataToControls();
     void ShowStockHistory();
 
-    void mmStockDialog::OnBuy();
-    void mmStockDialog::OnSell();
-    void mmStockDialog::OnDividend();
+    void OnBuy();
+    void OnSell();
+    void OnDividend();
 
     mmTextCtrl* m_stock_symbol_ctrl;
     wxStaticText* m_info_txt;

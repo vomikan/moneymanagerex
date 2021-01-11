@@ -119,4 +119,7 @@ public:
     static bool is_positive(int value);
 };
 
+inline wxDateTime Model_Account::get_date_by_string(const wxString& date_str) { return Model::to_date(date_str); }
+inline bool Model_Account::is_positive(int value) { return value > 0 ? true : false; }
+
 #endif // 
