@@ -926,7 +926,7 @@ void mmTransDialog::OnAccountOrPayeeUpdated(wxCommandEvent& event)
 {
     // Filtering the combobox as the user types because on Mac autocomplete function doesn't work
     // PLEASE DO NOT REMOVE!!!
-    if (!m_transfer)
+    if (!m_is_transfer)
     {
         wxString payeeName = event.GetString();
         if (m_trx_payee_box->GetSelection() == -1) // make sure nothing is selected (ex. user presses down arrow)
