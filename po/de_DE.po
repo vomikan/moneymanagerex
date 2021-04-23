@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2021-04-22 00:36+0300\n"
-"PO-Revision-Date: 2021-04-21 21:46\n"
+"PO-Revision-Date: 2021-04-23 20:04\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -1122,12 +1122,12 @@ msgstr "Kategorien"
 
 #: billsdepositsdialog.cpp:1467 transdialog.cpp:1320
 msgid "Clear color"
-msgstr ""
+msgstr "Farbe löschen"
 
 #: billsdepositsdialog.cpp:1472 transdialog.cpp:1325
 #, c-format
 msgid "Color #%i"
-msgstr ""
+msgstr "Farbe #%i"
 
 #: billsdepositsdialog.h:56
 msgid "New Recurring Transaction"
@@ -1384,7 +1384,7 @@ msgstr "Alle Budget-Kategorien anzeigen"
 #: budgetingpanel.cpp:172
 #, c-format
 msgid "Financial Year: %s - %li"
-msgstr ""
+msgstr "Geschäftsjahr: %s - %li"
 
 #: budgetingpanel.cpp:176 reports/budget.cpp:92
 #, c-format
@@ -1399,7 +1399,7 @@ msgstr "Monat: %s"
 #: budgetingpanel.cpp:186
 #, c-format
 msgid "%s    Start Date of: %s"
-msgstr ""
+msgstr "%s    Startdatum von: %s"
 
 #: budgetingpanel.cpp:189
 #, c-format
@@ -1876,19 +1876,19 @@ msgstr "Geben Sie die Auswahlmöglichkeiten für dieses Feld getrennt durch ein 
 
 #: customfieldeditdialog.cpp:171
 msgid "Digits scale"
-msgstr ""
+msgstr "Ziffernskala"
 
 #: customfieldeditdialog.cpp:173
 msgid "Enter the decimal digits scale allowed"
-msgstr ""
+msgstr "Geben Sie die erlaubte Dezimalzahl ein"
 
 #: customfieldeditdialog.cpp:176
 msgid "Panel's column"
-msgstr ""
+msgstr "Bedienfeld Spalte"
 
 #: customfieldeditdialog.cpp:181
 msgid "Select a value to represent the item on a panel"
-msgstr ""
+msgstr "Wählen Sie einen Wert, um das Element auf einem Bedienfeld darzustellen"
 
 #: customfieldeditdialog.cpp:223
 msgid "Changing field type will delete all content!"
@@ -1913,7 +1913,7 @@ msgstr "Neues/Bearbeite benutzerdefiniertes Feld"
 
 #: customfieldlistdialog.cpp:52
 msgid "#"
-msgstr ""
+msgstr "#"
 
 #: customfieldlistdialog.cpp:55
 msgid "Properties"
@@ -1937,7 +1937,9 @@ msgstr "Benutzerdefiniertes Feld löschen bestätigen"
 msgid "This function will massive search & replace for \"%s\" custom field values\n"
 "It will match & replace only complete field value, no partial or middle-value replaces allowed\n"
 "Please consider that there isn't any validation!"
-msgstr ""
+msgstr "Diese Funktion sucht nach \"%s\" und ersetzt in benutzerdefinierten Feldwerten.\n"
+"Es wird nur bei komplett übereinstimmenden Feldwerten ersetzt, es sind keine Teil- oder Mittelwertersetzungen erlaubt.\n"
+"Bitte beachten Sie, dass es keine Überprüfung gibt!"
 
 #: customfieldlistdialog.cpp:191
 msgid "Confirm Custom Field Content Update"
@@ -1973,8 +1975,8 @@ msgstr "Möchtest Sie den Inhalt auf 'leer' aktualisieren?\n"
 #, c-format
 msgid "%zu occurrence founded and replaced!"
 msgid_plural "%zu occurrences founded and replaced!"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%zu Vorkommnisse gefunden und ersetzt!"
+msgstr[1] "%zu Vorkommnisse gefunden und ersetzt!"
 
 #: customfieldlistdialog.cpp:263
 msgid "&Massive content update "
@@ -2318,23 +2320,23 @@ msgstr "Alle anzeigen, ausser überprüfte Buchungen"
 
 #: filtertransdialog.cpp:63
 msgid "Start of Financial Year"
-msgstr ""
+msgstr "Beginn des Geschäftsjahres"
 
 #: filtertransdialog.cpp:64
 msgid "Start of This Year"
-msgstr ""
+msgstr "Beginn dieses Jahres"
 
 #: filtertransdialog.cpp:65
 msgid "Since 90 days ago"
-msgstr ""
+msgstr "Seit 90 Tagen"
 
 #: filtertransdialog.cpp:66
 msgid "Since 30 days ago"
-msgstr ""
+msgstr "Seit 30 Tagen"
 
 #: filtertransdialog.cpp:67
 msgid "Since Today"
-msgstr ""
+msgstr "Seit heute"
 
 #: filtertransdialog.cpp:174 transactionsupdatedialog.cpp:108
 msgid "Specify"
@@ -2385,14 +2387,14 @@ msgstr "Betragsspanne:"
 
 #: filtertransdialog.cpp:345
 msgid "Settings"
-msgstr ""
+msgstr "Einstellungen"
 
 #: filtertransdialog.cpp:366 filtertransdialog.cpp:694
 #: filtertransdialog.cpp:739 filtertransdialog.cpp:948
 #: filtertransdialog.cpp:1083 filtertransdialog.cpp:1345
 #, c-format
 msgid "%i: Empty"
-msgstr ""
+msgstr "%i: Leer"
 
 #: filtertransdialog.cpp:375
 msgid "Save active values into current Preset selection"
@@ -6600,15 +6602,6 @@ msgstr "Legen Sie fest an wen die Buchung gehen soll"
 #: transdialog.cpp:1282 usertransactionpanel.cpp:95
 msgid "Specify the date of the transaction"
 msgstr "Datum der Buchung"
-
-#: transdialog.cpp:1319
-msgid "Clear color"
-msgstr "Farbe löschen"
-
-#: transdialog.cpp:1324
-#, c-format
-msgid "Color #%i"
-msgstr "Farbe #%i"
 
 #: usertransactionpanel.cpp:114
 msgid "Specify the associated Account that will contain this transaction"
