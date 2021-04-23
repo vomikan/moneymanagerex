@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2021-04-22 00:36+0300\n"
-"PO-Revision-Date: 2021-04-23 20:13\n"
+"PO-Revision-Date: 2021-04-23 20:29\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "MIME-Version: 1.0\n"
@@ -5580,7 +5580,7 @@ msgstr "Erscheinungsbild der Benutzeroberfläche"
 
 #: optionsettingsview.cpp:192
 msgid "Open Theme Manager"
-msgstr ""
+msgstr "Theme-Manager öffnen"
 
 #: optionsettingsview.cpp:194
 msgid "Style Template"
@@ -6496,35 +6496,35 @@ msgstr "Löschen"
 
 #: themes.cpp:189
 msgid "Use"
-msgstr ""
+msgstr "Verwenden"
 
 #: themes.cpp:235
 msgid "No description available"
-msgstr ""
+msgstr "keine Beschreibung verfügbar"
 
 #: themes.cpp:278
 msgid "Choose theme file to import"
-msgstr ""
+msgstr "Theme-Datei zum Importieren auswählen"
 
 #: themes.cpp:298
 msgid "The theme already exists, do you still want to import and overwrite the existing theme?"
-msgstr ""
+msgstr "Das Theme existiert bereits, möchten Sie trotzdem das vorhandene Theme importieren und überschreiben?"
 
 #: themes.cpp:308
 msgid "Something went wrong importing the theme"
-msgstr ""
+msgstr "Beim Importieren des Themes ist etwas schief gelaufen"
 
 #: themes.cpp:320
 msgid "Are you sure you want to delete this theme? If you want to use it again you will need to re-import it."
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie dieses Theme löschen möchten? Wenn Sie es erneut verwenden möchten, müssen Sie es erneut importieren."
 
 #: themes.cpp:327
 msgid "Something went wrong when attempting to delete the theme"
-msgstr ""
+msgstr "Beim Löschen des Themes ist ein Fehler aufgetreten"
 
 #: themes.cpp:339
 msgid "Are you sure you want to use this theme? Please note that this will only take effect when MMEX is re-started."
-msgstr ""
+msgstr "Sind Sie sicher, dass Sie dieses Theme verwenden möchten? Bitte beachten Sie, dass dies erst beim Neustart von MMEX wirksam wird."
 
 #: transactionsupdatedialog.cpp:78
 msgid "Multi Transactions Update"
