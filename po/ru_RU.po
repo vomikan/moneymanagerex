@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
-"POT-Creation-Date: 2023-06-29 17:27+0300\n"
-"PO-Revision-Date: 2023-06-29 15:08\n"
+"POT-Creation-Date: 2023-06-29 19:31+0300\n"
+"PO-Revision-Date: 2023-06-29 17:24\n"
 "Last-Translator: \n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -1679,8 +1679,8 @@ msgid "Category with same name exists for this parent"
 msgstr "Категория с таким именем существует для этого уровня"
 
 #: categdialog.cpp:376 categdialog.cpp:385
-msgid "Organise Categories: Adding Error"
-msgstr "Редактор категорий: Ошибка добавления"
+msgid "Organize Categories: Adding Error"
+msgstr "Организовать категории: Ошибка добавления"
 
 #: categdialog.cpp:437
 msgid "You cannot move a sub-category to a category that already has a sub-category with that name. Consider renaming before moving."
@@ -1738,8 +1738,8 @@ msgid "Tools → Relocation of → Categories"
 msgstr "Инструменты → Замена → Категории"
 
 #: categdialog.cpp:487
-msgid "Organise Categories: Delete Error"
-msgstr "Редактор категорий: Ошибка удаления"
+msgid "Organize Categories: Delete Error"
+msgstr "Организовать категории: Ошибка удаления"
 
 #: categdialog.cpp:510
 msgid "Deleted transactions exist which use this category or one of its descendants."
@@ -1771,7 +1771,7 @@ msgid "Category with same name exists for the parent"
 msgstr "Категория с таким именем существует для этого уровня"
 
 #: categdialog.cpp:635
-msgid "Organise Categories: Editing Error"
+msgid "Organize Categories: Editing Error"
 msgstr "Редактор категорий: Ошибка редактирования"
 
 #: categdialog.cpp:692 mmframe.cpp:3640
@@ -3578,7 +3578,7 @@ msgstr "Строка% ld: ОК, импортировано."
 
 #: import_export/univcsvdialog.cpp:1458
 msgid "Rejected rows:"
-msgstr ""
+msgstr "Отклонёные строки:"
 
 #: import_export/univcsvdialog.cpp:1463
 #, c-format
@@ -3786,7 +3786,7 @@ msgstr "Вы действительно хотите удалить выбран
 #: maincurrencydialog.cpp:366 maincurrencydialog.cpp:437
 #: maincurrencydialog.cpp:664 maincurrencydialog.cpp:789
 #: maincurrencydialog.cpp:813 mmframe.cpp:1688 optionsettingsgeneral.cpp:301
-msgid "Organise Currencies"
+msgid "Organize Currencies"
 msgstr "Редактор валют"
 
 #: maincurrencydialog.cpp:394
@@ -4833,8 +4833,8 @@ msgid "Organize Payees"
 msgstr "Редактор получателей"
 
 #: mmframe.cpp:1688
-msgid "Organise Curre&ncies..."
-msgstr ""
+msgid "Organize Curre&ncies..."
+msgstr "Редактор &валют..."
 
 #: mmframe.cpp:1692
 msgid "&Categories..."
