@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
-"POT-Creation-Date: 2023-06-29 17:27+0300\n"
-"PO-Revision-Date: 2023-06-29 15:08\n"
+"POT-Creation-Date: 2023-06-29 19:31+0300\n"
+"PO-Revision-Date: 2023-06-29 17:24\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "MIME-Version: 1.0\n"
@@ -1686,8 +1686,8 @@ msgid "Category with same name exists for this parent"
 msgstr "Šiam tėvui skirta kategorija tokiu pat pavadinimu"
 
 #: categdialog.cpp:376 categdialog.cpp:385
-msgid "Organise Categories: Adding Error"
-msgstr "Tvarkyti kategorijas: Pridėjimo klaida"
+msgid "Organize Categories: Adding Error"
+msgstr ""
 
 #: categdialog.cpp:437
 msgid "You cannot move a sub-category to a category that already has a sub-category with that name. Consider renaming before moving."
@@ -1745,8 +1745,8 @@ msgid "Tools → Relocation of → Categories"
 msgstr "Įrankiai -> Perkėlimas -> Kategorijos"
 
 #: categdialog.cpp:487
-msgid "Organise Categories: Delete Error"
-msgstr "Tvarkyti kategorijas: Ištrynimo klaida"
+msgid "Organize Categories: Delete Error"
+msgstr ""
 
 #: categdialog.cpp:510
 msgid "Deleted transactions exist which use this category or one of its descendants."
@@ -1778,8 +1778,8 @@ msgid "Category with same name exists for the parent"
 msgstr "Kategorija su tuo pačiu pavadinimu egzistuoja tėvams"
 
 #: categdialog.cpp:635
-msgid "Organise Categories: Editing Error"
-msgstr "Tvarkyti kategorijas: Redagavimo klaida"
+msgid "Organize Categories: Editing Error"
+msgstr ""
 
 #: categdialog.cpp:692 mmframe.cpp:3640
 msgid "Category Relocation Completed."
@@ -3795,7 +3795,7 @@ msgstr "Ar tikrai norite pašalinti pažymėtą valiutą?"
 #: maincurrencydialog.cpp:366 maincurrencydialog.cpp:437
 #: maincurrencydialog.cpp:664 maincurrencydialog.cpp:789
 #: maincurrencydialog.cpp:813 mmframe.cpp:1688 optionsettingsgeneral.cpp:301
-msgid "Organise Currencies"
+msgid "Organize Currencies"
 msgstr ""
 
 #: maincurrencydialog.cpp:394
@@ -4842,7 +4842,7 @@ msgid "Organize Payees"
 msgstr "Tvarkyti kontrahentus"
 
 #: mmframe.cpp:1688
-msgid "Organise Curre&ncies..."
+msgid "Organize Curre&ncies..."
 msgstr ""
 
 #: mmframe.cpp:1692
