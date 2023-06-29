@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
-"POT-Creation-Date: 2023-06-29 17:27+0300\n"
-"PO-Revision-Date: 2023-06-29 15:08\n"
+"POT-Creation-Date: 2023-06-29 19:31+0300\n"
+"PO-Revision-Date: 2023-06-29 17:24\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
@@ -1674,7 +1674,7 @@ msgid "Category with same name exists for this parent"
 msgstr "Ya existe una categoría con el mismo nombre en esta matriz"
 
 #: categdialog.cpp:376 categdialog.cpp:385
-msgid "Organise Categories: Adding Error"
+msgid "Organize Categories: Adding Error"
 msgstr "Organizar categorías: Error al añadir"
 
 #: categdialog.cpp:437
@@ -1731,8 +1731,8 @@ msgid "Tools → Relocation of → Categories"
 msgstr "Herramientas → Reorganización de → Categorías..."
 
 #: categdialog.cpp:487
-msgid "Organise Categories: Delete Error"
-msgstr "Organizar Categorías: Error al borrar"
+msgid "Organize Categories: Delete Error"
+msgstr "Organizar categorías: Error al eliminar"
 
 #: categdialog.cpp:510
 msgid "Deleted transactions exist which use this category or one of its descendants."
@@ -1764,7 +1764,7 @@ msgid "Category with same name exists for the parent"
 msgstr "Ya existe una categoría con el mismo nombre en la matriz"
 
 #: categdialog.cpp:635
-msgid "Organise Categories: Editing Error"
+msgid "Organize Categories: Editing Error"
 msgstr "Organizar categorías: Error al editar"
 
 #: categdialog.cpp:692 mmframe.cpp:3640
@@ -3567,7 +3567,7 @@ msgstr "Línea %ld: OK, importado."
 
 #: import_export/univcsvdialog.cpp:1458
 msgid "Rejected rows:"
-msgstr ""
+msgstr "Filas rechazadas:"
 
 #: import_export/univcsvdialog.cpp:1463
 #, c-format
@@ -3686,22 +3686,22 @@ msgstr "El signo de la cantidad debe definirse por tipo cuando se selecciona 'Ti
 #: import_export/univcsvdialog.cpp:2795
 #, c-format
 msgid "Value %s for custom field '%s' is not type %s."
-msgstr ""
+msgstr "El valor %s para el campo personalizado '%s' no es del tipo %s."
 
 #: import_export/univcsvdialog.cpp:2753 import_export/univcsvdialog.cpp:2774
 #, c-format
 msgid "Value %s for %s custom field '%s' is not a valid selection."
-msgstr ""
+msgstr "El valor %s para %s campo personalizado '%s' no es una selección válida."
 
 #: import_export/univcsvdialog.cpp:2785
 #, c-format
 msgid "Confirm format matches selection %s."
-msgstr ""
+msgstr "Confirme que el formato coincide con la selección %s."
 
 #: import_export/univcsvdialog.cpp:2812
 #, c-format
 msgid "Value %s does not match regex %s for custom field '%s'."
-msgstr ""
+msgstr "El valor %s no coincide con la expresión regular %s para el campo personalizado '%s'."
 
 #: maincurrencydialog.cpp:75
 msgid "Code"
@@ -3775,8 +3775,8 @@ msgstr "¿Desea eliminar la divisa seleccionada?"
 #: maincurrencydialog.cpp:366 maincurrencydialog.cpp:437
 #: maincurrencydialog.cpp:664 maincurrencydialog.cpp:789
 #: maincurrencydialog.cpp:813 mmframe.cpp:1688 optionsettingsgeneral.cpp:301
-msgid "Organise Currencies"
-msgstr ""
+msgid "Organize Currencies"
+msgstr "Organizar divisas"
 
 #: maincurrencydialog.cpp:394
 msgid "Base Currency Selection"
@@ -4408,7 +4408,7 @@ msgstr "Varias opciones"
 msgid "Unable to save custom field \"%s\":\n"
 "value \"%s\" does not match RegEx validation \"%s\""
 msgstr "No se puede guardar el campo personalizado \"%s\":\n"
-"el valor \"%s\" no coincide con la validación de RegEx \"%s\""
+"el valor \"%s\" no coincide con la validación de la expresión regular \"%s\""
 
 #: mmcustomdata.cpp:789
 msgid "CustomField validation error"
@@ -4798,8 +4798,8 @@ msgid "Organize Payees"
 msgstr "Organizar beneficiarios"
 
 #: mmframe.cpp:1688
-msgid "Organise Curre&ncies..."
-msgstr ""
+msgid "Organize Curre&ncies..."
+msgstr "Organizar divi&sas..."
 
 #: mmframe.cpp:1692
 msgid "&Categories..."
@@ -4879,7 +4879,7 @@ msgstr "&Opciones...\tCtrl-,"
 
 #: mmframe.cpp:1750 mmframe.cpp:1909
 msgid "Options Dialog"
-msgstr ""
+msgstr "Ventana de opciones"
 
 #: mmframe.cpp:1757
 msgid "Convert Encrypted &DB..."
@@ -5083,7 +5083,7 @@ msgstr "&Acerca de"
 
 #: mmframe.cpp:1861 mmframe.cpp:1933
 msgid "About dialog"
-msgstr ""
+msgstr "Mostrar ventana Acerca de"
 
 #: mmframe.cpp:1865
 msgid "&File"
@@ -5111,11 +5111,11 @@ msgstr "Nuevo"
 
 #: mmframe.cpp:1901
 msgid "Organize Categories Dialog"
-msgstr ""
+msgstr "Ventana de organizar categorías"
 
 #: mmframe.cpp:1902
 msgid "Organize Payees Dialog"
-msgstr ""
+msgstr "Ventana de organizar beneficiarios"
 
 #: mmframe.cpp:1903
 msgid "Organize Currency"
@@ -5123,7 +5123,7 @@ msgstr "Organizar divisas"
 
 #: mmframe.cpp:1903
 msgid "Organize Currency Dialog"
-msgstr ""
+msgstr "Ventana de organizar divisas"
 
 #: mmframe.cpp:1909
 msgid "&Options"
@@ -5147,7 +5147,7 @@ msgstr "&Imprimir"
 
 #: mmframe.cpp:1934
 msgid "Help files"
-msgstr ""
+msgstr "Archivos de ayuda"
 
 #: mmframe.cpp:1985
 #, c-format
