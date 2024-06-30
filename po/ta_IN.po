@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
-"POT-Creation-Date: 2024-05-19 23:47+0300\n"
-"PO-Revision-Date: 2024-05-19 20:50\n"
+"POT-Creation-Date: 2024-05-24 22:36+0300\n"
+"PO-Revision-Date: 2024-06-24 03:09\n"
 "Last-Translator: \n"
 "Language-Team: Tamil\n"
 "MIME-Version: 1.0\n"
@@ -671,7 +671,7 @@ msgstr "நட்சத்திரக் குறியைப் (*) பயன
 msgid "Use the asterisk (*) in the begin to find any string in the middle of the sentence."
 msgstr "வாக்கியத்தின் நடுவில் ஏதேனும் ஒரு சரத்தைக் கண்டறிய தொடக்கத்தில் (*) நட்சத்திரத்தைப் பயன்படுத்தவும்."
 
-#: assetspanel.cpp:583 stockspanel.cpp:333 stockspanel.cpp:520
+#: assetspanel.cpp:583 stockspanel.cpp:370 stockspanel.cpp:557
 #, c-format
 msgid "Total: %s"
 msgstr "மொத்தம்: %s"
@@ -699,8 +699,7 @@ msgstr "கணக்கு தேதி மதிப்பு\n\n"
 msgid "Description"
 msgstr "விளக்கம்"
 
-#: attachmentdialog.cpp:56 import_export/qif_export.cpp:203
-#: import_export/univcsvdialog.cpp:201
+#: attachmentdialog.cpp:56
 msgid "File"
 msgstr "கோப்பு"
 
@@ -709,8 +708,8 @@ msgid "Attachment folder not defined."
 msgstr "இணைப்பு கோப்புறை வரையறுக்கப்படவில்லை."
 
 #: attachmentdialog.cpp:65
-msgid "Please set it in Tools → Options → Attachments"
-msgstr "தயவுசெய்து அதை கருவிகள் → விருப்பங்கள் → இணைப்புகளில் அமைக்கவும்"
+msgid "Please set it in Tools → Settings… → Attachments"
+msgstr ""
 
 #: attachmentdialog.cpp:66
 msgid "Attachment folder not defined"
@@ -1249,8 +1248,8 @@ msgstr "செலுத்த வேண்டிய கட்டணங்கள�
 
 #: billsdepositsdialog.cpp:1367 images_list.cpp:502
 #: import_export/univcsvdialog.cpp:1582 maincurrencydialog.cpp:482
-#: mmframe.cpp:3917 splittransactionsdialog.cpp:412 stockspanel.cpp:384
-#: stockspanel.cpp:385 themes.cpp:316 themes.cpp:335 webappdialog.cpp:185
+#: mmframe.cpp:3917 splittransactionsdialog.cpp:412 stockspanel.cpp:421
+#: stockspanel.cpp:422 themes.cpp:316 themes.cpp:335 webappdialog.cpp:185
 #: webappdialog.cpp:190
 msgid "Error"
 msgstr "தவறு"
@@ -2550,7 +2549,7 @@ msgstr "பரிசோதனை"
 #: diagnostics.cpp:88 relocatecategorydialog.cpp:134
 #: relocatepayeedialog.cpp:132 relocatetagdialog.cpp:134 themes.cpp:195
 msgid "&Close"
-msgstr ""
+msgstr "&மூடு"
 
 #: diagnostics.cpp:101
 msgid "Developers may ask you to provide information presented here in order to help diagnose issues you may report with the program."
@@ -3160,6 +3159,11 @@ msgstr "கோப்பில் எழுதவும்"
 msgid "File Name:"
 msgstr "கோப்புப் பெயர்:"
 
+#: import_export/qif_export.cpp:203 import_export/qif_import_gui.cpp:135
+#: import_export/univcsvdialog.cpp:201
+msgid "&Browse..."
+msgstr ""
+
 #: import_export/qif_export.cpp:225 import_export/univcsvdialog.cpp:555
 msgid "Clear"
 msgstr "அழி"
@@ -3241,10 +3245,6 @@ msgstr "ஏற்றுமதி செய்யப்பட்ட பரிவ�
 msgid "Number of accounts exported: %zu"
 msgstr "ஏற்றுமதி செய்யப்பட்ட கணக்குகளின் எண்ணிக்கை: %zu"
 
-#: import_export/qif_import_gui.cpp:135 import_export/univcsvdialog.cpp:201
-msgid "&Browse"
-msgstr "&உலாவு"
-
 #: import_export/qif_import_gui.cpp:145 import_export/univcsvdialog.cpp:385
 msgid "Encoding:"
 msgstr "குறியாக்கம்:"
@@ -3321,7 +3321,7 @@ msgstr "தொடர, சரி பொத்தானை அழுத்தவ�
 
 #: import_export/qif_import_gui.cpp:770 import_export/qif_import_gui.cpp:801
 #: import_export/univcsvdialog.cpp:2091 import_export/univcsvdialog.cpp:2105
-#: stockspanel.cpp:449
+#: stockspanel.cpp:486
 msgid "Missing"
 msgstr "காணவில்லை"
 
@@ -3556,11 +3556,11 @@ msgstr ""
 
 #: import_export/univcsvdialog.cpp:569
 msgid "Move Up"
-msgstr ""
+msgstr "மேலே நகர்த்து"
 
 #: import_export/univcsvdialog.cpp:570
 msgid "Move Down"
-msgstr ""
+msgstr "கீழே நகர்த்து"
 
 #: import_export/univcsvdialog.cpp:571 optionsettingsmisc.cpp:228
 msgid "Specify the delimiter to use when importing/exporting CSV files"
@@ -3568,11 +3568,11 @@ msgstr "CSV கோப்பு இறக்கும்/ஏற்றும் �
 
 #: import_export/univcsvdialog.cpp:572
 msgid "Import File"
-msgstr ""
+msgstr "கோப்பை இறக்குமதி செய்"
 
 #: import_export/univcsvdialog.cpp:573
 msgid "Export File"
-msgstr ""
+msgstr "கோப்பை ஏற்றுமதிசெய்"
 
 #: import_export/univcsvdialog.cpp:586 import_export/univcsvdialog.cpp:2668
 #, c-format
@@ -3928,7 +3928,7 @@ msgstr ""
 msgid "Unable to download history for base symbol %s. History rates not available!"
 msgstr ""
 
-#: maincurrencydialog.cpp:876 stockspanel.cpp:395 util.cpp:684
+#: maincurrencydialog.cpp:876 stockspanel.cpp:432 util.cpp:684
 msgid "Could not find base currency symbol!"
 msgstr ""
 
@@ -5577,7 +5577,7 @@ msgstr ""
 msgid "Please wait..."
 msgstr ""
 
-#: mmframe.cpp:3567 stockspanel.cpp:459
+#: mmframe.cpp:3567 stockspanel.cpp:496
 #, c-format
 msgid "%1$s on %2$s"
 msgstr ""
@@ -6367,7 +6367,7 @@ msgstr ""
 
 #: optionsettingsmisc.cpp:182
 msgid "When MMEX starts,\n"
-"create the backup database: dbFile_start_YYYY-MM-DD.ext."
+"create the backup database: dbFile_start_YYYY-MM-DD.bak"
 msgstr ""
 
 #: optionsettingsmisc.cpp:187
@@ -6376,7 +6376,7 @@ msgstr ""
 
 #: optionsettingsmisc.cpp:189
 msgid "When MMEX shuts down and changes were made to the database,\n"
-"create or update the backup database: dbFile_update_YYYY-MM-DD.ext."
+"create or update the backup database: dbFile_update_YYYY-MM-DD.bak"
 msgstr ""
 
 #: optionsettingsmisc.cpp:197
@@ -7636,49 +7636,49 @@ msgstr "பங்கு விலையை யாஹூவிலிருந்�
 msgid "Lot"
 msgstr ""
 
-#: stockspanel.cpp:288
+#: stockspanel.cpp:325
 #, c-format
 msgid "Stock Portfolio: %s"
 msgstr ""
 
-#: stockspanel.cpp:332
+#: stockspanel.cpp:369
 #, c-format
 msgid "Total Shares: %s"
 msgstr ""
 
-#: stockspanel.cpp:334
+#: stockspanel.cpp:371
 #, c-format
 msgid "Invested: %s"
 msgstr ""
 
-#: stockspanel.cpp:335
+#: stockspanel.cpp:372
 #, c-format
 msgid "Gain: %s"
 msgstr ""
 
-#: stockspanel.cpp:335
+#: stockspanel.cpp:372
 #, c-format
 msgid "Loss: %s"
 msgstr ""
 
-#: stockspanel.cpp:373
+#: stockspanel.cpp:410
 msgid "Stock prices successfully updated"
 msgstr ""
 
-#: stockspanel.cpp:375 stockspanel.cpp:561
+#: stockspanel.cpp:412 stockspanel.cpp:598
 #, c-format
 msgid "Last updated %s"
 msgstr ""
 
-#: stockspanel.cpp:401 util.cpp:708 util.cpp:869
+#: stockspanel.cpp:438 util.cpp:708 util.cpp:869
 msgid "Nothing to update"
 msgstr ""
 
-#: stockspanel.cpp:415
+#: stockspanel.cpp:452
 msgid "Connecting..."
 msgstr ""
 
-#: stockspanel.cpp:519
+#: stockspanel.cpp:556
 #, c-format
 msgid "Symbol: %s"
 msgstr ""
@@ -8380,7 +8380,7 @@ msgid "Base Account Currency Not set."
 msgstr ""
 
 #: wizard_newaccount.cpp:165
-msgid "Set that first using Tools → Options menu and then add a new account."
+msgid "Set that first using Tools → Settings… menu and then add a new account."
 msgstr ""
 
 #: wizard_newdb.cpp:30

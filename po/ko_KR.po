@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
-"POT-Creation-Date: 2024-05-19 23:47+0300\n"
-"PO-Revision-Date: 2024-05-20 02:38\n"
+"POT-Creation-Date: 2024-05-24 22:36+0300\n"
+"PO-Revision-Date: 2024-06-07 11:36\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "MIME-Version: 1.0\n"
@@ -671,7 +671,7 @@ msgstr "별표(*)를 사용하여 임의의 문자를 찾을 수 있습니다. �
 msgid "Use the asterisk (*) in the begin to find any string in the middle of the sentence."
 msgstr "문장 중간에 있는 모든 문자열을 찾으려면 별표(*)를 앞에 사용하세요."
 
-#: assetspanel.cpp:583 stockspanel.cpp:333 stockspanel.cpp:520
+#: assetspanel.cpp:583 stockspanel.cpp:370 stockspanel.cpp:557
 #, c-format
 msgid "Total: %s"
 msgstr "합계: %s"
@@ -699,8 +699,7 @@ msgstr "계정 \t 날짜\t   값\n\n"
 msgid "Description"
 msgstr "설명"
 
-#: attachmentdialog.cpp:56 import_export/qif_export.cpp:203
-#: import_export/univcsvdialog.cpp:201
+#: attachmentdialog.cpp:56
 msgid "File"
 msgstr "파일"
 
@@ -709,8 +708,8 @@ msgid "Attachment folder not defined."
 msgstr "첨부 파일 폴더가 정의되지 않았습니다."
 
 #: attachmentdialog.cpp:65
-msgid "Please set it in Tools → Options → Attachments"
-msgstr "도구 → 옵션 → 첨부 파일에서 설정하십시오"
+msgid "Please set it in Tools → Settings… → Attachments"
+msgstr "도구 → 설정... → 첨부 파일에서 설정하십시오"
 
 #: attachmentdialog.cpp:66
 msgid "Attachment folder not defined"
@@ -1249,8 +1248,8 @@ msgstr "수행 할 지불 횟수를 지정하세요.\n"
 
 #: billsdepositsdialog.cpp:1367 images_list.cpp:502
 #: import_export/univcsvdialog.cpp:1582 maincurrencydialog.cpp:482
-#: mmframe.cpp:3917 splittransactionsdialog.cpp:412 stockspanel.cpp:384
-#: stockspanel.cpp:385 themes.cpp:316 themes.cpp:335 webappdialog.cpp:185
+#: mmframe.cpp:3917 splittransactionsdialog.cpp:412 stockspanel.cpp:421
+#: stockspanel.cpp:422 themes.cpp:316 themes.cpp:335 webappdialog.cpp:185
 #: webappdialog.cpp:190
 msgid "Error"
 msgstr "오류"
@@ -2600,7 +2599,7 @@ msgstr "막대형"
 
 #: filtertransdialog.cpp:55
 msgid "Line"
-msgstr "선"
+msgstr "꺾은선형"
 
 #: filtertransdialog.cpp:55
 msgid "Line DateTime"
@@ -3152,6 +3151,11 @@ msgstr "파일로 쓰기"
 msgid "File Name:"
 msgstr "파일명:"
 
+#: import_export/qif_export.cpp:203 import_export/qif_import_gui.cpp:135
+#: import_export/univcsvdialog.cpp:201
+msgid "&Browse..."
+msgstr "둘러보기(&B)..."
+
 #: import_export/qif_export.cpp:225 import_export/univcsvdialog.cpp:555
 msgid "Clear"
 msgstr "지우기"
@@ -3233,10 +3237,6 @@ msgstr "내보낸 거래내역 개수: %zu\n"
 msgid "Number of accounts exported: %zu"
 msgstr "내보낸 계정 개수: %zu"
 
-#: import_export/qif_import_gui.cpp:135 import_export/univcsvdialog.cpp:201
-msgid "&Browse"
-msgstr "찾아보기(&B)"
-
 #: import_export/qif_import_gui.cpp:145 import_export/univcsvdialog.cpp:385
 msgid "Encoding:"
 msgstr "인코딩:"
@@ -3313,7 +3313,7 @@ msgstr "계속하려면 OK 버튼을 누릅니다"
 
 #: import_export/qif_import_gui.cpp:770 import_export/qif_import_gui.cpp:801
 #: import_export/univcsvdialog.cpp:2091 import_export/univcsvdialog.cpp:2105
-#: stockspanel.cpp:449
+#: stockspanel.cpp:486
 msgid "Missing"
 msgstr "누락"
 
@@ -3922,7 +3922,7 @@ msgstr "오늘 환율을 업데이트하시겠습니까?"
 msgid "Unable to download history for base symbol %s. History rates not available!"
 msgstr "기본 통화 기호 %s에 대한 이력을 다운로드할 수 없습니다. 환율 이력을 사용할 수 없습니다!"
 
-#: maincurrencydialog.cpp:876 stockspanel.cpp:395 util.cpp:684
+#: maincurrencydialog.cpp:876 stockspanel.cpp:432 util.cpp:684
 msgid "Could not find base currency symbol!"
 msgstr "기준 통화 기호를 찾을 수 없습니다!"
 
@@ -5578,7 +5578,7 @@ msgstr "Yahoo에서 주가 내려받기"
 msgid "Please wait..."
 msgstr "잠시 기다려 주십시오..."
 
-#: mmframe.cpp:3567 stockspanel.cpp:459
+#: mmframe.cpp:3567 stockspanel.cpp:496
 #, c-format
 msgid "%1$s on %2$s"
 msgstr ""
@@ -6376,9 +6376,9 @@ msgstr "시작 시 데이터베이스 백업"
 
 #: optionsettingsmisc.cpp:182
 msgid "When MMEX starts,\n"
-"create the backup database: dbFile_start_YYYY-MM-DD.ext."
+"create the backup database: dbFile_start_YYYY-MM-DD.bak"
 msgstr "MMEX가 시작되면,\n"
-"백업 데이터베이스 생성: dbFile_start_YYYY-MM-DD.ext."
+"백업 데이터베이스 생성: dbFile_start_YYYY-MM-DD.bak"
 
 #: optionsettingsmisc.cpp:187
 msgid "Backup database on exit"
@@ -6386,9 +6386,9 @@ msgstr "종료 시 데이터베이스 백업"
 
 #: optionsettingsmisc.cpp:189
 msgid "When MMEX shuts down and changes were made to the database,\n"
-"create or update the backup database: dbFile_update_YYYY-MM-DD.ext."
+"create or update the backup database: dbFile_update_YYYY-MM-DD.bak"
 msgstr "MMEX가 종료되고 데이터베이스가 변경되면\n"
-"백업 데이터베이스 생성 또는 업데이트: dbFile_update_YYYY-MM-DD.ext."
+"백업 데이터베이스 생성 또는 업데이트: dbFile_update_YYYY-MM-DD.bak"
 
 #: optionsettingsmisc.cpp:197
 msgid "Specify max number of backup files"
@@ -7656,49 +7656,49 @@ msgstr "Yahoo에서 주가 새로 고침"
 msgid "Lot"
 msgstr "수량"
 
-#: stockspanel.cpp:288
+#: stockspanel.cpp:325
 #, c-format
 msgid "Stock Portfolio: %s"
 msgstr "주식 포트폴리오: %s"
 
-#: stockspanel.cpp:332
+#: stockspanel.cpp:369
 #, c-format
 msgid "Total Shares: %s"
 msgstr "전체 주식: %s"
 
-#: stockspanel.cpp:334
+#: stockspanel.cpp:371
 #, c-format
 msgid "Invested: %s"
 msgstr "투자: %s"
 
-#: stockspanel.cpp:335
+#: stockspanel.cpp:372
 #, c-format
 msgid "Gain: %s"
 msgstr "이득: %s"
 
-#: stockspanel.cpp:335
+#: stockspanel.cpp:372
 #, c-format
 msgid "Loss: %s"
 msgstr "손실: %s"
 
-#: stockspanel.cpp:373
+#: stockspanel.cpp:410
 msgid "Stock prices successfully updated"
 msgstr "주가가 성공적으로 업데이트되었습니다"
 
-#: stockspanel.cpp:375 stockspanel.cpp:561
+#: stockspanel.cpp:412 stockspanel.cpp:598
 #, c-format
 msgid "Last updated %s"
 msgstr "마지막 업데이트 %s"
 
-#: stockspanel.cpp:401 util.cpp:708 util.cpp:869
+#: stockspanel.cpp:438 util.cpp:708 util.cpp:869
 msgid "Nothing to update"
 msgstr "업데이트할 항목 없음"
 
-#: stockspanel.cpp:415
+#: stockspanel.cpp:452
 msgid "Connecting..."
 msgstr "연결 중…"
 
-#: stockspanel.cpp:519
+#: stockspanel.cpp:556
 #, c-format
 msgid "Symbol: %s"
 msgstr "기호: %s"
@@ -8408,8 +8408,8 @@ msgid "Base Account Currency Not set."
 msgstr "기본 계정 통화가 설정되지 않았습니다."
 
 #: wizard_newaccount.cpp:165
-msgid "Set that first using Tools → Options menu and then add a new account."
-msgstr "먼저 도구 → 옵션 메뉴를 설정한 다음 새 계정을 추가합니다."
+msgid "Set that first using Tools → Settings… menu and then add a new account."
+msgstr "먼저 도구 → 설정... 메뉴에서 설정한 다음 새 계정을 추가합니다."
 
 #: wizard_newdb.cpp:30
 msgid "New Database Wizard"
