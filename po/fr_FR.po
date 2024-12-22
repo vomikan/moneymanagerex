@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-10-02 01:00+0300\n"
-"PO-Revision-Date: 2024-12-22 13:38\n"
+"PO-Revision-Date: 2024-12-22 14:52\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "MIME-Version: 1.0\n"
@@ -730,7 +730,7 @@ msgstr "Répertoire des pièces jointes non trouvé"
 #: attachmentdialog.cpp:109
 #, c-format
 msgid "Attachment Manager | %s | %i"
-msgstr ""
+msgstr "Gestionnaire de pièces jointes | %s | %i"
 
 #: attachmentdialog.cpp:111
 #, c-format
@@ -2527,7 +2527,7 @@ msgstr "Erreur : %s"
 
 #: dbwrapper.cpp:92 mmframe.cpp:2063
 msgid "Opening MMEX Database - Error"
-msgstr ""
+msgstr "Ouverture de la base de données MMEX – Erreur"
 
 #: diagnostics.cpp:51
 msgid "Diagnostics"
@@ -3050,7 +3050,7 @@ msgstr "Impossible de créer le fichier."
 
 #: import_export/parsers.cpp:109 import_export/parsers.cpp:249
 msgid "Could not save file."
-msgstr ""
+msgstr "Impossible d'enregistrer le fichier."
 
 #: import_export/parsers.cpp:109 import_export/parsers.cpp:249
 msgid "Export error"
@@ -3067,7 +3067,7 @@ msgstr "Erreur d'analyse"
 
 #: import_export/parsers.cpp:158
 msgid "Could not find Worksheet."
-msgstr ""
+msgstr "Impossible de trouver la feuille de travail."
 
 #: import_export/parsers.cpp:164
 msgid "Table"
@@ -3075,7 +3075,7 @@ msgstr "Table"
 
 #: import_export/parsers.cpp:166
 msgid "Could not find Table."
-msgstr ""
+msgstr "Table introuvable."
 
 #: import_export/parsers.cpp:217 mmframereport.cpp:132
 msgid "Transactions"
@@ -4557,7 +4557,7 @@ msgstr "Diff: "
 
 #: mmcheckingpanel.cpp:571
 msgid "Filtered View Bal: "
-msgstr ""
+msgstr "Paramétrage de l'affichage filtré : "
 
 #: mmcheckingpanel.cpp:645 webapp.cpp:621
 msgid "Attachment"
@@ -5853,11 +5853,11 @@ msgstr "Budget:"
 
 #: mmreportspanel.cpp:357
 msgid "All Accounts:"
-msgstr ""
+msgstr "Tous les comptes :"
 
 #: mmreportspanel.cpp:358
 msgid "Specific Accounts:"
-msgstr ""
+msgstr "Comptes spécifiques :"
 
 #: mmreportspanel.cpp:374
 msgid "Future Months:"
