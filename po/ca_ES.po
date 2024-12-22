@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-20 14:18+0000\n"
-"PO-Revision-Date: 2024-12-22 21:08\n"
+"PO-Revision-Date: 2024-12-22 22:04\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
@@ -8237,7 +8237,7 @@ msgstr ""
 
 #: webapp.cpp:567
 msgid "Today will be used as the transaction date"
-msgstr ""
+msgstr "El dia d'avui serà utilitzat com el dia de la transacció"
 
 #: webapp.cpp:596 webapp.cpp:630 webappdialog.cpp:338
 msgid "Unable to download attachments from webapp."
