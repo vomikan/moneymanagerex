@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-20 14:18+0000\n"
-"PO-Revision-Date: 2024-12-22 18:58\n"
+"PO-Revision-Date: 2024-12-22 21:08\n"
 "Last-Translator: \n"
 "Language-Team: Catalan\n"
 "Language: ca_ES\n"
@@ -3271,7 +3271,7 @@ msgstr ""
 
 #: import_export/qif_import_gui.cpp:1053
 msgid "Importing"
-msgstr ""
+msgstr "Important"
 
 #: import_export/qif_import_gui.cpp:1055
 msgid "Importing Accounts"
@@ -3552,7 +3552,7 @@ msgstr ""
 #: import_export/univcsvdialog.cpp:1306 import_export/univcsvdialog.cpp:1501
 #: webappdialog.cpp:408
 msgid "Import"
-msgstr ""
+msgstr "Importar"
 
 #: import_export/univcsvdialog.cpp:1366
 #, c-format
@@ -3601,7 +3601,7 @@ msgstr ""
 #: import_export/univcsvdialog.cpp:1492
 #, c-format
 msgid "Imported: %ld"
-msgstr ""
+msgstr "Importat: %ld"
 
 #: import_export/univcsvdialog.cpp:1494
 #, c-format
@@ -3652,7 +3652,7 @@ msgstr "Compte Invàlid"
 #: import_export/univcsvdialog.cpp:1737
 #, c-format
 msgid "Transactions exported: %ld"
-msgstr ""
+msgstr "Transaccions exportades: %ld"
 
 #: import_export/univcsvdialog.cpp:2181
 #, c-format
@@ -3861,7 +3861,7 @@ msgstr ""
 #: mmSimpleDialogs.cpp:770 mmSimpleDialogs.cpp:784
 #, c-format
 msgid "Color #&%i"
-msgstr ""
+msgstr "Color #&%i"
 
 #: mmSimpleDialogs.cpp:942
 msgid "Subtract one year"
@@ -4248,8 +4248,8 @@ msgstr ""
 #: mmchecking_list.cpp:691
 msgid "&Delete selected transaction..."
 msgid_plural "&Delete selected transactions..."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "&Descartar transacció seleccionada..."
+msgstr[1] "&Descartar transaccions seleccionades..."
 
 #: mmchecking_list.cpp:692
 msgid "&Permanently delete selected transaction..."
@@ -4295,7 +4295,7 @@ msgstr ""
 
 #: mmchecking_list.cpp:714
 msgid "D&uplicate"
-msgstr ""
+msgstr "D&uplicar"
 
 #: mmchecking_list.cpp:716
 msgid "Mar&k as"
@@ -4344,7 +4344,7 @@ msgstr ""
 #: mmchecking_list.cpp:1345 mmchecking_list.cpp:1356
 #, c-format
 msgid "Do you really want to delete all the \"%s\" transactions shown?"
-msgstr ""
+msgstr "Realment vol descartar totes les transaccions \"%s\" mostrades?"
 
 #: mmchecking_list.cpp:1422
 #, c-format
@@ -4536,7 +4536,7 @@ msgstr ""
 
 #: mmcheckingpanel.cpp:680
 msgid "Account Bal: "
-msgstr ""
+msgstr "Balanç del Compte: "
 
 #: mmcheckingpanel.cpp:683
 msgid "Reconciled Bal: "
@@ -5174,11 +5174,11 @@ msgstr ""
 
 #: mmframe.cpp:1871
 msgid "&X"
-msgstr ""
+msgstr "&X"
 
 #: mmframe.cpp:1871
 msgid "Follow MMEX on X"
-msgstr ""
+msgstr "Segueixi MMEX a X"
 
 #: mmframe.cpp:1873
 msgid "&YouTube"
@@ -5186,7 +5186,7 @@ msgstr "&YouTube"
 
 #: mmframe.cpp:1873
 msgid "Watch MMEX videos on YouTube"
-msgstr ""
+msgstr "Miri vídeos de MMEX a YouTube"
 
 #: mmframe.cpp:1875
 msgid "&Slack"
@@ -5420,7 +5420,7 @@ msgstr ""
 
 #: mmframe.cpp:2329 mmframe.cpp:2355 mmframe.cpp:2527
 msgid "Encrypted MMEX Database"
-msgstr ""
+msgstr "Base de dades de MMEX encriptada"
 
 #: mmframe.cpp:2353
 msgid "Choose Encrypted database file to open"
@@ -5428,7 +5428,7 @@ msgstr ""
 
 #: mmframe.cpp:2363
 msgid "Enter password for database"
-msgstr ""
+msgstr "Introdueixi la contrasenya per a la base de dades"
 
 #: mmframe.cpp:2368
 msgid "Choose database file to Save As"
@@ -5448,7 +5448,7 @@ msgstr ""
 
 #: mmframe.cpp:2401
 msgid "New password for database:"
-msgstr ""
+msgstr "Nova contrasenya per a la base de dades:"
 
 #: mmframe.cpp:2409
 msgid "New password must not be empty."
@@ -5928,7 +5928,7 @@ msgstr ""
 
 #: model/Model_Asset.cpp:50
 msgid "Percentage"
-msgstr ""
+msgstr "Percentatge"
 
 #: model/Model_Asset.cpp:51
 msgid "Linear"
@@ -5940,7 +5940,7 @@ msgstr ""
 
 #: model/Model_Attachment.cpp:24
 msgid "Transaction"
-msgstr ""
+msgstr "Transacció"
 
 #: model/Model_Attachment.cpp:27
 msgid "BankAccount"
@@ -5994,7 +5994,7 @@ msgstr ""
 
 #: model/Model_CustomField.cpp:26
 msgid "Integer"
-msgstr ""
+msgstr "Enter"
 
 #: model/Model_CustomField.cpp:27
 msgid "Decimal"
@@ -6053,11 +6053,11 @@ msgstr ""
 
 #: optiondialog.cpp:37 optionsettingsview.cpp:61
 msgid "View"
-msgstr ""
+msgstr "Visualitzar"
 
 #: optiondialog.cpp:161
 msgid "&Apply "
-msgstr ""
+msgstr "&Aplicar "
 
 #: optiondialog.cpp:219
 #, c-format
@@ -6116,17 +6116,17 @@ msgstr ""
 #: optionsettingsattachment.cpp:135
 #, c-format
 msgid "Windows folder: %s"
-msgstr ""
+msgstr "Carpeta de Windows: %s"
 
 #: optionsettingsattachment.cpp:143
 #, c-format
 msgid "Mac folder: %s"
-msgstr ""
+msgstr "Carpeta de Mac: %s"
 
 #: optionsettingsattachment.cpp:151
 #, c-format
 msgid "Unix folder: %s"
-msgstr ""
+msgstr "Carpeta d'Unix: %s"
 
 #: optionsettingsattachment.cpp:159
 msgid "Create and use Attachments subfolder"
@@ -6162,7 +6162,7 @@ msgstr ""
 
 #: optionsettingsattachment.cpp:238
 msgid "Attachments folder"
-msgstr ""
+msgstr "Carpeta de fitxers adjunts"
 
 #: optionsettingsattachment.cpp:238
 msgid "Attachments folder it's not writable!"
@@ -6194,7 +6194,7 @@ msgstr ""
 
 #: optionsettingsgeneral.cpp:79 wizard_newdb.cpp:117
 msgid "User Name"
-msgstr ""
+msgstr "Nom d'usuari"
 
 #: optionsettingsgeneral.cpp:84
 msgid "The User Name is used as a title for the database."
@@ -6826,7 +6826,7 @@ msgstr ""
 
 #: relocatepayeedialog.cpp:87 relocatepayeedialog.h:42
 msgid "Merge Payees"
-msgstr ""
+msgstr "Combinar Beneficiaris"
 
 #: relocatepayeedialog.cpp:99
 msgid "&Delete source payee after merge"
@@ -7229,7 +7229,7 @@ msgstr ""
 #: reports/summarystocks.cpp:118 sharetransactiondialog.cpp:244
 #: stocks_list.cpp:112 stockspanel.cpp:216
 msgid "Commission"
-msgstr ""
+msgstr "Comissió"
 
 #: reports/summarystocks.cpp:119 stocks_list.cpp:102
 msgid "Realized Gain/Loss"
