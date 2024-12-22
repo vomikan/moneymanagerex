@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-10-02 01:00+0300\n"
-"PO-Revision-Date: 2024-12-22 13:38\n"
+"PO-Revision-Date: 2024-12-22 16:04\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "MIME-Version: 1.0\n"
@@ -730,7 +730,7 @@ msgstr "Ο φάκελος συνημμένων δεν βρέθηκε"
 #: attachmentdialog.cpp:109
 #, c-format
 msgid "Attachment Manager | %s | %i"
-msgstr ""
+msgstr "Διαχειριστής Συνημμένων | %s %i"
 
 #: attachmentdialog.cpp:111
 #, c-format
@@ -2527,7 +2527,7 @@ msgstr "Σφάλμα: %s"
 
 #: dbwrapper.cpp:92 mmframe.cpp:2063
 msgid "Opening MMEX Database - Error"
-msgstr ""
+msgstr "Άνοιγμα Βάσης Δεδομένων MMEX – Σφάλμα"
 
 #: diagnostics.cpp:51
 msgid "Diagnostics"
@@ -3048,7 +3048,7 @@ msgstr "Αδυναμία δημιουργίας αρχείου."
 
 #: import_export/parsers.cpp:109 import_export/parsers.cpp:249
 msgid "Could not save file."
-msgstr ""
+msgstr "Αδυναμία αποθήκευσης αρχείου."
 
 #: import_export/parsers.cpp:109 import_export/parsers.cpp:249
 msgid "Export error"
@@ -3065,7 +3065,7 @@ msgstr "Σφάλμα ανάλυσης"
 
 #: import_export/parsers.cpp:158
 msgid "Could not find Worksheet."
-msgstr ""
+msgstr "Αδυναμία εύρεσης Φύλλου Εργασίας."
 
 #: import_export/parsers.cpp:164
 msgid "Table"
@@ -3073,7 +3073,7 @@ msgstr "Πίνακας"
 
 #: import_export/parsers.cpp:166
 msgid "Could not find Table."
-msgstr ""
+msgstr "Αδυναμία εύρεσης του πίνακα."
 
 #: import_export/parsers.cpp:217 mmframereport.cpp:132
 msgid "Transactions"
@@ -4555,7 +4555,7 @@ msgstr "Διαφορά: "
 
 #: mmcheckingpanel.cpp:571
 msgid "Filtered View Bal: "
-msgstr ""
+msgstr "Προβολή Φιλτραρισμένου Υπολοίπου: "
 
 #: mmcheckingpanel.cpp:645 webapp.cpp:621
 msgid "Attachment"
@@ -5851,11 +5851,11 @@ msgstr "Προϋπολογισμός:"
 
 #: mmreportspanel.cpp:357
 msgid "All Accounts:"
-msgstr ""
+msgstr "Όλοι οι Λογαριασμοί:"
 
 #: mmreportspanel.cpp:358
 msgid "Specific Accounts:"
-msgstr ""
+msgstr "Συγκεκριμένοι Λογαριασμοί:"
 
 #: mmreportspanel.cpp:374
 msgid "Future Months:"
