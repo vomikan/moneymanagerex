@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-20 14:18+0000\n"
-"PO-Revision-Date: 2024-12-22 21:08\n"
+"PO-Revision-Date: 2024-12-22 22:04\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -4594,15 +4594,15 @@ msgstr "Kijelölt ügyletek között eltelt napok: %d"
 
 #: mmcheckingpanel.cpp:1062
 msgid "Scheduled transactions cannot be shown, because the current filter choice extends into the future without limit."
-msgstr ""
+msgstr "Az ütemezett ügyletek nem jeleníthetők meg, mert a jelenlegi szűrőkijelölés korlátlanul kiterjed a jövőre."
 
 #: mmcheckingpanel.cpp:1063
 msgid "Click to show scheduled transactions. This feature works best with filter choices that extend into the future (e.g., Current Month)."
-msgstr ""
+msgstr "Kattintson az ütemezett ügyletek megjelenítéséhez. Ez a jellemző a jövőbe nyúló szűrőkijelölésekkel működik a legjobban (pl. Jelenlegi hónap)."
 
 #: mmcheckingpanel.cpp:1064
 msgid "Click to hide scheduled transactions."
-msgstr ""
+msgstr "Kattintson az ütemezett ügyletek elrejtéséhez."
 
 #: mmcustomdata.cpp:65
 msgid "Custom fields"
@@ -4722,7 +4722,7 @@ msgstr "Biztosan törölni szeretné a számlát?"
 
 #: mmframe.cpp:1408
 msgid "This will also delete any associated Shares."
-msgstr ""
+msgstr "Ezzel az összes kapcsolódó részvényt is törölni fogja."
 
 #: mmframe.cpp:1412 mmframe.cpp:3630
 msgid "Confirm Account Deletion"
