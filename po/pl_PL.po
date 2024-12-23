@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-23 22:22\n"
+"PO-Revision-Date: 2024-12-23 22:25\n"
 "Last-Translator: \n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -4779,11 +4779,11 @@ msgstr "&Importuj z"
 
 #: mmframe.cpp:1450
 msgid "&CSV Files…"
-msgstr ""
+msgstr "Pliki &CSV…"
 
 #: mmframe.cpp:1451
 msgid "&XML Files…"
-msgstr ""
+msgstr "Pliki &XML…"
 
 #: mmframe.cpp:1451 mmframe.cpp:1612
 msgid "Import from XML file (Excel format)"
@@ -4791,7 +4791,7 @@ msgstr "Import z pliku XML (format Excel)"
 
 #: mmframe.cpp:1453
 msgid "&QIF Files…"
-msgstr ""
+msgstr "Pliki &QIF…"
 
 #: mmframe.cpp:1456 mmframe.cpp:1619
 msgid "&Export as"
@@ -4799,23 +4799,23 @@ msgstr "&Eksportuj jako"
 
 #: mmframe.cpp:1457 mmframe.cpp:1611 mmframe.cpp:1620
 msgid "&CSV File…"
-msgstr ""
+msgstr "Plik &CSV…"
 
 #: mmframe.cpp:1458 mmframe.cpp:1612 mmframe.cpp:1621
 msgid "&XML File…"
-msgstr ""
+msgstr "&Plik XML…"
 
 #: mmframe.cpp:1460 mmframe.cpp:1623
 msgid "&MMEX CSV File…"
-msgstr ""
+msgstr "Plik &MMEX CSV…"
 
 #: mmframe.cpp:1461 mmframe.cpp:1624
 msgid "&JSON File…"
-msgstr ""
+msgstr "Plik &JSON…"
 
 #: mmframe.cpp:1462 mmframe.cpp:1614 mmframe.cpp:1625
 msgid "&QIF File…"
-msgstr ""
+msgstr "Plik &QIF…"
 
 #: mmframe.cpp:1487
 msgid "&Customize Report…"
@@ -4831,11 +4831,11 @@ msgstr ""
 
 #: mmframe.cpp:1505 mmframe.cpp:1523 mmframe.cpp:1543 mmframe.cpp:1726
 msgid "&Edit Account…"
-msgstr ""
+msgstr "&Edytuj konto…"
 
 #: mmframe.cpp:1506 mmframe.cpp:1526 mmframe.cpp:1546 mmframe.cpp:1732
 msgid "&Delete Account…"
-msgstr ""
+msgstr "&Usuń konto…"
 
 #: mmframe.cpp:1508 mmframe.cpp:1528
 msgid "&Launch Account Website"
@@ -4847,11 +4847,11 @@ msgstr ""
 
 #: mmframe.cpp:1524 mmframe.cpp:1729
 msgid "&Change Account Type…"
-msgstr ""
+msgstr "&Zmień typ konta…"
 
 #: mmframe.cpp:1542 mmframe.cpp:1723
 msgid "&New Account…"
-msgstr ""
+msgstr "&Nowe konto…"
 
 #: mmframe.cpp:1544
 msgid "Account &List"
@@ -4879,7 +4879,7 @@ msgstr ""
 
 #: mmframe.cpp:1595
 msgid "&New Database…"
-msgstr ""
+msgstr "&Nowa baza danych…"
 
 #: mmframe.cpp:1595 mmframe.cpp:1974 wizard_newdb.cpp:136
 msgid "New Database"
@@ -4887,7 +4887,7 @@ msgstr "Nowa baza danych"
 
 #: mmframe.cpp:1596
 msgid "&Open Database…\tCtrl-O"
-msgstr ""
+msgstr "&Otwórz bazę danych… Ctrl-O"
 
 #: mmframe.cpp:1596 mmframe.cpp:1975
 msgid "Open Database"
@@ -4895,7 +4895,7 @@ msgstr "Otwórz bazę danych"
 
 #: mmframe.cpp:1597
 msgid "Save Database &As…"
-msgstr ""
+msgstr "Zapi&sz bazę danych jako…"
 
 #: mmframe.cpp:1597
 msgid "Save Database As"
@@ -4923,7 +4923,7 @@ msgstr "Eksportuj jako stały plik CSV"
 
 #: mmframe.cpp:1627
 msgid "&HTML File…"
-msgstr ""
+msgstr "Plik &HTML…"
 
 #: mmframe.cpp:1627
 msgid "Export as HTML file"
@@ -4931,7 +4931,7 @@ msgstr "Eksportuj jako plik HTML"
 
 #: mmframe.cpp:1632
 msgid "&Print…"
-msgstr ""
+msgstr "&Drukuj…"
 
 #: mmframe.cpp:1632
 msgid "Print current view"
@@ -5091,7 +5091,7 @@ msgstr ""
 
 #: mmframe.cpp:1767
 msgid "&Categories…"
-msgstr ""
+msgstr "&Kategorie…"
 
 #: mmframe.cpp:1768
 msgid "Merge categories"
@@ -5099,7 +5099,7 @@ msgstr "Scal kategorie"
 
 #: mmframe.cpp:1770
 msgid "&Payees…"
-msgstr ""
+msgstr "&Beneficjentów…"
 
 #: mmframe.cpp:1771
 msgid "Merge payees"
@@ -5107,7 +5107,7 @@ msgstr "Scal beneficjentów"
 
 #: mmframe.cpp:1773
 msgid "&Tags…"
-msgstr ""
+msgstr "&Tagi…"
 
 #: mmframe.cpp:1774
 msgid "Merge tags"
@@ -5140,7 +5140,7 @@ msgstr "&Aktywa"
 
 #: mmframe.cpp:1802
 msgid "T&heme Manager…"
-msgstr ""
+msgstr "Menedżer &motywów…"
 
 #: mmframe.cpp:1802 themes.cpp:143
 msgid "Theme Manager"
@@ -5160,7 +5160,7 @@ msgstr ""
 
 #: mmframe.cpp:1824
 msgid "Refresh &WebApp…"
-msgstr ""
+msgstr "Odśw&ież WebApp…"
 
 #: mmframe.cpp:1824 mmframe.cpp:2962 mmframe.cpp:2969
 msgid "Refresh WebApp"
@@ -5172,7 +5172,7 @@ msgstr ""
 
 #: mmframe.cpp:1836
 msgid "&Decrypt Encrypted Database…"
-msgstr ""
+msgstr "&Odszyfruj zaszyfrowaną bazę danych…"
 
 #: mmframe.cpp:1837
 msgid "Convert encrypted database to unencrypted database"
@@ -5180,7 +5180,7 @@ msgstr "Konwertuj zaszyfrowaną bazę danych na niezaszyfrowaną bazę danych"
 
 #: mmframe.cpp:1839
 msgid "Change Encrypted &Password…"
-msgstr ""
+msgstr "&Zmień zaszyfrowane hasło…"
 
 #: mmframe.cpp:1840
 msgid "Change the password of an encrypted database"
@@ -5188,7 +5188,7 @@ msgstr "Zmień hasło zaszyfrowanej bazy danych"
 
 #: mmframe.cpp:1842
 msgid "&Optimize Database…"
-msgstr ""
+msgstr "&Optymalizuj bazę danych…"
 
 #: mmframe.cpp:1843
 msgid "Optimize database for space and performance"
@@ -5196,7 +5196,7 @@ msgstr "Optymalizuj bazę danych pod kątem zajmowanego miejsca i wydajności"
 
 #: mmframe.cpp:1845
 msgid "Database Check and De&bug…"
-msgstr ""
+msgstr "Sprawdzanie i &debugowanie bazy danych…"
 
 #: mmframe.cpp:1846
 msgid "Generate database report or fix errors"
@@ -5645,7 +5645,7 @@ msgstr "Pobierz ceny akcji z Yahoo"
 
 #: mmframe.cpp:3531
 msgid "Please wait…"
-msgstr ""
+msgstr "Proszę czekać…"
 
 #: mmframe.cpp:3580 stockspanel.cpp:496
 #, c-format
@@ -7665,11 +7665,11 @@ msgstr "Aktualna łączna wartość"
 
 #: stocks_list.cpp:146
 msgid "&New Stock Investment…"
-msgstr ""
+msgstr "&Nowa inwestycja…"
 
 #: stocks_list.cpp:148
 msgid "&Add Stock Transactions…"
-msgstr ""
+msgstr "&Dodaj transakcję akcji…"
 
 #: stocks_list.cpp:149
 msgid "&View Stock Transactions"
@@ -7677,11 +7677,11 @@ msgstr "Pokaż transakcje na akcjach"
 
 #: stocks_list.cpp:151
 msgid "&Edit Stock Investment…"
-msgstr ""
+msgstr "&Edytuj inwestycję…"
 
 #: stocks_list.cpp:153
 msgid "&Delete Stock Investment…"
-msgstr ""
+msgstr "&Usuń inwestycję…"
 
 #: stocks_list.cpp:156
 msgid "Stock &Web Page"
@@ -7776,7 +7776,7 @@ msgstr "Brak elementów do aktualizacji"
 
 #: stockspanel.cpp:452
 msgid "Connecting…"
-msgstr ""
+msgstr "Łączenie…"
 
 #: stockspanel.cpp:556
 #, c-format
