@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-23 22:23\n"
+"PO-Revision-Date: 2024-12-23 22:25\n"
 "Last-Translator: \n"
 "Language-Team: Turkish\n"
 "Language: tr_TR\n"
@@ -536,15 +536,15 @@ msgstr "Bugünkü Değer"
 
 #: assetspanel.cpp:100
 msgid "&New Asset…"
-msgstr ""
+msgstr "&Yeni Varlık…"
 
 #: assetspanel.cpp:102
 msgid "D&uplicate Asset…"
-msgstr ""
+msgstr "Varlığı &Kopyala…"
 
 #: assetspanel.cpp:104
 msgid "&Add Asset Transaction…"
-msgstr ""
+msgstr "&Varlık İşlemi Ekle…"
 
 #: assetspanel.cpp:105
 msgid "&View Asset Transactions"
@@ -552,20 +552,20 @@ msgstr "Varlık İşlemlerini &Göster"
 
 #: assetspanel.cpp:106
 msgid "&Open Asset Account…"
-msgstr ""
+msgstr "Varlık Hesabını &Aç…"
 
 #: assetspanel.cpp:108
 msgid "&Edit Asset…"
-msgstr ""
+msgstr "&Varlık Düzenle…"
 
 #: assetspanel.cpp:110
 msgid "&Delete Asset…"
-msgstr ""
+msgstr "&Varlık Sil…"
 
 #: assetspanel.cpp:112 billsdepositspanel.cpp:455 mmchecking_list.cpp:522
 #: stocks_list.cpp:155
 msgid "&Organize Attachments…"
-msgstr ""
+msgstr "&Ekleri Düzenle…"
 
 #: assetspanel.cpp:209
 msgid "Do you really want to delete the Asset?"
@@ -1334,7 +1334,7 @@ msgstr "Bir Sonraki Zamanlanmış İşlem Oluşumunu Atla"
 
 #: billsdepositspanel.cpp:445
 msgid "Enter next Occurrence…"
-msgstr ""
+msgstr "Bir sonraki Oluşumu girin…"
 
 #: billsdepositspanel.cpp:447
 msgid "Skip next Occurrence"
@@ -1342,19 +1342,19 @@ msgstr "Sonraki gerçekleşmeyi atlayın"
 
 #: billsdepositspanel.cpp:449
 msgid "&New Scheduled Transaction…"
-msgstr ""
+msgstr "&Yeni Zamanlanmış İşlem…"
 
 #: billsdepositspanel.cpp:450
 msgid "&Edit Scheduled Transaction…"
-msgstr ""
+msgstr "&Zamanlanmış İşlemi Düzenle…"
 
 #: billsdepositspanel.cpp:451
 msgid "D&uplicate Scheduled Transaction…"
-msgstr ""
+msgstr "Z&amanlanmış İşlemi Çoğaltın…"
 
 #: billsdepositspanel.cpp:453
 msgid "&Delete Scheduled Transaction…"
-msgstr ""
+msgstr "&Zamanlanmış İşlemi silin…"
 
 #: billsdepositspanel.cpp:509
 msgid "Automated"
@@ -2865,11 +2865,11 @@ msgstr "Genel Rapor Yöneticisi"
 
 #: general_report_manager.cpp:732
 msgid "Assets…"
-msgstr ""
+msgstr "Varlıklar…"
 
 #: general_report_manager.cpp:735
 msgid "New Empty Report…"
-msgstr ""
+msgstr "Yeni Boş Rapor…"
 
 #: general_report_manager.cpp:736
 msgid "New Sample Report"
@@ -2877,11 +2877,11 @@ msgstr "Yeni Örnek Rapor"
 
 #: general_report_manager.cpp:739
 msgid "Change Group…"
-msgstr ""
+msgstr "Grubu Değiştir…"
 
 #: general_report_manager.cpp:741
 msgid "Rename Group…"
-msgstr ""
+msgstr "Gurubu Yeniden Adlandır…"
 
 #: general_report_manager.cpp:742
 msgid "UnGroup"
@@ -2889,7 +2889,7 @@ msgstr "Gurubu Çöz"
 
 #: general_report_manager.cpp:743
 msgid "Rename Report…"
-msgstr ""
+msgstr "Raporu Yeniden Adlandır…"
 
 #: general_report_manager.cpp:747
 msgid "Active"
@@ -2901,7 +2901,7 @@ msgstr ""
 
 #: general_report_manager.cpp:751
 msgid "Delete Report…"
-msgstr ""
+msgstr "Raporu Sil…"
 
 #: general_report_manager.cpp:848 general_report_manager.cpp:1009
 msgid "Enter the name for the report"
@@ -4208,8 +4208,8 @@ msgstr ""
 #: mmchecking_list.cpp:490
 msgid "&Edit Transaction…"
 msgid_plural "&Edit Transactions…"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "&İşlemi Düzenle…"
+msgstr[1] "&İşlemleri Düzenle…"
 
 #: mmchecking_list.cpp:493
 msgid "&Copy Transaction"
@@ -4228,13 +4228,13 @@ msgstr "İşlemleri &Yapıştır (%d)"
 
 #: mmchecking_list.cpp:505
 msgid "D&uplicate Transaction…"
-msgstr ""
+msgstr "İşlemlemi &Çoğalt…"
 
 #: mmchecking_list.cpp:508
 msgid "&Move Transaction…"
 msgid_plural "&Move Transactions…"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "İşlemi &Taşı…"
+msgstr[1] "İşlemleri &Taşı…"
 
 #: mmchecking_list.cpp:514
 msgid "&View In Other Account"
@@ -4246,13 +4246,13 @@ msgstr "&Parçalı Kategorileri Göster"
 
 #: mmchecking_list.cpp:526
 msgid "Create Scheduled T&ransaction…"
-msgstr ""
+msgstr "Zamanlanmış İşlem &Oluştur…"
 
 #: mmchecking_list.cpp:530
 msgid "&Restore selected transaction…"
 msgid_plural "&Restore selected transactions…"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "&Seçilen işlemi geri yükle…"
+msgstr[1] "&Seçilen işlemleri geri yükle…"
 
 #: mmchecking_list.cpp:532
 msgid "Restore &all transactions in current view…"
@@ -4270,14 +4270,14 @@ msgstr ""
 #: mmchecking_list.cpp:691
 msgid "&Delete selected transaction…"
 msgid_plural "&Delete selected transactions…"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "&Seçilen işlemi sil…"
+msgstr[1] "&Seçilen işlemleri sil…"
 
 #: mmchecking_list.cpp:692
 msgid "&Permanently delete selected transaction…"
 msgid_plural "&Permanently delete selected transactions…"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "&Seçilen işlemi kalıcı olarak silin…"
+msgstr[1] "&Seçilen işlemleri kalıcı olarak silin…"
 
 #: mmchecking_list.cpp:695
 msgid "Delete &all transactions in current view…"
@@ -4425,8 +4425,8 @@ msgstr "İşlem Taşımayı Onayla"
 #, c-format
 msgid "Moving transaction to…"
 msgid_plural "Moving %i transactions to…"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "İşlem şuraya taşınıyor…"
+msgstr[1] "%i işlemler şuraya taşınıyor…"
 
 #: mmchecking_list.cpp:1756 stocks_list.cpp:312
 msgid "Select the destination Account "
@@ -4510,15 +4510,15 @@ msgstr ""
 
 #: mmcheckingpanel.cpp:445
 msgid "&New Withdrawal…"
-msgstr ""
+msgstr "&Yeni Para Çekme…"
 
 #: mmcheckingpanel.cpp:446
 msgid "&New Deposit…"
-msgstr ""
+msgstr "&Yeni Para Yatırma…"
 
 #: mmcheckingpanel.cpp:447
 msgid "&New Transfer…"
-msgstr ""
+msgstr "&Yeni Aktarım…"
 
 #: mmcheckingpanel.cpp:576
 msgid "Delete all selected transactions"
@@ -4743,11 +4743,11 @@ msgstr "&Şuradan içe aktar"
 
 #: mmframe.cpp:1450
 msgid "&CSV Files…"
-msgstr ""
+msgstr "&CSV Dosyaları…"
 
 #: mmframe.cpp:1451
 msgid "&XML Files…"
-msgstr ""
+msgstr "&XML Dosyaları…"
 
 #: mmframe.cpp:1451 mmframe.cpp:1612
 msgid "Import from XML file (Excel format)"
@@ -4755,7 +4755,7 @@ msgstr "XML'den al (Excel formatı)"
 
 #: mmframe.cpp:1453
 msgid "&QIF Files…"
-msgstr ""
+msgstr "&QIF Dosyaları…"
 
 #: mmframe.cpp:1456 mmframe.cpp:1619
 msgid "&Export as"
@@ -4763,23 +4763,23 @@ msgstr "&Farklı dışa aktar"
 
 #: mmframe.cpp:1457 mmframe.cpp:1611 mmframe.cpp:1620
 msgid "&CSV File…"
-msgstr ""
+msgstr "&CSV Dosyaları…"
 
 #: mmframe.cpp:1458 mmframe.cpp:1612 mmframe.cpp:1621
 msgid "&XML File…"
-msgstr ""
+msgstr "&XML Dosyaları…"
 
 #: mmframe.cpp:1460 mmframe.cpp:1623
 msgid "&MMEX CSV File…"
-msgstr ""
+msgstr "&MMEX CSV Dosya…"
 
 #: mmframe.cpp:1461 mmframe.cpp:1624
 msgid "&JSON File…"
-msgstr ""
+msgstr "&JSON Dosyaları…"
 
 #: mmframe.cpp:1462 mmframe.cpp:1614 mmframe.cpp:1625
 msgid "&QIF File…"
-msgstr ""
+msgstr "&QIF Dosyaları…"
 
 #: mmframe.cpp:1487
 msgid "&Customize Report…"
@@ -4795,11 +4795,11 @@ msgstr ""
 
 #: mmframe.cpp:1505 mmframe.cpp:1523 mmframe.cpp:1543 mmframe.cpp:1726
 msgid "&Edit Account…"
-msgstr ""
+msgstr "&Hesap Düzenle…"
 
 #: mmframe.cpp:1506 mmframe.cpp:1526 mmframe.cpp:1546 mmframe.cpp:1732
 msgid "&Delete Account…"
-msgstr ""
+msgstr "&Hesap Sil…"
 
 #: mmframe.cpp:1508 mmframe.cpp:1528
 msgid "&Launch Account Website"
@@ -4811,11 +4811,11 @@ msgstr ""
 
 #: mmframe.cpp:1524 mmframe.cpp:1729
 msgid "&Change Account Type…"
-msgstr ""
+msgstr "Hesap &Tipini Değiştir…"
 
 #: mmframe.cpp:1542 mmframe.cpp:1723
 msgid "&New Account…"
-msgstr ""
+msgstr "&Yeni Hesap…"
 
 #: mmframe.cpp:1544
 msgid "Account &List"
@@ -4843,7 +4843,7 @@ msgstr ""
 
 #: mmframe.cpp:1595
 msgid "&New Database…"
-msgstr ""
+msgstr "&Yeni Veritabanı…"
 
 #: mmframe.cpp:1595 mmframe.cpp:1974 wizard_newdb.cpp:136
 msgid "New Database"
@@ -4851,7 +4851,7 @@ msgstr "Yeni Veritabanı"
 
 #: mmframe.cpp:1596
 msgid "&Open Database…\tCtrl-O"
-msgstr ""
+msgstr "&Veritabanı Aç\tCtrl-O"
 
 #: mmframe.cpp:1596 mmframe.cpp:1975
 msgid "Open Database"
@@ -4859,7 +4859,7 @@ msgstr "Veritabanı Aç"
 
 #: mmframe.cpp:1597
 msgid "Save Database &As…"
-msgstr ""
+msgstr "Veritabanını Farklı &Kaydet…"
 
 #: mmframe.cpp:1597
 msgid "Save Database As"
@@ -4887,7 +4887,7 @@ msgstr "Sabit CSV dosyası olarak dışa aktar"
 
 #: mmframe.cpp:1627
 msgid "&HTML File…"
-msgstr ""
+msgstr "&HTML Dosyası…"
 
 #: mmframe.cpp:1627
 msgid "Export as HTML file"
@@ -4895,7 +4895,7 @@ msgstr "HTML dosyası olarak dışa aktar"
 
 #: mmframe.cpp:1632
 msgid "&Print…"
-msgstr ""
+msgstr "&Yazdır…"
 
 #: mmframe.cpp:1632
 msgid "Print current view"
@@ -5055,7 +5055,7 @@ msgstr ""
 
 #: mmframe.cpp:1767
 msgid "&Categories…"
-msgstr ""
+msgstr "&Kategoriler…"
 
 #: mmframe.cpp:1768
 msgid "Merge categories"
@@ -5063,7 +5063,7 @@ msgstr "Kategorileri birleştir"
 
 #: mmframe.cpp:1770
 msgid "&Payees…"
-msgstr ""
+msgstr "&Alacaklılar…"
 
 #: mmframe.cpp:1771
 msgid "Merge payees"
@@ -5071,7 +5071,7 @@ msgstr "Alacaklıları birleştir"
 
 #: mmframe.cpp:1773
 msgid "&Tags…"
-msgstr ""
+msgstr "&Etiketler…"
 
 #: mmframe.cpp:1774
 msgid "Merge tags"
@@ -5104,7 +5104,7 @@ msgstr "&Varlıklar"
 
 #: mmframe.cpp:1802
 msgid "T&heme Manager…"
-msgstr ""
+msgstr "T&ema Yönetimi…"
 
 #: mmframe.cpp:1802 themes.cpp:143
 msgid "Theme Manager"
@@ -5124,7 +5124,7 @@ msgstr ""
 
 #: mmframe.cpp:1824
 msgid "Refresh &WebApp…"
-msgstr ""
+msgstr "&WebApp Yenile…"
 
 #: mmframe.cpp:1824 mmframe.cpp:2962 mmframe.cpp:2969
 msgid "Refresh WebApp"
@@ -5144,7 +5144,7 @@ msgstr ""
 
 #: mmframe.cpp:1839
 msgid "Change Encrypted &Password…"
-msgstr ""
+msgstr "Şifreli &Şifreyi Değiştir…"
 
 #: mmframe.cpp:1840
 msgid "Change the password of an encrypted database"
@@ -5152,7 +5152,7 @@ msgstr "Şifrelenmiş bir veritabanının şifresini değiştir"
 
 #: mmframe.cpp:1842
 msgid "&Optimize Database…"
-msgstr ""
+msgstr "Veritabanını &Optimize Et…"
 
 #: mmframe.cpp:1843
 msgid "Optimize database for space and performance"
@@ -5160,7 +5160,7 @@ msgstr ""
 
 #: mmframe.cpp:1845
 msgid "Database Check and De&bug…"
-msgstr ""
+msgstr "Veritabanı Kontrolü ve Hata &Ayıkla…"
 
 #: mmframe.cpp:1846
 msgid "Generate database report or fix errors"
@@ -5609,7 +5609,7 @@ msgstr "Yahoo'dan hisse senedi fiyatları indiriliyor"
 
 #: mmframe.cpp:3531
 msgid "Please wait…"
-msgstr ""
+msgstr "Lütfen bekleyin…"
 
 #: mmframe.cpp:3580 stockspanel.cpp:496
 #, c-format
@@ -7621,11 +7621,11 @@ msgstr "Günc. Toplam Değer"
 
 #: stocks_list.cpp:146
 msgid "&New Stock Investment…"
-msgstr ""
+msgstr "&Yeni Hisse Senedi Yatırımı…"
 
 #: stocks_list.cpp:148
 msgid "&Add Stock Transactions…"
-msgstr ""
+msgstr "&Hisse Senedi İşlemleri Ekleyin…"
 
 #: stocks_list.cpp:149
 msgid "&View Stock Transactions"
@@ -7633,11 +7633,11 @@ msgstr "Menkul Değer İşlemlerini &Göster"
 
 #: stocks_list.cpp:151
 msgid "&Edit Stock Investment…"
-msgstr ""
+msgstr "&Hisse Senedi Yatırımını Düzenle…"
 
 #: stocks_list.cpp:153
 msgid "&Delete Stock Investment…"
-msgstr ""
+msgstr "Hisse Senedi Yatırımını &Sil…"
 
 #: stocks_list.cpp:156
 msgid "Stock &Web Page"
@@ -7732,7 +7732,7 @@ msgstr "Güncellenecek birşey yok"
 
 #: stockspanel.cpp:452
 msgid "Connecting…"
-msgstr ""
+msgstr "Bağlanıyor…"
 
 #: stockspanel.cpp:556
 #, c-format
