@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-23 22:23\n"
+"PO-Revision-Date: 2024-12-23 22:25\n"
 "Last-Translator: \n"
 "Language-Team: Slovak\n"
 "Language: sk_SK\n"
@@ -536,15 +536,15 @@ msgstr "Aktuálna hodnota"
 
 #: assetspanel.cpp:100
 msgid "&New Asset…"
-msgstr ""
+msgstr "&Nový hmotný majetok…"
 
 #: assetspanel.cpp:102
 msgid "D&uplicate Asset…"
-msgstr ""
+msgstr "D&uplikovať hmotný majetok…"
 
 #: assetspanel.cpp:104
 msgid "&Add Asset Transaction…"
-msgstr ""
+msgstr "Prid&ať transakciu hmotného majetku…"
 
 #: assetspanel.cpp:105
 msgid "&View Asset Transactions"
@@ -552,20 +552,20 @@ msgstr "Zobraziť &všetky transakcie hmotného majetku"
 
 #: assetspanel.cpp:106
 msgid "&Open Asset Account…"
-msgstr ""
+msgstr "&Otvoriť účet hmotného majetku…"
 
 #: assetspanel.cpp:108
 msgid "&Edit Asset…"
-msgstr ""
+msgstr "Upraviť hmotný maj&etok…"
 
 #: assetspanel.cpp:110
 msgid "&Delete Asset…"
-msgstr ""
+msgstr "O&dstrániť hmotný majetok…"
 
 #: assetspanel.cpp:112 billsdepositspanel.cpp:455 mmchecking_list.cpp:522
 #: stocks_list.cpp:155
 msgid "&Organize Attachments…"
-msgstr ""
+msgstr "&Organizovať prílohy…"
 
 #: assetspanel.cpp:209
 msgid "Do you really want to delete the Asset?"
@@ -1334,7 +1334,7 @@ msgstr "Preskočte ďalšiu naplánovanú transakciu"
 
 #: billsdepositspanel.cpp:445
 msgid "Enter next Occurrence…"
-msgstr ""
+msgstr "Zadajte ďalší výskyt…"
 
 #: billsdepositspanel.cpp:447
 msgid "Skip next Occurrence"
@@ -1342,19 +1342,19 @@ msgstr "Preskočiť ďalší výskyt"
 
 #: billsdepositspanel.cpp:449
 msgid "&New Scheduled Transaction…"
-msgstr ""
+msgstr "&Nová naplánovaná transakcia…"
 
 #: billsdepositspanel.cpp:450
 msgid "&Edit Scheduled Transaction…"
-msgstr ""
+msgstr "Upravt&e naplánovanú transakciu…"
 
 #: billsdepositspanel.cpp:451
 msgid "D&uplicate Scheduled Transaction…"
-msgstr ""
+msgstr "D&uplikovať naplánovanú transakciu…"
 
 #: billsdepositspanel.cpp:453
 msgid "&Delete Scheduled Transaction…"
-msgstr ""
+msgstr "O&dstrániť naplánovanú transakciu…"
 
 #: billsdepositspanel.cpp:509
 msgid "Automated"
@@ -4525,7 +4525,7 @@ msgstr "Zobraziť od dátumu výpisu"
 
 #: mmcheckingpanel.cpp:67
 msgid "View Transaction Report…"
-msgstr ""
+msgstr "Zobraziť správu o transakciách…"
 
 #: mmcheckingpanel.cpp:445
 msgid "&New Withdrawal…"
@@ -5613,7 +5613,7 @@ msgstr ""
 
 #: mmframe.cpp:3531
 msgid "Please wait…"
-msgstr ""
+msgstr "Prosím čakajte…"
 
 #: mmframe.cpp:3580 stockspanel.cpp:496
 #, c-format
@@ -7725,7 +7725,7 @@ msgstr "Nie je dostupná žiadna aktualizácia"
 
 #: stockspanel.cpp:452
 msgid "Connecting…"
-msgstr ""
+msgstr "Pripájanie…"
 
 #: stockspanel.cpp:556
 #, c-format
