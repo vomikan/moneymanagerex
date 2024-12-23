@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
-"POT-Creation-Date: 2024-12-20 14:18+0000\n"
-"PO-Revision-Date: 2024-12-22 18:58\n"
+"POT-Creation-Date: 2024-12-23 22:19+0000\n"
+"PO-Revision-Date: 2024-12-23 22:23\n"
 "Last-Translator: \n"
 "Language-Team: Lithuanian\n"
 "Language: lt_LT\n"
@@ -291,8 +291,8 @@ msgid "Invalid Date"
 msgstr "Klaidinga data"
 
 #: accountdialog.cpp:515
-msgid "Opening date cannot be in the future"
-msgstr "Atidarymo data negali būti ateityje"
+msgid "Opening date is unable to be in the future"
+msgstr ""
 
 #: accountdialog.cpp:524
 msgid "Transactions for this account already exist before this date"
@@ -535,37 +535,37 @@ msgid "Current Value"
 msgstr "Dabartinė vertė"
 
 #: assetspanel.cpp:100
-msgid "&New Asset..."
-msgstr "&Naujas turtas..."
+msgid "&New Asset…"
+msgstr "&Naujas turtas…"
 
 #: assetspanel.cpp:102
-msgid "D&uplicate Asset..."
-msgstr "D&ubliuoti turtą..."
+msgid "D&uplicate Asset…"
+msgstr "D&ubliuoti turtą…"
 
 #: assetspanel.cpp:104
-msgid "&Add Asset Transaction..."
-msgstr "&Pridėti turto operaciją..."
+msgid "&Add Asset Transaction…"
+msgstr "&Pridėti turto operaciją…"
 
 #: assetspanel.cpp:105
 msgid "&View Asset Transactions"
 msgstr "&Peržiūrėti turto operacijas"
 
 #: assetspanel.cpp:106
-msgid "&Open Asset Account..."
-msgstr "&Atidaryti turto paskyrą..."
+msgid "&Open Asset Account…"
+msgstr "&Atidaryti turto paskyrą…"
 
 #: assetspanel.cpp:108
-msgid "&Edit Asset..."
-msgstr "&Redaguoti turtą..."
+msgid "&Edit Asset…"
+msgstr "&Redaguoti turtą…"
 
 #: assetspanel.cpp:110
-msgid "&Delete Asset..."
-msgstr "&Ištrinti turtą..."
+msgid "&Delete Asset…"
+msgstr "&Ištrinti turtą…"
 
 #: assetspanel.cpp:112 billsdepositspanel.cpp:455 mmchecking_list.cpp:522
 #: stocks_list.cpp:155
-msgid "&Organize Attachments..."
-msgstr "&Tvarkyti priedus..."
+msgid "&Organize Attachments…"
+msgstr "&Tvarkyti priedus…"
 
 #: assetspanel.cpp:209
 msgid "Do you really want to delete the Asset?"
@@ -1333,27 +1333,27 @@ msgid "Skip Next Scheduled Transaction Occurrence"
 msgstr ""
 
 #: billsdepositspanel.cpp:445
-msgid "Enter next Occurrence..."
-msgstr "Įveskite kitą įvykį..."
+msgid "Enter next Occurrence…"
+msgstr "Įveskite kitą įvykį…"
 
 #: billsdepositspanel.cpp:447
 msgid "Skip next Occurrence"
 msgstr "Praleisti kitą įvykį"
 
 #: billsdepositspanel.cpp:449
-msgid "&New Scheduled Transaction..."
+msgid "&New Scheduled Transaction…"
 msgstr ""
 
 #: billsdepositspanel.cpp:450
-msgid "&Edit Scheduled Transaction..."
+msgid "&Edit Scheduled Transaction…"
 msgstr ""
 
 #: billsdepositspanel.cpp:451
-msgid "D&uplicate Scheduled Transaction..."
+msgid "D&uplicate Scheduled Transaction…"
 msgstr ""
 
 #: billsdepositspanel.cpp:453
-msgid "&Delete Scheduled Transaction..."
+msgid "&Delete Scheduled Transaction…"
 msgstr ""
 
 #: billsdepositspanel.cpp:509
@@ -1649,8 +1649,8 @@ msgid "Edit the name of an existing category"
 msgstr "Redaguoti egzistuojančios kategorijos pavadinimą"
 
 #: categdialog.cpp:323
-msgid "Delete an existing category. The category cannot be used by existing transactions."
-msgstr "Ištrinti egzistuojančią kategoriją. Kategorija negali būti naudojama egzistuojančiose operacijose."
+msgid "Delete an existing category. The category is unable to be used by existing transactions."
+msgstr ""
 
 #: categdialog.cpp:328 maincurrencydialog.cpp:225
 msgid "&Select"
@@ -1689,7 +1689,7 @@ msgid "Category Manager: Adding Error"
 msgstr ""
 
 #: categdialog.cpp:427
-msgid "You cannot move a subcategory to a category that already has a subcategory with that name. Consider renaming before moving."
+msgid "Unable to move a subcategory to a category that already has a subcategory with that name. Consider renaming before moving."
 msgstr ""
 
 #: categdialog.cpp:428
@@ -1966,8 +1966,8 @@ msgid "Invalid Entry"
 msgstr "Netinkamas įrašas"
 
 #: currencydialog.cpp:285 currencydialog.cpp:310
-msgid "Grouping character cannot be the same as the decimal character"
-msgstr "Grupavimo simbolis negali būti toks pat kaip dešimtainis simbolis"
+msgid "Grouping character is unable to be the same as the decimal character"
+msgstr ""
 
 #: currencydialog.cpp:332
 #, c-format
@@ -2475,8 +2475,8 @@ msgid "When database file opening:"
 msgstr "Kai atidaromas duomenų bazės failas:"
 
 #: dbwrapper.cpp:114
-msgid "Can't open file"
-msgstr "Nepavyksta atverti failo"
+msgid "Unable to open file"
+msgstr ""
 
 #: dbwrapper.cpp:114
 msgid "You must specify path to another database file"
@@ -2879,32 +2879,32 @@ msgid "General Report Manager"
 msgstr "Bendras ataskaitų tvarkytuvas"
 
 #: general_report_manager.cpp:732
-msgid "Assets..."
-msgstr "Turtas..."
+msgid "Assets…"
+msgstr "Turtas…"
 
 #: general_report_manager.cpp:735
-msgid "New Empty Report..."
-msgstr "Nauja tuščia ataskaita..."
+msgid "New Empty Report…"
+msgstr "Nauja tuščia ataskaita…"
 
 #: general_report_manager.cpp:736
 msgid "New Sample Report"
 msgstr "Nauja pavyzdinė ataskaita"
 
 #: general_report_manager.cpp:739
-msgid "Change Group..."
-msgstr "Keisti grupę..."
+msgid "Change Group…"
+msgstr "Keisti grupę…"
 
 #: general_report_manager.cpp:741
-msgid "Rename Group..."
-msgstr "Pervardyti grupę..."
+msgid "Rename Group…"
+msgstr "Pervardyti grupę…"
 
 #: general_report_manager.cpp:742
 msgid "UnGroup"
 msgstr "Išgrupuoti"
 
 #: general_report_manager.cpp:743
-msgid "Rename Report..."
-msgstr "Pervadinti ataskaitą..."
+msgid "Rename Report…"
+msgstr "Pervadinti ataskaitą…"
 
 #: general_report_manager.cpp:747
 msgid "Active"
@@ -2915,8 +2915,8 @@ msgid "Show/Hide report in Navigator"
 msgstr ""
 
 #: general_report_manager.cpp:751
-msgid "Delete Report..."
-msgstr "Ištrinti ataskaitą..."
+msgid "Delete Report…"
+msgstr "Ištrinti ataskaitą…"
 
 #: general_report_manager.cpp:848 general_report_manager.cpp:1009
 msgid "Enter the name for the report"
@@ -3115,7 +3115,7 @@ msgstr "Failo pavadinimas:"
 
 #: import_export/qif_export.cpp:203 import_export/qif_import_gui.cpp:135
 #: import_export/univcsvdialog.cpp:201
-msgid "&Browse..."
+msgid "&Browse…"
 msgstr ""
 
 #: import_export/qif_export.cpp:225 import_export/univcsvdialog.cpp:555
@@ -3779,8 +3779,8 @@ msgid "Show all even the unused currencies"
 msgstr "Rodyti visas net nepanaudotas valiutas"
 
 #: maincurrencydialog.cpp:241
-msgid "Currency History Options"
-msgstr "Valiutų istorijos parinktys"
+msgid "Historical Currency Options"
+msgstr ""
 
 #: maincurrencydialog.cpp:258 stockdialog.cpp:287 stockdialog.cpp:306
 #: stockdialog.cpp:634 stockspanel.cpp:215
@@ -3812,8 +3812,8 @@ msgid "Delete selected Currency Values"
 msgstr "Ištrinkite pasirinktas valiutos vertes"
 
 #: maincurrencydialog.cpp:309
-msgid "Delete Currency Values history for unused currencies and days"
-msgstr "Ištrinkite nenaudojamų valiutų ir dienų valiutų verčių istoriją"
+msgid "Delete Historical Currency Values for unused currencies and days"
+msgstr ""
 
 #: maincurrencydialog.cpp:365
 msgid "Do you really want to delete the selected Currency?"
@@ -3825,8 +3825,8 @@ msgstr "Bazinės valiutos pasirinkimas"
 
 #: maincurrencydialog.cpp:435
 #, c-format
-msgid "Historic rates for %1$s found, but \"Use currency history\" in options is disabled:\n"
-"click no and enable it or click yes to remove all historic rates for %2$s"
+msgid "Historical rates for %1$s found, but “Use historical currency” in options is disabled:\n"
+"click No and enable it or click Yes to remove all historical rates for %2$s"
 msgstr ""
 
 #: maincurrencydialog.cpp:447
@@ -3835,14 +3835,13 @@ msgid "Currency History Options: %s"
 msgstr ""
 
 #: maincurrencydialog.cpp:503
-msgid "Unable to update history currency rates. Please update them manually!"
-msgstr "Nepavyko atnaujinti istorijos valiutų kursų. Atnaujinkite juos rankiniu būdu!"
+msgid "Unable to update historical currency rates. Please update them manually!"
+msgstr ""
 
-#: maincurrencydialog.cpp:504 maincurrencydialog.cpp:657
-#: maincurrencydialog.cpp:692 maincurrencydialog.cpp:728
-#: maincurrencydialog.cpp:834
-msgid "Currency history error"
-msgstr "Valiutos istorijos klaida"
+#: maincurrencydialog.cpp:504 maincurrencydialog.cpp:692
+#: maincurrencydialog.cpp:728
+msgid "Historical currency error"
+msgstr ""
 
 #: maincurrencydialog.cpp:536
 msgid "Set as Base Currency"
@@ -3851,6 +3850,10 @@ msgstr "Nustatyti kaip pagrindinę valiutą"
 #: maincurrencydialog.cpp:537
 msgid "Online Update Currency Rate"
 msgstr "Atnaujinti iš interneto valiutų kursą"
+
+#: maincurrencydialog.cpp:657 maincurrencydialog.cpp:834
+msgid "Currency history error"
+msgstr "Valiutos istorijos klaida"
 
 #: maincurrencydialog.cpp:657
 msgid "No currency selected!"
@@ -3867,12 +3870,12 @@ msgstr "Nepavyko atsisiųsti %s valiutos kursų"
 
 #: maincurrencydialog.cpp:726
 #, c-format
-msgid "Unable to download history for symbol %s. History rates not available!"
-msgstr "Nepavyko atsisiųsti simbolio %s istorijos. Istorijos įkainiai neprieinami!"
+msgid "Unable to download history for symbol %s. Historical rates unavailable!"
+msgstr ""
 
 #: maincurrencydialog.cpp:788 optionsettingsgeneral.cpp:300
-msgid "Changing base currency will delete all history rates, proceed?"
-msgstr "Pakeitus bazinę valiutą bus ištrinti visi istorijos kursai. Tęsti?"
+msgid "Changing base currency will delete all historical rates, proceed?"
+msgstr ""
 
 #: maincurrencydialog.cpp:812
 msgid "Do you want to update today currency rates?"
@@ -3880,12 +3883,12 @@ msgstr "Ar norite šiandien atnaujinti valiutų kursus?"
 
 #: maincurrencydialog.cpp:833
 #, c-format
-msgid "Unable to download history for base symbol %s. History rates not available!"
-msgstr "Nepavyko atsisiųsti pagrindinio simbolio %s istorijos. Istorijos įkainiai neprieinami!"
+msgid "Unable to download history for base symbol %s. Historical rates unavailable!"
+msgstr ""
 
-#: maincurrencydialog.cpp:876 stockspanel.cpp:432 util.cpp:684
-msgid "Could not find base currency symbol!"
-msgstr "Nepavyko rasti bazinės valiutos simbolio!"
+#: maincurrencydialog.cpp:876 util.cpp:684
+msgid "Unable to find base currency symbol!"
+msgstr ""
 
 #: mmSimpleDialogs.cpp:767 mmSimpleDialogs.cpp:779
 msgid "&Clear color"
@@ -4206,20 +4209,20 @@ msgid "Last Updated"
 msgstr "Paskutinį kartą atnaujinta"
 
 #: mmchecking_list.cpp:483
-msgid "New &Withdrawal..."
+msgid "New &Withdrawal…"
 msgstr ""
 
 #: mmchecking_list.cpp:484
-msgid "New &Deposit..."
+msgid "New &Deposit…"
 msgstr ""
 
 #: mmchecking_list.cpp:486
-msgid "New &Transfer..."
+msgid "New &Transfer…"
 msgstr ""
 
 #: mmchecking_list.cpp:490
-msgid "&Edit Transaction..."
-msgid_plural "&Edit Transactions..."
+msgid "&Edit Transaction…"
+msgid_plural "&Edit Transactions…"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
@@ -4243,12 +4246,12 @@ msgid "&Paste Transactions (%d)"
 msgstr "&Įklijuoti operaciją (%d)"
 
 #: mmchecking_list.cpp:505
-msgid "D&uplicate Transaction..."
-msgstr "D&pasikartoti operaciją..."
+msgid "D&uplicate Transaction…"
+msgstr "D&pasikartoti operaciją…"
 
 #: mmchecking_list.cpp:508
-msgid "&Move Transaction..."
-msgid_plural "&Move Transactions..."
+msgid "&Move Transaction…"
+msgid_plural "&Move Transactions…"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
@@ -4263,19 +4266,19 @@ msgid "&View Split Categories"
 msgstr "&Žiūrėti suskaldytas kategorijas"
 
 #: mmchecking_list.cpp:526
-msgid "Create Scheduled T&ransaction..."
+msgid "Create Scheduled T&ransaction…"
 msgstr ""
 
 #: mmchecking_list.cpp:530
-msgid "&Restore selected transaction..."
-msgid_plural "&Restore selected transactions..."
+msgid "&Restore selected transaction…"
+msgid_plural "&Restore selected transactions…"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
 #: mmchecking_list.cpp:532
-msgid "Restore &all transactions in current view..."
+msgid "Restore &all transactions in current view…"
 msgstr ""
 
 #: mmchecking_list.cpp:681
@@ -4288,35 +4291,35 @@ msgid "Cop&y Text to Clipboard"
 msgstr ""
 
 #: mmchecking_list.cpp:691
-msgid "&Delete selected transaction..."
-msgid_plural "&Delete selected transactions..."
+msgid "&Delete selected transaction…"
+msgid_plural "&Delete selected transactions…"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
 #: mmchecking_list.cpp:692
-msgid "&Permanently delete selected transaction..."
-msgid_plural "&Permanently delete selected transactions..."
+msgid "&Permanently delete selected transaction…"
+msgid_plural "&Permanently delete selected transactions…"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 msgstr[3] ""
 
 #: mmchecking_list.cpp:695
-msgid "Delete &all transactions in current view..."
+msgid "Delete &all transactions in current view…"
 msgstr ""
 
 #: mmchecking_list.cpp:695
-msgid "Permanently delete &all transactions in current view..."
+msgid "Permanently delete &all transactions in current view…"
 msgstr ""
 
 #: mmchecking_list.cpp:697
-msgid "Delete Viewed “&Follow Up” Transactions..."
+msgid "Delete Viewed “&Follow Up” Transactions…"
 msgstr ""
 
 #: mmchecking_list.cpp:698
-msgid "Delete Viewed “&Unreconciled” Transactions..."
+msgid "Delete Viewed “&Unreconciled” Transactions…"
 msgstr ""
 
 #: mmchecking_list.cpp:700
@@ -4381,8 +4384,8 @@ msgid "Deleted transactions will be temporarily stored and can be restored from 
 msgstr "Ištrintos operacijos bus laikinai saugomos ir jas bus galima atkurti rodinyje Ištrintos operacijos."
 
 #: mmchecking_list.cpp:1331 mmchecking_list.cpp:1430
-msgid "You cannot undo this action."
-msgstr "Negalite anuliuoti šio veiksmo."
+msgid "Unable to undo this action."
+msgstr ""
 
 #: mmchecking_list.cpp:1335 mmchecking_list.cpp:1346 mmchecking_list.cpp:1357
 #: mmchecking_list.cpp:1435
@@ -4457,8 +4460,8 @@ msgstr "Patvirtinkite operacijos perkėlimą"
 
 #: mmchecking_list.cpp:1752
 #, c-format
-msgid "Moving transaction to..."
-msgid_plural "Moving %i transactions to..."
+msgid "Moving transaction to…"
+msgid_plural "Moving %i transactions to…"
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
@@ -4481,7 +4484,7 @@ msgid "Not moved"
 msgstr ""
 
 #: mmchecking_list.cpp:1796
-msgid "Some transactions could not be moved"
+msgid "Unable to move some transactions"
 msgstr ""
 
 #: mmchecking_list.cpp:1863
@@ -4541,20 +4544,20 @@ msgid "View Since Statement Date"
 msgstr "Žiūrėti nuo pareiškimo datos"
 
 #: mmcheckingpanel.cpp:67
-msgid "View Transaction Report..."
+msgid "View Transaction Report…"
 msgstr ""
 
 #: mmcheckingpanel.cpp:445
-msgid "&New Withdrawal..."
-msgstr "&Naujas išėmimas..."
+msgid "&New Withdrawal…"
+msgstr "&Naujas išėmimas…"
 
 #: mmcheckingpanel.cpp:446
-msgid "&New Deposit..."
-msgstr "&Naujas indėlis..."
+msgid "&New Deposit…"
+msgstr "&Naujas indėlis…"
 
 #: mmcheckingpanel.cpp:447
-msgid "&New Transfer..."
-msgstr "&Naujas perkėlimas..."
+msgid "&New Transfer…"
+msgstr "&Naujas perkėlimas…"
 
 #: mmcheckingpanel.cpp:576
 msgid "Delete all selected transactions"
@@ -4630,7 +4633,7 @@ msgid "Days between selected transactions: %d"
 msgstr "Dienos tarp pasirinktų operacijų: %d"
 
 #: mmcheckingpanel.cpp:1062
-msgid "Scheduled transactions cannot be shown, because the current filter choice extends into the future without limit."
+msgid "Scheduled transactions are unable to be shown, because the current filter choice extends into the future without limit."
 msgstr ""
 
 #: mmcheckingpanel.cpp:1063
@@ -4777,80 +4780,80 @@ msgid "&Import from"
 msgstr "&Importuoti iš"
 
 #: mmframe.cpp:1450
-msgid "&CSV Files..."
-msgstr "&CSV failai..."
+msgid "&CSV Files…"
+msgstr "&CSV failai…"
 
 #: mmframe.cpp:1451
-msgid "&XML Files..."
-msgstr "&XML failai..."
+msgid "&XML Files…"
+msgstr "&XML failai…"
 
 #: mmframe.cpp:1451 mmframe.cpp:1612
 msgid "Import from XML file (Excel format)"
 msgstr "Importuoti iš XML failo (Excel formatu)"
 
 #: mmframe.cpp:1453
-msgid "&QIF Files..."
-msgstr "&QIF failai..."
+msgid "&QIF Files…"
+msgstr "&QIF failai…"
 
 #: mmframe.cpp:1456 mmframe.cpp:1619
 msgid "&Export as"
 msgstr "&Eksportuoti"
 
 #: mmframe.cpp:1457 mmframe.cpp:1611 mmframe.cpp:1620
-msgid "&CSV File..."
-msgstr "&CSV failai..."
+msgid "&CSV File…"
+msgstr "&CSV failai…"
 
 #: mmframe.cpp:1458 mmframe.cpp:1612 mmframe.cpp:1621
-msgid "&XML File..."
-msgstr "&XML failai..."
+msgid "&XML File…"
+msgstr "&XML failai…"
 
 #: mmframe.cpp:1460 mmframe.cpp:1623
-msgid "&MMEX CSV File..."
-msgstr "&MMEX CSV failas..."
+msgid "&MMEX CSV File…"
+msgstr "&MMEX CSV failas…"
 
 #: mmframe.cpp:1461 mmframe.cpp:1624
-msgid "&JSON File..."
-msgstr "&JSON failas..."
+msgid "&JSON File…"
+msgstr "&JSON failas…"
 
 #: mmframe.cpp:1462 mmframe.cpp:1614 mmframe.cpp:1625
-msgid "&QIF File..."
-msgstr "&QIF failai..."
+msgid "&QIF File…"
+msgstr "&QIF failai…"
 
 #: mmframe.cpp:1487
-msgid "&Customize Report..."
+msgid "&Customize Report…"
 msgstr ""
 
 #: mmframe.cpp:1488
-msgid "&Rename Report..."
+msgid "&Rename Report…"
 msgstr ""
 
 #: mmframe.cpp:1489
-msgid "&Delete Report..."
+msgid "&Delete Report…"
 msgstr ""
 
 #: mmframe.cpp:1505 mmframe.cpp:1523 mmframe.cpp:1543 mmframe.cpp:1726
-msgid "&Edit Account..."
-msgstr "&Redaguoti paskyrą..."
+msgid "&Edit Account…"
+msgstr "&Redaguoti paskyrą…"
 
 #: mmframe.cpp:1506 mmframe.cpp:1526 mmframe.cpp:1546 mmframe.cpp:1732
-msgid "&Delete Account..."
-msgstr "Ištrinti paskyrą..."
+msgid "&Delete Account…"
+msgstr "Ištrinti paskyrą…"
 
 #: mmframe.cpp:1508 mmframe.cpp:1528
 msgid "&Launch Account Website"
 msgstr "&Atverti sąskaitos svetainę"
 
 #: mmframe.cpp:1509 mmframe.cpp:1529
-msgid "&Attachment Manager..."
+msgid "&Attachment Manager…"
 msgstr ""
 
 #: mmframe.cpp:1524 mmframe.cpp:1729
-msgid "&Change Account Type..."
+msgid "&Change Account Type…"
 msgstr ""
 
 #: mmframe.cpp:1542 mmframe.cpp:1723
-msgid "&New Account..."
-msgstr "Nauja paskyra..."
+msgid "&New Account…"
+msgstr "Nauja paskyra…"
 
 #: mmframe.cpp:1544
 msgid "Account &List"
@@ -4877,24 +4880,24 @@ msgid "Accounts &Visible"
 msgstr ""
 
 #: mmframe.cpp:1595
-msgid "&New Database..."
-msgstr "&Nauja duomenų bazė..."
+msgid "&New Database…"
+msgstr "&Nauja duomenų bazė…"
 
 #: mmframe.cpp:1595 mmframe.cpp:1974 wizard_newdb.cpp:136
 msgid "New Database"
 msgstr "Nauja duomenų bazė"
 
 #: mmframe.cpp:1596
-msgid "&Open Database...\tCtrl-O"
-msgstr "&Atidaryti duomenų bazę... Ctrl-O"
+msgid "&Open Database…\tCtrl-O"
+msgstr "&Atidaryti duomenų bazę… Ctrl-O"
 
 #: mmframe.cpp:1596 mmframe.cpp:1975
 msgid "Open Database"
 msgstr "Atverti duombazę"
 
 #: mmframe.cpp:1597
-msgid "Save Database &As..."
-msgstr "Išsaugoti duomenų bazę &kaip..."
+msgid "Save Database &As…"
+msgstr "Išsaugoti duomenų bazę &kaip…"
 
 #: mmframe.cpp:1597
 msgid "Save Database As"
@@ -4909,28 +4912,28 @@ msgid "&Clear Recent Files"
 msgstr "&Išvalyti paskiausius failus"
 
 #: mmframe.cpp:1616
-msgid "&WebApp..."
-msgstr "&Žiniatinklio programa..."
+msgid "&WebApp…"
+msgstr "&Žiniatinklio programa…"
 
 #: mmframe.cpp:1616
-msgid "Import from WebApp"
-msgstr "Importuoti iš WebApp"
+msgid "Import from the WebApp"
+msgstr ""
 
 #: mmframe.cpp:1623
 msgid "Export as fixed CSV file"
 msgstr "Eksportuoti kaip fiksuotą CSV failą"
 
 #: mmframe.cpp:1627
-msgid "&HTML File..."
-msgstr "&HTML failas..."
+msgid "&HTML File…"
+msgstr "&HTML failas…"
 
 #: mmframe.cpp:1627
 msgid "Export as HTML file"
 msgstr "Eksportuoti į HTML bylą"
 
 #: mmframe.cpp:1632
-msgid "&Print..."
-msgstr "&Spausdinti..."
+msgid "&Print…"
+msgstr "&Spausdinti…"
 
 #: mmframe.cpp:1632
 msgid "Print current view"
@@ -5065,7 +5068,7 @@ msgid "Download Currency and Stock Rates"
 msgstr ""
 
 #: mmframe.cpp:1751
-msgid "&Payee Manager..."
+msgid "&Payee Manager…"
 msgstr ""
 
 #: mmframe.cpp:1751 mmframe.cpp:1982 payeedialog.cpp:512
@@ -5073,11 +5076,11 @@ msgid "Payee Manager"
 msgstr ""
 
 #: mmframe.cpp:1755
-msgid "&Category Manager..."
+msgid "&Category Manager…"
 msgstr ""
 
 #: mmframe.cpp:1759
-msgid "&Tag Manager..."
+msgid "&Tag Manager…"
 msgstr ""
 
 #: mmframe.cpp:1759 mmframe.cpp:1984 tagdialog.h:45
@@ -5085,27 +5088,27 @@ msgid "Tag Manager"
 msgstr ""
 
 #: mmframe.cpp:1763
-msgid "Curre&ncy Manager..."
+msgid "Curre&ncy Manager…"
 msgstr ""
 
 #: mmframe.cpp:1767
-msgid "&Categories..."
-msgstr "&Kategorijos..."
+msgid "&Categories…"
+msgstr "&Kategorijos…"
 
 #: mmframe.cpp:1768
 msgid "Merge categories"
 msgstr ""
 
 #: mmframe.cpp:1770
-msgid "&Payees..."
-msgstr "&Gavėjai..."
+msgid "&Payees…"
+msgstr "&Gavėjai…"
 
 #: mmframe.cpp:1771
 msgid "Merge payees"
 msgstr ""
 
 #: mmframe.cpp:1773
-msgid "&Tags..."
+msgid "&Tags…"
 msgstr ""
 
 #: mmframe.cpp:1774
@@ -5122,7 +5125,7 @@ msgid "Merge categories, payees, and tags"
 msgstr ""
 
 #: mmframe.cpp:1788
-msgid "&Budget Planner..."
+msgid "&Budget Planner…"
 msgstr ""
 
 #: mmframe.cpp:1792
@@ -5138,39 +5141,39 @@ msgid "&Assets"
 msgstr "&Turtas"
 
 #: mmframe.cpp:1802
-msgid "T&heme Manager..."
-msgstr "T&temos vadybininkas..."
+msgid "T&heme Manager…"
+msgstr "T&temos vadybininkas…"
 
 #: mmframe.cpp:1802 themes.cpp:143
 msgid "Theme Manager"
 msgstr "Dizainų administravimas"
 
 #: mmframe.cpp:1808
-msgid "Tra&nsaction Report..."
+msgid "Tra&nsaction Report…"
 msgstr ""
 
 #: mmframe.cpp:1814
-msgid "&General Report Manager..."
+msgid "&General Report Manager…"
 msgstr ""
 
 #: mmframe.cpp:1818
-msgid "C&ustom Field Manager..."
+msgid "C&ustom Field Manager…"
 msgstr ""
 
 #: mmframe.cpp:1824
-msgid "Refresh &WebApp..."
-msgstr "Atnaujinti &WebApp..."
+msgid "Refresh &WebApp…"
+msgstr "Atnaujinti &WebApp…"
 
 #: mmframe.cpp:1824 mmframe.cpp:2962 mmframe.cpp:2969
 msgid "Refresh WebApp"
 msgstr "Atnaujinkite „WebApp“"
 
 #: mmframe.cpp:1829
-msgid "&Settings...\tAlt-F12"
+msgid "&Settings…\tAlt-F12"
 msgstr ""
 
 #: mmframe.cpp:1836
-msgid "&Decrypt Encrypted Database..."
+msgid "&Decrypt Encrypted Database…"
 msgstr ""
 
 #: mmframe.cpp:1837
@@ -5178,23 +5181,23 @@ msgid "Convert encrypted database to unencrypted database"
 msgstr ""
 
 #: mmframe.cpp:1839
-msgid "Change Encrypted &Password..."
-msgstr "Keisti šifruotą &slaptažodį..."
+msgid "Change Encrypted &Password…"
+msgstr "Keisti šifruotą &slaptažodį…"
 
 #: mmframe.cpp:1840
 msgid "Change the password of an encrypted database"
 msgstr "Pakeiskite šifruotos duomenų bazės slaptažodį"
 
 #: mmframe.cpp:1842
-msgid "&Optimize Database..."
-msgstr "&Optimizuoti duomenų bazę..."
+msgid "&Optimize Database…"
+msgstr "&Optimizuoti duomenų bazę…"
 
 #: mmframe.cpp:1843
 msgid "Optimize database for space and performance"
 msgstr ""
 
 #: mmframe.cpp:1845
-msgid "Database Check and De&bug..."
+msgid "Database Check and De&bug…"
 msgstr ""
 
 #: mmframe.cpp:1846
@@ -5444,7 +5447,7 @@ msgid "&Next →"
 msgstr ""
 
 #: mmframe.cpp:2223
-msgid "Cannot locate previously opened database.\n"
+msgid "Unable to locate previously opened database.\n"
 msgstr ""
 
 #: mmframe.cpp:2225
@@ -5570,8 +5573,8 @@ msgid "Save database file as"
 msgstr "Išsaugoti duomenų bazės failą kaip"
 
 #: mmframe.cpp:2545
-msgid "Can't copy file to itself"
-msgstr "Nepavyksta nukopijuoti failo į jį patį"
+msgid "Unable to copy file to itself"
+msgstr ""
 
 #: mmframe.cpp:2558
 msgid "Enter password for new database"
@@ -5630,8 +5633,8 @@ msgid "Downloading stock prices from Yahoo"
 msgstr ""
 
 #: mmframe.cpp:3531
-msgid "Please wait..."
-msgstr "Prašome palaukti..."
+msgid "Please wait…"
+msgstr "Prašome palaukti…"
 
 #: mmframe.cpp:3580 stockspanel.cpp:496
 #, c-format
@@ -6286,12 +6289,12 @@ msgid "Format derived from locale.\n"
 msgstr ""
 
 #: optionsettingsgeneral.cpp:174
-msgid "Use currency history"
-msgstr "Naudokite valiutų istoriją"
+msgid "Use historical currency"
+msgstr ""
 
 #: optionsettingsgeneral.cpp:176
-msgid "Select to use currency history (one rate for each day), deselect to use a fixed rate"
-msgstr "Pasirinkite, jei norite naudoti valiutų istoriją (vienas kursas kiekvienai dienai), panaikinkite pasirinkimą, jei norite naudoti fiksuotą kursą"
+msgid "Select to use historical currency (one rate for each day), deselect to use a fixed rate"
+msgstr ""
 
 #: optionsettingsgeneral.cpp:180
 msgid "Financial Year"
@@ -7633,11 +7636,11 @@ msgid "Curr. Total Value"
 msgstr ""
 
 #: stocks_list.cpp:146
-msgid "&New Stock Investment..."
+msgid "&New Stock Investment…"
 msgstr ""
 
 #: stocks_list.cpp:148
-msgid "&Add Stock Transactions..."
+msgid "&Add Stock Transactions…"
 msgstr ""
 
 #: stocks_list.cpp:149
@@ -7645,11 +7648,11 @@ msgid "&View Stock Transactions"
 msgstr ""
 
 #: stocks_list.cpp:151
-msgid "&Edit Stock Investment..."
+msgid "&Edit Stock Investment…"
 msgstr ""
 
 #: stocks_list.cpp:153
-msgid "&Delete Stock Investment..."
+msgid "&Delete Stock Investment…"
 msgstr ""
 
 #: stocks_list.cpp:156
@@ -7735,13 +7738,17 @@ msgstr "Akcijų kainos sėkmingai atnaujintos"
 msgid "Last updated %s"
 msgstr "Vėliausiai atnaujinta: %s"
 
+#: stockspanel.cpp:432
+msgid "Could not find base currency symbol!"
+msgstr "Nepavyko rasti bazinės valiutos simbolio!"
+
 #: stockspanel.cpp:438 util.cpp:708 util.cpp:869
 msgid "Nothing to update"
 msgstr "Nėra ką naujinti"
 
 #: stockspanel.cpp:452
-msgid "Connecting..."
-msgstr "Jungiamasi..."
+msgid "Connecting…"
+msgstr "Jungiamasi…"
 
 #: stockspanel.cpp:556
 #, c-format
@@ -7757,7 +7764,7 @@ msgid "Edit the name of an existing tag"
 msgstr ""
 
 #: tagdialog.cpp:136
-msgid "Delete an existing tag. The tag cannot be used by existing transactions."
+msgid "Delete an existing tag. The tag is unable to be used by existing transactions."
 msgstr ""
 
 #: tagdialog.cpp:142
@@ -7887,7 +7894,7 @@ msgid "Not updated"
 msgstr ""
 
 #: transactionsupdatedialog.cpp:540
-msgid "Some transactions could not be updated"
+msgid "Unable to update some transactions"
 msgstr ""
 
 #: transactionsupdatedialog.h:42
@@ -8124,11 +8131,11 @@ msgid "Expected response to contain a data or error string"
 msgstr ""
 
 #: util.cpp:1011
-msgid "Could not find asset for symbol"
+msgid "Unable to find asset for symbol"
 msgstr ""
 
 #: util.cpp:1046
-msgid "Could not get base currency!"
+msgid "Unable to get base currency!"
 msgstr ""
 
 #: util.cpp:1052
@@ -8136,11 +8143,11 @@ msgid "USD"
 msgstr "USD"
 
 #: util.cpp:1055
-msgid "Could not find currency 'USD', needed for converting history prices"
+msgid "Unable to find currency 'USD', required for converting historical prices"
 msgstr ""
 
 #: util.cpp:1076
-msgid "Could not parse price in asset history"
+msgid "Unable to parse price in asset history"
 msgstr ""
 
 #: util.cpp:1449
@@ -8305,8 +8312,8 @@ msgid "Today will be used as the transaction date"
 msgstr "Šiandien bus naudojama kaip operacijos data"
 
 #: webapp.cpp:596 webapp.cpp:630 webappdialog.cpp:338
-msgid "Unable to download attachments from webapp."
-msgstr "Nepavyksta atsisiųsti priedų iš WebApp."
+msgid "Unable to download attachments from the WebApp."
+msgstr ""
 
 #: webapp.cpp:597
 msgid "Attachments folder not set or unavailable"
@@ -8317,8 +8324,8 @@ msgid "Transaction not downloaded:"
 msgstr "Operacija neatsiųsta:"
 
 #: webapp.cpp:599
-msgid "Please fix attachments folder or delete attachments from WebApp"
-msgstr "Pataisykite priedų aplanką arba ištrinkite priedus iš „WebApp“"
+msgid "Please fix attachments folder or delete attachments from the WebApp"
+msgstr ""
 
 #: webapp.cpp:600
 msgid "Attachment folder error"
@@ -8353,8 +8360,8 @@ msgid "Import and open all "
 msgstr "Importuoti ir atverti viską "
 
 #: webappdialog.cpp:205
-msgid "Unable to download transactions from webapp."
-msgstr "Nepavyko atsisiųsti operacijų iš žiniatinklio programos."
+msgid "Unable to download transactions from the WebApp."
+msgstr ""
 
 #: webappdialog.cpp:206
 msgid "Transactions download error"
