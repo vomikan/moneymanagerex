@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-23 22:23\n"
+"PO-Revision-Date: 2024-12-23 22:25\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -4806,15 +4806,15 @@ msgstr "&קבצי XML…"
 
 #: mmframe.cpp:1460 mmframe.cpp:1623
 msgid "&MMEX CSV File…"
-msgstr ""
+msgstr "&קובצי MMEX CSV…"
 
 #: mmframe.cpp:1461 mmframe.cpp:1624
 msgid "&JSON File…"
-msgstr ""
+msgstr "קובץ JSON&…"
 
 #: mmframe.cpp:1462 mmframe.cpp:1614 mmframe.cpp:1625
 msgid "&QIF File…"
-msgstr ""
+msgstr "&קובץ QIF…"
 
 #: mmframe.cpp:1487
 msgid "&Customize Report…"
@@ -4830,11 +4830,11 @@ msgstr ""
 
 #: mmframe.cpp:1505 mmframe.cpp:1523 mmframe.cpp:1543 mmframe.cpp:1726
 msgid "&Edit Account…"
-msgstr ""
+msgstr "&עריכת חשבון…"
 
 #: mmframe.cpp:1506 mmframe.cpp:1526 mmframe.cpp:1546 mmframe.cpp:1732
 msgid "&Delete Account…"
-msgstr ""
+msgstr "מחי&קת חשבון…"
 
 #: mmframe.cpp:1508 mmframe.cpp:1528
 msgid "&Launch Account Website"
@@ -4850,7 +4850,7 @@ msgstr ""
 
 #: mmframe.cpp:1542 mmframe.cpp:1723
 msgid "&New Account…"
-msgstr ""
+msgstr "&חשבון חדש…"
 
 #: mmframe.cpp:1544
 msgid "Account &List"
@@ -4878,7 +4878,7 @@ msgstr ""
 
 #: mmframe.cpp:1595
 msgid "&New Database…"
-msgstr ""
+msgstr "&מסד נתונים חדש…"
 
 #: mmframe.cpp:1595 mmframe.cpp:1974 wizard_newdb.cpp:136
 msgid "New Database"
@@ -4886,7 +4886,7 @@ msgstr "מסד נתונים חדש"
 
 #: mmframe.cpp:1596
 msgid "&Open Database…\tCtrl-O"
-msgstr ""
+msgstr "פ&תיחת מסד נתונים… Ctrl-O"
 
 #: mmframe.cpp:1596 mmframe.cpp:1975
 msgid "Open Database"
@@ -4894,7 +4894,7 @@ msgstr "פתיחת מסד נתונים"
 
 #: mmframe.cpp:1597
 msgid "Save Database &As…"
-msgstr ""
+msgstr "שמירת &מסד נתונים בשם…"
 
 #: mmframe.cpp:1597
 msgid "Save Database As"
@@ -4910,7 +4910,7 @@ msgstr "&ניקוי רשימת קבצים אחרונים"
 
 #: mmframe.cpp:1616
 msgid "&WebApp…"
-msgstr ""
+msgstr "יישומון &מרשתת…"
 
 #: mmframe.cpp:1616
 msgid "Import from the WebApp"
@@ -4922,7 +4922,7 @@ msgstr "יצוא לקובץ CSV קבוע"
 
 #: mmframe.cpp:1627
 msgid "&HTML File…"
-msgstr ""
+msgstr "&קבצי HTML…"
 
 #: mmframe.cpp:1627
 msgid "Export as HTML file"
@@ -4930,7 +4930,7 @@ msgstr "ייצוא לקובץ HTML"
 
 #: mmframe.cpp:1632
 msgid "&Print…"
-msgstr ""
+msgstr "&הדפסה…"
 
 #: mmframe.cpp:1632
 msgid "Print current view"
@@ -5090,7 +5090,7 @@ msgstr ""
 
 #: mmframe.cpp:1767
 msgid "&Categories…"
-msgstr ""
+msgstr "&סוגי־אב…"
 
 #: mmframe.cpp:1768
 msgid "Merge categories"
@@ -5098,7 +5098,7 @@ msgstr ""
 
 #: mmframe.cpp:1770
 msgid "&Payees…"
-msgstr ""
+msgstr "&מוטבים…"
 
 #: mmframe.cpp:1771
 msgid "Merge payees"
@@ -5106,7 +5106,7 @@ msgstr ""
 
 #: mmframe.cpp:1773
 msgid "&Tags…"
-msgstr ""
+msgstr "&תגים…"
 
 #: mmframe.cpp:1774
 msgid "Merge tags"
@@ -5139,7 +5139,7 @@ msgstr "&נכסים"
 
 #: mmframe.cpp:1802
 msgid "T&heme Manager…"
-msgstr ""
+msgstr "מ&נהל ערכת נושא…"
 
 #: mmframe.cpp:1802 themes.cpp:143
 msgid "Theme Manager"
@@ -5159,7 +5159,7 @@ msgstr ""
 
 #: mmframe.cpp:1824
 msgid "Refresh &WebApp…"
-msgstr ""
+msgstr "רענון &יישומון מרשתת…"
 
 #: mmframe.cpp:1824 mmframe.cpp:2962 mmframe.cpp:2969
 msgid "Refresh WebApp"
@@ -5179,7 +5179,7 @@ msgstr ""
 
 #: mmframe.cpp:1839
 msgid "Change Encrypted &Password…"
-msgstr ""
+msgstr "שנוי ססמה &מוצפנת…"
 
 #: mmframe.cpp:1840
 msgid "Change the password of an encrypted database"
@@ -5187,7 +5187,7 @@ msgstr "שינוי ססמה למסד נתונים מוצפן"
 
 #: mmframe.cpp:1842
 msgid "&Optimize Database…"
-msgstr ""
+msgstr "&מיטוב מסד נתונים…"
 
 #: mmframe.cpp:1843
 msgid "Optimize database for space and performance"
@@ -5195,7 +5195,7 @@ msgstr ""
 
 #: mmframe.cpp:1845
 msgid "Database Check and De&bug…"
-msgstr ""
+msgstr "בדיקת וניפוי תקלי מסד נתונים…"
 
 #: mmframe.cpp:1846
 msgid "Generate database report or fix errors"
@@ -5643,7 +5643,7 @@ msgstr "עדכון שערי נירות ערך מ Yahoo"
 
 #: mmframe.cpp:3531
 msgid "Please wait…"
-msgstr ""
+msgstr "נא להמתין…"
 
 #: mmframe.cpp:3580 stockspanel.cpp:496
 #, c-format
@@ -7658,11 +7658,11 @@ msgstr "ערך כולל נוכחי"
 
 #: stocks_list.cpp:146
 msgid "&New Stock Investment…"
-msgstr ""
+msgstr "&השקעה חדשה בניירות ערך…"
 
 #: stocks_list.cpp:148
 msgid "&Add Stock Transactions…"
-msgstr ""
+msgstr "&הוספת תנועות נירות ערך…"
 
 #: stocks_list.cpp:149
 msgid "&View Stock Transactions"
@@ -7670,11 +7670,11 @@ msgstr "&הצגת תנועות בניירות ערך"
 
 #: stocks_list.cpp:151
 msgid "&Edit Stock Investment…"
-msgstr ""
+msgstr "&עריכת השקעות בניירות ערך…"
 
 #: stocks_list.cpp:153
 msgid "&Delete Stock Investment…"
-msgstr ""
+msgstr "&מחיקת השקעת ניירות ערך…"
 
 #: stocks_list.cpp:156
 msgid "Stock &Web Page"
@@ -7769,7 +7769,7 @@ msgstr "לא נמצאו עדכונים"
 
 #: stockspanel.cpp:452
 msgid "Connecting…"
-msgstr ""
+msgstr "מתחבר…"
 
 #: stockspanel.cpp:556
 #, c-format
