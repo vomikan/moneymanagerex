@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-20 14:18+0000\n"
-"PO-Revision-Date: 2024-12-22 18:58\n"
+"PO-Revision-Date: 2024-12-23 06:58\n"
 "Last-Translator: \n"
 "Language-Team: Greek\n"
 "Language: el_GR\n"
@@ -722,7 +722,7 @@ msgstr "Ο φάκελος συνημμένων δεν βρέθηκε"
 #: attachmentdialog.cpp:109
 #, c-format
 msgid "Attachment Manager | %s | %lld"
-msgstr ""
+msgstr "Διαχειριστής Συνημμένων | %s %lld"
 
 #: attachmentdialog.cpp:111
 #, c-format
@@ -2250,7 +2250,7 @@ msgstr "Δίδακτρα"
 #: db/DB_Table_Category_V1.h:136 db/DB_Table_Category_V1.h:140
 #: db/DB_Table_Category_V1.h:160
 msgid "Others"
-msgstr ""
+msgstr "Άλλα"
 
 #: db/DB_Table_Category_V1.h:137
 msgid "Homeneeds"
@@ -2445,19 +2445,19 @@ msgstr "Η συντήρηση της DB ολοκληρώθηκε, κλείστε
 
 #: dbwrapper.cpp:78
 msgid "The default cipher algorithm has changed from AES-128 to AES-256 for compatibility with the MMEX mobile apps."
-msgstr ""
+msgstr "Ο προεπιλεγμένος αλγόριθμος κρυπτογράφησης έχει αλλάξει από AES-128 σε AES-256 για συμβατότητα με τις εφαρμογές MMEX για κινητά."
 
 #: dbwrapper.cpp:79
 msgid "Rekeying with the new cipher will prevent opening this database in older versions of MMEX."
-msgstr ""
+msgstr "Το Rekeying με το νέο cipher θα αποτρέψει το άνοιγμα αυτής της βάσης δεδομένων σε παλαιότερες εκδόσεις του MMEX."
 
 #: dbwrapper.cpp:80
 msgid "Do you want to update the database?"
-msgstr ""
+msgstr "Θέλετε να ενημερώσετε τη βάση δεδομένων?"
 
 #: dbwrapper.cpp:80
 msgid "Opening MMEX Database – Warning"
-msgstr ""
+msgstr "Άνοιγμα Βάσης Δεδομένων MMEX – Προειδοποίηση"
 
 #: dbwrapper.cpp:110
 msgid "When database file opening:"
@@ -2486,7 +2486,7 @@ msgstr "Σφάλμα: %s"
 
 #: dbwrapper.cpp:125 mmframe.cpp:2075
 msgid "Opening MMEX Database – Error"
-msgstr ""
+msgstr "Άνοιγμα Βάσης Δεδομένων MMEX – Σφάλμα"
 
 #: diagnostics.cpp:51
 msgid "Diagnostics"
@@ -3011,7 +3011,7 @@ msgstr "Σφάλμα εξαγωγής"
 
 #: import_export/parsers.cpp:120 import_export/parsers.cpp:260
 msgid "Unable to save file."
-msgstr ""
+msgstr "Αδυναμία αποθήκευσης αρχείου."
 
 #: import_export/parsers.cpp:146 import_export/parsers.cpp:155
 msgid "File is not in Excel XML Spreadsheet 2003 format."
@@ -3024,7 +3024,7 @@ msgstr "Σφάλμα ανάλυσης"
 
 #: import_export/parsers.cpp:169
 msgid "Unable to find Worksheet."
-msgstr ""
+msgstr "Αδυναμία εύρεσης Φύλλου Εργασίας."
 
 #: import_export/parsers.cpp:175
 msgid "Table"
@@ -3032,7 +3032,7 @@ msgstr "Πίνακας"
 
 #: import_export/parsers.cpp:177
 msgid "Unable to find Table."
-msgstr ""
+msgstr "Αδυναμία εύρεσης Πίνακα."
 
 #: import_export/parsers.cpp:228 mmframereport.cpp:132
 msgid "Transactions"
@@ -4570,7 +4570,7 @@ msgstr "Διαφορά: "
 
 #: mmcheckingpanel.cpp:689
 msgid "Filtered Flow: "
-msgstr ""
+msgstr "Φιλτραρισμένη Ροή: "
 
 #: mmcheckingpanel.cpp:769 webapp.cpp:621
 msgid "Attachment"
@@ -4601,7 +4601,7 @@ msgstr ""
 
 #: mmcheckingpanel.cpp:1064
 msgid "Click to hide scheduled transactions."
-msgstr ""
+msgstr "Κάντε κλικ για να αποκρύψετε προγραμματισμένες συναλλαγές."
 
 #: mmcustomdata.cpp:65
 msgid "Custom fields"
@@ -5887,7 +5887,7 @@ msgstr "Όλοι οι λογαριασμοί"
 
 #: mmreportspanel.cpp:363
 msgid "Specific Accounts…"
-msgstr ""
+msgstr "Συγκεκριμένοι Λογαριασμοί…"
 
 #: mmreportspanel.cpp:379
 msgid "Future Months:"
