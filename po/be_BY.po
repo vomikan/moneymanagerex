@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-23 22:23\n"
+"PO-Revision-Date: 2024-12-23 22:25\n"
 "Last-Translator: \n"
 "Language-Team: Belarusian\n"
 "Language: be_BY\n"
@@ -536,15 +536,15 @@ msgstr "Бягучае значэнне"
 
 #: assetspanel.cpp:100
 msgid "&New Asset…"
-msgstr ""
+msgstr "&Новы актыў…"
 
 #: assetspanel.cpp:102
 msgid "D&uplicate Asset…"
-msgstr ""
+msgstr "Д&убляваць актыў…"
 
 #: assetspanel.cpp:104
 msgid "&Add Asset Transaction…"
-msgstr ""
+msgstr "&Дадаць аперацыю для актыва…"
 
 #: assetspanel.cpp:105
 msgid "&View Asset Transactions"
@@ -552,20 +552,20 @@ msgstr "&Усе аперацыі для актыва"
 
 #: assetspanel.cpp:106
 msgid "&Open Asset Account…"
-msgstr ""
+msgstr "&Адчыніць рахунак актыва…"
 
 #: assetspanel.cpp:108
 msgid "&Edit Asset…"
-msgstr ""
+msgstr "&Рыдагаванне актыва…"
 
 #: assetspanel.cpp:110
 msgid "&Delete Asset…"
-msgstr ""
+msgstr "&Выдаліць актыў…"
 
 #: assetspanel.cpp:112 billsdepositspanel.cpp:455 mmchecking_list.cpp:522
 #: stocks_list.cpp:155
 msgid "&Organize Attachments…"
-msgstr ""
+msgstr "&Дыспетчар далучэнняў…"
 
 #: assetspanel.cpp:209
 msgid "Do you really want to delete the Asset?"
@@ -1335,7 +1335,7 @@ msgstr ""
 
 #: billsdepositspanel.cpp:445
 msgid "Enter next Occurrence…"
-msgstr ""
+msgstr "Дадаць чэргавую…"
 
 #: billsdepositspanel.cpp:447
 msgid "Skip next Occurrence"
@@ -2877,11 +2877,11 @@ msgstr "Дыспетчар справаздачаў"
 
 #: general_report_manager.cpp:732
 msgid "Assets…"
-msgstr ""
+msgstr "Актывы…"
 
 #: general_report_manager.cpp:735
 msgid "New Empty Report…"
-msgstr ""
+msgstr "Новая пустая справаздача…"
 
 #: general_report_manager.cpp:736
 msgid "New Sample Report"
@@ -2889,11 +2889,11 @@ msgstr "Новы прыклад справаздачы"
 
 #: general_report_manager.cpp:739
 msgid "Change Group…"
-msgstr ""
+msgstr "Змяніць групу…"
 
 #: general_report_manager.cpp:741
 msgid "Rename Group…"
-msgstr ""
+msgstr "Пераназваць групу…"
 
 #: general_report_manager.cpp:742
 msgid "UnGroup"
@@ -2901,7 +2901,7 @@ msgstr "Разгрупаваць"
 
 #: general_report_manager.cpp:743
 msgid "Rename Report…"
-msgstr ""
+msgstr "Пераназваць справаздачу…"
 
 #: general_report_manager.cpp:747
 msgid "Active"
@@ -2913,7 +2913,7 @@ msgstr ""
 
 #: general_report_manager.cpp:751
 msgid "Delete Report…"
-msgstr ""
+msgstr "Выдаліць справаздачу…"
 
 #: general_report_manager.cpp:848 general_report_manager.cpp:1009
 msgid "Enter the name for the report"
@@ -4220,10 +4220,10 @@ msgstr ""
 #: mmchecking_list.cpp:490
 msgid "&Edit Transaction…"
 msgid_plural "&Edit Transactions…"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "&Рыдагаваць аперацыю…"
+msgstr[1] "&Рыдагаваць аперацыі…"
+msgstr[2] "&Рыдагаваць аперацыі…"
+msgstr[3] "&Рыдагаваць аперацыі…"
 
 #: mmchecking_list.cpp:493
 msgid "&Copy Transaction"
@@ -4244,15 +4244,15 @@ msgstr "&Уставіць аперацыі (%d)"
 
 #: mmchecking_list.cpp:505
 msgid "D&uplicate Transaction…"
-msgstr ""
+msgstr "Д&убляваць аперацыю…"
 
 #: mmchecking_list.cpp:508
 msgid "&Move Transaction…"
 msgid_plural "&Move Transactions…"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "П&ерасунуць аперацыю…"
+msgstr[1] "П&ерасунуць аперацыі…"
+msgstr[2] "П&ерасунуць аперацыі…"
+msgstr[3] "П&ерасунуць аперацыі…"
 
 #: mmchecking_list.cpp:514
 msgid "&View In Other Account"
@@ -4269,10 +4269,10 @@ msgstr ""
 #: mmchecking_list.cpp:530
 msgid "&Restore selected transaction…"
 msgid_plural "&Restore selected transactions…"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "А&днавіць абраную аперацыю…"
+msgstr[1] "А&днавіць абраныя аперацыі…"
+msgstr[2] "А&днавіць абраныя аперацыі…"
+msgstr[3] "А&днавіць абраныя аперацыі…"
 
 #: mmchecking_list.cpp:532
 msgid "Restore &all transactions in current view…"
@@ -4290,18 +4290,18 @@ msgstr ""
 #: mmchecking_list.cpp:691
 msgid "&Delete selected transaction…"
 msgid_plural "&Delete selected transactions…"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "&Выдаліць абраную аперацыю…"
+msgstr[1] "&Выдаліць абраныя аперацыі…"
+msgstr[2] "&Выдаліць абраныя аперацыі…"
+msgstr[3] "&Выдаліць абраныя аперацыі…"
 
 #: mmchecking_list.cpp:692
 msgid "&Permanently delete selected transaction…"
 msgid_plural "&Permanently delete selected transactions…"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Назаўжды &выдаліць абраную аперацыю…"
+msgstr[1] "Назаўжды &выдаліць абраныя аперацыі…"
+msgstr[2] "Назаўжды &выдаліць абраныя аперацыі…"
+msgstr[3] "Назаўжды &выдаліць абраныя аперацыі…"
 
 #: mmchecking_list.cpp:695
 msgid "Delete &all transactions in current view…"
@@ -4459,10 +4459,10 @@ msgstr "Спраўдзіць перасоўванне аперацыі"
 #, c-format
 msgid "Moving transaction to…"
 msgid_plural "Moving %i transactions to…"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
-msgstr[3] ""
+msgstr[0] "Перасоўванне аперацыі…"
+msgstr[1] "Перасоўванне %i аперацыяў…"
+msgstr[2] "Перасоўванне %i аперацыяў…"
+msgstr[3] "Перасоўванне %i аперацыяў…"
 
 #: mmchecking_list.cpp:1756 stocks_list.cpp:312
 msgid "Select the destination Account "
@@ -4546,15 +4546,15 @@ msgstr ""
 
 #: mmcheckingpanel.cpp:445
 msgid "&New Withdrawal…"
-msgstr ""
+msgstr "&Новае спісанне…"
 
 #: mmcheckingpanel.cpp:446
 msgid "&New Deposit…"
-msgstr ""
+msgstr "&Новы ўнёсак…"
 
 #: mmcheckingpanel.cpp:447
 msgid "&New Transfer…"
-msgstr ""
+msgstr "&Новы пераказ…"
 
 #: mmcheckingpanel.cpp:576
 msgid "Delete all selected transactions"
@@ -4779,11 +4779,11 @@ msgstr "&Імпартаваць з"
 
 #: mmframe.cpp:1450
 msgid "&CSV Files…"
-msgstr ""
+msgstr "Файлы &CSV…"
 
 #: mmframe.cpp:1451
 msgid "&XML Files…"
-msgstr ""
+msgstr "Файлы &XML…"
 
 #: mmframe.cpp:1451 mmframe.cpp:1612
 msgid "Import from XML file (Excel format)"
@@ -4791,7 +4791,7 @@ msgstr "Імпартаваць з XML (фармат Excel)"
 
 #: mmframe.cpp:1453
 msgid "&QIF Files…"
-msgstr ""
+msgstr "Файлы &QIF…"
 
 #: mmframe.cpp:1456 mmframe.cpp:1619
 msgid "&Export as"
@@ -4799,23 +4799,23 @@ msgstr "&Экспартаваць як"
 
 #: mmframe.cpp:1457 mmframe.cpp:1611 mmframe.cpp:1620
 msgid "&CSV File…"
-msgstr ""
+msgstr "Файл &CSV…"
 
 #: mmframe.cpp:1458 mmframe.cpp:1612 mmframe.cpp:1621
 msgid "&XML File…"
-msgstr ""
+msgstr "Файл &XML…"
 
 #: mmframe.cpp:1460 mmframe.cpp:1623
 msgid "&MMEX CSV File…"
-msgstr ""
+msgstr "Файл &MMEX CSV…"
 
 #: mmframe.cpp:1461 mmframe.cpp:1624
 msgid "&JSON File…"
-msgstr ""
+msgstr "Файл &JSON…"
 
 #: mmframe.cpp:1462 mmframe.cpp:1614 mmframe.cpp:1625
 msgid "&QIF File…"
-msgstr ""
+msgstr "Файл &QIF…"
 
 #: mmframe.cpp:1487
 msgid "&Customize Report…"
@@ -4831,11 +4831,11 @@ msgstr ""
 
 #: mmframe.cpp:1505 mmframe.cpp:1523 mmframe.cpp:1543 mmframe.cpp:1726
 msgid "&Edit Account…"
-msgstr ""
+msgstr "&Рыдагаваць рахунак…"
 
 #: mmframe.cpp:1506 mmframe.cpp:1526 mmframe.cpp:1546 mmframe.cpp:1732
 msgid "&Delete Account…"
-msgstr ""
+msgstr "&Выдаліць рахунак…"
 
 #: mmframe.cpp:1508 mmframe.cpp:1528
 msgid "&Launch Account Website"
@@ -4847,11 +4847,11 @@ msgstr ""
 
 #: mmframe.cpp:1524 mmframe.cpp:1729
 msgid "&Change Account Type…"
-msgstr ""
+msgstr "&Зняніць тып рахунка…"
 
 #: mmframe.cpp:1542 mmframe.cpp:1723
 msgid "&New Account…"
-msgstr ""
+msgstr "&Новы рахунак…"
 
 #: mmframe.cpp:1544
 msgid "Account &List"
@@ -4879,7 +4879,7 @@ msgstr ""
 
 #: mmframe.cpp:1595
 msgid "&New Database…"
-msgstr ""
+msgstr "&Новая база дадзеных…"
 
 #: mmframe.cpp:1595 mmframe.cpp:1974 wizard_newdb.cpp:136
 msgid "New Database"
@@ -4887,7 +4887,7 @@ msgstr "Новая база дадзеных"
 
 #: mmframe.cpp:1596
 msgid "&Open Database…\tCtrl-O"
-msgstr ""
+msgstr "&Адчыніць базу дадзеных\tCtrl-O"
 
 #: mmframe.cpp:1596 mmframe.cpp:1975
 msgid "Open Database"
@@ -4895,7 +4895,7 @@ msgstr "Адчыніць базу дадзеных"
 
 #: mmframe.cpp:1597
 msgid "Save Database &As…"
-msgstr ""
+msgstr "Захаваць Базу дадзеных &як…"
 
 #: mmframe.cpp:1597
 msgid "Save Database As"
@@ -4923,7 +4923,7 @@ msgstr "Экспарт у фіксаваны CSV"
 
 #: mmframe.cpp:1627
 msgid "&HTML File…"
-msgstr ""
+msgstr "Файл &HTML…"
 
 #: mmframe.cpp:1627
 msgid "Export as HTML file"
@@ -4931,7 +4931,7 @@ msgstr "Экспарт у HTML-файл"
 
 #: mmframe.cpp:1632
 msgid "&Print…"
-msgstr ""
+msgstr "&Друкаваць…"
 
 #: mmframe.cpp:1632
 msgid "Print current view"
@@ -5091,7 +5091,7 @@ msgstr ""
 
 #: mmframe.cpp:1767
 msgid "&Categories…"
-msgstr ""
+msgstr "&Катыгорыі…"
 
 #: mmframe.cpp:1768
 msgid "Merge categories"
@@ -5099,7 +5099,7 @@ msgstr "Аб'яднаць катыгорыі"
 
 #: mmframe.cpp:1770
 msgid "&Payees…"
-msgstr ""
+msgstr "&Платнікі…"
 
 #: mmframe.cpp:1771
 msgid "Merge payees"
@@ -5107,7 +5107,7 @@ msgstr "Аб'яднаць платнікоў"
 
 #: mmframe.cpp:1773
 msgid "&Tags…"
-msgstr ""
+msgstr "&Пазнакі…"
 
 #: mmframe.cpp:1774
 msgid "Merge tags"
@@ -5140,7 +5140,7 @@ msgstr "&Актывы"
 
 #: mmframe.cpp:1802
 msgid "T&heme Manager…"
-msgstr ""
+msgstr "Дыспетчар т&эмаў…"
 
 #: mmframe.cpp:1802 themes.cpp:143
 msgid "Theme Manager"
@@ -5160,7 +5160,7 @@ msgstr ""
 
 #: mmframe.cpp:1824
 msgid "Refresh &WebApp…"
-msgstr ""
+msgstr "Абнавіць &WebApp…"
 
 #: mmframe.cpp:1824 mmframe.cpp:2962 mmframe.cpp:2969
 msgid "Refresh WebApp"
@@ -5180,7 +5180,7 @@ msgstr ""
 
 #: mmframe.cpp:1839
 msgid "Change Encrypted &Password…"
-msgstr ""
+msgstr "Змяніць &пароль шыфравання…"
 
 #: mmframe.cpp:1840
 msgid "Change the password of an encrypted database"
@@ -5188,7 +5188,7 @@ msgstr "Змена пароля зашыфраванай базы дадзены
 
 #: mmframe.cpp:1842
 msgid "&Optimize Database…"
-msgstr ""
+msgstr "&Аптымізаваць базу дадзеных…"
 
 #: mmframe.cpp:1843
 msgid "Optimize database for space and performance"
@@ -5196,7 +5196,7 @@ msgstr ""
 
 #: mmframe.cpp:1845
 msgid "Database Check and De&bug…"
-msgstr ""
+msgstr "Праверка і &наладка базы дадзеных…"
 
 #: mmframe.cpp:1846
 msgid "Generate database report or fix errors"
@@ -5648,7 +5648,7 @@ msgstr "Спампоўваю каціроўкі з Yahoo"
 
 #: mmframe.cpp:3531
 msgid "Please wait…"
-msgstr ""
+msgstr "Калі ласка, пачакайце…"
 
 #: mmframe.cpp:3580 stockspanel.cpp:496
 #, c-format
@@ -7661,11 +7661,11 @@ msgstr "Бягучая сума"
 
 #: stocks_list.cpp:146
 msgid "&New Stock Investment…"
-msgstr ""
+msgstr "&Дадаць новую інвестыцыю…"
 
 #: stocks_list.cpp:148
 msgid "&Add Stock Transactions…"
-msgstr ""
+msgstr "&Дадаць аперацыю з акцыямі…"
 
 #: stocks_list.cpp:149
 msgid "&View Stock Transactions"
@@ -7673,11 +7673,11 @@ msgstr "&Глядзець аперацыю з акцыямі"
 
 #: stocks_list.cpp:151
 msgid "&Edit Stock Investment…"
-msgstr ""
+msgstr "&Змяніць аперацыю з акцыямі…"
 
 #: stocks_list.cpp:153
 msgid "&Delete Stock Investment…"
-msgstr ""
+msgstr "&Выдаліць аперацыю з акцыямі…"
 
 #: stocks_list.cpp:156
 msgid "Stock &Web Page"
@@ -7772,7 +7772,7 @@ msgstr "Няма чаго абнаўляць"
 
 #: stockspanel.cpp:452
 msgid "Connecting…"
-msgstr ""
+msgstr "Падлучэнне…"
 
 #: stockspanel.cpp:556
 #, c-format
