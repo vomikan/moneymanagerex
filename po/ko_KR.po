@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-24 02:53\n"
+"PO-Revision-Date: 2024-12-24 05:54\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -4585,7 +4585,7 @@ msgstr ""
 
 #: mmcheckingpanel.cpp:1064
 msgid "Click to hide scheduled transactions."
-msgstr ""
+msgstr "예약된 거래를 숨기려면 클릭하세요."
 
 #: mmcustomdata.cpp:65
 msgid "Custom fields"
@@ -4705,7 +4705,7 @@ msgstr "정말 계정을 삭제하시겠습니까?"
 
 #: mmframe.cpp:1408
 msgid "This will also delete any associated Shares."
-msgstr ""
+msgstr "관련된 모든 주식도 삭제됩니다."
 
 #: mmframe.cpp:1412 mmframe.cpp:3630
 msgid "Confirm Account Deletion"
@@ -4857,11 +4857,11 @@ msgstr "최근 파일 비우기(&C)"
 
 #: mmframe.cpp:1616
 msgid "&WebApp…"
-msgstr ""
+msgstr "&WebApp…"
 
 #: mmframe.cpp:1616
 msgid "Import from the WebApp"
-msgstr ""
+msgstr "WebApp에서 가져오기"
 
 #: mmframe.cpp:1623
 msgid "Export as fixed CSV file"
@@ -5393,7 +5393,7 @@ msgstr "다음(&N) →"
 
 #: mmframe.cpp:2223
 msgid "Unable to locate previously opened database.\n"
-msgstr ""
+msgstr "이전에 열었던 데이터베이스를 찾을 수 없습니다.\n"
 
 #: mmframe.cpp:2225
 msgid "Password not entered for encrypted Database.\n"
@@ -5524,7 +5524,7 @@ msgstr "데이터베이스 파일을 다음으로 저장"
 
 #: mmframe.cpp:2545
 msgid "Unable to copy file to itself"
-msgstr ""
+msgstr "같은 파일에 복사할 수 없습니다"
 
 #: mmframe.cpp:2558
 msgid "Enter password for new database"
@@ -5871,7 +5871,7 @@ msgstr "모든 계정"
 
 #: mmreportspanel.cpp:363
 msgid "Specific Accounts…"
-msgstr ""
+msgstr "특정 계정…"
 
 #: mmreportspanel.cpp:379
 msgid "Future Months:"
@@ -6255,11 +6255,11 @@ msgstr "현지에서 파생된 형식입니다.\n"
 
 #: optionsettingsgeneral.cpp:174
 msgid "Use historical currency"
-msgstr ""
+msgstr "통화 이력 사용"
 
 #: optionsettingsgeneral.cpp:176
 msgid "Select to use historical currency (one rate for each day), deselect to use a fixed rate"
-msgstr ""
+msgstr "과거 통화 이력(매일 하나의 환율)을 사용하려면 선택하고, 고정 환율을 사용하려면 선택 취소합니다"
 
 #: optionsettingsgeneral.cpp:180
 msgid "Financial Year"
@@ -7737,7 +7737,7 @@ msgstr "기존 태그의 이름 편집"
 
 #: tagdialog.cpp:136
 msgid "Delete an existing tag. The tag is unable to be used by existing transactions."
-msgstr ""
+msgstr "기존 태그를 삭제합니다. 태그는 기존 거래에서 사용할 수 없습니다."
 
 #: tagdialog.cpp:142
 msgid "Select"
@@ -7867,7 +7867,7 @@ msgstr "업데이트되지 않음"
 
 #: transactionsupdatedialog.cpp:540
 msgid "Unable to update some transactions"
-msgstr ""
+msgstr "일부 거래를 갱신할 수 없습니다"
 
 #: transactionsupdatedialog.h:42
 msgid "Multi Transactions Update"
@@ -8105,11 +8105,11 @@ msgstr "데이터 또는 오류 문자열을 포함하는 응답이 예상됩니
 
 #: util.cpp:1011
 msgid "Unable to find asset for symbol"
-msgstr ""
+msgstr "기호에 대한 자산을 찾을 수 없습니다"
 
 #: util.cpp:1046
 msgid "Unable to get base currency!"
-msgstr ""
+msgstr "기준 통화를 가져올 수 없습니다!"
 
 #: util.cpp:1052
 msgid "USD"
@@ -8117,11 +8117,11 @@ msgstr "USD"
 
 #: util.cpp:1055
 msgid "Unable to find currency 'USD', required for converting historical prices"
-msgstr ""
+msgstr "과거 가격을 변환하는 데 필요한 'USD' 통화를 찾을 수 없습니다"
 
 #: util.cpp:1076
 msgid "Unable to parse price in asset history"
-msgstr ""
+msgstr "자산 이력에서 값을 분석할 수 없습니다"
 
 #: util.cpp:1449
 #, c-format
@@ -8286,7 +8286,7 @@ msgstr "오늘이 거래일로 사용됩니다."
 
 #: webapp.cpp:596 webapp.cpp:630 webappdialog.cpp:338
 msgid "Unable to download attachments from the WebApp."
-msgstr ""
+msgstr "WebApp에서 첨부 파일을 내려받을 수 없습니다."
 
 #: webapp.cpp:597
 msgid "Attachments folder not set or unavailable"
@@ -8298,7 +8298,7 @@ msgstr "거래가 다운로드되지 않음:"
 
 #: webapp.cpp:599
 msgid "Please fix attachments folder or delete attachments from the WebApp"
-msgstr ""
+msgstr "첨부 파일 폴더를 수정하거나 WebApp에서 첨부 파일을 삭제하세요"
 
 #: webapp.cpp:600
 msgid "Attachment folder error"
@@ -8334,7 +8334,7 @@ msgstr "모두 가져오기 및 열기 "
 
 #: webappdialog.cpp:205
 msgid "Unable to download transactions from the WebApp."
-msgstr ""
+msgstr "WebApp에서 거래 이력을 내려받을 수 없습니다."
 
 #: webappdialog.cpp:206
 msgid "Transactions download error"
