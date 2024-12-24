@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-24 08:38\n"
+"PO-Revision-Date: 2024-12-24 11:57\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -565,7 +565,7 @@ msgstr "&Elimina Cespite…"
 #: assetspanel.cpp:112 billsdepositspanel.cpp:455 mmchecking_list.cpp:522
 #: stocks_list.cpp:155
 msgid "&Organize Attachments…"
-msgstr "&Gestisci Allegati…"
+msgstr "&Organizza Allegati…"
 
 #: assetspanel.cpp:209
 msgid "Do you really want to delete the Asset?"
@@ -1322,7 +1322,7 @@ msgstr "Invi&o"
 
 #: billsdepositspanel.cpp:326 mmcheckingpanel.cpp:597
 msgid "Enter Next Scheduled Transaction Occurrence"
-msgstr "Inserire il Prossimo Avvenimento di Transazione Pianificata"
+msgstr "Inserire la prossima scadenza di Transazione Pianificata"
 
 #: billsdepositspanel.cpp:330 mmcheckingpanel.cpp:601
 msgid "&Skip"
@@ -1330,7 +1330,7 @@ msgstr "&Salta"
 
 #: billsdepositspanel.cpp:331 mmcheckingpanel.cpp:602
 msgid "Skip Next Scheduled Transaction Occurrence"
-msgstr "Salta la prossima Transazione Pianificata"
+msgstr "Salta la prossima Scadenza della Transazione Pianificata"
 
 #: billsdepositspanel.cpp:445
 msgid "Enter next Occurrence…"
@@ -2867,7 +2867,7 @@ msgstr "Gestione Resoconti"
 
 #: general_report_manager.cpp:732
 msgid "Assets…"
-msgstr "Asset…"
+msgstr "Cespiti…"
 
 #: general_report_manager.cpp:735
 msgid "New Empty Report…"
@@ -4786,7 +4786,7 @@ msgstr "File &QIF…"
 
 #: mmframe.cpp:1487
 msgid "&Customize Report…"
-msgstr "&Personalizza Report…"
+msgstr "&Personalizza Resoconto…"
 
 #: mmframe.cpp:1488
 msgid "&Rename Report…"
@@ -5046,7 +5046,7 @@ msgstr "Gestore &categoria…"
 
 #: mmframe.cpp:1759
 msgid "&Tag Manager…"
-msgstr "&Gestore Etichette…"
+msgstr "Gestore &Tag…"
 
 #: mmframe.cpp:1759 mmframe.cpp:1984 tagdialog.h:45
 msgid "Tag Manager"
@@ -5074,7 +5074,7 @@ msgstr "Unisci i beneficiari"
 
 #: mmframe.cpp:1773
 msgid "&Tags…"
-msgstr "E&tichette…"
+msgstr "&Tag…"
 
 #: mmframe.cpp:1774
 msgid "Merge tags"
@@ -7637,7 +7637,7 @@ msgstr "&Modifica Investimento in Titoli…"
 
 #: stocks_list.cpp:148
 msgid "&Add Stock Transactions…"
-msgstr "&Aggiungi Operazioni Titoli…"
+msgstr "&Aggiungi Transazioni Titoli…"
 
 #: stocks_list.cpp:149
 msgid "&View Stock Transactions"
@@ -8459,7 +8459,7 @@ msgstr "Valuta Base non impostata"
 
 #: wizard_newaccount.cpp:165
 msgid "Set that first using Tools → Settings… menu and then add a new account."
-msgstr "Impostalo prima utilizzando il menu Strumenti → Impostazioni… e poi aggiungi un nuovo conto."
+msgstr "Per impostarlo, utilizzare prima il menu Strumenti → Impostazioni... e poi aggiungere un nuovo conto."
 
 #: wizard_newdb.cpp:30
 msgid "New Database Wizard"
