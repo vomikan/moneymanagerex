@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-24 02:53\n"
+"PO-Revision-Date: 2024-12-24 09:53\n"
 "Last-Translator: \n"
 "Language-Team: French\n"
 "Language: fr_FR\n"
@@ -292,7 +292,7 @@ msgstr "Date non valide"
 
 #: accountdialog.cpp:515
 msgid "Opening date is unable to be in the future"
-msgstr ""
+msgstr "La date d'ouverture ne peut pas être dans le futur"
 
 #: accountdialog.cpp:524
 msgid "Transactions for this account already exist before this date"
@@ -1638,7 +1638,7 @@ msgstr "Editer le nom d'une catégorie existante"
 
 #: categdialog.cpp:323
 msgid "Delete an existing category. The category is unable to be used by existing transactions."
-msgstr ""
+msgstr "Supprimer une catégorie existante. La catégorie ne doit pas être utilisée par des transactions existantes."
 
 #: categdialog.cpp:328 maincurrencydialog.cpp:225
 msgid "&Select"
@@ -1678,7 +1678,7 @@ msgstr "Gestionnaire de catégories : Erreur d'ajout"
 
 #: categdialog.cpp:427
 msgid "Unable to move a subcategory to a category that already has a subcategory with that name. Consider renaming before moving."
-msgstr ""
+msgstr "Vous ne pouvez pas déplacer une sous-catégorie vers une catégorie qui a déjà une sous-catégorie portant le même nom. Pensez à la renommer avant de la déplacer."
 
 #: categdialog.cpp:428
 msgid "A subcategory with this name already exists"
@@ -2465,7 +2465,7 @@ msgstr "Lors de l'ouverture du fichier de la base de données :"
 
 #: dbwrapper.cpp:114
 msgid "Unable to open file"
-msgstr ""
+msgstr "Impossible d'ouvrir le fichier"
 
 #: dbwrapper.cpp:114
 msgid "You must specify path to another database file"
@@ -3767,7 +3767,7 @@ msgstr "Afficher toutes les devises, même celles qui ne sont pas utilisées"
 
 #: maincurrencydialog.cpp:241
 msgid "Historical Currency Options"
-msgstr ""
+msgstr "Options de devises historiques"
 
 #: maincurrencydialog.cpp:258 stockdialog.cpp:287 stockdialog.cpp:306
 #: stockdialog.cpp:634 stockspanel.cpp:215
@@ -3800,7 +3800,7 @@ msgstr "Supprimer les valeurs des devises sélectionnées"
 
 #: maincurrencydialog.cpp:309
 msgid "Delete Historical Currency Values for unused currencies and days"
-msgstr ""
+msgstr "Supprimer les valeurs historiques des devises pour les monnaies et les jours inutilisés"
 
 #: maincurrencydialog.cpp:365
 msgid "Do you really want to delete the selected Currency?"
@@ -3814,7 +3814,8 @@ msgstr "Sélection de la devise de base."
 #, c-format
 msgid "Historical rates for %1$s found, but “Use historical currency” in options is disabled:\n"
 "click No and enable it or click Yes to remove all historical rates for %2$s"
-msgstr ""
+msgstr "Des taux historiques pour %1$s ont été trouvés mais \"Utiliser l'historique des devises\" est désactivé dans les options :\n"
+"cliquez sur \"non\" pour activer ou sur \"oui\" pour supprimer tout l'historique des taux pour %2$s"
 
 #: maincurrencydialog.cpp:447
 #, c-format
@@ -3823,12 +3824,12 @@ msgstr "Options d'historique des devises : %s"
 
 #: maincurrencydialog.cpp:503
 msgid "Unable to update historical currency rates. Please update them manually!"
-msgstr ""
+msgstr "Impossible de mettre à jour l'historique des taux de change. Veuillez les mettre à jour manuellement !"
 
 #: maincurrencydialog.cpp:504 maincurrencydialog.cpp:692
 #: maincurrencydialog.cpp:728
 msgid "Historical currency error"
-msgstr ""
+msgstr "Erreur d'historique de devise"
 
 #: maincurrencydialog.cpp:536
 msgid "Set as Base Currency"
