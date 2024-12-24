@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-23 23:29\n"
+"PO-Revision-Date: 2024-12-24 00:43\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1638,7 +1638,7 @@ msgstr "Létező kategória nevének szerkesztése"
 
 #: categdialog.cpp:323
 msgid "Delete an existing category. The category is unable to be used by existing transactions."
-msgstr ""
+msgstr "Meglévő kategória törlése. A kategória nem használható meglévő ügyletekben."
 
 #: categdialog.cpp:328 maincurrencydialog.cpp:225
 msgid "&Select"
@@ -1960,7 +1960,7 @@ msgstr "Érvénytelen bejegyzés"
 
 #: currencydialog.cpp:285 currencydialog.cpp:310
 msgid "Grouping character is unable to be the same as the decimal character"
-msgstr ""
+msgstr "A csoportosító karakter nem egyezhet meg a decimális karakterrel"
 
 #: currencydialog.cpp:332
 #, c-format
@@ -3659,7 +3659,7 @@ msgstr "Létező fájlt felülírja?"
 
 #: import_export/univcsvdialog.cpp:1573
 msgid "Failed to delete existing file. File may be locked by another program."
-msgstr "Létező fájl törlése sikertelen. A fájlt más alkalmazás zárolhatta."
+msgstr "Hiba történt a meglévő fájl törlése közben. A fájlt más alkalmazás zárolhatta."
 
 #: import_export/univcsvdialog.cpp:1574
 msgid "Destination file error"
@@ -3767,7 +3767,7 @@ msgstr "Összes pénznem megjelenítése"
 
 #: maincurrencydialog.cpp:241
 msgid "Historical Currency Options"
-msgstr ""
+msgstr "Pénznemek előzményeinek beállítások"
 
 #: maincurrencydialog.cpp:258 stockdialog.cpp:287 stockdialog.cpp:306
 #: stockdialog.cpp:634 stockspanel.cpp:215
@@ -3800,7 +3800,7 @@ msgstr "A kijelölt valutaárfolyamok törlése"
 
 #: maincurrencydialog.cpp:309
 msgid "Delete Historical Currency Values for unused currencies and days"
-msgstr ""
+msgstr "Pénznemek előzményeinek értékek törlése a fel nem használt pénznemeknél és napoknál"
 
 #: maincurrencydialog.cpp:365
 msgid "Do you really want to delete the selected Currency?"
@@ -3814,7 +3814,7 @@ msgstr "Alappénznem kijelölése"
 #, c-format
 msgid "Historical rates for %1$s found, but “Use historical currency” in options is disabled:\n"
 "click No and enable it or click Yes to remove all historical rates for %2$s"
-msgstr ""
+msgstr "A(z) %1$s előzmény árfolyamok megtalálhatók, de a „Pénznemek előzményeinek használata” le van tiltva a beállítások között. Kattintson a Nem gombra az engedélyékéhez, vagy kattintson az Igen gombra a(z) %2$s összes előzmény árfolyamának eltávolításához."
 
 #: maincurrencydialog.cpp:447
 #, c-format
@@ -3823,12 +3823,12 @@ msgstr "Valutaárfolyam-előzmények beállításai: %s"
 
 #: maincurrencydialog.cpp:503
 msgid "Unable to update historical currency rates. Please update them manually!"
-msgstr ""
+msgstr "Nem sikerült frissíteni a pénznemárfolyamok előzményeit. Kérem, frissítse kézzel!"
 
 #: maincurrencydialog.cpp:504 maincurrencydialog.cpp:692
 #: maincurrencydialog.cpp:728
 msgid "Historical currency error"
-msgstr ""
+msgstr "Pénznemek előzményeinek hiba"
 
 #: maincurrencydialog.cpp:536
 msgid "Set as Base Currency"
@@ -3858,11 +3858,11 @@ msgstr "Nem sikerült letölteni a(z) %s pénznemárfolyamokat"
 #: maincurrencydialog.cpp:726
 #, c-format
 msgid "Unable to download history for symbol %s. Historical rates unavailable!"
-msgstr ""
+msgstr "Nem sikerült letölteni a(z) %s-jelelőzményeket. Az árfolyamelőzmények nem elérhető!"
 
 #: maincurrencydialog.cpp:788 optionsettingsgeneral.cpp:300
 msgid "Changing base currency will delete all historical rates, proceed?"
-msgstr ""
+msgstr "Alappénznem módosítása törli az összes előzmény árfolyamot, folytatja?"
 
 #: maincurrencydialog.cpp:812
 msgid "Do you want to update today currency rates?"
@@ -4880,7 +4880,7 @@ msgstr "&Webalkalmazás…"
 
 #: mmframe.cpp:1616
 msgid "Import from the WebApp"
-msgstr ""
+msgstr "Importálás a Webalkalmazásból"
 
 #: mmframe.cpp:1623
 msgid "Export as fixed CSV file"
@@ -6275,11 +6275,11 @@ msgstr "Területi beállításból származtatott formátum.\n"
 
 #: optionsettingsgeneral.cpp:174
 msgid "Use historical currency"
-msgstr ""
+msgstr "Pénznemek előzményeinek használata"
 
 #: optionsettingsgeneral.cpp:176
 msgid "Select to use historical currency (one rate for each day), deselect to use a fixed rate"
-msgstr ""
+msgstr "Jelölje ki a pénznemek előzményeinek használatához (naponként egy árfolyam), fix árfolyam használatához törölje a kijelölést"
 
 #: optionsettingsgeneral.cpp:180
 msgid "Financial Year"
@@ -7757,7 +7757,7 @@ msgstr "Létező címke nevének szerkesztése"
 
 #: tagdialog.cpp:136
 msgid "Delete an existing tag. The tag is unable to be used by existing transactions."
-msgstr "Létező címke törlése. A címkét nem használhatják meglévő ügyleteket."
+msgstr "Meglévő címke törlése. A címke nem használható meglévő ügyletekben."
 
 #: tagdialog.cpp:142
 msgid "Select"
@@ -8318,7 +8318,7 @@ msgstr "Az ügylet nincs letöltve:"
 
 #: webapp.cpp:599
 msgid "Please fix attachments folder or delete attachments from the WebApp"
-msgstr ""
+msgstr "Kérjük, javítsa ki a mellékletek könyvtárát, vagy törölje a mellékleteket a Webalkalmazásból"
 
 #: webapp.cpp:600
 msgid "Attachment folder error"
