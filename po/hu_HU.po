@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-24 00:43\n"
+"PO-Revision-Date: 2024-12-24 02:53\n"
 "Last-Translator: \n"
 "Language-Team: Hungarian\n"
 "Language: hu_HU\n"
@@ -1190,7 +1190,7 @@ msgstr "Érvénytelen érték"
 #: import_export/univcsvdialog.cpp:1419 stockdialog.cpp:414 transdialog.cpp:656
 #: transdialog.cpp:730 usertransactionpanel.cpp:451 webapp.cpp:566
 msgid "The opening date for the account is later than the date of this transaction"
-msgstr "A számla nyitódátuma később, mint az ügylet dátuma"
+msgstr "A számla nyitási dátuma későbbi, mint az ügylet dátuma"
 
 #: billsdepositsdialog.cpp:1283
 msgid "Specify the transfer amount in the From Account"
@@ -2970,7 +2970,7 @@ msgid "Metadata '%1$s' missing in chosen theme '%2$s'"
 msgstr "A(z) „%1$s”-metaadat hiányzik a kijelölt „%2$s” témában"
 
 #: images_list.cpp:458
-msgid "and more..."
+msgid "and more…"
 msgstr "és mások…"
 
 #: images_list.cpp:460
@@ -3659,7 +3659,7 @@ msgstr "Létező fájlt felülírja?"
 
 #: import_export/univcsvdialog.cpp:1573
 msgid "Failed to delete existing file. File may be locked by another program."
-msgstr "Hiba történt a meglévő fájl törlése közben. A fájlt más alkalmazás zárolhatta."
+msgstr "Létező fájl törlése sikertelen. A fájlt más alkalmazás zárolhatta."
 
 #: import_export/univcsvdialog.cpp:1574
 msgid "Destination file error"
