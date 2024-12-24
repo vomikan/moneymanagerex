@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-24 05:54\n"
+"PO-Revision-Date: 2024-12-24 07:06\n"
 "Last-Translator: \n"
 "Language-Team: Korean\n"
 "Language: ko_KR\n"
@@ -292,7 +292,7 @@ msgstr "잘못된 날짜"
 
 #: accountdialog.cpp:515
 msgid "Opening date is unable to be in the future"
-msgstr ""
+msgstr "개설 날짜는 미래일 수 없습니다"
 
 #: accountdialog.cpp:524
 msgid "Transactions for this account already exist before this date"
@@ -722,7 +722,7 @@ msgstr "첨부 파일 폴더를 찾을 수 없음"
 #: attachmentdialog.cpp:109
 #, c-format
 msgid "Attachment Manager | %s | %lld"
-msgstr ""
+msgstr "첨부 관리자 | %s | %lld"
 
 #: attachmentdialog.cpp:111
 #, c-format
@@ -1635,7 +1635,7 @@ msgstr "기존 범주의 이름 편집"
 
 #: categdialog.cpp:323
 msgid "Delete an existing category. The category is unable to be used by existing transactions."
-msgstr ""
+msgstr "기존 범주를 삭제합니다. 해당 범주는 기존 거래에서 사용할 수 없습니다."
 
 #: categdialog.cpp:328 maincurrencydialog.cpp:225
 msgid "&Select"
@@ -1675,7 +1675,7 @@ msgstr "범주 관리자: 추가 오류"
 
 #: categdialog.cpp:427
 msgid "Unable to move a subcategory to a category that already has a subcategory with that name. Consider renaming before moving."
-msgstr ""
+msgstr "이미 같은 이름의 하위 범주가 있는 범주로 하위 범주를 이동할 수 없습니다. 이동하기 전에 이름을 바꾸는 것이 좋습니다."
 
 #: categdialog.cpp:428
 msgid "A subcategory with this name already exists"
@@ -1954,7 +1954,7 @@ msgstr "잘못된 항목"
 
 #: currencydialog.cpp:285 currencydialog.cpp:310
 msgid "Grouping character is unable to be the same as the decimal character"
-msgstr ""
+msgstr "그룹화 문자는 소수점 문자와 같을 수 없습니다"
 
 #: currencydialog.cpp:332
 #, c-format
@@ -2242,7 +2242,7 @@ msgstr "수업료"
 #: db/DB_Table_Category_V1.h:136 db/DB_Table_Category_V1.h:140
 #: db/DB_Table_Category_V1.h:160
 msgid "Others"
-msgstr ""
+msgstr "기타"
 
 #: db/DB_Table_Category_V1.h:137
 msgid "Homeneeds"
@@ -2437,19 +2437,19 @@ msgstr "DB 유지관리가 완료되었습니다. MMEX를 닫았다가 다시 �
 
 #: dbwrapper.cpp:78
 msgid "The default cipher algorithm has changed from AES-128 to AES-256 for compatibility with the MMEX mobile apps."
-msgstr ""
+msgstr "MMEX 모바일 앱과의 호환성을 위해 기본 암호화 알고리즘이 AES-128에서 AES-256으로 변경되었습니다."
 
 #: dbwrapper.cpp:79
 msgid "Rekeying with the new cipher will prevent opening this database in older versions of MMEX."
-msgstr ""
+msgstr "새로운 암호로 다시 입력하면 이전 버전의 MMEX에서 이 데이터베이스를 열 수 없습니다."
 
 #: dbwrapper.cpp:80
 msgid "Do you want to update the database?"
-msgstr ""
+msgstr "데이터베이스를 업데이트하시겠습니까?"
 
 #: dbwrapper.cpp:80
 msgid "Opening MMEX Database – Warning"
-msgstr ""
+msgstr "MMEX 데이터베이스 열기 – 경고"
 
 #: dbwrapper.cpp:110
 msgid "When database file opening:"
@@ -2457,7 +2457,7 @@ msgstr "데이터베이스 파일을 열 때:"
 
 #: dbwrapper.cpp:114
 msgid "Unable to open file"
-msgstr ""
+msgstr "파일을 열 수 없음"
 
 #: dbwrapper.cpp:114
 msgid "You must specify path to another database file"
@@ -2478,7 +2478,7 @@ msgstr "오류: %s"
 
 #: dbwrapper.cpp:125 mmframe.cpp:2075
 msgid "Opening MMEX Database – Error"
-msgstr ""
+msgstr "MMEX 데이터베이스 열기 – 오류"
 
 #: diagnostics.cpp:51
 msgid "Diagnostics"
@@ -3004,7 +3004,7 @@ msgstr "내보내기 오류"
 
 #: import_export/parsers.cpp:120 import_export/parsers.cpp:260
 msgid "Unable to save file."
-msgstr ""
+msgstr "파일을 저장할 수 없습니다."
 
 #: import_export/parsers.cpp:146 import_export/parsers.cpp:155
 msgid "File is not in Excel XML Spreadsheet 2003 format."
@@ -3017,7 +3017,7 @@ msgstr "구문 분석 오류"
 
 #: import_export/parsers.cpp:169
 msgid "Unable to find Worksheet."
-msgstr ""
+msgstr "워크시트를 찾을 수 없습니다."
 
 #: import_export/parsers.cpp:175
 msgid "Table"
@@ -3025,7 +3025,7 @@ msgstr "표"
 
 #: import_export/parsers.cpp:177
 msgid "Unable to find Table."
-msgstr ""
+msgstr "테이블을 찾을 수 없습니다."
 
 #: import_export/parsers.cpp:228 mmframereport.cpp:132
 msgid "Transactions"
@@ -3759,7 +3759,7 @@ msgstr "사용되지 않은 통화까지 모두 표시"
 
 #: maincurrencydialog.cpp:241
 msgid "Historical Currency Options"
-msgstr ""
+msgstr "통화 이력 설정"
 
 #: maincurrencydialog.cpp:258 stockdialog.cpp:287 stockdialog.cpp:306
 #: stockdialog.cpp:634 stockspanel.cpp:215
@@ -3792,7 +3792,7 @@ msgstr "선택한 통화 값 삭제"
 
 #: maincurrencydialog.cpp:309
 msgid "Delete Historical Currency Values for unused currencies and days"
-msgstr ""
+msgstr "사용하지 않는 통화 및 날짜에 대한 통화 값 이력 삭제"
 
 #: maincurrencydialog.cpp:365
 msgid "Do you really want to delete the selected Currency?"
@@ -3806,7 +3806,8 @@ msgstr "기준 통화 선택"
 #, c-format
 msgid "Historical rates for %1$s found, but “Use historical currency” in options is disabled:\n"
 "click No and enable it or click Yes to remove all historical rates for %2$s"
-msgstr ""
+msgstr "%1$s에 대한 환율 이력을 찾았지만, 설정에서 \"통화 이력 사용\"이 비활성화됨:\n"
+"아니요를 클릭하고 활성화하거나 예를 클릭하여 %2$s에 대한 모든 환율 이력을 제거합니다."
 
 #: maincurrencydialog.cpp:447
 #, c-format
@@ -3815,12 +3816,12 @@ msgstr "통화 이력 옵션: %s"
 
 #: maincurrencydialog.cpp:503
 msgid "Unable to update historical currency rates. Please update them manually!"
-msgstr ""
+msgstr "통화 환율 이력을 갱신할 수 없습니다. 수동으로 갱신해 주세요!"
 
 #: maincurrencydialog.cpp:504 maincurrencydialog.cpp:692
 #: maincurrencydialog.cpp:728
 msgid "Historical currency error"
-msgstr ""
+msgstr "통화 이력 오류"
 
 #: maincurrencydialog.cpp:536
 msgid "Set as Base Currency"
@@ -3850,11 +3851,11 @@ msgstr "%s 통화 환율을 다운로드할 수 없습니다"
 #: maincurrencydialog.cpp:726
 #, c-format
 msgid "Unable to download history for symbol %s. Historical rates unavailable!"
-msgstr ""
+msgstr "%s 기호에 대한 기록을 다운로드할 수 없습니다. 환율 이력을 사용할 수 없습니다!"
 
 #: maincurrencydialog.cpp:788 optionsettingsgeneral.cpp:300
 msgid "Changing base currency will delete all historical rates, proceed?"
-msgstr ""
+msgstr "기준 통화를 변경하면 모든 환율 이력이 삭제됩니다. 계속하시겠습니까?"
 
 #: maincurrencydialog.cpp:812
 msgid "Do you want to update today currency rates?"
@@ -3863,11 +3864,11 @@ msgstr "오늘 환율을 업데이트하시겠습니까?"
 #: maincurrencydialog.cpp:833
 #, c-format
 msgid "Unable to download history for base symbol %s. Historical rates unavailable!"
-msgstr ""
+msgstr "기본 심볼 %s에 대한 기록을 내려받을 수 없습니다. 환율 이력을 사용할 수 없습니다!"
 
 #: maincurrencydialog.cpp:876 util.cpp:684
 msgid "Unable to find base currency symbol!"
-msgstr ""
+msgstr "기본 통화 기호를 찾을 수 없습니다!"
 
 #: mmSimpleDialogs.cpp:767 mmSimpleDialogs.cpp:779
 msgid "&Clear color"
@@ -4343,7 +4344,7 @@ msgstr "삭제된 거래는 일시적으로 저장되며 삭제된 거래 보기
 
 #: mmchecking_list.cpp:1331 mmchecking_list.cpp:1430
 msgid "Unable to undo this action."
-msgstr ""
+msgstr "이 작업은 취소할 수 없습니다."
 
 #: mmchecking_list.cpp:1335 mmchecking_list.cpp:1346 mmchecking_list.cpp:1357
 #: mmchecking_list.cpp:1435
@@ -4428,7 +4429,7 @@ msgstr "이동되지 않음"
 
 #: mmchecking_list.cpp:1796
 msgid "Unable to move some transactions"
-msgstr ""
+msgstr "일부 거래를 이동할 수 없습니다"
 
 #: mmchecking_list.cpp:1863
 msgid "Scheduled transaction saved."
@@ -4554,7 +4555,7 @@ msgstr "차이: "
 
 #: mmcheckingpanel.cpp:689
 msgid "Filtered Flow: "
-msgstr ""
+msgstr "필터링된 흐름: "
 
 #: mmcheckingpanel.cpp:769 webapp.cpp:621
 msgid "Attachment"
@@ -4577,11 +4578,11 @@ msgstr "선택한 거래 사이의 일 수: %d"
 
 #: mmcheckingpanel.cpp:1062
 msgid "Scheduled transactions are unable to be shown, because the current filter choice extends into the future without limit."
-msgstr ""
+msgstr "현재 필터 선택 사항이 미래까지 제한 없이 적용되기 때문에 예약된 거래를 표시할 수 없습니다."
 
 #: mmcheckingpanel.cpp:1063
 msgid "Click to show scheduled transactions. This feature works best with filter choices that extend into the future (e.g., Current Month)."
-msgstr ""
+msgstr "클릭하여 예약된 거래를 표시합니다. 이 기능은 미래로 확장되는 필터 선택 사항(예: 이번 달)과 가장 잘 작동합니다."
 
 #: mmcheckingpanel.cpp:1064
 msgid "Click to hide scheduled transactions."
