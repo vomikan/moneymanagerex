@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-24 02:53\n"
+"PO-Revision-Date: 2024-12-24 07:06\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -292,7 +292,7 @@ msgstr "Data non valida"
 
 #: accountdialog.cpp:515
 msgid "Opening date is unable to be in the future"
-msgstr ""
+msgstr "La data di apertura non può essere futura"
 
 #: accountdialog.cpp:524
 msgid "Transactions for this account already exist before this date"
@@ -544,7 +544,7 @@ msgstr "D&uplica Cespite…"
 
 #: assetspanel.cpp:104
 msgid "&Add Asset Transaction…"
-msgstr "&Aggiungi Operazione su Cespite…"
+msgstr "&Aggiungi Transazione su Cespite…"
 
 #: assetspanel.cpp:105
 msgid "&View Asset Transactions"
@@ -552,11 +552,11 @@ msgstr "&Mostra Transazioni sui Cespiti"
 
 #: assetspanel.cpp:106
 msgid "&Open Asset Account…"
-msgstr "&Apri Conto Cespite…"
+msgstr "Apri C&onto Cespite…"
 
 #: assetspanel.cpp:108
 msgid "&Edit Asset…"
-msgstr "&Modifica Cespite…"
+msgstr "Modifica C&espite…"
 
 #: assetspanel.cpp:110
 msgid "&Delete Asset…"
@@ -1638,7 +1638,7 @@ msgstr "Modifica il nome di una categoria esistente"
 
 #: categdialog.cpp:323
 msgid "Delete an existing category. The category is unable to be used by existing transactions."
-msgstr ""
+msgstr "Elimina una categoria esistente. La categoria non può essere utilizzata dalle transazioni esistenti."
 
 #: categdialog.cpp:328 maincurrencydialog.cpp:225
 msgid "&Select"
@@ -1678,7 +1678,7 @@ msgstr "Gestore Categorie: Errore Di Aggiunta"
 
 #: categdialog.cpp:427
 msgid "Unable to move a subcategory to a category that already has a subcategory with that name. Consider renaming before moving."
-msgstr ""
+msgstr "Impossibile spostare una sottocategoria in una categoria che ha già una sottocategoria con quel nome. Considera di rinominarla prima di spostarla."
 
 #: categdialog.cpp:428
 msgid "A subcategory with this name already exists"
@@ -1960,7 +1960,7 @@ msgstr "Inserimento non valido"
 
 #: currencydialog.cpp:285 currencydialog.cpp:310
 msgid "Grouping character is unable to be the same as the decimal character"
-msgstr ""
+msgstr "Il carattere di raggruppamento non può essere uguale al carattere decimale"
 
 #: currencydialog.cpp:332
 #, c-format
@@ -2464,7 +2464,7 @@ msgstr "Quando il database viene aperto:"
 
 #: dbwrapper.cpp:114
 msgid "Unable to open file"
-msgstr ""
+msgstr "Impossibile aprire il file"
 
 #: dbwrapper.cpp:114
 msgid "You must specify path to another database file"
@@ -4597,7 +4597,7 @@ msgstr "Giorni tra le transazioni selezionate: %d"
 
 #: mmcheckingpanel.cpp:1062
 msgid "Scheduled transactions are unable to be shown, because the current filter choice extends into the future without limit."
-msgstr ""
+msgstr "Le transazioni pianificate non possono essere mostrate, perché la scelta del filtro attuale si estende nel futuro senza limiti."
 
 #: mmcheckingpanel.cpp:1063
 msgid "Click to show scheduled transactions. This feature works best with filter choices that extend into the future (e.g., Current Month)."
@@ -4877,11 +4877,11 @@ msgstr "&Cancella cronologia file"
 
 #: mmframe.cpp:1616
 msgid "&WebApp…"
-msgstr ""
+msgstr "&WebApp…"
 
 #: mmframe.cpp:1616
 msgid "Import from the WebApp"
-msgstr ""
+msgstr "Importa da WebApp"
 
 #: mmframe.cpp:1623
 msgid "Export as fixed CSV file"
@@ -5544,7 +5544,7 @@ msgstr "Salva il database con un determinato nome"
 
 #: mmframe.cpp:2545
 msgid "Unable to copy file to itself"
-msgstr ""
+msgstr "Impossibile copiare il file su se stesso"
 
 #: mmframe.cpp:2558
 msgid "Enter password for new database"
@@ -8144,7 +8144,7 @@ msgstr ""
 
 #: util.cpp:1076
 msgid "Unable to parse price in asset history"
-msgstr ""
+msgstr "Impossibile analizzare il prezzo nella cronologia del Cespite"
 
 #: util.cpp:1449
 #, c-format
@@ -8309,7 +8309,7 @@ msgstr "Oggi sarà utilizzato come data di transazione"
 
 #: webapp.cpp:596 webapp.cpp:630 webappdialog.cpp:338
 msgid "Unable to download attachments from the WebApp."
-msgstr ""
+msgstr "Impossibile scaricare allegati dalla WebApp."
 
 #: webapp.cpp:597
 msgid "Attachments folder not set or unavailable"
@@ -8321,7 +8321,7 @@ msgstr "Operazione non scaricata:"
 
 #: webapp.cpp:599
 msgid "Please fix attachments folder or delete attachments from the WebApp"
-msgstr ""
+msgstr "Correggi la cartella degli allegati o elimina gli allegati dalla WebApp"
 
 #: webapp.cpp:600
 msgid "Attachment folder error"
@@ -8357,7 +8357,7 @@ msgstr "Importa ed apri tutte"
 
 #: webappdialog.cpp:205
 msgid "Unable to download transactions from the WebApp."
-msgstr ""
+msgstr "Impossibile scaricare le transazioni da WebApp."
 
 #: webappdialog.cpp:206
 msgid "Transactions download error"
