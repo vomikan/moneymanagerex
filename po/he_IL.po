@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-23 22:25\n"
+"PO-Revision-Date: 2024-12-24 02:53\n"
 "Last-Translator: \n"
 "Language-Team: Hebrew\n"
 "Language: he_IL\n"
@@ -2979,8 +2979,8 @@ msgid "Metadata '%1$s' missing in chosen theme '%2$s'"
 msgstr "בערכת הנושא '%2$s' שנבחרה, חסרים נתוני על '%1$s'"
 
 #: images_list.cpp:458
-msgid "and more..."
-msgstr "ועוד..."
+msgid "and more…"
+msgstr "ועוד…"
 
 #: images_list.cpp:460
 #, c-format
