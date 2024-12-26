@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-24 02:53\n"
+"PO-Revision-Date: 2024-12-26 19:51\n"
 "Last-Translator: \n"
 "Language-Team: German\n"
 "Language: de_DE\n"
@@ -292,7 +292,7 @@ msgstr "Ungültiges Datum"
 
 #: accountdialog.cpp:515
 msgid "Opening date is unable to be in the future"
-msgstr ""
+msgstr "Eröffnungsdatum kann nicht in der Zukunft sein"
 
 #: accountdialog.cpp:524
 msgid "Transactions for this account already exist before this date"
@@ -721,7 +721,7 @@ msgstr "Anhangsverzeichnis fehlt"
 #: attachmentdialog.cpp:109
 #, c-format
 msgid "Attachment Manager | %s | %lld"
-msgstr ""
+msgstr "Anhang-Manager | %s | %lld"
 
 #: attachmentdialog.cpp:111
 #, c-format
@@ -1636,7 +1636,7 @@ msgstr "Namen einer bestehenden Kategorie bearbeiten"
 
 #: categdialog.cpp:323
 msgid "Delete an existing category. The category is unable to be used by existing transactions."
-msgstr ""
+msgstr "Löschen einer existierenden Kategorie. Die Kategorie kann nicht von bestehenden Transaktionen verwendet werden."
 
 #: categdialog.cpp:328 maincurrencydialog.cpp:225
 msgid "&Select"
@@ -1676,7 +1676,7 @@ msgstr "Kategorie-Manager: Fehler beim Hinzufügen"
 
 #: categdialog.cpp:427
 msgid "Unable to move a subcategory to a category that already has a subcategory with that name. Consider renaming before moving."
-msgstr ""
+msgstr "Sie können eine Unterkategorie nicht in eine Kategorie verschieben, die bereits eine Unterkategorie mit diesem Namen hat. Ziehen Sie vor dem Verschieben eine Umbenennung in Betracht."
 
 #: categdialog.cpp:428
 msgid "A subcategory with this name already exists"
@@ -1958,7 +1958,7 @@ msgstr "Ungültiger Eintrag"
 
 #: currencydialog.cpp:285 currencydialog.cpp:310
 msgid "Grouping character is unable to be the same as the decimal character"
-msgstr ""
+msgstr "Das Gruppierungszeichen kann nicht mit dem Dezimalzeichen identisch sein"
 
 #: currencydialog.cpp:332
 #, c-format
@@ -2247,7 +2247,7 @@ msgstr "Studiengebühren"
 #: db/DB_Table_Category_V1.h:136 db/DB_Table_Category_V1.h:140
 #: db/DB_Table_Category_V1.h:160
 msgid "Others"
-msgstr ""
+msgstr "Sonstiges"
 
 #: db/DB_Table_Category_V1.h:137
 msgid "Homeneeds"
@@ -2444,7 +2444,7 @@ msgstr "DB-Wartung abgeschlossen, starten Sie MMEX bitte neu!"
 
 #: dbwrapper.cpp:78
 msgid "The default cipher algorithm has changed from AES-128 to AES-256 for compatibility with the MMEX mobile apps."
-msgstr ""
+msgstr "Der Standard-Verschlüsselungsalgorithmus hat sich von AES-128 auf AES-256 geändert, um die Kompatibilität mit den MMEX-Mobilanwendungen zu gewährleisten."
 
 #: dbwrapper.cpp:79
 msgid "Rekeying with the new cipher will prevent opening this database in older versions of MMEX."
