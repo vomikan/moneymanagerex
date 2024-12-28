@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-24 11:57\n"
+"PO-Revision-Date: 2024-12-28 23:52\n"
 "Last-Translator: \n"
 "Language-Team: Italian\n"
 "Language: it_IT\n"
@@ -5046,11 +5046,11 @@ msgstr "Gestore &categoria…"
 
 #: mmframe.cpp:1759
 msgid "&Tag Manager…"
-msgstr "Gestore &Tag…"
+msgstr "&Gestore Etichette…"
 
 #: mmframe.cpp:1759 mmframe.cpp:1984 tagdialog.h:45
 msgid "Tag Manager"
-msgstr "Gestore Tag"
+msgstr "Gestore Etichette"
 
 #: mmframe.cpp:1763
 msgid "Curre&ncy Manager…"
@@ -6894,7 +6894,7 @@ msgstr "Conferma unione beneficiari"
 
 #: relocatetagdialog.cpp:87 relocatetagdialog.h:42
 msgid "Merge Tags"
-msgstr "Unisci Tag"
+msgstr "Unisci Etichette"
 
 #: relocatetagdialog.cpp:101
 msgid "&Delete source tag after merge"
@@ -7805,20 +7805,20 @@ msgstr "Tag Manager: Errore Di Aggiunta"
 
 #: tagdialog.cpp:242 tagdialog.cpp:245
 msgid "Edit Tag"
-msgstr "Modifica Tag"
+msgstr "Modifica Etichetta"
 
 #: tagdialog.cpp:254
 msgid "Tag Manager: Editing Error"
-msgstr "Tag Manager: Errore Di Modifica"
+msgstr "Gestore Etichette: Errore Di Modifica"
 
 #: tagdialog.cpp:295
 #, c-format
 msgid "Tag '%s' in use"
-msgstr "Tag '%s' in uso"
+msgstr "Etichetta '%s' in uso"
 
 #: tagdialog.cpp:295
 msgid "Tag Manager: Delete Error"
-msgstr "Tag Manager: Errore Di Eliminazione"
+msgstr "Gestore Etichette: Errore Di Eliminazione"
 
 #: tagdialog.cpp:298
 #, c-format
@@ -7831,7 +7831,7 @@ msgstr "Eliminando l'etichetta si elimineranno automaticamente anche le transazi
 
 #: tagdialog.cpp:301
 msgid "Confirm Tag Deletion"
-msgstr "Conferma eliminazione del Tag"
+msgstr "Conferma eliminazione dell'Etichetta"
 
 #: themes.cpp:191
 msgid "&Delete"
