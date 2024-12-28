@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: moneymanagerex\n"
 "Report-Msgid-Bugs-To: developer@moneymanagerex.org\n"
 "POT-Creation-Date: 2024-12-23 22:19+0000\n"
-"PO-Revision-Date: 2024-12-26 22:37\n"
+"PO-Revision-Date: 2024-12-28 21:16\n"
 "Last-Translator: \n"
 "Language-Team: Spanish\n"
 "Language: es_ES\n"
@@ -4875,11 +4875,11 @@ msgstr "&Limpiar ficheros recientes"
 
 #: mmframe.cpp:1616
 msgid "&WebApp…"
-msgstr ""
+msgstr "&Aplicación web…"
 
 #: mmframe.cpp:1616
 msgid "Import from the WebApp"
-msgstr ""
+msgstr "Importar desde la aplicación web"
 
 #: mmframe.cpp:1623
 msgid "Export as fixed CSV file"
@@ -6275,11 +6275,11 @@ msgstr "Formato derivado de la configuración regional.\n"
 
 #: optionsettingsgeneral.cpp:174
 msgid "Use historical currency"
-msgstr ""
+msgstr "Usar el histórico de divisas"
 
 #: optionsettingsgeneral.cpp:176
 msgid "Select to use historical currency (one rate for each day), deselect to use a fixed rate"
-msgstr ""
+msgstr "Seleccione para utilizar el historial de la divisa (una tarifa por cada día), deseleccione para utilizar un tipo de cambio fijo"
 
 #: optionsettingsgeneral.cpp:180
 msgid "Financial Year"
@@ -7757,7 +7757,7 @@ msgstr "Editar el nombre de una etiqueta existente"
 
 #: tagdialog.cpp:136
 msgid "Delete an existing tag. The tag is unable to be used by existing transactions."
-msgstr ""
+msgstr "Eliminar una etiqueta existente. La etiqueta no puede ser usada por las transacciones existentes."
 
 #: tagdialog.cpp:142
 msgid "Select"
@@ -7887,7 +7887,7 @@ msgstr "Sin actualizar"
 
 #: transactionsupdatedialog.cpp:540
 msgid "Unable to update some transactions"
-msgstr ""
+msgstr "No se pudo actualizar algunas transacciones"
 
 #: transactionsupdatedialog.h:42
 msgid "Multi Transactions Update"
@@ -8126,11 +8126,11 @@ msgstr "Se esperaba una respuesta que tuviera datos o una cadena de error"
 
 #: util.cpp:1011
 msgid "Unable to find asset for symbol"
-msgstr ""
+msgstr "No se pudo encontrar el activo del símbolo"
 
 #: util.cpp:1046
 msgid "Unable to get base currency!"
-msgstr ""
+msgstr "¡No se pudo obtener la divisa base!"
 
 #: util.cpp:1052
 msgid "USD"
@@ -8138,11 +8138,11 @@ msgstr "USD"
 
 #: util.cpp:1055
 msgid "Unable to find currency 'USD', required for converting historical prices"
-msgstr ""
+msgstr "No se pudo encontrar la divisa 'USD', necesaria para convertir los precios del historial"
 
 #: util.cpp:1076
 msgid "Unable to parse price in asset history"
-msgstr ""
+msgstr "No se pudo analizar el precio en el historial de activos"
 
 #: util.cpp:1449
 #, c-format
@@ -8307,7 +8307,7 @@ msgstr "Se utilizará hoy como la fecha de la transacción"
 
 #: webapp.cpp:596 webapp.cpp:630 webappdialog.cpp:338
 msgid "Unable to download attachments from the WebApp."
-msgstr ""
+msgstr "No se pueden descargar archivos adjuntos de la aplicación web."
 
 #: webapp.cpp:597
 msgid "Attachments folder not set or unavailable"
